@@ -75,11 +75,12 @@ def cant_reproduce(ref, body):
     items = list(EARTH_LIMITS[body])
     dv = (div or {}).get("sites", {}).get(ref)
     if dv:
-        items = [f"**{dv['share_colder_than_earth_record']:.1%}** of the site averages colder than Earth's record low "
-                 f"(184 K); mean {dv['temp_avg_mean_K']:.0f} K, coldest {dv['temp_avg_min_K']:.0f} K (Diviner)",
+        items = [f"**{dv['share_colder_than_earth_record']:.1%}** of the site has an annual mean temperature below "
+                 f"Earth's record low (184 K); site mean {dv['temp_avg_mean_K']:.0f} K, coldest spot "
+                 f"{dv['temp_avg_min_K']:.0f} K (Diviner, 2 cm below the surface)",
                  f"Water ice thermally stable within 1 m in **{dv['share_ice_stable_within_1m']:.0%}** of it "
                  f"(median depth {dv['median_ice_depth_m']*100:.0f} cm)",
-                 f"Peaks reach {dv['temp_max_max_K']:.0f} K ({dv['temp_max_max_K']-273.15:.0f} °C)"] + items
+                 f"Surface peaks reach {dv['temp_max_max_K']:.0f} K ({dv['temp_max_max_K']-273.15:.0f} °C)"] + items
     return items
 
 refs = [r for r in cfg["sites"] if cfg["sites"][r]["role"] == "reference" and r in set(win.reference)]
