@@ -26,7 +26,7 @@ NASA plans its Moon Base near the lunar south pole, where the Sun never rises ab
 landing, roving and power there. P.E.N. is an open tool that searches Earth for places that match a target
 Moon or Mars site **dimension by dimension**: terrain shape, low-Sun illumination, and (in progress) temperature.
 It explains what is similar and where the analogy breaks. Our cast-shadow model reproduces NASA's official LOLA
-illumination map at Shackleton Connecting Ridge (ρ = 0.86). P.E.N. also finds *when* Earth sites reproduce
+illumination map at all four Moon Base sites (ρ = 0.92–0.99). P.E.N. also finds *when* Earth sites reproduce
 lunar-pole light: an "analog in time" that tells field teams the best weeks to test.
 
 **Link to project demo:** <deck or video URL>
