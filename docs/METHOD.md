@@ -43,14 +43,17 @@ Malapert; the far-horizon test below raises this to 0.92–0.99.
 month. This uses a standard declination and hour-angle formula without refraction.
 
 **Diviner context (Moon only).** For each lunar reference footprint, `scripts/diviner_context.py` summarises
-the LRO Diviner polar resource product (Paige et al.): average and maximum surface temperature, and the share of
+the LRO Diviner polar resource product (Paige et al.): annual mean temperature (2 cm below the surface), maximum
+surface temperature, and the share of
 the site where water ice is thermally stable at the surface or within 1 m. These numbers feed the "Earth can't
 reproduce" panel of every analog card. They are not scored, because no Earth layer has a comparable meaning.
 
 **Far-horizon test (Moon only).** `scripts/validate_far_horizons.py` recomputes illumination for the lunar
-references with the LOLA 85°S 40 m DEM, horizons traced to 150 km in exact 3D on the lunar sphere, and 1,728 real
+references with the LOLA 85°S 40 m DEM, horizons traced up to 150 km in exact 3D on the lunar sphere, and 1,728 real
 Sun positions (subsolar latitude ±1.54°, Sun as a 0.53° disk). Against the LOLA average-illumination map, ρ rises
-from 0.55–0.88 (local DEM) to 0.92–0.99 (150 km), and the mean error falls to 2–3 percentage points of lit time.
+from 0.55–0.88 (local DEM) to 0.92–0.99 (150 km), and the mean error falls to 2.0–3.2 percentage points of lit time.
+Malapert and Nobile Rim 1 lie near the DEM edge, so their rays toward lower latitudes stop after 21–39 km and
+41–66 km (`ray_reach` in `far_horizons.json`).
 
 **Known-analog test.** `scripts/validate_known_analogs.py` takes 10 classic analog sites that fall inside our
 regions (Meteor Crater, SP Crater, Cinder Lake Crater Field, Pinacate Peaks, Haughton crater, the HMP Research

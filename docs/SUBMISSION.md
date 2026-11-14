@@ -48,11 +48,12 @@ lunar-pole light: an "analog in time" that tells field teams the best weeks to t
      mission in 2012, is window #1 of 10,424 for Malapert and in the top 0.2 % for all four Moon Base sites.
      No labels were used.
    - The light model matches NASA's LOLA illumination map with ρ = 0.92–0.99 once terrain out to 150 km is included
-     (mean error 2–3 percentage points of lit time).
+     (mean error 2.0–3.2 percentage points of lit time).
    - Best matches: the four Moon sites ↔ Mauna Kea (79–91), Arcadia Planitia ↔ Atacama near Yungay (96),
      Jezero ↔ Sierra Chichinautzin, Mexico (89). El Pinacate is in the top 3 % for all four Moon Base sites.
    - Known analog sites rank at the 80th percentile in illumination (median of 38 tests with 10 sites; 50 = random).
-   - LRO Diviner: 88–100 % of each lunar site averages colder than Earth's record low; ice is stable within 1 m in 22–40 %.
+   - LRO Diviner: in 88–100 % of each lunar site the annual mean temperature (2 cm below the surface) is colder than
+     Earth's record low air temperature (184 K); ice is stable within 1 m in 22–40 %.
    - Polar sites give 4–7 h/day of lunar-pole-like light around the equinoxes.
 4. *Benefits:* regional screeners say which region to look at; P.E.N. picks the exact 6 km site and the best weeks.
    Choose and schedule analog field tests for rover vision, EVA lighting and landing-hazard rehearsal.
