@@ -43,10 +43,11 @@ the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's 
   (Connecting Ridge), 0.99 (Nobile Rim 1), 0.97 (de Gerlache) and 0.975 (Malapert), with a mean error of 2–3
   percentage points of lit time. With the local DEM alone ρ is 0.55–0.88: the gap was distant mountains, and
   curvature by itself barely matters.
-- **Known-analog test:** 10 classic analog sites, 38 site × target tests. The median rank is the 80th percentile for
-  illumination and the 61st for terrain (50 = random). El Pinacate, the Apollo training ground in Sonora, ranks in
+- **Known-analog test:** 8 classic analog sites, 32 site × target tests. The median rank is the 83rd percentile for
+  illumination and the 58th for terrain (50 = random). El Pinacate, the Apollo training ground in Sonora, ranks in
   the top 3 % for all four Moon Base sites. Sites chosen for other reasons rank lower, as they should: Meteor Crater
-  is an impact-geology analog and University Valley a dry-permafrost (thermal) analog.
+  is an impact-geology analog, University Valley a dry-permafrost (thermal) analog, and Yungay a chemical and
+  aridity analog, not a terrain or light one.
 - **Where Earth stops being an analog:** per LRO Diviner, 88–100 % of each lunar site averages colder than Earth's
   record low (184 K), and water ice is thermally stable within 1 m in 22–40 % of it. Peaks reach 320–342 K.
 - **Analog in time:** polar sites (Haughton, Axel Heiberg, Svalbard, University Valley) give 4–7 h/day of
@@ -71,7 +72,7 @@ the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's 
 | Terrain + illumination features, IQR-scaled similarity, per-dimension scores | `pen/features.py`, `pen/scoring.py` | Victor |
 | 6 references (4 Moon Base sites incl. Artemis candidates Nobile Rim 1 and Malapert, 2 Mars) and 14 Earth regions | `config/sites.yaml` | D. Lizárraga · D. Dona |
 | Light model vs NASA LOLA illumination, local (ρ 0.55–0.88) and with 150 km horizons + curvature (ρ 0.92–0.99) | `scripts/validate_illumination.py`, `scripts/validate_far_horizons.py`, fig4, fig7 | D. Lizárraga · Victor |
-| Known-analog test with 10 classic sites (Mauna Kea ISRU site #1 for Malapert, top 0.2 % for all Moon sites) | `scripts/validate_known_analogs.py` | D. Dona |
+| Known-analog test with 8 classic sites (Mauna Kea ISRU site #1 for Malapert, top 0.2 % for all Moon sites) | `scripts/validate_known_analogs.py` | D. Dona |
 | Sensitivity to weights and window size | `scripts/sensitivity.py`, fig5 | Victor |
 | LRO Diviner temperature and ice context for the Moon sites | `scripts/diviner_context.py`, fig6 | D. Lizárraga |
 | Analog in time (hours/day of 0–7° Sun per month) | `pen/sun.py`, fig3 | Victor |

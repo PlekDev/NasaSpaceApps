@@ -52,9 +52,11 @@ references with the LOLA 85°S 40 m DEM, horizons traced to 150 km in exact 3D o
 Sun positions (subsolar latitude ±1.54°, Sun as a 0.53° disk). Against the LOLA average-illumination map, ρ rises
 from 0.55–0.88 (local DEM) to 0.92–0.99 (150 km), and the mean error falls to 2–3 percentage points of lit time.
 
-**Known-analog test.** `scripts/validate_known_analogs.py` takes 10 classic analog sites that fall inside our
-regions (Meteor Crater, SP Crater, Cinder Lake Crater Field, Pinacate Peaks, Haughton crater, the HMP Research
-Station, Pu'u Hiwahine on Mauna Kea, Askja, Yungay and University Valley) and reports the percentile of the windows containing them among all Earth windows.
+**Known-analog test.** `scripts/validate_known_analogs.py` takes 8 classic analog sites that fall inside our
+regions (Meteor Crater, SP Crater, Cinder Lake Crater Field, Pinacate Peaks, Haughton crater, Pu'u Hiwahine on
+Mauna Kea, Yungay and University Valley) and reports the percentile of the windows containing them among all Earth windows. Askja (its point lies on a lake that the water mask removes, so no window is valid) and the
+HMP Research Station (same crater as Haughton) were removed. Each coordinate comes from an official gazetteer or a
+publication, listed in the `note` field of the script; Pinacate and Cinder Lake are not verified against an official database.
 
 ### Limitations
 

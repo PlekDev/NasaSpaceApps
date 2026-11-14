@@ -51,7 +51,7 @@ lunar-pole light: an "analog in time" that tells field teams the best weeks to t
      (mean error 2–3 percentage points of lit time).
    - Best matches: the four Moon sites ↔ Mauna Kea (79–91), Arcadia Planitia ↔ Atacama near Yungay (96),
      Jezero ↔ Sierra Chichinautzin, Mexico (89). El Pinacate is in the top 3 % for all four Moon Base sites.
-   - Known analog sites rank at the 80th percentile in illumination (median of 38 tests with 10 sites; 50 = random).
+   - Known analog sites rank at the 83rd percentile in illumination (median of 32 tests with 8 sites; 50 = random).
    - LRO Diviner: 88–100 % of each lunar site averages colder than Earth's record low; ice is stable within 1 m in 22–40 %.
    - Polar sites give 4–7 h/day of lunar-pole-like light around the equinoxes.
 4. *Benefits:* regional screeners say which region to look at; P.E.N. picks the exact 6 km site and the best weeks.
