@@ -58,6 +58,8 @@ lunar-pole light: an "analog in time" that tells field teams the best weeks to t
    - Diviner vs Earth's cold analogs (NASA POWER): University Valley, Antarctica, the coldest region we search, has a
      mean skin temperature of 239 K, still 95–132 K warmer than the Moon Base sites (107–144 K). Lunar surface peaks
      (306–342 K) are within reach of Earth's deserts (up to 328 K). See fig8.
+   - Mars is a closer thermal match: the Mars Climate Database (model) gives our three Mars sites a mean surface
+     temperature of 200–224 K, 15–38 K colder than University Valley, at 680–830 Pa (under 1 % of sea level).
    - Polar sites give 4–7 h/day of lunar-pole-like light around the equinoxes.
 4. *Benefits:* regional screeners say which region to look at; P.E.N. picks the exact 6 km site and the best weeks.
    Choose and schedule analog field tests for rover vision, EVA lighting and landing-hazard rehearsal.
@@ -95,6 +97,8 @@ mid-latitude region with buried ice), and the CTX global mosaic
 
 **Space Agency Partner data and other references:**
 - ESA Copernicus DEM GLO-30 (via AWS Open Data)
+- Mars Climate Database v6.2 (LMD/OU/IAA, supported by ESA and CNES): modelled surface temperature and pressure at
+  the Mars sites
 - Open-source libraries: rasterio, GDAL, NumPy, SciPy, pandas, Matplotlib, Streamlit, pydeck
 - Literature: Mazarico et al. 2011; Barker et al. (PGDA); Paige et al. (Diviner); Klingelhoefer et al. 2014 (Mauna Kea
   ISRU tests, NTRS 20140008708); McKay et al. 2003 (Atacama); Plaut et al. 2009 and Petersen et al. 2018 (Deuteronilus Mensae ice, SHARAD); Marinova et al. 2022 (University Valley);

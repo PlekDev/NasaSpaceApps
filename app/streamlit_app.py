@@ -81,7 +81,20 @@ def cant_reproduce(ref, body):
                  f"Water ice thermally stable within 1 m in **{dv['share_ice_stable_within_1m']:.0%}** of it "
                  f"(median depth {dv['median_ice_depth_m']*100:.0f} cm)",
                  f"Surface peaks reach {dv['temp_max_max_K']:.0f} K ({dv['temp_max_max_K']-273.15:.0f} °C)"] + items
+    mc = mars_context().get("sites", {}).get(ref)
+    if mc:   # modelled, not measured: Mars Climate Database v6.2 (scripts/mars_context.py)
+        items = [f"Surface averages **{mc['tsurf_mean_K']:.0f} K** ({mc['tsurf_mean_K']-273.15:.0f} °C) over the year, from "
+                 f"{mc['tsurf_min_K']:.0f} K at night to {mc['tsurf_max_K']:.0f} K at midday; above freezing only "
+                 f"{mc['share_above_freezing']:.0%} of the time (Mars Climate Database, model)",
+                 f"Air pressure **{mc['ps_mean_Pa']:.0f} Pa**, {mc['ps_mean_Pa']/101325:.1%} of Earth's sea level and close to "
+                 f"water's triple point (612 Pa)"] + items
     return items
+
+
+@st.cache_data(show_spinner=False)
+def mars_context():
+    p = PROCESSED / "mars_context.json"
+    return json.load(open(p, encoding="utf-8")) if p.exists() else {}
 
 refs = [r for r in cfg["sites"] if cfg["sites"][r]["role"] == "reference" and r in set(win.reference)]
 cands = [c for c in cfg["sites"] if cfg["sites"][c]["role"] == "candidate" and c in set(win.site)]

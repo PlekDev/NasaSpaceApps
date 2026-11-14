@@ -61,6 +61,12 @@ for sid, s in cfg["sites"].items():
 moon = {sid: dict(label=short(sid), temp_avg_mean_K=v["temp_avg_mean_K"], temp_avg_min_K=v["temp_avg_min_K"],
                   temp_max_max_K=v["temp_max_max_K"]) for sid, v in div["sites"].items()}
 
+# Mars reference sites (Mars Climate Database, written by scripts/mars_context.py); optional
+mc = PROCESSED / "mars_context.json"
+mars = json.load(open(mc, encoding="utf-8"))["sites"] if mc.exists() else {}
+for m in mars.values():
+    m["label"] = m["label"].split("·", 1)[-1].split("(")[0].strip()
+
 coldest = min(earth, key=lambda k: earth[k]["ts_mean_K"])
 hottest = max(earth, key=lambda k: earth[k]["ts_max_K"])
 summary = dict(
@@ -74,9 +80,15 @@ summary = dict(
     # how much colder each Moon site's mean is than the mean of the coldest Earth region
     gap_to_coldest_earth_mean_K={sid: round(earth[coldest]["ts_mean_K"] - m["temp_avg_mean_K"], 1) for sid, m in moon.items()},
 )
-json.dump(dict(moon=moon, earth=earth, summary=summary,
+if mars:
+    summary["mars_mean_K"] = [min(m["tsurf_mean_K"] for m in mars.values()), max(m["tsurf_mean_K"] for m in mars.values())]
+    summary["mars_gap_to_coldest_earth_mean_K"] = {sid: round(earth[coldest]["ts_mean_K"] - m["tsurf_mean_K"], 1)
+                                                   for sid, m in mars.items()}
+json.dump(dict(moon=moon, mars=mars, earth=earth, summary=summary,
                sources=dict(moon="LRO Diviner polar resource product, NASA PDS Geosciences (Paige et al.): annual mean "
                                  "2 cm below the surface, annual maximum at the surface, per reference footprint",
+                            mars="Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES), modelled surface temperature at the "
+                                 "site centre over 12 seasons x 24 local hours (scripts/mars_context.py)",
                             earth="NASA POWER climatology API (MERRA-2): skin temperature TS at the region centre; "
                                   "min/max = coldest/warmest monthly mean of the daily minimum/maximum")),
           open(OUT, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
@@ -87,14 +99,15 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-SURF, INK, INK2, MOON, EARTH = "#fcfcfb", "#0b0b0b", "#52514e", "#1c5cab", "#eb6834"
+SURF, INK, INK2, MOON, EARTH, MARS = "#fcfcfb", "#0b0b0b", "#52514e", "#1c5cab", "#eb6834", "#8a5a00"
 plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 10, "axes.edgecolor": "#c9c8c2", "axes.labelcolor": INK2,
                      "xtick.color": INK2, "ytick.color": INK2, "figure.facecolor": SURF, "axes.facecolor": SURF,
                      "savefig.facecolor": SURF})
 rows = [(m["label"], m["temp_avg_min_K"], m["temp_avg_mean_K"], m["temp_max_max_K"], MOON) for m in moon.values()]
+rows += [(m["label"], m["tsurf_min_K"], m["tsurf_mean_K"], m["tsurf_max_K"], MARS) for m in mars.values()]
 rows += [(e["label"].split(",")[0], e["ts_min_K"], e["ts_mean_K"], e["ts_max_K"], EARTH)
          for e in sorted(earth.values(), key=lambda e: e["ts_mean_K"])]
-fig, ax = plt.subplots(figsize=(9.5, 6.2))
+fig, ax = plt.subplots(figsize=(9.5, 6.2 + 0.28 * len(mars)))
 for i, (lab, lo, mid, hi, col) in enumerate(rows):
     y = len(rows) - 1 - i
     ax.plot([lo, hi], [y, y], color=col, lw=5, alpha=0.35, solid_capstyle="round")
@@ -105,16 +118,20 @@ lowrec = div["earth_record_low_K"]
 ax.axvline(lowrec, color=INK2, lw=1, ls="--")
 ax.text(lowrec - 3, len(earth) / 2 - 0.5, f"Earth's record low\n(air, {lowrec:.0f} K)", ha="right", va="center",
         fontsize=8.5, color=INK2)
-ax.text(0.0, 1.02, "● Moon Base sites · LRO Diviner", transform=ax.transAxes, ha="left", va="bottom", color=MOON, fontweight="bold")
-ax.text(0.42, 1.02, "● Earth analog regions · NASA POWER", transform=ax.transAxes, ha="left", va="bottom", color=EARTH, fontweight="bold")
+ax.text(0.0, 1.02, "● Moon · LRO Diviner", transform=ax.transAxes, ha="left", va="bottom", color=MOON, fontweight="bold")
+if mars:
+    ax.axhline(len(earth) + len(mars) - 0.5, color="#c9c8c2", lw=0.8)
+    ax.text(0.30, 1.02, "● Mars · MCD (model)", transform=ax.transAxes, ha="left", va="bottom", color=MARS, fontweight="bold")
+ax.text(0.60 if mars else 0.42, 1.02, "● Earth · NASA POWER", transform=ax.transAxes, ha="left", va="bottom", color=EARTH, fontweight="bold")
 ax.set_xlabel("Temperature (K)     dot = annual mean · bar = coldest to hottest")
 ax.grid(axis="x", color="#e8e7e2", lw=0.8); ax.set_axisbelow(True)
 for sp in ["top", "right"]:
     ax.spines[sp].set_visible(False)
-fig.suptitle("Earth matches the Moon Base's heat, not its cold", x=0.02, ha="left", fontsize=12.5, color=INK,
-             fontweight="bold")
-fig.text(0.02, 0.012, "Moon: annual mean 2 cm below the surface (coldest facet to site mean) and surface maximum, per site footprint. "
-         "Earth: skin temperature of the ~50 km cell at each region centre.", fontsize=7.2, color=INK2)
+fig.suptitle("Earth's coldest places come close to Mars, but not to the Moon Base" if mars else
+             "Earth matches the Moon Base's heat, not its cold", x=0.02, ha="left", fontsize=12.5, color=INK, fontweight="bold")
+fig.text(0.02, 0.012, "Moon: annual mean 2 cm below the surface and surface maximum, per site footprint (measured)."
+         + ("  Mars: modelled surface temperature at the site centre\n(Mars Climate Database v6.2)." if mars else "")
+         + "  Earth: skin temperature of the ~50 km cell at each region centre.", fontsize=7.2, color=INK2)
 FIGURES.mkdir(parents=True, exist_ok=True)
-fig.tight_layout(rect=(0, 0.03, 1, 0.95)); fig.savefig(FIGURES / "fig8_thermal_gap.png", dpi=150)
+fig.tight_layout(rect=(0, 0.05, 1, 0.95)); fig.savefig(FIGURES / "fig8_thermal_gap.png", dpi=150)
 print("wrote", FIGURES / "fig8_thermal_gap.png")

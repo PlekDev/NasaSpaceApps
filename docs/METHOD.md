@@ -49,6 +49,9 @@ the site where water ice is thermally stable at the surface or within 1 m. These
 reproduce" panel of every analog card. They are not scored, because no Earth layer has a comparable meaning.
 `scripts/thermal_gap.py` compares them with NASA POWER skin temperatures (MERRA-2 climatology) at the centre of each
 Earth region: the coldest region (University Valley, 239 K mean) is still 95–132 K warmer than the Moon Base sites.
+For the Mars references, `scripts/mars_context.py` takes modelled surface temperature and pressure from the Mars
+Climate Database v6.2 (mean 200–224 K, 680–830 Pa): 15–38 K colder than University Valley, at under 1 % of Earth's
+sea-level pressure.
 
 **Far-horizon test (Moon only).** `scripts/validate_far_horizons.py` recomputes illumination for the lunar
 references with the LOLA 85°S 40 m DEM, horizons traced up to 150 km in exact 3D on the lunar sphere, and 1,728 real

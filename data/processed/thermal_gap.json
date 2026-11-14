@@ -37,6 +37,47 @@
    "temp_max_max_K": 314.9
   }
  },
+ "mars": {
+  "mars_arcadia": {
+   "label": "Arcadia Planitia",
+   "lon": -170.211,
+   "lat": 39.089,
+   "tsurf_mean_K": 203.4,
+   "tsurf_min_K": 159.4,
+   "tsurf_max_K": 278.9,
+   "ps_mean_Pa": 830,
+   "ps_min_Pa": 701,
+   "ps_max_Pa": 964,
+   "share_above_freezing": 0.03,
+   "n_samples": 576
+  },
+  "mars_jezero": {
+   "label": "Jezero crater",
+   "lon": 77.332,
+   "lat": 18.268,
+   "tsurf_mean_K": 223.8,
+   "tsurf_min_K": 185.8,
+   "tsurf_max_K": 287.2,
+   "ps_mean_Pa": 679,
+   "ps_min_Pa": 581,
+   "ps_max_Pa": 772,
+   "share_above_freezing": 0.076,
+   "n_samples": 576
+  },
+  "mars_deuteronilus": {
+   "label": "Deuteronilus Mensae",
+   "lon": 27.854,
+   "lat": 44.473,
+   "tsurf_mean_K": 200.4,
+   "tsurf_min_K": 155.5,
+   "tsurf_max_K": 275.0,
+   "ps_mean_Pa": 794,
+   "ps_min_Pa": 673,
+   "ps_max_Pa": 917,
+   "share_above_freezing": 0.017,
+   "n_samples": 576
+  }
+ },
  "earth": {
   "earth_pinacate": {
    "label": "El Pinacate volcanic field, Sonora",
@@ -186,10 +227,20 @@
    "moon_malapert": 95.3,
    "moon_haworth": 132.0,
    "moon_leibnitz_beta": 121.5
+  },
+  "mars_mean_K": [
+   200.4,
+   223.8
+  ],
+  "mars_gap_to_coldest_earth_mean_K": {
+   "mars_arcadia": 35.4,
+   "mars_jezero": 15.0,
+   "mars_deuteronilus": 38.4
   }
  },
  "sources": {
   "moon": "LRO Diviner polar resource product, NASA PDS Geosciences (Paige et al.): annual mean 2 cm below the surface, annual maximum at the surface, per reference footprint",
+  "mars": "Mars Climate Database v6.2 (LMD/OU/IAA/ESA/CNES), modelled surface temperature at the site centre over 12 seasons x 24 local hours (scripts/mars_context.py)",
   "earth": "NASA POWER climatology API (MERRA-2): skin temperature TS at the region centre; min/max = coldest/warmest monthly mean of the daily minimum/maximum"
  }
 }

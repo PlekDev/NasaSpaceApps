@@ -60,6 +60,10 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
   search, University Valley in Antarctica, has a mean skin temperature of 239 K (NASA POWER). The Moon Base sites
   average 107–144 K, which is 95–132 K colder. The heat is within reach: Earth's desert regions peak at up to 328 K,
   against lunar surface peaks of 306–342 K (fig8).
+- **Mars is a much closer thermal match than the Moon.** The Mars Climate Database (a model, v6.2) gives the three
+  Mars sites a mean surface temperature of 200–224 K, only 15–38 K colder than University Valley, with midday peaks
+  of 275–287 K. What Earth cannot give is the air: 680–830 Pa on average, under 1 % of sea level and close to water's
+  triple point (612 Pa). Every Mars analog card now shows these numbers.
 - **Analog in time:** polar sites (Haughton, Axel Heiberg, Svalbard, University Valley) give 4–7 h/day of
   lunar-pole-like low Sun (0–7°) around the equinoxes; sites below 40° latitude get about 1 h/day.
 - **NASA APIs in the app** ([api.nasa.gov](https://api.nasa.gov/)): Moon Trek WMTS (LRO NAC south-pole mosaic, 1 m),
@@ -86,6 +90,7 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 | Sensitivity to weights and window size | `scripts/sensitivity.py`, fig5 | Victor |
 | LRO Diviner temperature and ice context for the Moon sites | `scripts/diviner_context.py`, fig6 | D. Lizárraga |
 | Diviner vs Earth analog regions (NASA POWER skin temperature) | `scripts/thermal_gap.py`, fig8 | D. Lizárraga |
+| Mars surface temperature and pressure per Mars site (Mars Climate Database), in fig8 and on the Mars analog cards | `scripts/mars_context.py` | D. Lizárraga |
 | Moon/Mars data paragraph for the project page; Mars DTMs checked against their headers (metres above the MOLA geoid, R = 3,396,190 m) | `docs/SUBMISSION.md` | D. Lizárraga |
 | Analog in time (hours/day of 0–7° Sun per month) | `pen/sun.py`, fig3 | Victor |
 | Dark app with 3D globe / flat map, colour-by-dimension, NASA reference analog markers, dynamic `DIMENSIONS` support, analog card with low-Sun previews, validation tab, CSV download | `app/` | Paul · Aaron |
@@ -124,7 +129,7 @@ make data        # python scripts/download_data.py
 make pipeline    # python scripts/run_pipeline.py
 make validate    # python scripts/validate_illumination.py
 make figures     # python scripts/make_figures.py
-make extras      # thumbnails, known-analog test, sensitivity, Diviner context, thermal gap
+make extras      # thumbnails, known-analog test, sensitivity, Diviner and Mars context, thermal gap
 make far         # far-horizon light validation (~4 min, needs the 230 MB LOLA polar DEM)
 make imagery     # real NASA imagery for the analog cards (Trek WMTS + GIBS, ~150 requests, no API key)
 make eonet       # refresh the offline EONET snapshot
@@ -230,6 +235,10 @@ mean is colder than Earth's record low (184 K, Vostok), and the share where wate
 POWER climatology API (MERRA-2, 2001–2025, no key) for the skin temperature TS (annual mean) and for TS_MIN / TS_MAX
 (coldest / warmest monthly mean of the daily extremes), and writes `thermal_gap.json` and fig8. This is region scale
 (a ~50 km model cell, so Mauna Kea's cell is mostly low ground), and context only: it is not scored.
+For Mars there is no per-site product like Diviner in our pipeline, so `scripts/mars_context.py` asks the public web
+interface of the Mars Climate Database v6.2 for surface temperature and pressure at the centre of each Mars reference,
+over 12 seasons × 24 local hours with the climatology dust scenario, and writes `mars_context.json`. These are
+modelled values, not measurements; they appear in fig8 and in the "Earth can't reproduce" list of the Mars cards.
 
 **11 · Analog in time** (`pen/sun.py`). Solar elevation from the standard declination and hour-angle formula (no
 refraction), sampled every 3 min for every day of the year at each region's centre latitude, gives the hours per day
@@ -265,6 +274,7 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 | [Moon Trek / Mars Trek WMTS](https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon) (via api.nasa.gov) | **NASA** SSERVI / JPL | Real view of Moon (LRO NAC mosaic) and Mars (CTX mosaic) windows |
 | [GIBS](https://nasa-gibs.github.io/gibs-api-docs/) (via api.nasa.gov) | **NASA** ESDIS | Real view of Earth windows (Landsat WELD, HLS, MODIS) |
 | [EONET v3](https://eonet.gsfc.nasa.gov/docs/v3) (via api.nasa.gov) | **NASA** Earth Observatory | Live field-safety check (open natural events near the site) |
+| [Mars Climate Database v6.2](https://www-mars.lmd.jussieu.fr/mcd_python/) | LMD/OU/IAA with **ESA** and CNES | Modelled surface temperature and pressure at the Mars sites (context) |
 | [Copernicus DEM GLO-30](https://registry.opendata.aws/copernicus-dem/) | **ESA** (Space Agency Partner) | Earth candidate terrain (14 one-degree tiles) |
 
 ![Diviner](figures/fig6_diviner.png)
@@ -292,6 +302,8 @@ RADARSAT / Sentinel-1 radar (CSA / ESA).
 - Real imagery is context, not scored. The LRO NAC mosaic averages many Sun angles, so it does not show the 3° Sun
   of the preview; the Landsat WELD mosaic is ~2010 and has no Antarctic coverage (MODIS 250 m is used there).
 - EONET keeps some events "open" for months (e.g. Kīlauea), so the list is a prompt to check, not a hazard map.
+- The Mars temperatures and pressures come from a climate model (Mars Climate Database), interpolated to the site
+  centre, while the Moon numbers are Diviner measurements per footprint. They are context, not scored.
 - Diviner is used as context for the Moon sites, not scored: there is no Earth layer with comparable meaning yet.
 - Deuteronilus Mensae is our "buried ice" Mars reference because orbital radar (SHARAD) found debris aprons of
   more than 80 % water ice across that region (Plaut et al. 2009; Petersen et al. 2018). Our DTM lies inside it

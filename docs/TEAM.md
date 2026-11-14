@@ -50,7 +50,7 @@ Checkpoint = 10-minute stand-up: what's done, what's blocked, and what's next.
 - ✅ Lunar references Site06 (Nobile Rim 1, Artemis candidate region) and Site11 (de Gerlache Rim) added.
 - ✅ **B1** Review of `scripts/validate_far_horizons.py` and the Diviner numbers against the PDS labels (PR #1): method confirmed, `ray_reach` and the AVGVISIB scale guard added, `temp_avg` = 2 cm below the surface, mean error stated as 2.0–3.2 pp, DEM-edge caveat in the README.
 - ✅ **B3** Mars reference with buried ice: Deuteronilus Mensae (CTX DTM J13_049991_2248 from the USGS STAC). Also two more Artemis candidate regions, Haworth and Leibnitz Beta Plateau (ρ 0.99 and 0.98 vs NASA with far horizons). Full pipeline re-run with 9 targets; the 6 earlier targets came out identical.
-- ✅ **B4** Moon/Mars data paragraph for Angel's project page (in `docs/SUBMISSION.md`), plus Diviner vs Earth analog regions with NASA POWER (fig8).
+- ✅ **B4** Moon/Mars data paragraph for Angel's project page (in `docs/SUBMISSION.md`), plus Diviner vs Earth analog regions with NASA POWER (fig8) and Mars surface temperature and pressure from the Mars Climate Database (`scripts/mars_context.py`).
 
 ### Diego Dona — Earth data & validation
 - ✅ 10 new Copernicus tiles (4 Mexico, Svalbard, Axel Heiberg, University Valley, Askja, Atacama, Mauna Kea) and the known-analog test, now with 10 sites (Cinder Lake Crater Field and the HMP Research Station added).
