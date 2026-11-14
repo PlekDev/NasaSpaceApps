@@ -77,6 +77,7 @@ the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's 
 | LRO Diviner temperature and ice context for the Moon sites | `scripts/diviner_context.py`, fig6 | D. Lizárraga |
 | Analog in time (hours/day of 0–7° Sun per month) | `pen/sun.py`, fig3 | Victor |
 | Dark app with 3D globe / flat map, analog card with low-Sun previews, validation tab, CSV download | `app/` | Paul · Aaron |
+| Far-horizon method and Diviner numbers reviewed against the NASA labels (PDS3 LDEM, AVGVISIB scale, PDS4 Diviner); `ray_reach` and the AVGVISIB scale guard added | `scripts/validate_far_horizons.py`, `scripts/diviner_context.py` | D. Lizárraga |
 | Real NASA imagery for every analog card (Moon/Mars Trek WMTS, GIBS), aligned with the previews | `scripts/real_imagery.py` | Aaron · Paul |
 | Live field-safety check from NASA EONET, with an offline snapshot | `pen/eonet.py`, `scripts/eonet_snapshot.py` | Aaron |
 | Tests (17) and CI with an offline app smoke test | `tests/`, `.github/` | Aaron |
@@ -88,7 +89,7 @@ the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's 
 | Public deploy on Streamlit Community Cloud; check that EONET answers live there | The judges need a link that opens without installing anything | Aaron |
 | Deck (7 slides) and project page around the blind-rediscovery result | It's the demo the judges see | Angel |
 | Visual identity (wordmark), UI polish, phone check, visuals for the deck | First impression | Paul |
-| Review the far-horizon method and the new lunar sites; Moon/Mars paragraph for the page | A second pair of eyes on the strongest claim | D. Lizárraga |
+| Moon/Mars data paragraph for the project page | Angel needs it for the submission | D. Lizárraga |
 | Earth surface temperature (MODIS/ECOSTRESS) so thermal becomes a **scored** dimension | Today Diviner is context only | D. Dona → Victor |
 | Fact-check every number in README, deck and page; tag `v1.0` | No wrong number in front of judges | Angel · Victor |
 

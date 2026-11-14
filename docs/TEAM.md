@@ -48,7 +48,7 @@ Checkpoint = 10-minute stand-up: what's done, what's blocked, and what's next.
 - ✅ Diviner polar resource product: filtered to lat ≤ −84° (811,652 facets) and summarised per lunar site (fig6).
 - ✅ Far-horizon test (LOLA 85°S 40 m DEM, 150 km, curvature): ρ 0.92–0.99 vs NASA at all four Moon sites (fig7).
 - ✅ Lunar references Site06 (Nobile Rim 1, Artemis candidate region) and Site11 (de Gerlache Rim) added.
-- **B1** **Review** `scripts/validate_far_horizons.py` (Sun geometry, azimuth convention, AVGVISIB scale 4e-5) and the Diviner numbers (units, `ice_depth` = −999 meaning) against the PDS labels. This is our strongest claim, so it needs a second pair of eyes.
+- ✅ **B1** Review of `scripts/validate_far_horizons.py` and the Diviner numbers against the PDS labels (PR #1): method confirmed, `ray_reach` and the AVGVISIB scale guard added, `temp_avg` = 2 cm below the surface, mean error stated as 2.0–3.2 pp, DEM-edge caveat in the README.
 - **B3 (stretch)** One Mars reference with buried ice (Deuteronilus Mensae CTX DTM from the USGS STAC).
 - **B4** Write the Moon/Mars data paragraph for Angel's project page (NASA products used, exact names).
 
