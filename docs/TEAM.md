@@ -49,8 +49,8 @@ Checkpoint = 10-minute stand-up: what's done, what's blocked, and what's next.
 - ✅ Far-horizon test (LOLA 85°S 40 m DEM, 150 km, curvature): ρ 0.92–0.99 vs NASA at all four Moon sites (fig7).
 - ✅ Lunar references Site06 (Nobile Rim 1, Artemis candidate region) and Site11 (de Gerlache Rim) added.
 - ✅ **B1** Review of `scripts/validate_far_horizons.py` and the Diviner numbers against the PDS labels (PR #1): method confirmed, `ray_reach` and the AVGVISIB scale guard added, `temp_avg` = 2 cm below the surface, mean error stated as 2.0–3.2 pp, DEM-edge caveat in the README.
-- **B3 (stretch)** One Mars reference with buried ice (Deuteronilus Mensae CTX DTM from the USGS STAC).
-- **B4** Write the Moon/Mars data paragraph for Angel's project page (NASA products used, exact names).
+- ✅ **B3** Mars reference with buried ice: Deuteronilus Mensae (CTX DTM J13_049991_2248 from the USGS STAC). Also two more Artemis candidate regions, Haworth and Leibnitz Beta Plateau (ρ 0.99 and 0.98 vs NASA with far horizons). Full pipeline re-run with 9 targets; the 6 earlier targets came out identical.
+- ✅ **B4** Moon/Mars data paragraph for Angel's project page (in `docs/SUBMISSION.md`), plus Diviner vs Earth analog regions with NASA POWER (fig8).
 
 ### Diego Dona — Earth data & validation
 - ✅ 10 new Copernicus tiles (4 Mexico, Svalbard, Axel Heiberg, University Valley, Askja, Atacama, Mauna Kea) and the known-analog test, now with 10 sites (Cinder Lake Crater Field and the HMP Research Station added).
@@ -59,7 +59,7 @@ Checkpoint = 10-minute stand-up: what's done, what's blocked, and what's next.
 - **B4** Write the Earth-data and partner-data paragraphs for Angel.
 
 ### Angel — presentation & submission
-- **B1** Story: lead with the **blind rediscovery** (Mauna Kea's NASA lunar test site is #1 of 10,424 windows for Malapert and top 0.2 % for all four Moon Base sites, found without labels), then light validated against NASA (ρ = 0.92–0.99, fig7), then "where Earth stops being an analog" (Diviner), then Mexico. Draft the project page in English from `docs/SUBMISSION.md`.
+- **B1** Story: lead with the **blind rediscovery** (Mauna Kea's NASA lunar test site is #1 of 10,424 windows for Malapert and top 0.2 % for four of the six Moon Base sites, found without labels), then light validated against NASA (ρ = 0.92–0.99, fig7), then "where Earth stops being an analog" (Diviner), then Mexico. Draft the project page in English from `docs/SUBMISSION.md`.
 - **B2** Build the 7-slide deck in English with Paul's visuals and figures 1, 2, 6 and 7. Mention the NASA APIs used live in the app (Trek WMTS, GIBS, EONET) on the "how it works" slide.
 - **B3** Analog cards for the top 5 sites; fact-check every number in the README, deck and page against `data/processed/`.
 - **B4** Final deck with the frozen numbers; video only if time allows. Collect the paragraphs from both Diegos.

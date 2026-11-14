@@ -12,6 +12,7 @@ For each site we compare three variants against the LOLA 18.6-year average illum
 Sites near 85°S (Malapert, Nobile Rim 1) lose part of their rays at the DEM edge; `ray_reach` in the JSON says
 how much, so the "150 km" claim is never stated without that caveat.
 Writes data/processed/far_horizons.json and figures/fig7_far_horizons.png.
+Usage:  python scripts/validate_far_horizons.py [--figure-only]   (--figure-only redraws fig7 from the saved JSON)
 
 Checked against the NASA labels (D. Lizárraga, 2026-11-14):
   * LDEM_85S_40M_FLOAT.LBL: 7584 × 7584 PC_REAL (little-endian float32), UNIT = KILOMETER relative to
@@ -171,7 +172,8 @@ if __name__ == "__main__":
     out = {}
     prev = json.load(open(PROCESSED / "validation.json")) if (PROCESSED / "validation.json").exists() else {}
     maps = {}
-    for sid, s in cfg["sites"].items():
+    FIG_ONLY = "--figure-only" in sys.argv
+    for sid, s in ({} if FIG_ONLY else cfg["sites"]).items():
         if s["body"] != "moon" or s["role"] != "reference":
             continue
         with rasterio.open(RAW / s["file"]) as src:
@@ -199,10 +201,13 @@ if __name__ == "__main__":
             print(f"{sid:24s} {name:16s} ρ = {rho:.3f}   MAE = {mae:.3f}   ({time.time()-t0:.0f}s)", flush=True)
         out[sid] = dict(label=s["label"], n_points=int(ok.sum()), pipeline_rho=prev.get(sid, {}).get("spearman_rho"),
                         ray_reach=ray_reach(x0, y0), **res)
-    json.dump(dict(sites=out, settings=dict(spacing_m=SPACING, border_m=BORDER, n_azimuths=N_AZ, max_distance_m=MAX_D,
-                                            sun_disk_deg=SUN_DISK, subsolar_lat_amplitude_deg=DEC_MAX,
-                                            dem="LOLA LDEM_85S_40M (PDS)")),
-              open(PROCESSED / "far_horizons.json", "w"), indent=1)
+    if FIG_ONLY:
+        out = json.load(open(PROCESSED / "far_horizons.json", encoding="utf-8"))["sites"]
+    else:
+        json.dump(dict(sites=out, settings=dict(spacing_m=SPACING, border_m=BORDER, n_azimuths=N_AZ, max_distance_m=MAX_D,
+                                                sun_disk_deg=SUN_DISK, subsolar_lat_amplitude_deg=DEC_MAX,
+                                                dem="LOLA LDEM_85S_40M (PDS)")),
+                  open(PROCESSED / "far_horizons.json", "w"), indent=1)
 
     # ---- figure: rho per site and variant
     import matplotlib
@@ -212,18 +217,19 @@ if __name__ == "__main__":
     COL = ["#c9c8c2", "#86b6ef", "#1c5cab"]
     names = {"V1_local_flat": "local DEM, flat", "V2_local_curved": "local DEM, curved", "V3_far_curved": "terrain up to 150 km, curved"}
     sites = list(out)
-    fig, ax = plt.subplots(figsize=(9, 4.2), facecolor=SURF); ax.set_facecolor(SURF)
+    import textwrap
+    fig, ax = plt.subplots(figsize=(max(9, 1.75 * len(sites)), 4.5), facecolor=SURF); ax.set_facecolor(SURF)
     w = 0.26
     for k, v in enumerate(names):
         vals = [out[s][v]["spearman_rho"] for s in sites]
         bars = ax.bar(np.arange(len(sites)) + (k - 1) * w, vals, w - 0.02, color=COL[k], label=names[v])
         for bx, val in zip(bars, vals):
             ax.text(bx.get_x() + bx.get_width() / 2, val + 0.01, f"{val:.2f}", ha="center", fontsize=8.5, color=INK2)
-    ax.set_xticks(range(len(sites)), [out[s]["label"].split("·")[1].split("(")[0].strip() for s in sites])
+    ax.set_xticks(range(len(sites)), [textwrap.fill(out[s]["label"].split("·")[1].split("(")[0].strip(), 15) for s in sites])
     ax.set_ylim(0, 1.05); ax.set_ylabel("Spearman ρ vs NASA LOLA illumination")
     for sp in ["top", "right"]: ax.spines[sp].set_visible(False)
     ax.grid(axis="y", color="#e8e7e2", lw=0.8); ax.set_axisbelow(True)
-    ax.legend(frameon=False, fontsize=9, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax.legend(frameon=False, fontsize=9, loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=3)
     fig.suptitle("Distant horizons close the gap: our light model vs NASA LOLA illumination", x=0.02, ha="left",
                  fontsize=12.5, color=INK, fontweight="bold")
     fig.tight_layout(rect=(0, 0, 1, 0.95)); fig.savefig(FIGURES / "fig7_far_horizons.png", dpi=150)

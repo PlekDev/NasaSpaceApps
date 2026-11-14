@@ -291,8 +291,8 @@ with tab_val:
                  f"{s['n_tests']} site × target tests; 50 = random).")
         st.success("**Blind rediscovery:** Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar "
                    "prospecting mission in 2012 (PISCES ISRU field test), ranks **#1 of 10,424** Earth windows for "
-                   "Malapert and stays in the **top 0.2 %** for all four Moon Base sites (#9 Nobile Rim 1, #19 de Gerlache, "
-                   "#23 Connecting Ridge). P.E.N. was never told about it.")
+                   "Malapert and in the **top 0.2 %** for four of the six Moon Base sites (#9 Nobile Rim 1, #19 de Gerlache, "
+                   "#23 Connecting Ridge); top 1.1 % for Leibnitz Beta and top 5 % for Haworth. P.E.N. was never told about it.")
         st.caption("Sites chosen for other reasons rank lower, as they should: Meteor Crater is an impact-geology analog and "
                    "University Valley a dry-permafrost (thermal) analog, not terrain-and-light analogs.")
         kt = pd.DataFrame(known["rows"])[["reference", "site", "score_combined_pct_best", "score_terrain_pct_best", "score_illumination_pct_best"]]
@@ -303,13 +303,13 @@ with tab_val:
     if f5.exists():
         st.subheader("3 · How robust is the ranking?")
         st.image(str(f5))
-        st.caption("Re-weighting illumination 0.5–2× keeps 8–10 of the top 10 for five of six targets (5–10 for Malapert); the "
+        st.caption("Re-weighting illumination 0.5–2× keeps 7–10 of the top 10 for seven of nine targets (down to 5 for Malapert and Haworth); the "
                    "window size (3/6/12 km) changes rankings much more — reported, not hidden.")
 
     f6 = FIGURES / "fig6_diviner.png"
     if div and f6.exists():
         st.subheader("4 · Where Earth stops being an analog")
-        st.write("Analogs reproduce terrain and light, not lunar polar temperature. LRO Diviner measurements show all four "
+        st.write("Analogs reproduce terrain and light, not lunar polar temperature. LRO Diviner measurements show all six "
                  "lunar sites average below Earth's coldest recorded temperature over 88–100 % of their area, with water ice stable "
                  "just under the surface. P.E.N. says so on every analog card instead of overselling the match.")
         st.image(str(f6))
