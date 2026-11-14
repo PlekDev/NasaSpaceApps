@@ -9,8 +9,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
-from penumbra.config import load_config, PROCESSED, CACHE, FIGURES
-from penumbra.shadows import lowsun_hillshade
+from pen.config import load_config, PROCESSED, CACHE, FIGURES
+from pen.shadows import lowsun_hillshade
 
 cfg = load_config()
 RES = cfg["resolution_m"]; W6 = int(cfg["main_window_km"] * 1000 / RES)
@@ -29,7 +29,7 @@ plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 10, "axes.edgeco
 SHORT = {k: v["label"].split("·", 1)[-1].split("(")[0].split(",")[0].strip() for k, v in cfg["sites"].items()}
 REFS = [r for r in cfg["sites"] if cfg["sites"][r]["role"] == "reference" and r in R["reference_features"]]
 CANDS = [c for c in cfg["sites"] if cfg["sites"][c]["role"] == "candidate" and c in R["low_sun_hours_by_month"]]
-CREDIT = "Data: NASA LRO/LOLA (GSFC PGDA), NASA MRO CTX DTMs (USGS), ESA Copernicus DEM GLO-30. Team Los Pikadientes de Caborca · NASA Space Apps 2026."
+CREDIT = "Data: NASA LRO/LOLA (GSFC PGDA), NASA MRO CTX DTMs (USGS), ESA Copernicus DEM GLO-30. Team Pollones en Fuga · NASA Space Apps 2026."
 
 
 def ref_window(ref):

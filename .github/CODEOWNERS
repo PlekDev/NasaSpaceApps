@@ -1,9 +1,9 @@
 # Uncomment and replace with real GitHub usernames after the first push (e.g. @victor-gh).
 # Default reviewer
 # *                         @VICTOR_GH
-# /penumbra/                @VICTOR_GH
-# /app/                     @AARON_GH
+# /pen/                     @VICTOR_GH
+# /app/                     @AARON_GH @PAUL_GH
 # /config/sites.yaml        @DIEGO_DONA_GH @DIEGO_LIZARRAGA_GH
-# /scripts/validate_*       @ANGEL_GH
+# /scripts/validate_*       @DIEGO_DONA_GH
 # /docs/METHOD.md           @ANGEL_GH
-# /docs/SUBMISSION.md       @PAUL_GH
+# /docs/SUBMISSION.md       @ANGEL_GH

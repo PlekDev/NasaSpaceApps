@@ -1,7 +1,7 @@
 [project]
-name = "penumbra"
+name = "pen"
 version = "0.1.0"
-description = "Earth analogs for the Moon Base and Mars landing sites, scored by terrain and low-Sun illumination (NASA Space Apps 2026)"
+description = "P.E.N. — Planetary Environmental Navigator: Earth analogs for the Moon Base and Mars, scored by terrain and low-Sun illumination (NASA Space Apps 2026)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -12,4 +12,4 @@ app = ["streamlit>=1.40", "pydeck>=0.9"]
 dev = ["pytest>=8.0"]
 
 [tool.setuptools]
-packages = ["penumbra"]
+packages = ["pen"]

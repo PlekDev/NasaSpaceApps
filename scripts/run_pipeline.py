@@ -13,12 +13,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import numpy as np
 import pandas as pd
-from penumbra.config import load_config, RAW, PROCESSED, CACHE, references, candidates
-from penumbra.grid import to_metric
-from penumbra.shadows import shadow_fraction_maps
-from penumbra.features import slope_deg, roughness_sq, window_features, DIMENSIONS
-from penumbra.scoring import iqr_scale, reference_vector, similarity
-from penumbra.sun import low_sun_hours_by_month
+from pen.config import load_config, RAW, PROCESSED, CACHE, references, candidates
+from pen.grid import to_metric
+from pen.shadows import shadow_fraction_maps
+from pen.features import slope_deg, roughness_sq, window_features, DIMENSIONS
+from pen.scoring import iqr_scale, reference_vector, similarity
+from pen.sun import low_sun_hours_by_month
 
 t0 = time.time()
 cfg = load_config()

@@ -1,16 +1,21 @@
-# Penumbra 🌗 — Earth analogs for the Moon Base and Mars, by terrain *and* light
+# P.E.N. 🌗
+### Planetary Environmental Navigator
 
-**Team:** Los Pikadientes de Caborca (Caborca, Sonora, Mexico) · **NASA Space Apps Challenge 2026 · Challenge:** *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars*
+**Team:** Pollones en Fuga (Mexico) · **NASA Space Apps Challenge 2026 · Challenge:** *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars*
 
-Penumbra searches Earth for places that resemble the planned **lunar south-pole Moon Base** sites and candidate
-**Mars landing areas**, and scores each place **one dimension at a time**. Today it scores terrain and **low-Sun
-illumination**; thermal and mineralogy are next. For each candidate it says *how* similar it is, *in what*, and
-*where the analogy breaks*.
+P.E.N. finds the **exact field-test site on Earth** for the planned **lunar south-pole Moon Base** and for
+candidate **Mars landing areas**. It scores 6 km windows at 30 m resolution, **one dimension at a time**. Today
+those dimensions are terrain and **low-Sun illumination**; thermal and ice from LRO Diviner are next. For each
+candidate it says *how* similar it is, *in what*, and *where the analogy breaks*.
 
 > **Why light?** At the lunar south pole the Sun never rises above ~7°. Long shadows define landing safety,
-> rover vision, power and EVA planning. Existing analog searches compare terrain shape only. Penumbra adds a
-> validated cast-shadow model, and it finds **when** Earth sites reproduce lunar-pole lighting (an *analog in time*),
-> not only **where**.
+> rover vision, power and EVA planning. P.E.N. scores **terrain-cast shadows** with an exact shadow model and
+> **validates them against NASA's official LOLA illumination maps** (Spearman ρ = 0.86 at Shackleton Connecting Ridge).
+> It also finds **when** Earth sites reproduce lunar-pole light (an *analog in time*), not only **where**.
+
+**Where it fits:** regional screeners tell you *which region* of Earth to look at, on ~50 km cells. P.E.N.
+is the zoom-in stage: *which 6 km site* inside that region matches the target's terrain and light, compared against
+the official 5 m LOLA DEMs of the Moon Base sites.
 
 ![Low-Sun side-by-side](figures/fig1_low_sun_side_by_side.png)
 
@@ -34,7 +39,7 @@ illumination**; thermal and mineralogy are next. For each candidate it says *how
 ## Quick start
 
 ```bash
-git clone <this repo> && cd penumbra
+git clone <this repo> && cd pen
 python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 streamlit run app/streamlit_app.py                   # uses the committed results in data/processed/
@@ -100,7 +105,7 @@ plotted directly from the data by the scripts in `scripts/`.
 
 ## Team
 
-**Los Pikadientes de Caborca** — Victor · Diego Lizárraga · Diego Doña · Angel · Aaron · Paul. From Caborca, Sonora, about 170 km from El Pinacate, one of the analogs Penumbra ranks highest for the Moon Base. Roles: [`docs/TEAM.md`](docs/TEAM.md).
+**Pollones en Fuga** — Victor · Diego Lizárraga · Diego Doña · Angel · Aaron · Paul. A Mexican team; El Pinacate (Sonora), where Apollo astronauts trained, is one of the analogs P.E.N. ranks highest for the Moon Base. Roles: [`docs/TEAM.md`](docs/TEAM.md).
 
 ## License
 

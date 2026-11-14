@@ -6,6 +6,6 @@
 4. Data: put big files in `data/raw/` (git-ignored). Only Victor commits regenerated `data/processed/` and `figures/`,
    to avoid merge conflicts.
 5. Add a new site: edit `config/sites.yaml`, then run `python scripts/download_data.py <site_id>`.
-6. Add a new feature dimension: compute it per window in `penumbra/features.py` and register its keys in `DIMENSIONS`.
+6. Add a new feature dimension: compute it per window in `pen/features.py` and register its keys in `DIMENSIONS`.
    Scoring, the app sliders and the cards pick it up automatically.
 7. Public text (code comments, README, app, PRs) is in English. If you used AI help, say so in the PR.

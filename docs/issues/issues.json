@@ -11,20 +11,20 @@
   "owner_name": "Victor",
   "block": "B1",
   "title": "[B1] Generic raster-layer hook for new dimensions",
-  "body": "Any GeoTIFF on a site grid → per-window mean/P10/P90 features, registered in `DIMENSIONS`. Unit tests. Thermal and mineral layers plug in through this.\n\n**Owner:** Victor · **Block:** B1 · see docs/TEAM.md"
+  "body": "Any GeoTIFF on a site grid → per-window mean/P10/P90 features, registered in `DIMENSIONS`. Unit tests. Thermal, ice and mineral layers plug in through this.\n\n**Owner:** Victor · **Block:** B1 · see docs/TEAM.md"
  },
  {
   "owner": "victor",
   "owner_name": "Victor",
   "block": "B2",
-  "title": "[B2] Merge B1 PRs and publish pipeline v0.2",
-  "body": "`make pipeline validate figures`, commit `data/processed` + `figures`, update README numbers.\n\n**Owner:** Victor · **Block:** B2 · see docs/TEAM.md"
+  "title": "[B2] Merge B1 PRs, publish pipeline v0.2, sensitivity table + figure",
+  "body": "`make pipeline validate figures`; top-10 changes vs dimension weights and window size (3/6/12 km). Hand the figure to Angel.\n\n**Owner:** Victor · **Block:** B2 · see docs/TEAM.md"
  },
  {
   "owner": "victor",
   "owner_name": "Victor",
   "block": "B3",
-  "title": "[B3] Integrate thermal/mineral dimensions, final run before 14:00 freeze, tag v1.0",
+  "title": "[B3] Integrate Diviner thermal/ice dimensions, final run before 12:00 freeze, tag v1.0",
   "body": "**Owner:** Victor · **Block:** B3 · see docs/TEAM.md"
  },
  {
@@ -38,8 +38,8 @@
   "owner": "dlizarraga",
   "owner_name": "Diego Lizárraga",
   "block": "B1",
-  "title": "[B1] Diviner polar temperature layer for lunar references",
-  "body": "Download Diviner south-polar products (avg/max/min T) covering Connecting Ridge and Malapert; add to `config/sites.yaml → auxiliary`; resample with `penumbra.grid.resample_onto`. Explicitly listed in the challenge resources.\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md"
+  "title": "[B1] Diviner Polar Resource Product (temp_avg, temp_max, ice_depth) for lunar references",
+  "body": "PDS Geosciences `lro_diviner_derived1/data_derived_prp/dlre_prp_south.tab` (605 MB, 2.88 M triangles). Read in pandas chunks, keep triangles inside each site, rasterise onto the site grid with the same CRS. Listed in the challenge resources.\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md"
  },
  {
   "owner": "dlizarraga",
@@ -59,64 +59,71 @@
   "owner": "dlizarraga",
   "owner_name": "Diego Lizárraga",
   "block": "B4",
-  "title": "[B4] Write Moon/Mars data paragraph for the project page",
+  "title": "[B4] Write Moon/Mars data paragraph for the project page (to Angel)",
   "body": "**Owner:** Diego Lizárraga · **Block:** B4 · see docs/TEAM.md"
  },
  {
   "owner": "ddona",
   "owner_name": "Diego Doña",
   "block": "B1",
-  "title": "[B1] Add 6–10 Copernicus tiles (Mexican volcanic fields + high-latitude light analogs)",
-  "body": "Mexico: Sierra Chichinautzin, Valle de Santiago, Serdán-Oriental (Alchichica), Ceboruco. High latitude: Svalbard, Axel Heiberg, Antarctic Dry Valleys, Iceland highlands. Verify each tile URL returns 200 before committing.\n\n**Owner:** Diego Doña · **Block:** B1 · see docs/TEAM.md"
+  "title": "[B1] Add 6–10 Copernicus tiles (Mexico + high-latitude light analogs + regions other teams flag)",
+  "body": "Mexico: Sierra Chichinautzin, Valle de Santiago, Serdán-Oriental (Alchichica), Ceboruco. High latitude: Svalbard, Axel Heiberg, Antarctic Dry Valleys, Iceland highlands. Also Chersky Range, Prince Charles Mountains, Baffin Island. Verify each tile URL returns 200.\n\n**Owner:** Diego Doña · **Block:** B1 · see docs/TEAM.md"
  },
  {
   "owner": "ddona",
   "owner_name": "Diego Doña",
   "block": "B2",
-  "title": "[B2] Earth temperature layer (MODIS MOD11A2 or ECOSTRESS) per Earth region",
-  "body": "Earthdata Login required. Per-window annual range and minimum, to pair with Diviner.\n\n**Owner:** Diego Doña · **Block:** B2 · see docs/TEAM.md"
+  "title": "[B2] Known-analog test: rank percentile of classic analog sites",
+  "body": "Haughton crater centre, SFVF Cinder Lake crater field, Dry Valleys. Target: top 20 %. Our answer to other teams' ROC-AUC.\n\n**Owner:** Diego Doña · **Block:** B2 · see docs/TEAM.md"
  },
  {
   "owner": "ddona",
   "owner_name": "Diego Doña",
   "block": "B3",
-  "title": "[B3] Stretch: EMIT mineral fractions for Mexican regions",
-  "body": "e.g. gypsum at Cuatro Ciénegas vs Gale-like sulfates. If not feasible, document in README next steps.\n\n**Owner:** Diego Doña · **Block:** B3 · see docs/TEAM.md"
+  "title": "[B3] Earth temperature layer (MODIS MOD11A2 or ECOSTRESS); stretch: EMIT minerals",
+  "body": "Earthdata Login required. Per-window annual range and minimum, to pair with Diviner.\n\n**Owner:** Diego Doña · **Block:** B3 · see docs/TEAM.md"
  },
  {
   "owner": "ddona",
   "owner_name": "Diego Doña",
   "block": "B4",
-  "title": "[B4] Write Earth data + partner data paragraph for the project page",
+  "title": "[B4] Write Earth data + partner data paragraph for the project page (to Angel)",
   "body": "**Owner:** Diego Doña · **Block:** B4 · see docs/TEAM.md"
  },
  {
   "owner": "angel",
   "owner_name": "Angel",
   "block": "B1",
-  "title": "[B1] Known-analog test: rank percentile of classic analog sites",
-  "body": "Haughton crater centre, SFVF Cinder Lake crater field, others in our tiles. Target: top 20 %.\n\n**Owner:** Angel · **Block:** B1 · see docs/TEAM.md"
+  "title": "[B1] Story + demo format; draft project page (English) from docs/SUBMISSION.md",
+  "body": "7 slides recommended; optional ≤30 s video with English subtitles.\n\n**Owner:** Angel · **Block:** B1 · see docs/TEAM.md"
  },
  {
   "owner": "angel",
   "owner_name": "Angel",
   "block": "B2",
-  "title": "[B2] Sensitivity to weights and window size (3/6/12 km): one table + one figure",
-  "body": "**Owner:** Angel · **Block:** B2 · see docs/TEAM.md"
+  "title": "[B2] Build the 7-slide deck in English (with Paul's visuals)",
+  "body": "Title+team, problem, idea (terrain + light validated vs NASA), how it works, results, analog in time + Mexico, impact.\n\n**Owner:** Angel · **Block:** B2 · see docs/TEAM.md"
  },
  {
   "owner": "angel",
   "owner_name": "Angel",
   "block": "B3",
-  "title": "[B3] Analog cards for the top 5 sites (similar / differs / Earth can't / what to test)",
+  "title": "[B3] Analog cards for top 5 sites + fact-check every number (README, deck, page)",
   "body": "**Owner:** Angel · **Block:** B3 · see docs/TEAM.md"
  },
  {
   "owner": "angel",
   "owner_name": "Angel",
   "block": "B4",
-  "title": "[B4] Fact-check all numbers (README, deck, page) and finalise docs/METHOD.md",
+  "title": "[B4] Final deck with frozen numbers; video if doing one",
   "body": "**Owner:** Angel · **Block:** B4 · see docs/TEAM.md"
+ },
+ {
+  "owner": "angel",
+  "owner_name": "Angel",
+  "block": "B5",
+  "title": "[B5] Fill the Space Apps project page, test links in incognito, SUBMIT at 18:00 Sunday",
+  "body": "**Owner:** Angel · **Block:** B5 · see docs/TEAM.md"
  },
  {
   "owner": "aaron",
@@ -136,8 +143,15 @@
   "owner": "aaron",
   "owner_name": "Aaron",
   "block": "B2",
-  "title": "[B2] UX: legend, colour-by-dimension, reference markers, CSV download, credits footer, mobile",
+  "title": "[B2] App features: colour-by-dimension, reference markers, CSV download, caching",
   "body": "**Owner:** Aaron · **Block:** B2 · see docs/TEAM.md"
+ },
+ {
+  "owner": "aaron",
+  "owner_name": "Aaron",
+  "block": "B3",
+  "title": "[B3] New dimensions appear automatically from DIMENSIONS (sliders, card, map)",
+  "body": "**Owner:** Aaron · **Block:** B3 · see docs/TEAM.md"
  },
  {
   "owner": "aaron",
@@ -149,29 +163,29 @@
  {
   "owner": "paul",
   "owner_name": "Paul",
-  "block": "B0",
-  "title": "[B0] Confirm all 6 at the same Local Event; team name and team page",
-  "body": "**Owner:** Paul · **Block:** B0 · see docs/TEAM.md"
- },
- {
-  "owner": "paul",
-  "owner_name": "Paul",
   "block": "B1",
-  "title": "[B1] Draft the project page (English) from docs/SUBMISSION.md; choose demo format",
+  "title": "[B1] UI redesign plan: layout, colour/type system, agree changes with Aaron",
   "body": "**Owner:** Paul · **Block:** B1 · see docs/TEAM.md"
  },
  {
   "owner": "paul",
   "owner_name": "Paul",
   "block": "B2",
-  "title": "[B2] Build the 7-slide deck in English",
-  "body": "Title+team, problem, idea, how it works, results, analog in time + Mexico, impact.\n\n**Owner:** Paul · **Block:** B2 · see docs/TEAM.md"
+  "title": "[B2] Implement the look: map legend, analog card design, header metrics, credits footer, mobile",
+  "body": "**Owner:** Paul · **Block:** B2 · see docs/TEAM.md"
  },
  {
   "owner": "paul",
   "owner_name": "Paul",
-  "block": "B5",
-  "title": "[B5] Fill the Space Apps project page, test links in incognito, SUBMIT at 21:00 Sunday",
-  "body": "**Owner:** Paul · **Block:** B5 · see docs/TEAM.md"
+  "block": "B3",
+  "title": "[B3] Visual identity: P.E.N. wordmark/logo (no NASA logos; watermark if AI-generated) + screenshots/visuals for the deck",
+  "body": "**Owner:** Paul · **Block:** B3 · see docs/TEAM.md"
+ },
+ {
+  "owner": "paul",
+  "owner_name": "Paul",
+  "block": "B4",
+  "title": "[B4] UI polish after freeze; projector legibility check; help Angel lay out slides",
+  "body": "**Owner:** Paul · **Block:** B4 · see docs/TEAM.md"
  }
 ]

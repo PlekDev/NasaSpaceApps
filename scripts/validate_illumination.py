@@ -6,9 +6,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import numpy as np
 from scipy.stats import spearmanr
-from penumbra.config import load_config, RAW, PROCESSED, CACHE
-from penumbra.grid import to_metric, resample_onto
-from penumbra.shadows import shadow_fraction_maps
+from pen.config import load_config, RAW, PROCESSED, CACHE
+from pen.grid import to_metric, resample_onto
+from pen.shadows import shadow_fraction_maps
 
 cfg = load_config()
 avg = RAW / cfg["auxiliary"]["lola_avg_illumination_85s"]["file"]

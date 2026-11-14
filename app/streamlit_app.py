@@ -1,4 +1,4 @@
-"""Penumbra — interactive Earth analog explorer.  Run:  streamlit run app/streamlit_app.py"""
+"""P.E.N. — interactive Earth analog explorer.  Run:  streamlit run app/streamlit_app.py"""
 # AI-assisted (Claude, Anthropic); reviewed by the team.
 import sys, json, math
 from pathlib import Path
@@ -8,11 +8,11 @@ import numpy as np
 import pandas as pd
 import pydeck as pdk
 import streamlit as st
-from penumbra.config import load_config, PROCESSED, FIGURES
-from penumbra.features import DIMENSIONS
-from penumbra.scoring import explain, FEATURE_LABELS
+from pen.config import load_config, PROCESSED, FIGURES
+from pen.features import DIMENSIONS
+from pen.scoring import explain, FEATURE_LABELS
 
-st.set_page_config(page_title="Penumbra · Earth analogs for the Moon Base and Mars", layout="wide")
+st.set_page_config(page_title="P.E.N. · Earth analogs for the Moon Base and Mars", layout="wide")
 cfg = load_config()
 
 
@@ -38,8 +38,8 @@ EARTH_LIMITS = {
 }
 
 # ---------------- sidebar
-st.sidebar.title("Penumbra")
-st.sidebar.caption("Earth analogs for the Moon Base and Mars landing sites — by terrain **and** low-Sun light.")
+st.sidebar.title("P.E.N.")
+st.sidebar.caption("Planetary Environmental Navigator — Earth analogs for the Moon Base and Mars, by terrain **and** low-Sun light.")
 ref = st.sidebar.selectbox("Moon / Mars reference site", refs, format_func=label)
 st.sidebar.markdown("**Weight of each dimension**")
 weights = {d: st.sidebar.slider(d.capitalize(), 0.0, 1.0, 1.0, 0.1) for d in DIMENSIONS}

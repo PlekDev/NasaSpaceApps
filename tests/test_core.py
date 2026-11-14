@@ -2,9 +2,9 @@
 import math
 import numpy as np
 import pytest
-from penumbra.shadows import cast_shadow
-from penumbra.scoring import similarity, iqr_scale
-from penumbra.sun import low_sun_hours_by_month, solar_elevation
+from pen.shadows import cast_shadow
+from pen.scoring import similarity, iqr_scale
+from pen.sun import low_sun_hours_by_month, solar_elevation
 
 
 @pytest.fixture

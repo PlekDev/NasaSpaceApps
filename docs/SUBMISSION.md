@@ -1,11 +1,11 @@
-# Submission kit (owner: Paul)
+# Submission kit (owner: Angel)
 
 Official guide: https://www.spaceappschallenge.org/resources/project-submission-guide/
-Closes **Sun Nov 15, 23:59 local time**. Internal target: **21:00**.
+Our Local Event ends **Sun Nov 15, 20:00 local time** (the global form closes at 23:59). Internal target: **submit at 18:00**.
 
 ## Checklist
 
-- [ ] Team name on the Space Apps team page: **Los Pikadientes de Caborca**
+- [ ] Team name on the Space Apps team page: **Pollones en Fuga**
 - [ ] All 6 members are confirmed participants at the **same Local Event**
 - [ ] Every field is filled, **in English**
 - [ ] Demo: **≤ 7 slides** (title + intro included) **or** a **≤ 30 s video** (English subtitles if the speech is in Spanish), hosted publicly
@@ -19,14 +19,14 @@ Closes **Sun Nov 15, 23:59 local time**. Internal target: **21:00**.
 
 ## Draft fields (edit freely; check every number against `data/processed/`)
 
-**Project name:** Penumbra — Earth analogs for the Moon Base and Mars, by terrain and light
+**Project name:** P.E.N. — Planetary Environmental Navigator
 
 **High-level summary (≈100 words):**
 NASA plans its Moon Base near the lunar south pole, where the Sun never rises above about 7°. Long shadows rule
-landing, roving and power there. Penumbra is an open tool that searches Earth for places that match a target
+landing, roving and power there. P.E.N. is an open tool that searches Earth for places that match a target
 Moon or Mars site **dimension by dimension**: terrain shape, low-Sun illumination, and (in progress) temperature.
 It explains what is similar and where the analogy breaks. Our cast-shadow model reproduces NASA's official LOLA
-illumination map at Shackleton Connecting Ridge (ρ = 0.86). Penumbra also finds *when* Earth sites reproduce
+illumination map at Shackleton Connecting Ridge (ρ = 0.86). P.E.N. also finds *when* Earth sites reproduce
 lunar-pole light: an "analog in time" that tells field teams the best weeks to test.
 
 **Link to project demo:** <deck or video URL>
@@ -47,7 +47,8 @@ lunar-pole light: an "analog in time" that tells field teams the best weeks to t
    - Connecting Ridge ↔ San Francisco Volcanic Field (73) and El Pinacate, Mexico (72; best illumination match, 81).
    - Malapert ↔ Cuatro Ciénegas (70).
    - Haughton crater offers 4–6 h/day of lunar-pole-like light in spring and autumn.
-4. *Benefits:* choose and schedule analog field tests for rover vision, EVA lighting and landing-hazard rehearsal.
+4. *Benefits:* regional screeners say which region to look at; P.E.N. picks the exact 6 km site and the best weeks.
+   Choose and schedule analog field tests for rover vision, EVA lighting and landing-hazard rehearsal.
    Find under-studied analogs, including in Mexico.
 5. *Tools:* Python (rasterio, NumPy, SciPy, pandas, Matplotlib), Streamlit + pydeck, GitHub.
 6. *Limitations and next steps:* local horizons only, 30 m resolution, flat Mars plains, and Earth's limits
@@ -70,7 +71,7 @@ AI-assisted file is marked in its header. No AI-generated images.
 
 ## 7-slide deck outline
 
-1. **Penumbra** — by **Los Pikadientes de Caborca**: 6 members, challenge title. Hook: we come from the Sonoran Desert, next to El Pinacate, where Apollo astronauts trained
+1. **P.E.N.** (Planetary Environmental Navigator) — by **Pollones en Fuga**: 6 members, challenge title. Hook: a Mexican team, and one of our best Moon Base analogs is El Pinacate (Sonora), where Apollo astronauts trained
 2. **The problem** — the Moon Base goes where the Sun never climbs above 7°; existing analog searches ignore light
 3. **Our idea** — score Earth places by terrain *and* low-Sun light; explain where the analogy breaks
 4. **How it works** — common grid → shadow model → scores; validation map (fig4, ρ = 0.86)

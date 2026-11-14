@@ -7,7 +7,7 @@ Usage:  python scripts/download_data.py            # all
 import sys, urllib.request, shutil
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from penumbra.config import load_config, RAW
+from pen.config import load_config, RAW
 
 
 def fetch(url, dest: Path):
