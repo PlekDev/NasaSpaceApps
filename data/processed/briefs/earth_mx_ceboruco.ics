@@ -1,0 +1,383 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Pollones en Fuga//P.E.N.//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:P.E.N. lunar-pole light · Ceboruco volcano
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261201T000000Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261201T000000Z
+DTEND:20261201T001300Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 245°→247°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261201T132400Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261201T132400Z
+DTEND:20261201T135700Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 114°→117°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261201T234000Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261201T234000Z
+DTEND:20261202T001300Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 243°→246°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261202T132500Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261202T132500Z
+DTEND:20261202T135800Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 114°→117°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261202T234000Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261202T234000Z
+DTEND:20261203T001300Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 243°→246°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261203T132500Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261203T132500Z
+DTEND:20261203T135900Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 114°→117°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261203T234000Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261203T234000Z
+DTEND:20261204T001300Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 243°→246°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261204T132600Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261204T132600Z
+DTEND:20261204T135900Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 114°→117°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261204T234000Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261204T234000Z
+DTEND:20261205T001300Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 243°→246°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261205T132700Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261205T132700Z
+DTEND:20261205T140000Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 114°→117°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261205T234000Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261205T234000Z
+DTEND:20261206T001400Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 243°→246°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261206T132700Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261206T132700Z
+DTEND:20261206T140100Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 114°→117°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261206T234000Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261206T234000Z
+DTEND:20261207T001400Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→246°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261207T132800Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261207T132800Z
+DTEND:20261207T140100Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 114°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261207T234100Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261207T234100Z
+DTEND:20261208T001400Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→246°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261208T132900Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261208T132900Z
+DTEND:20261208T140200Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261208T234100Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261208T234100Z
+DTEND:20261209T001400Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261209T132900Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261209T132900Z
+DTEND:20261209T140300Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261209T234100Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261209T234100Z
+DTEND:20261210T001400Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261210T133000Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261210T133000Z
+DTEND:20261210T140300Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261210T234100Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261210T234100Z
+DTEND:20261211T001500Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261211T133100Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261211T133100Z
+DTEND:20261211T140400Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261211T234200Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261211T234200Z
+DTEND:20261212T001500Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261212T133100Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261212T133100Z
+DTEND:20261212T140500Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261212T234200Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261212T234200Z
+DTEND:20261213T001500Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261213T133200Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261213T133200Z
+DTEND:20261213T140500Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261213T234200Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261213T234200Z
+DTEND:20261214T001600Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261214T133200Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261214T133200Z
+DTEND:20261214T140600Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_ceboruco-20261214T234300Z@pollones-en-fuga
+DTSTAMP:20261114T232230Z
+DTSTART:20261214T234300Z
+DTEND:20261215T001600Z
+SUMMARY:Lunar-pole light window · Ceboruco volcano
+LOCATION:21.1336, -104.7405
+GEO:21.13357;-104.74052
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Ha
+ worth. Test rover vision\, EVA lighting and shadow navigation. Brief: data
+ /processed/briefs/earth_mx_ceboruco.md
+END:VEVENT
+END:VCALENDAR

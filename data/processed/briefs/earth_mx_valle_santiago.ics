@@ -1,0 +1,370 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Pollones en Fuga//P.E.N.//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:P.E.N. lunar-pole light · Valle de Santiago maars
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261212T131600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261212T131600Z
+DTEND:20261212T134900Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261212T233100Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261212T233100Z
+DTEND:20261213T000400Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261213T131600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261213T131600Z
+DTEND:20261213T135000Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261213T233100Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261213T233100Z
+DTEND:20261214T000400Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261214T131700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261214T131700Z
+DTEND:20261214T135000Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261214T233100Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261214T233100Z
+DTEND:20261215T000500Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261215T131800Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261215T131800Z
+DTEND:20261215T135100Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261215T233200Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261215T233200Z
+DTEND:20261216T000500Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261216T131800Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261216T131800Z
+DTEND:20261216T135100Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261216T233200Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261216T233200Z
+DTEND:20261217T000500Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261217T131900Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261217T131900Z
+DTEND:20261217T135200Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261217T233200Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261217T233200Z
+DTEND:20261218T000600Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261218T131900Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261218T131900Z
+DTEND:20261218T135300Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261218T233300Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261218T233300Z
+DTEND:20261219T000600Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261219T132000Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261219T132000Z
+DTEND:20261219T135300Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261219T233300Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261219T233300Z
+DTEND:20261220T000700Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261220T132000Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261220T132000Z
+DTEND:20261220T135400Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261220T233400Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261220T233400Z
+DTEND:20261221T000700Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261221T132100Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261221T132100Z
+DTEND:20261221T135400Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261221T233400Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261221T233400Z
+DTEND:20261222T000800Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261222T132100Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261222T132100Z
+DTEND:20261222T135500Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261222T233500Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261222T233500Z
+DTEND:20261223T000800Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261223T132200Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261223T132200Z
+DTEND:20261223T135500Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261223T233500Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261223T233500Z
+DTEND:20261224T000900Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261224T132200Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261224T132200Z
+DTEND:20261224T135600Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261224T233600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261224T233600Z
+DTEND:20261225T000900Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261225T132300Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261225T132300Z
+DTEND:20261225T135600Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_mx_valle_santiago-20261225T233600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261225T233600Z
+DTEND:20261226T001000Z
+SUMMARY:Lunar-pole light window · Valle de Santiago maars
+LOCATION:20.1878, -101.3692
+GEO:20.18776;-101.36915
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Leibnitz Beta Plateau\, Sh
+ ackleton Connecting Ridge\, Haworth. Test rover vision\, EVA lighting and 
+ shadow navigation. Brief: data/processed/briefs/earth_mx_valle_santiago.md
+END:VEVENT
+END:VCALENDAR

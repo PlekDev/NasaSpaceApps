@@ -1,0 +1,258 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Pollones en Fuga//P.E.N.//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:P.E.N. lunar-pole light · University Valley
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270205T102700Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270205T102700Z
+DTEND:20270205T163900Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 224°→135°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270206T102000Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270206T102000Z
+DTEND:20270206T164700Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 226°→133°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270207T101200Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270207T101200Z
+DTEND:20270207T165400Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 228°→132°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270208T100500Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270208T100500Z
+DTEND:20270208T170200Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 230°→130°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270209T095800Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270209T095800Z
+DTEND:20270209T170900Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 232°→128°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270210T095000Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270210T095000Z
+DTEND:20270210T171700Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 234°→126°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270211T094300Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270211T094300Z
+DTEND:20270211T172400Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 235°→124°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270212T093600Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270212T093600Z
+DTEND:20270212T173100Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 237°→122°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270213T092900Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270213T092900Z
+DTEND:20270213T173800Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 239°→121°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270214T092200Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270214T092200Z
+DTEND:20270214T174500Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 240°→119°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270215T091500Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270215T091500Z
+DTEND:20270215T132200Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→183°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270215T134400Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270215T134400Z
+DTEND:20270215T175200Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 177°→117°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270216T090800Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270216T090800Z
+DTEND:20270216T123800Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 244°→193°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270216T142900Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270216T142900Z
+DTEND:20270216T175900Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 166°→115°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270217T090100Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270217T090100Z
+DTEND:20270217T121500Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 246°→199°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270217T145100Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270217T145100Z
+DTEND:20270217T180600Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 161°→114°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270218T085400Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270218T085400Z
+DTEND:20270218T115700Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 247°→203°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_antarctica_university_valley-20270218T150900Z@pollones-en-fug
+ a
+DTSTAMP:20261114T232229Z
+DTSTART:20270218T150900Z
+DTEND:20270218T181200Z
+SUMMARY:Lunar-pole light window · University Valley
+LOCATION:-77.3493, 160.5999
+GEO:-77.34932;160.59993
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 156°→112°)
+ : the light of the lunar south pole. Analog of: Nobile Rim 1\, de Gerlache
+  Rim. Test rover vision\, EVA lighting and shadow navigation. Brief: data/
+ processed/briefs/earth_antarctica_university_valley.md
+END:VEVENT
+END:VCALENDAR
