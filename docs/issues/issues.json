@@ -150,14 +150,16 @@
   "owner_name": "Aaron",
   "block": "B2",
   "title": "[B2] App features: colour-by-dimension, reference markers, CSV download, caching",
-  "body": "**Owner:** Aaron · **Block:** B2 · see docs/TEAM.md"
+  "body": "**Owner:** Aaron · **Block:** B2 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "aaron",
   "owner_name": "Aaron",
   "block": "B3",
   "title": "[B3] New dimensions appear automatically from DIMENSIONS (sliders, card, map)",
-  "body": "**Owner:** Aaron · **Block:** B3 · see docs/TEAM.md"
+  "body": "**Owner:** Aaron · **Block:** B3 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "aaron",

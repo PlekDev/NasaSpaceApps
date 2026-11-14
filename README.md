@@ -86,7 +86,7 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 | Diviner vs Earth analog regions (NASA POWER skin temperature) | `scripts/thermal_gap.py`, fig8 | D. Lizárraga |
 | Moon/Mars data paragraph for the project page; Mars DTMs checked against their headers (metres above the MOLA geoid, R = 3,396,190 m) | `docs/SUBMISSION.md` | D. Lizárraga |
 | Analog in time (hours/day of 0–7° Sun per month) | `pen/sun.py`, fig3 | Victor |
-| Dark app with 3D globe / flat map, analog card with low-Sun previews, validation tab, CSV download | `app/` | Paul · Aaron |
+| Dark app with 3D globe / flat map, colour-by-dimension, NASA reference analog markers, dynamic `DIMENSIONS` support, analog card with low-Sun previews, validation tab, CSV download | `app/` | Paul · Aaron |
 | Far-horizon method and Diviner numbers reviewed against the NASA labels (PDS3 LDEM, AVGVISIB scale, PDS4 Diviner); `ray_reach` and the AVGVISIB scale guard added | `scripts/validate_far_horizons.py`, `scripts/diviner_context.py` | D. Lizárraga |
 | Real NASA imagery for every analog card (Moon/Mars Trek WMTS, GIBS), aligned with the previews | `scripts/real_imagery.py` | Aaron · Paul |
 | Live field-safety check from NASA EONET, with an offline snapshot | `pen/eonet.py`, `scripts/eonet_snapshot.py` | Aaron |
