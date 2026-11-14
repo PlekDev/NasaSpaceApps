@@ -40,7 +40,9 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
   ISRU field tests in 2010 and 2012 (the 2012 test simulated a lunar-polar prospecting mission), is window
   **#1 of 10,424** for Malapert and in the **top 0.2 %** for four of the six Moon Base sites (#9 Nobile Rim 1,
   #19 de Gerlache, #23 Connecting Ridge). For the two sites added last it is in the top 1.1 % (Leibnitz Beta, #115)
-  and the top 5 % (Haworth, #483). P.E.N. never saw any analog labels. For the Mars targets it ranks low,
+  and the top 5 % (Haworth, #483). That drop has a measured reason: those two sites are gentler (median slope
+  9–11°, relief 830–860 m) than the four massif and rim sites (12–18°, 900–1,700 m), so their best matches move to
+  the smoother flanks of Mauna Loa. P.E.N. never saw any analog labels. For the Mars targets it ranks low,
   as a lunar site should.
 - **The light model matches NASA.** With NASA's 40 m polar DEM up to 150 km away, exact lunar curvature and real Sun
   positions, our illumination reproduces the LOLA 18.6-year average-illumination map with Spearman ρ = 0.92
@@ -291,6 +293,12 @@ RADARSAT / Sentinel-1 radar (CSA / ESA).
   of the preview; the Landsat WELD mosaic is ~2010 and has no Antarctic coverage (MODIS 250 m is used there).
 - EONET keeps some events "open" for months (e.g. Kīlauea), so the list is a prompt to check, not a hazard map.
 - Diviner is used as context for the Moon sites, not scored: there is no Earth layer with comparable meaning yet.
+- Deuteronilus Mensae is our "buried ice" Mars reference because orbital radar (SHARAD) found debris aprons of
+  more than 80 % water ice across that region (Plaut et al. 2009; Petersen et al. 2018). Our DTM lies inside it
+  (43.6–45.3°N, 27.4–28.3°E), but we did not check that this footprint itself contains an apron, and ice is not a
+  scored feature: the match with Atacama is in terrain and light only.
+- Leibnitz Beta is the massif the IAU named Mons Mouton in 2023; we keep the name of NASA's 2022 Artemis III
+  candidate-region list and of the LOLA product.
 - Flat Mars plains score high against much of Earth. Plains need finer texture, ice or thermal features to discriminate.
 - Rankings depend on window size; see `stability_top10_by_window_km` in `data/processed/results.json`.
 - Earth cannot reproduce reduced gravity, vacuum, the thin CO₂ atmosphere or the radiation environment.

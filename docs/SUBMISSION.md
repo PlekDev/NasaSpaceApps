@@ -97,7 +97,7 @@ mid-latitude region with buried ice), and the CTX global mosaic
 - ESA Copernicus DEM GLO-30 (via AWS Open Data)
 - Open-source libraries: rasterio, GDAL, NumPy, SciPy, pandas, Matplotlib, Streamlit, pydeck
 - Literature: Mazarico et al. 2011; Barker et al. (PGDA); Paige et al. (Diviner); Klingelhoefer et al. 2014 (Mauna Kea
-  ISRU tests, NTRS 20140008708); McKay et al. 2003 (Atacama); Marinova et al. 2022 (University Valley);
+  ISRU tests, NTRS 20140008708); McKay et al. 2003 (Atacama); Plaut et al. 2009 and Petersen et al. 2018 (Deuteronilus Mensae ice, SHARAD); Marinova et al. 2022 (University Valley);
   Preston & Dartnell 2014; NASA Moon Base overview
 
 **Use of Super Intelligence (SI):** see README "Use of AI". AI was used for literature/dataset discovery and to draft
