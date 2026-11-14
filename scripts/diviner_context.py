@@ -77,7 +77,8 @@ plt.rcParams.update({"font.size": 10, "axes.facecolor": "#0b0f17", "figure.facec
                      "text.color": "#f0efec", "axes.labelcolor": "#c9c7c1", "xtick.color": "#8a8780", "ytick.color": "#8a8780"})
 fig, ax = plt.subplots(figsize=(7.2, 6.4))
 im = ax.imshow(img, extent=[-L / 1e3, L / 1e3, -L / 1e3, L / 1e3], cmap="inferno", vmin=40, vmax=220)
-names = {"moon_connecting_ridge": "Connecting Ridge", "moon_malapert": "Malapert"}
+names = {"moon_connecting_ridge": "Connecting Ridge", "moon_malapert": "Malapert",
+         "moon_nobile_rim1": "Nobile Rim 1", "moon_de_gerlache_rim": "de Gerlache Rim"}
 for ref, b in boxes.items():
     ax.add_patch(Rectangle((b.left / 1e3, b.bottom / 1e3), (b.right - b.left) / 1e3, (b.top - b.bottom) / 1e3,
                            fill=False, ec="#5fd0ff", lw=2))

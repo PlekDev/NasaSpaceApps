@@ -11,7 +11,8 @@ jobs:
         with: { python-version: "3.11", cache: pip }
       - run: pip install -r requirements.txt
       - run: python -m pytest -q
-      - name: App smoke test (committed results)
+      - name: App smoke test (committed results, offline)
+        env: { PEN_OFFLINE: "1" }
         run: |
           python - <<'PY'
           from streamlit.testing.v1 import AppTest

@@ -13,6 +13,32 @@
    "median_ice_depth_m": 0.115,
    "share_colder_than_earth_record": 0.998
   },
+  "moon_nobile_rim1": {
+   "label": "Moon \u00b7 Nobile Rim 1 (LOLA Site06, Artemis candidate region)",
+   "n_facets": 3120,
+   "temp_avg_mean_K": 130.4,
+   "temp_avg_min_K": 45.3,
+   "temp_max_mean_K": 267.4,
+   "temp_max_max_K": 331.2,
+   "share_below_110K_avg": 0.288,
+   "share_ice_stable_surface": 0.001,
+   "share_ice_stable_within_1m": 0.348,
+   "median_ice_depth_m": 0.221,
+   "share_colder_than_earth_record": 0.99
+  },
+  "moon_de_gerlache_rim": {
+   "label": "Moon \u00b7 de Gerlache Rim (LOLA Site11)",
+   "n_facets": 2016,
+   "temp_avg_mean_K": 122.8,
+   "temp_avg_min_K": 55.0,
+   "temp_max_mean_K": 261.4,
+   "temp_max_max_K": 320.1,
+   "share_below_110K_avg": 0.313,
+   "share_ice_stable_surface": 0.003,
+   "share_ice_stable_within_1m": 0.396,
+   "median_ice_depth_m": 0.281,
+   "share_colder_than_earth_record": 1.0
+  },
   "moon_malapert": {
    "label": "Moon \u00b7 Malapert Massif (LOLA Site23)",
    "n_facets": 3486,

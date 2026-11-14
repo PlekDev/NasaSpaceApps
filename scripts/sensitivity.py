@@ -41,13 +41,13 @@ json.dump(out, open(PROCESSED / "sensitivity.json", "w"), indent=1)
 
 # figure: one line per reference
 SURF, INK, INK2 = "#fcfcfb", "#0b0b0b", "#52514e"
-CAT = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100"]
+CAT = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"]
 plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 10, "figure.facecolor": SURF, "axes.facecolor": SURF,
                      "axes.edgecolor": "#c9c8c2", "xtick.color": INK2, "ytick.color": INK2, "axes.labelcolor": INK2})
 fig, ax = plt.subplots(figsize=(10, 4.6))
 x = np.arange(len(WEIGHTS))
 for k, (ref, ov) in enumerate(out["top10_overlap_vs_equal"].items()):
-    ax.plot(x, ov, marker="o", lw=2, ms=6, color=CAT[k % 4], label=cfg["sites"][ref]["label"].split("(")[0].strip())
+    ax.plot(x, ov, marker="o", lw=2, ms=6, color=CAT[k % len(CAT)], label=cfg["sites"][ref]["label"].split("(")[0].strip())
 ax.set_xticks(x, [f"{w:g}×" for w in WEIGHTS]); ax.set_ylim(-0.3, 10.6); ax.set_yticks(range(0, 11, 2))
 ax.set_xlabel("weight of illumination relative to terrain"); ax.set_ylabel("windows shared with equal-weight top 10")
 ax.grid(axis="y", color="#e8e7e2", lw=0.8); ax.set_axisbelow(True)

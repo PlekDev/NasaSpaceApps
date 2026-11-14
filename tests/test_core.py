@@ -65,3 +65,24 @@ def test_low_sun_hours_shapes():
 
 def test_solar_noon_equinox_equator():
     assert solar_elevation(0, 80, [12])[0] == pytest.approx(90, abs=2)
+
+
+def test_eonet_parse_filters_by_distance():
+    from pen.eonet import parse
+    payload = {"events": [
+        {"title": "Near fire", "link": "x", "categories": [{"title": "Wildfires"}],
+         "geometry": [{"type": "Point", "date": "2026-11-10T00:00:00Z", "coordinates": [-155.50, 19.80]}]},
+        {"title": "Far volcano", "link": "y", "categories": [{"title": "Volcanoes"}],
+         "geometry": [{"type": "Point", "date": "2026-11-12T00:00:00Z", "coordinates": [-120.0, 45.0]}]},
+    ]}
+    ev = parse(payload, 19.78, -155.49, 150)
+    assert [e["title"] for e in ev] == ["Near fire"] and ev[0]["distance_km"] < 5
+
+
+def test_eonet_offline_returns_none(monkeypatch):
+    import urllib.request
+    from pen import eonet
+    def boom(*a, **k):
+        raise OSError("no network")
+    monkeypatch.setattr(urllib.request, "urlopen", boom)
+    assert eonet.events_near(19.8, -155.5) is None

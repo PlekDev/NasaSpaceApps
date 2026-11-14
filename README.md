@@ -7,47 +7,60 @@ P.E.N. finds the **exact field-test site on Earth** for the planned **lunar sout
 candidate **Mars landing areas**. It scores 6 km windows at 30 m resolution, **one dimension at a time**. Today
 those dimensions are terrain and **low-Sun illumination**, searched across **14 Earth regions** (~10,400 windows).
 For each candidate it says *how* similar it is, *in what*, and *where the analogy breaks*, with NASA LRO Diviner
-temperature and ice data quantifying that last part for the Moon sites.
+temperature and ice data quantifying that last part for the Moon sites. Every analog card also shows the **real view**
+of both sites from NASA imagery APIs and a **live field-safety check** from NASA EONET.
 
 > **Why light?** At the lunar south pole the Sun never rises above ~7°. Long shadows define landing safety,
 > rover vision, power and EVA planning. P.E.N. scores **terrain-cast shadows** with an exact shadow model and
-> **validates them against NASA's official LOLA illumination maps** (Spearman ρ = 0.86 at Shackleton Connecting Ridge).
+> **validates them against NASA's official LOLA illumination maps**: with distant horizons included, Spearman
+> ρ = 0.92–0.99 at all four Moon Base sites, within 2–3 percentage points of lit time.
 > It also finds **when** Earth sites reproduce lunar-pole light (an *analog in time*), not only **where**.
 
 **Where it fits:** regional screeners tell you *which region* of Earth to look at, on ~50 km cells. P.E.N.
 is the zoom-in stage: *which 6 km site* inside that region matches the target's terrain and light, compared against
-the official 5 m LOLA DEMs of the Moon Base sites.
+the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's Artemis candidate landing regions.
 
 ![Low-Sun side-by-side](figures/fig1_low_sun_side_by_side.png)
 
-## Key results (v0.2, 6 km windows, 30 m grid, 14 Earth regions, 10,424 windows)
+## Key results (v0.3, 6 km windows, 30 m grid, 6 targets, 14 Earth regions, 10,424 windows)
 
 | Reference | Best Earth window | Combined | Terrain | Illumination |
 |---|---|---|---|---|
 | Moon · Shackleton Connecting Ridge | Mauna Kea upper slopes, Hawaiʻi (19.811, −155.544) | 91 | 89 | 98 |
-| Moon · Malapert Massif | Mauna Kea, Hawaiʻi (19.784, −155.487) | 79 | 76 | 91 |
+| Moon · de Gerlache Rim | Mauna Kea, Hawaiʻi (19.865, −155.516) | 85 | 83 | 92 |
+| Moon · Nobile Rim 1 (Artemis candidate region) | Mauna Kea, Hawaiʻi (19.865, −155.516) | 81 | 78 | 95 |
+| Moon · Malapert Massif (Artemis candidate region) | Mauna Kea, Hawaiʻi (19.784, −155.487) | 79 | 76 | 91 |
 | Mars · Arcadia Planitia | Hyperarid Atacama near Yungay, Chile (−24.893, −69.914) | 96 | 95 | 98 |
 | Mars · Jezero | Sierra Chichinautzin volcanic field, Mexico (19.323, −99.887) | 89 | 87 | 97 |
 
 - **Blind rediscovery of a NASA lunar test site.** Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR ran
   ISRU field tests in 2010 and 2012 (the 2012 test simulated a lunar-polar prospecting mission), is window
-  **#1 of 10,424** for Malapert and **#23** for Connecting Ridge. P.E.N. never saw any analog labels.
-- **Known-analog test:** across 18 site × target tests with 8 classic analog sites, the median rank is the 80th
-  percentile for illumination and the 61st for terrain (50 = random). El Pinacate, the Apollo training ground in
-  Sonora, ranks in the top 3 % for both lunar targets. Sites chosen for other reasons rank lower, as they should:
-  Meteor Crater is an impact-geology analog and University Valley a dry-permafrost (thermal) analog.
-- **Validation of the light model:** it reproduces NASA's LOLA 18.6-year average-illumination map at Connecting
-  Ridge (Spearman ρ = 0.86). Agreement is weaker at Malapert (ρ = 0.55), where distant horizons outside the local DEM matter.
-- **Where Earth stops being an analog:** per LRO Diviner, 99.8 % of the Connecting Ridge site averages colder than
-  Earth's record low (184 K), and water ice is thermally stable within 1 m in 35 % of it. Malapert peaks at 342 K.
+  **#1 of 10,424** for Malapert and stays in the **top 0.2 %** for all four Moon Base sites (#9 Nobile Rim 1,
+  #19 de Gerlache, #23 Connecting Ridge). P.E.N. never saw any analog labels. For the Mars targets it ranks low,
+  as a lunar site should.
+- **The light model matches NASA.** With NASA's 40 m polar DEM out to 150 km, exact lunar curvature and real Sun
+  positions, our illumination reproduces the LOLA 18.6-year average-illumination map with Spearman ρ = 0.92
+  (Connecting Ridge), 0.99 (Nobile Rim 1), 0.97 (de Gerlache) and 0.975 (Malapert), with a mean error of 2–3
+  percentage points of lit time. With the local DEM alone ρ is 0.55–0.88: the gap was distant mountains, and
+  curvature by itself barely matters.
+- **Known-analog test:** 10 classic analog sites, 38 site × target tests. The median rank is the 80th percentile for
+  illumination and the 61st for terrain (50 = random). El Pinacate, the Apollo training ground in Sonora, ranks in
+  the top 3 % for all four Moon Base sites. Sites chosen for other reasons rank lower, as they should: Meteor Crater
+  is an impact-geology analog and University Valley a dry-permafrost (thermal) analog.
+- **Where Earth stops being an analog:** per LRO Diviner, 88–100 % of each lunar site averages colder than Earth's
+  record low (184 K), and water ice is thermally stable within 1 m in 22–40 % of it. Peaks reach 320–342 K.
 - **Analog in time:** polar sites (Haughton, Axel Heiberg, Svalbard, University Valley) give 4–7 h/day of
   lunar-pole-like low Sun (0–7°) around the equinoxes; sites below 40° latitude get about 1 h/day.
-- **Robustness:** re-weighting illumination 0.5–2× keeps 8–10 of the top 10 for three of the four targets (5–10 for
+- **NASA APIs in the app** ([api.nasa.gov](https://api.nasa.gov/)): Moon Trek WMTS (LRO NAC south-pole mosaic, 1 m),
+  Mars Trek WMTS (CTX global mosaic) and GIBS (Landsat/HLS 30 m) give a real photo of both windows, reprojected onto
+  the same grid as the low-Sun preview. EONET flags open natural events within 150 km of the Earth site; when we
+  checked, it listed active wildfires 20–35 km from our best Mauna Kea window.
+- **Robustness:** re-weighting illumination 0.5–2× keeps 8–10 of the top 10 for five of the six targets (5–10 for
   Malapert). Window size (3/6/12 km) changes rankings much more; we report it instead of hiding it.
 
 ![Scores](figures/fig2_score_matrix.png)
 
-## Project status (Sat Nov 14, 14:00 local · freeze Sun 12:00 · submit Sun 18:00)
+## Project status (Sat Nov 14, 15:30 local · freeze Sun 12:00 · submit Sun 18:00)
 
 **Done**
 
@@ -56,29 +69,31 @@ the official 5 m LOLA DEMs of the Moon Base sites.
 | Common 30 m grid for Moon, Mars and Earth; Earth sea/lake mask | `pen/grid.py` | Victor |
 | Exact O(N) cast-shadow model, 2 Sun elevations × 8 azimuths | `pen/shadows.py` | Victor |
 | Terrain + illumination features, IQR-scaled similarity, per-dimension scores | `pen/features.py`, `pen/scoring.py` | Victor |
-| Light model validated against NASA LOLA illumination (ρ = 0.86 / 0.55) | `scripts/validate_illumination.py` | Victor · D. Lizárraga |
-| 4 references (2 Moon Base sites, 2 Mars) and 14 Earth regions, 10,424 windows | `config/sites.yaml` | D. Lizárraga · D. Doña |
-| Known-analog test with 8 classic sites (Mauna Kea ISRU site #1 for Malapert) | `scripts/validate_known_analogs.py` | D. Doña |
+| 6 references (4 Moon Base sites incl. Artemis candidates Nobile Rim 1 and Malapert, 2 Mars) and 14 Earth regions | `config/sites.yaml` | D. Lizárraga · D. Dona |
+| Light model vs NASA LOLA illumination, local (ρ 0.55–0.88) and with 150 km horizons + curvature (ρ 0.92–0.99) | `scripts/validate_illumination.py`, `scripts/validate_far_horizons.py`, fig4, fig7 | D. Lizárraga · Victor |
+| Known-analog test with 10 classic sites (Mauna Kea ISRU site #1 for Malapert, top 0.2 % for all Moon sites) | `scripts/validate_known_analogs.py` | D. Dona |
 | Sensitivity to weights and window size | `scripts/sensitivity.py`, fig5 | Victor |
 | LRO Diviner temperature and ice context for the Moon sites | `scripts/diviner_context.py`, fig6 | D. Lizárraga |
 | Analog in time (hours/day of 0–7° Sun per month) | `pen/sun.py`, fig3 | Victor |
 | Dark app with 3D globe / flat map, analog card with low-Sun previews, validation tab, CSV download | `app/` | Paul · Aaron |
-| Tests (15) and CI with an app smoke test | `tests/`, `.github/` | Aaron |
+| Real NASA imagery for every analog card (Moon/Mars Trek WMTS, GIBS), aligned with the previews | `scripts/real_imagery.py` | Aaron · Paul |
+| Live field-safety check from NASA EONET, with an offline snapshot | `pen/eonet.py`, `scripts/eonet_snapshot.py` | Aaron |
+| Tests (17) and CI with an offline app smoke test | `tests/`, `.github/` | Aaron |
 
 **To do before the freeze** (each line is a GitHub issue, see [`docs/TEAM.md`](docs/TEAM.md))
 
 | What | Why it matters | Owner |
 |---|---|---|
-| Public deploy on Streamlit Community Cloud | The judges need a link that opens without installing anything | Aaron |
+| Public deploy on Streamlit Community Cloud; check that EONET answers live there | The judges need a link that opens without installing anything | Aaron |
 | Deck (7 slides) and project page around the blind-rediscovery result | It's the demo the judges see | Angel |
 | Visual identity (wordmark), UI polish, phone check, visuals for the deck | First impression | Paul |
-| Far-horizon test: shadows on a ≥ 60 km DEM around Malapert | Explains (or fixes) ρ = 0.55 | D. Lizárraga |
-| Earth surface temperature (MODIS/ECOSTRESS) so thermal becomes a **scored** dimension | Today Diviner is context only | D. Doña → Victor |
-| More known analog sites with verified coordinates | Makes the validation harder to dismiss | D. Doña |
+| Review the far-horizon method and the new lunar sites; Moon/Mars paragraph for the page | A second pair of eyes on the strongest claim | D. Lizárraga |
+| Earth surface temperature (MODIS/ECOSTRESS) so thermal becomes a **scored** dimension | Today Diviner is context only | D. Dona → Victor |
 | Fact-check every number in README, deck and page; tag `v1.0` | No wrong number in front of judges | Angel · Victor |
 
-**Stretch (only if time allows):** 2–3 more lunar references (PGDA Site06, Site11) and a Mars ice reference
-(Deuteronilus Mensae); EMIT mineralogy for the Mexican regions; a 30-second video.
+**Stretch (only if time allows):** a Mars ice reference (Deuteronilus Mensae CTX DTM); the remaining Artemis regions
+(Nobile Rim 2, de Gerlache Rim 2, Haworth, Mons Mouton) once 5 m DEMs are available; EMIT mineralogy for the Mexican
+regions; a 30-second video.
 
 ## Quick start
 
@@ -89,7 +104,7 @@ pip install -r requirements.txt
 streamlit run app/streamlit_app.py                   # uses the committed results in data/processed/
 ```
 
-Reproduce everything from raw data (~600 MB download, ~10 min compute):
+Reproduce everything from raw data (~950 MB download, ~15 min compute):
 
 ```bash
 make data        # python scripts/download_data.py
@@ -97,6 +112,9 @@ make pipeline    # python scripts/run_pipeline.py
 make validate    # python scripts/validate_illumination.py
 make figures     # python scripts/make_figures.py
 make extras      # thumbnails, known-analog test, sensitivity, Diviner context
+make far         # far-horizon light validation (~4 min, needs the 230 MB LOLA polar DEM)
+make imagery     # real NASA imagery for the analog cards (Trek WMTS + GIBS, ~150 requests, no API key)
+make eonet       # refresh the offline EONET snapshot
 make test        # pytest
 ```
 
@@ -177,6 +195,14 @@ the measured Diviner numbers of step 10.
   and 17 azimuths (every 22°), compared with the LOLA 18.6-year average-illumination map (Mazarico et al.) resampled
   onto the same grid. We drop a 1.5 km border and take every 4th pixel (120 m) to limit spatial autocorrelation,
   then report Spearman's ρ.
+- *Far horizons* (`scripts/validate_far_horizons.py`): the local model only sees terrain inside the site DEM, so we
+  also rebuild the light for every Moon site with NASA's LOLA 85°S DEM at 40 m. For target points every 240 m
+  (1.5 km border dropped) we trace 72 horizon azimuths out to 150 km, with steps of 40 m that grow 0.5 % per step,
+  and take each terrain point's elevation angle in exact 3D on the lunar sphere (so curvature is included). The
+  Sun is sampled at subsolar latitudes 1.54°·sin(2πk/24) and every 5° of subsolar longitude (1,728 positions) and
+  treated as a 0.53° disk; the lit fraction is the mean visible share of the disk. We report ρ and mean absolute
+  error against the LOLA average-illumination map for three variants: local DEM flat, local DEM curved, and 150 km
+  curved.
 - *Known analog sites:* for each classic site, take the windows that contain its coordinates and report the
   percentile of their best score among all 10,424 Earth windows (100 = best on Earth, 50 = random). No labels are
   ever used in scoring.
@@ -190,7 +216,18 @@ the share colder than Earth's record low (184 K, Vostok), and the share where wa
 refraction), sampled every 3 min for every day of the year at each region's centre latitude, gives the hours per day
 with the Sun between 0° and 7°, averaged per month.
 
-**12 · Sensitivity** (`scripts/sensitivity.py`). The illumination weight goes from 0 to 4 (terrain fixed at 1) and
+**12 · Real imagery** (`scripts/real_imagery.py`). For the reference window of each target and its top 15 Earth
+windows we download imagery from NASA APIs: Moon Trek WMTS (LRO NAC south-pole mosaic, zoom 10 ≈ 8 m/px, same
+polar stereographic metres as the LOLA DEMs), Mars Trek WMTS (CTX global mosaic, zoom 10 ≈ 20 m/px) and GIBS WMS
+(Landsat WELD annual mosaic at 30 m; HLS 30 m where WELD shows striping; MODIS 250 m where WELD has no data, i.e.
+Antarctica). Each mosaic is georeferenced from the tile matrix and reprojected with `rasterio` onto the window's own
+grid at 10 m/px, so it lines up with the low-Sun preview. No API key is needed for these services.
+
+**13 · Field safety** (`pen/eonet.py`). The app asks NASA EONET v3 for open events in a box around the Earth window,
+keeps those whose nearest geometry point is within 150 km (haversine) and lists them newest first. Requests time out
+after 4 s; offline, the app shows the committed snapshot (`scripts/eonet_snapshot.py`) with its date.
+
+**14 · Sensitivity** (`scripts/sensitivity.py`). The illumination weight goes from 0 to 4 (terrain fixed at 1) and
 we count how many of the equal-weight top 10 windows survive. We also compare the regions in the top 10 at 3, 6 and
 12 km.
 
@@ -202,20 +239,31 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 |---|---|---|
 | [LOLA 5 m south-pole DEMs](https://pgda.gsfc.nasa.gov/products/78) (Barker et al.) | **NASA** GSFC / LRO | Moon Base reference terrain |
 | [LOLA polar illumination](https://pgda.gsfc.nasa.gov/products/69) (Mazarico et al.) | **NASA** GSFC / LRO | Validation of the shadow model |
+| [LOLA gridded polar DEM, 85°S, 40 m](https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/float_img/) | **NASA** LRO / PDS | Far-horizon validation (terrain out to 150 km) |
 | [MRO CTX stereo DTMs](https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms) | **NASA** MRO / USGS | Mars reference terrain |
 | [LRO Diviner polar resource product](https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/) (Paige et al.) | **NASA** LRO / PDS | Moon temperature and ice stability (where Earth stops being an analog) |
+| [Moon Trek / Mars Trek WMTS](https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon) (via api.nasa.gov) | **NASA** SSERVI / JPL | Real view of Moon (LRO NAC mosaic) and Mars (CTX mosaic) windows |
+| [GIBS](https://nasa-gibs.github.io/gibs-api-docs/) (via api.nasa.gov) | **NASA** ESDIS | Real view of Earth windows (Landsat WELD, HLS, MODIS) |
+| [EONET v3](https://eonet.gsfc.nasa.gov/docs/v3) (via api.nasa.gov) | **NASA** Earth Observatory | Live field-safety check (open natural events near the site) |
 | [Copernicus DEM GLO-30](https://registry.opendata.aws/copernicus-dem/) | **ESA** (Space Agency Partner) | Earth candidate terrain (14 one-degree tiles) |
 
 ![Diviner](figures/fig6_diviner.png)
+
+![Far horizons](figures/fig7_far_horizons.png)
 
 Planned: EMIT surface mineralogy (NASA), MODIS/ECOSTRESS land-surface temperature (NASA),
 RADARSAT / Sentinel-1 radar (CSA / ESA).
 
 ## Limitations
 
-- Shadows come from **local** terrain only. There is no body curvature and no horizon outside the DEM, which is why
-  agreement drops at Malapert.
+- Scoring uses shadows from **local** terrain only, on both bodies, so Moon and Earth are treated the same way.
+  The far-horizon test shows the light model is right once distant terrain is added (ρ 0.92–0.99), but Earth
+  windows are not re-scored with their own distant horizons. Malapert sits near the edge of the 85°S DEM, so its
+  rays toward lower latitudes stop after ~20–30 km.
 - Copernicus is a surface model: vegetation and buildings are included. Sea (≤ 0.5 m) and flattened lakes are masked.
+- Real imagery is context, not scored. The LRO NAC mosaic averages many Sun angles, so it does not show the 3° Sun
+  of the preview; the Landsat WELD mosaic is ~2010 and has no Antarctic coverage (MODIS 250 m is used there).
+- EONET keeps some events "open" for months (e.g. Kīlauea), so the list is a prompt to check, not a hazard map.
 - Diviner is used as context for the Moon sites, not scored: there is no Earth layer with comparable meaning yet.
 - Flat Mars plains score high against much of Earth. Plains need finer texture, ice or thermal features to discriminate.
 - Rankings depend on window size; see `stability_top10_by_window_km` in `data/processed/results.json`.
@@ -237,7 +285,7 @@ plotted directly from the data by the scripts in `scripts/`.
 |---|---|---|
 | **Victor** | Tech lead & integrator | Core pipeline (`pen/`), merges, sensitivity, final run and `v1.0` |
 | **Diego Lizárraga** | Moon & Mars data | Lunar/Martian references, LRO Diviner, far-horizon test |
-| **Diego Doña** | Earth data & validation | Earth regions, known-analog test, Earth temperature layer |
+| **Diego Dona** | Earth data & validation | Earth regions, known-analog test, Earth temperature layer |
 | **Angel** | Presentation & submission | Story, deck, project page, fact-check, submission |
 | **Aaron** | App engineering & deploy | App logic, data loading, public deploy, tests/CI |
 | **Paul** | UI/UX & visual design | App look, globe and map, analog card, visual identity, deck visuals |

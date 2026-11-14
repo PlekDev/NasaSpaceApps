@@ -57,9 +57,10 @@ def reference_window(ref):
     return best
 
 
-manifest = {}
+manifest, ref_windows = {}, {}
 for ref in R["reference_features"]:
     i, j = reference_window(ref)
+    ref_windows[ref] = [int(i), int(j)]
     render(grid(ref), i, j, OUT / f"ref__{ref}.png")
     top = win[win.reference == ref].sort_values("score_combined", ascending=False).head(TOP_N)
     for r in top.itertuples():
@@ -69,3 +70,4 @@ for ref in R["reference_features"]:
     manifest[ref] = len(top)
     print(ref, "→", len(top), "thumbnails")
 json.dump(manifest, open(OUT / "manifest.json", "w"))
+json.dump(ref_windows, open(OUT / "ref_windows.json", "w"))  # used by scripts/real_imagery.py

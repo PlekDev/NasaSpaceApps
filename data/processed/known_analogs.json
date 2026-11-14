@@ -1,10 +1,10 @@
 {
  "summary": {
   "median_percentile_combined_best": 65.7,
-  "share_in_top20pct_combined_best": 0.3888888888888889,
-  "median_percentile_illumination_best": 79.9,
+  "share_in_top20pct_combined_best": 0.3157894736842105,
+  "median_percentile_illumination_best": 79.85,
   "median_percentile_terrain_best": 60.849999999999994,
-  "n_tests": 18
+  "n_tests": 38
  },
  "rows": [
   {
@@ -18,6 +18,18 @@
    "score_terrain_pct_mean": 71.7,
    "score_illumination_pct_best": 78.1,
    "score_illumination_pct_mean": 53.6
+  },
+  {
+   "reference": "mars_arcadia",
+   "site": "HMP Research Station, Devon Island, CA",
+   "note": "Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",
+   "n_windows": 2,
+   "score_combined_pct_best": 83.8,
+   "score_combined_pct_mean": 67.6,
+   "score_terrain_pct_best": 85.4,
+   "score_terrain_pct_mean": 64.9,
+   "score_illumination_pct_best": 69.7,
+   "score_illumination_pct_mean": 68.3
   },
   {
    "reference": "mars_arcadia",
@@ -66,6 +78,18 @@
    "score_terrain_pct_mean": 76.9,
    "score_illumination_pct_best": 92.2,
    "score_illumination_pct_mean": 72.7
+  },
+  {
+   "reference": "mars_jezero",
+   "site": "HMP Research Station, Devon Island, CA",
+   "note": "Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",
+   "n_windows": 2,
+   "score_combined_pct_best": 75.9,
+   "score_combined_pct_mean": 60.7,
+   "score_terrain_pct_best": 81.2,
+   "score_terrain_pct_mean": 60.9,
+   "score_illumination_pct_best": 54.5,
+   "score_illumination_pct_mean": 52.2
   },
   {
    "reference": "mars_jezero",
@@ -153,6 +177,30 @@
   },
   {
    "reference": "moon_connecting_ridge",
+   "site": "Cinder Lake Crater Field, AZ",
+   "note": "Apollo-era crater field built by USGS for astronaut training (USGS data release 10.5066/P13W5FTZ)",
+   "n_windows": 4,
+   "score_combined_pct_best": 74.7,
+   "score_combined_pct_mean": 47.4,
+   "score_terrain_pct_best": 69.8,
+   "score_terrain_pct_mean": 42.7,
+   "score_illumination_pct_best": 82.7,
+   "score_illumination_pct_mean": 69.9
+  },
+  {
+   "reference": "moon_connecting_ridge",
+   "site": "HMP Research Station, Devon Island, CA",
+   "note": "Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",
+   "n_windows": 2,
+   "score_combined_pct_best": 57.8,
+   "score_combined_pct_mean": 54.3,
+   "score_terrain_pct_best": 55.8,
+   "score_terrain_pct_mean": 52.5,
+   "score_illumination_pct_best": 60.1,
+   "score_illumination_pct_mean": 57.5
+  },
+  {
+   "reference": "moon_connecting_ridge",
    "site": "Pu'u Hiwahine, Mauna Kea, HI",
    "note": "NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708",
    "n_windows": 4,
@@ -162,6 +210,90 @@
    "score_terrain_pct_mean": 97.5,
    "score_illumination_pct_best": 99.5,
    "score_illumination_pct_mean": 97.9
+  },
+  {
+   "reference": "moon_de_gerlache_rim",
+   "site": "Meteor Crater (Barringer), AZ",
+   "note": "Apollo and Artemis astronaut training",
+   "n_windows": 2,
+   "score_combined_pct_best": 12.6,
+   "score_combined_pct_mean": 12.5,
+   "score_terrain_pct_best": 16.7,
+   "score_terrain_pct_mean": 15.8,
+   "score_illumination_pct_best": 7.9,
+   "score_illumination_pct_mean": 6.3
+  },
+  {
+   "reference": "moon_de_gerlache_rim",
+   "site": "SP Crater, San Francisco Volcanic Field, AZ",
+   "note": "NASA Desert RATS analog site since 1998",
+   "n_windows": 4,
+   "score_combined_pct_best": 68.8,
+   "score_combined_pct_mean": 55.6,
+   "score_terrain_pct_best": 61.8,
+   "score_terrain_pct_mean": 50.1,
+   "score_illumination_pct_best": 91.8,
+   "score_illumination_pct_mean": 86.1
+  },
+  {
+   "reference": "moon_de_gerlache_rim",
+   "site": "Pinacate Peaks, Sonora, MX",
+   "note": "Apollo astronaut geology training 1965\u20131970",
+   "n_windows": 4,
+   "score_combined_pct_best": 97.4,
+   "score_combined_pct_mean": 94.2,
+   "score_terrain_pct_best": 96.5,
+   "score_terrain_pct_mean": 90.3,
+   "score_illumination_pct_best": 96.5,
+   "score_illumination_pct_mean": 93.1
+  },
+  {
+   "reference": "moon_de_gerlache_rim",
+   "site": "Haughton impact crater, Devon Island, CA",
+   "note": "Haughton-Mars Project; lunar and Mars analog",
+   "n_windows": 4,
+   "score_combined_pct_best": 57.6,
+   "score_combined_pct_mean": 46.5,
+   "score_terrain_pct_best": 54.3,
+   "score_terrain_pct_mean": 43.2,
+   "score_illumination_pct_best": 80.7,
+   "score_illumination_pct_mean": 70.4
+  },
+  {
+   "reference": "moon_de_gerlache_rim",
+   "site": "Cinder Lake Crater Field, AZ",
+   "note": "Apollo-era crater field built by USGS for astronaut training (USGS data release 10.5066/P13W5FTZ)",
+   "n_windows": 4,
+   "score_combined_pct_best": 72.7,
+   "score_combined_pct_mean": 45.0,
+   "score_terrain_pct_best": 67.1,
+   "score_terrain_pct_mean": 41.3,
+   "score_illumination_pct_best": 76.5,
+   "score_illumination_pct_mean": 67.2
+  },
+  {
+   "reference": "moon_de_gerlache_rim",
+   "site": "HMP Research Station, Devon Island, CA",
+   "note": "Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",
+   "n_windows": 2,
+   "score_combined_pct_best": 50.6,
+   "score_combined_pct_mean": 48.2,
+   "score_terrain_pct_best": 47.5,
+   "score_terrain_pct_mean": 45.4,
+   "score_illumination_pct_best": 68.1,
+   "score_illumination_pct_mean": 65.6
+  },
+  {
+   "reference": "moon_de_gerlache_rim",
+   "site": "Pu'u Hiwahine, Mauna Kea, HI",
+   "note": "NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708",
+   "n_windows": 4,
+   "score_combined_pct_best": 99.8,
+   "score_combined_pct_mean": 99.6,
+   "score_terrain_pct_best": 99.8,
+   "score_terrain_pct_mean": 99.6,
+   "score_illumination_pct_best": 98.1,
+   "score_illumination_pct_mean": 95.8
   },
   {
    "reference": "moon_malapert",
@@ -213,6 +345,30 @@
   },
   {
    "reference": "moon_malapert",
+   "site": "Cinder Lake Crater Field, AZ",
+   "note": "Apollo-era crater field built by USGS for astronaut training (USGS data release 10.5066/P13W5FTZ)",
+   "n_windows": 4,
+   "score_combined_pct_best": 58.4,
+   "score_combined_pct_mean": 37.7,
+   "score_terrain_pct_best": 57.0,
+   "score_terrain_pct_mean": 36.1,
+   "score_illumination_pct_best": 79.9,
+   "score_illumination_pct_mean": 66.9
+  },
+  {
+   "reference": "moon_malapert",
+   "site": "HMP Research Station, Devon Island, CA",
+   "note": "Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",
+   "n_windows": 2,
+   "score_combined_pct_best": 47.7,
+   "score_combined_pct_mean": 43.5,
+   "score_terrain_pct_best": 47.8,
+   "score_terrain_pct_mean": 43.5,
+   "score_illumination_pct_best": 64.0,
+   "score_illumination_pct_mean": 61.4
+  },
+  {
+   "reference": "moon_malapert",
    "site": "Pu'u Hiwahine, Mauna Kea, HI",
    "note": "NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708",
    "n_windows": 4,
@@ -222,6 +378,90 @@
    "score_terrain_pct_mean": 96.8,
    "score_illumination_pct_best": 99.3,
    "score_illumination_pct_mean": 97.9
+  },
+  {
+   "reference": "moon_nobile_rim1",
+   "site": "Meteor Crater (Barringer), AZ",
+   "note": "Apollo and Artemis astronaut training",
+   "n_windows": 2,
+   "score_combined_pct_best": 12.5,
+   "score_combined_pct_mean": 12.5,
+   "score_terrain_pct_best": 17.1,
+   "score_terrain_pct_mean": 16.3,
+   "score_illumination_pct_best": 6.2,
+   "score_illumination_pct_mean": 5.3
+  },
+  {
+   "reference": "moon_nobile_rim1",
+   "site": "SP Crater, San Francisco Volcanic Field, AZ",
+   "note": "NASA Desert RATS analog site since 1998",
+   "n_windows": 4,
+   "score_combined_pct_best": 62.3,
+   "score_combined_pct_mean": 50.8,
+   "score_terrain_pct_best": 58.4,
+   "score_terrain_pct_mean": 47.2,
+   "score_illumination_pct_best": 91.4,
+   "score_illumination_pct_mean": 81.5
+  },
+  {
+   "reference": "moon_nobile_rim1",
+   "site": "Pinacate Peaks, Sonora, MX",
+   "note": "Apollo astronaut geology training 1965\u20131970",
+   "n_windows": 4,
+   "score_combined_pct_best": 97.8,
+   "score_combined_pct_mean": 90.7,
+   "score_terrain_pct_best": 95.9,
+   "score_terrain_pct_mean": 85.5,
+   "score_illumination_pct_best": 99.3,
+   "score_illumination_pct_mean": 97.8
+  },
+  {
+   "reference": "moon_nobile_rim1",
+   "site": "Haughton impact crater, Devon Island, CA",
+   "note": "Haughton-Mars Project; lunar and Mars analog",
+   "n_windows": 4,
+   "score_combined_pct_best": 56.5,
+   "score_combined_pct_mean": 44.9,
+   "score_terrain_pct_best": 53.5,
+   "score_terrain_pct_mean": 42.6,
+   "score_illumination_pct_best": 79.8,
+   "score_illumination_pct_mean": 66.5
+  },
+  {
+   "reference": "moon_nobile_rim1",
+   "site": "Cinder Lake Crater Field, AZ",
+   "note": "Apollo-era crater field built by USGS for astronaut training (USGS data release 10.5066/P13W5FTZ)",
+   "n_windows": 4,
+   "score_combined_pct_best": 67.5,
+   "score_combined_pct_mean": 42.4,
+   "score_terrain_pct_best": 63.5,
+   "score_terrain_pct_mean": 39.0,
+   "score_illumination_pct_best": 85.2,
+   "score_illumination_pct_mean": 69.4
+  },
+  {
+   "reference": "moon_nobile_rim1",
+   "site": "HMP Research Station, Devon Island, CA",
+   "note": "Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",
+   "n_windows": 2,
+   "score_combined_pct_best": 49.8,
+   "score_combined_pct_mean": 46.0,
+   "score_terrain_pct_best": 49.1,
+   "score_terrain_pct_mean": 45.2,
+   "score_illumination_pct_best": 55.7,
+   "score_illumination_pct_mean": 53.2
+  },
+  {
+   "reference": "moon_nobile_rim1",
+   "site": "Pu'u Hiwahine, Mauna Kea, HI",
+   "note": "NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708",
+   "n_windows": 4,
+   "score_combined_pct_best": 99.9,
+   "score_combined_pct_mean": 99.8,
+   "score_terrain_pct_best": 99.9,
+   "score_terrain_pct_mean": 99.8,
+   "score_illumination_pct_best": 100.0,
+   "score_illumination_pct_mean": 99.2
   }
  ]
 }

@@ -8,8 +8,8 @@ from scipy import ndimage
 DIMENSIONS = {
     "terrain": ["relief", "slope_med", "slope_p90", "rough", "hypso"],
     "illumination": ["shadow_e2", "shadow_e5"],
-    # "thermal": ["lst_range", ...],        # TODO(Diego Lizárraga / Diego Doña): Diviner vs MODIS/ECOSTRESS
-    # "mineralogy": ["gypsum", ...],        # TODO(Diego Doña): EMIT L2B mineral fractions
+    # "thermal": ["lst_range", ...],        # TODO(Diego Lizárraga / Diego Dona): Diviner vs MODIS/ECOSTRESS
+    # "mineralogy": ["gypsum", ...],        # TODO(Diego Dona): EMIT L2B mineral fractions
 }
 
 

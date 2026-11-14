@@ -46,16 +46,17 @@
  {
   "owner": "dlizarraga",
   "owner_name": "Diego Lizárraga",
-  "block": "B2",
-  "title": "[B2] Add 2–3 lunar references (PGDA 78) + 1 Mars ice reference (Deuteronilus Mensae CTX DTM)",
-  "body": "Check file sizes first; prefer Site06 / Site11. Use the USGS STAC API to find the DTM.\n\n**Owner:** Diego Lizárraga · **Block:** B2 · see docs/TEAM.md"
+  "block": "B3",
+  "title": "[B3] Stretch: Mars reference with buried ice (Deuteronilus Mensae CTX DTM)",
+  "body": "- Lunar Site06 (Nobile Rim 1) and Site11 (de Gerlache Rim) are already in (v0.3)\n- Remaining: one Deuteronilus Mensae CTX DTM from the USGS STAC as a Mars ice reference\n\n**Owner:** Diego Lizárraga · **Block:** B3 · see docs/TEAM.md"
  },
  {
   "owner": "dlizarraga",
   "owner_name": "Diego Lizárraga",
   "block": "B3",
   "title": "[B3] Far-horizon test: shadows on ≥60 km DEM crop, report new ρ vs LOLA",
-  "body": "Quantify how much of the Malapert gap (ρ = 0.55) comes from distant horizons.\n\n**Owner:** Diego Lizárraga · **Block:** B3 · see docs/TEAM.md"
+  "body": "Quantify how much of the Malapert gap (ρ = 0.55) comes from distant horizons.\n\n**Owner:** Diego Lizárraga · **Block:** B3 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "dlizarraga",
@@ -66,33 +67,33 @@
  },
  {
   "owner": "ddona",
-  "owner_name": "Diego Doña",
+  "owner_name": "Diego Dona",
   "block": "B1",
   "title": "[B1] Add 6–10 Copernicus tiles (Mexico + high-latitude light analogs + regions other teams flag)",
-  "body": "Mexico: Sierra Chichinautzin, Valle de Santiago, Serdán-Oriental (Alchichica), Ceboruco. High latitude: Svalbard, Axel Heiberg, Antarctic Dry Valleys, Iceland highlands. Also Chersky Range, Prince Charles Mountains, Baffin Island. Verify each tile URL returns 200.\n\n**Owner:** Diego Doña · **Block:** B1 · see docs/TEAM.md",
+  "body": "Mexico: Sierra Chichinautzin, Valle de Santiago, Serdán-Oriental (Alchichica), Ceboruco. High latitude: Svalbard, Axel Heiberg, Antarctic Dry Valleys, Iceland highlands. Also Chersky Range, Prince Charles Mountains, Baffin Island. Verify each tile URL returns 200.\n\n**Owner:** Diego Dona · **Block:** B1 · see docs/TEAM.md",
   "status": "done"
  },
  {
   "owner": "ddona",
-  "owner_name": "Diego Doña",
+  "owner_name": "Diego Dona",
   "block": "B2",
   "title": "[B2] Known-analog test: rank percentile of classic analog sites",
-  "body": "Haughton crater centre, SFVF Cinder Lake crater field, Dry Valleys. Target: top 20 %. Our answer to other teams' ROC-AUC.\n\n**Owner:** Diego Doña · **Block:** B2 · see docs/TEAM.md",
+  "body": "Haughton crater centre, SFVF Cinder Lake crater field, Dry Valleys. Target: top 20 %. Our answer to other teams' ROC-AUC.\n\n**Owner:** Diego Dona · **Block:** B2 · see docs/TEAM.md",
   "status": "done"
  },
  {
   "owner": "ddona",
-  "owner_name": "Diego Doña",
+  "owner_name": "Diego Dona",
   "block": "B3",
   "title": "[B3] Earth temperature layer (MODIS MOD11A2 or ECOSTRESS); stretch: EMIT minerals",
-  "body": "Earthdata Login required. Per-window annual range and minimum, to pair with Diviner.\n\n**Owner:** Diego Doña · **Block:** B3 · see docs/TEAM.md"
+  "body": "Earthdata Login required. Per-window annual range and minimum, to pair with Diviner.\n\n**Owner:** Diego Dona · **Block:** B3 · see docs/TEAM.md"
  },
  {
   "owner": "ddona",
-  "owner_name": "Diego Doña",
+  "owner_name": "Diego Dona",
   "block": "B4",
   "title": "[B4] Write Earth data + partner data paragraph for the project page (to Angel)",
-  "body": "**Owner:** Diego Doña · **Block:** B4 · see docs/TEAM.md"
+  "body": "**Owner:** Diego Dona · **Block:** B4 · see docs/TEAM.md"
  },
  {
   "owner": "angel",
@@ -210,10 +211,11 @@
  },
  {
   "owner": "ddona",
-  "owner_name": "Diego Doña",
+  "owner_name": "Diego Dona",
   "block": "B1",
   "title": "[B1] Verify known-site coordinates and add 2–4 more sites inside our tiles",
-  "body": "- One primary source per site (paper, NTRS, agency page)\n- Candidates: Cinder Lake crater field (SFVF), Haughton-Mars Project base camp\n- Edit `KNOWN` in `scripts/validate_known_analogs.py`, re-run it\n\n**Owner:** Diego Doña · **Block:** B1 · see docs/TEAM.md"
+  "body": "- One primary source per site (paper, NTRS, agency page)\n- Candidates: Cinder Lake crater field (SFVF), Haughton-Mars Project base camp\n- Edit `KNOWN` in `scripts/validate_known_analogs.py`, re-run it\n\n**Owner:** Diego Dona · **Block:** B1 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "angel",
@@ -228,5 +230,27 @@
   "block": "B1",
   "title": "[B1] Polish the dark UI: globe labels, legend, card spacing, phone check",
   "body": "- Check globe labels render on a real GPU (headless screenshots may not show them)\n- Keep the colour ramp readable on a projector\n\n**Owner:** Paul · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "dlizarraga",
+  "owner_name": "Diego Lizárraga",
+  "block": "B1",
+  "title": "[B1] Review the far-horizon validation (our strongest claim)",
+  "body": "- Read `scripts/validate_far_horizons.py`: Sun geometry, azimuth convention, AVGVISIB scale (4e-5)\n- Re-run `make far` and confirm ρ 0.92–0.99 in `data/processed/far_horizons.json`\n- Write two sentences for the project page\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "aaron",
+  "owner_name": "Aaron",
+  "block": "B1",
+  "status": "done",
+  "title": "[B1] NASA APIs in the app: real imagery (Trek WMTS, GIBS) + EONET field safety",
+  "body": "Done in v0.4.\n\n**Owner:** Aaron · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "aaron",
+  "owner_name": "Aaron",
+  "block": "B2",
+  "title": "[B2] On the deployed app: confirm EONET answers live and images load fast",
+  "body": "- The EONET box should say \"live\", not \"snapshot\"\n- If the event wifi blocks EONET, run `make eonet` right before the demo to refresh the snapshot\n- Real images are committed JPEGs (data/processed/thumbs/real__*.jpg); `make imagery` refreshes them\n\n**Owner:** Aaron · **Block:** B2 · see docs/TEAM.md"
  }
 ]

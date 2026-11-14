@@ -1,0 +1,196 @@
+"""Far-horizon test: how much of the gap to NASA's LOLA illumination map comes from distant terrain?
+
+The main pipeline casts shadows from the local DEM only (flat, no body curvature), because that is what we can do
+the same way on Earth. Here, for the lunar references only, we rebuild the illumination with:
+  * the LOLA 85°S polar DEM at 40 m (covers ~150 km around each site),
+  * exact 3D geometry on the lunar sphere (curvature included),
+  * real Sun positions: subsolar latitude oscillating ±1.54°, all subsolar longitudes, Sun as a 0.53° disk.
+For each site we compare three variants against the LOLA 18.6-year average illumination (Mazarico et al.):
+  V1 local DEM only, flat      (what the pipeline assumes)
+  V2 local DEM only, curved
+  V3 terrain out to 150 km, curved   (full model)
+Writes data/processed/far_horizons.json and figures/fig7_far_horizons.png.
+"""
+# AI-assisted (Claude, Anthropic); reviewed by the team.
+import sys, json, math, time
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import numpy as np
+import rasterio
+from scipy.ndimage import map_coordinates
+from scipy.stats import spearmanr
+from pen.config import load_config, RAW, PROCESSED, FIGURES, RADIUS_M
+
+R = RADIUS_M["moon"]
+cfg = load_config()
+LDEM = RAW / cfg["auxiliary"]["lola_ldem_85s_40m"]["file"]
+AVG = RAW / cfg["auxiliary"]["lola_avg_illumination_85s"]["file"]
+N, SCALE, OFF = 7584, 40.0, 3791.5          # from the PDS label (LDEM_85S_40M)
+
+SPACING = 240.0          # target-point spacing (m); coarser than the main validation to keep the run ~10 min
+BORDER = 1500.0          # drop 1.5 km at the site edges, same as the main validation
+N_AZ = 72                # horizon azimuths (5°)
+MAX_D = 150_000.0        # horizon search distance (m)
+SUN_DISK = 0.533         # apparent Sun diameter (deg)
+DEC_MAX = 1.54           # lunar subsolar-latitude amplitude (deg)
+
+z_all = np.fromfile(LDEM, dtype="<f4").reshape(N, N).astype(np.float32) * 1000.0  # km → m above 1737.4 km
+
+
+def to_rc(x, y):
+    """Map metres (polar stereographic) → fractional row/col of the LDEM (0-based, pixel centres)."""
+    return OFF - y / SCALE, x / SCALE + OFF
+
+
+def height(x, y):
+    r, c = to_rc(x, y)
+    out = map_coordinates(z_all, [r.ravel(), c.ravel()], order=1, mode="constant", cval=np.nan)
+    return out.reshape(np.shape(x))
+
+
+def unit(x, y):
+    """Unit position vector on the sphere in the map frame (x, y axes = map axes, z = north pole)."""
+    rho = np.hypot(x, y)
+    c = 2 * np.arctan(rho / (2 * R))                     # angular distance from the south pole
+    with np.errstate(invalid="ignore", divide="ignore"):
+        s = np.where(rho > 0, np.sin(c) / rho, 1 / (2 * R))
+    return np.stack([s * x, s * y, -np.cos(c)], axis=-1)
+
+
+# Step distances along each ray: 40 m steps near the observer, growing 0.5 % per step far away
+d = [SCALE]
+while d[-1] < MAX_D:
+    d.append(d[-1] + max(SCALE, 0.005 * d[-1]))
+D = np.array(d)
+
+
+def horizons(x0, y0, z0, bbox=None, curved=True, chunk=1500):
+    """Chunked wrapper (memory: chunk × steps × 3 floats per azimuth)."""
+    return np.concatenate([_horizons(x0[i:i + chunk], y0[i:i + chunk], z0[i:i + chunk], bbox, curved)
+                           for i in range(0, len(x0), chunk)])
+
+
+def _horizons(x0, y0, z0, bbox=None, curved=True):
+    """Horizon elevation angle (deg) for each target point and each of N_AZ map azimuths.
+    bbox=(left, bottom, right, top) limits terrain to the site footprint (the 'local DEM only' variants)."""
+    Dk = D if bbox is None else D[D <= math.hypot(bbox[2] - bbox[0], bbox[3] - bbox[1])]
+    P_u = unit(x0, y0)                                       # (n, 3)
+    P = P_u * (R + z0)[:, None]
+    H = np.full((len(x0), N_AZ), -90.0, np.float32)
+    for k in range(N_AZ):
+        a = 2 * math.pi * k / N_AZ
+        qx = x0[:, None] + Dk[None, :] * math.sin(a)          # azimuth measured clockwise from map +y
+        qy = y0[:, None] + Dk[None, :] * math.cos(a)
+        zq = height(qx, qy)
+        if bbox is not None:
+            l, b, r_, t = bbox
+            zq = np.where((qx >= l) & (qx <= r_) & (qy >= b) & (qy <= t), zq, np.nan)
+        if curved:
+            Q = unit(qx, qy) * (R + zq)[..., None]
+            v = Q - P[:, None, :]
+            sin_e = np.einsum("nkc,nc->nk", v, P_u) / np.linalg.norm(v, axis=-1)
+            e = np.degrees(np.arcsin(np.clip(sin_e, -1, 1)))
+        else:
+            e = np.degrees(np.arctan2(zq - z0[:, None], Dk[None, :]))
+        H[:, k] = np.nanmax(np.where(np.isfinite(e), e, -90.0), axis=1)
+    return H
+
+
+def sun_visibility(x0, y0, H):
+    """Mean visible fraction of the Sun disk over subsolar latitudes (±1.54°) and all subsolar longitudes."""
+    U = unit(x0, y0)
+    eps = 1.0
+    T0 = unit(x0, y0 + eps) - U; T0 -= (T0 * U).sum(1, keepdims=True) * U; T0 /= np.linalg.norm(T0, axis=1, keepdims=True)
+    T90 = unit(x0 + eps, y0) - U; T90 -= (T90 * U).sum(1, keepdims=True) * U; T90 /= np.linalg.norm(T90, axis=1, keepdims=True)
+    decs = DEC_MAX * np.sin(2 * np.pi * np.arange(24) / 24)
+    lons = np.radians(np.arange(0, 360, 5))
+    vis = np.zeros(len(x0))
+    n = 0
+    az_grid = np.arange(N_AZ + 1) * 360 / N_AZ
+    Hc = np.concatenate([H, H[:, :1]], axis=1)                 # wrap 360° = 0°
+    for dec in np.radians(decs):
+        for L in lons:
+            # Moon-fixed Sun direction (X=cosφcosλ, Y=cosφsinλ, Z=sinφ); the map frame swaps X and Y (x = ρ sinλ)
+            S = np.array([math.cos(dec) * math.sin(L), math.cos(dec) * math.cos(L), math.sin(dec)])
+            e = np.degrees(np.arcsin(U @ S))
+            Hh = S[None, :] - (U @ S)[:, None] * U
+            az = np.degrees(np.arctan2((Hh * T90).sum(1), (Hh * T0).sum(1))) % 360   # clockwise from map +y
+            idx = az / (360 / N_AZ); i0 = np.floor(idx).astype(int); f = idx - i0
+            h = Hc[np.arange(len(x0)), i0] * (1 - f) + Hc[np.arange(len(x0)), i0 + 1] * f
+            vis += np.clip((e - h) / SUN_DISK + 0.5, 0, 1)
+            n += 1
+    return vis / n
+
+
+def avgvisib_at(x, y):
+    with rasterio.open(AVG) as src:
+        a = src.read(1).astype(np.float32)
+        if src.nodata is not None:
+            a[a == src.nodata] = np.nan
+        a = a * (src.scales[0] or 1.0) + (src.offsets[0] or 0.0)   # stored as int16 × 4e-5 → fraction of time lit
+        inv = ~src.transform
+        cols, rows = inv * (x, y)
+    return map_coordinates(a, [rows - 0.5, cols - 0.5], order=1, mode="constant", cval=np.nan)
+
+
+if __name__ == "__main__":
+    t0 = time.time()
+    out = {}
+    prev = json.load(open(PROCESSED / "validation.json")) if (PROCESSED / "validation.json").exists() else {}
+    maps = {}
+    for sid, s in cfg["sites"].items():
+        if s["body"] != "moon" or s["role"] != "reference":
+            continue
+        with rasterio.open(RAW / s["file"]) as src:
+            b = src.bounds
+        xs = np.arange(b.left + BORDER, b.right - BORDER + 1, SPACING)
+        ys = np.arange(b.bottom + BORDER, b.top - BORDER + 1, SPACING)
+        X, Y = np.meshgrid(xs, ys[::-1])
+        x0, y0 = X.ravel(), Y.ravel()
+        z0 = height(x0, y0)
+        ref = avgvisib_at(x0, y0)
+        ok = np.isfinite(z0) & np.isfinite(ref)
+        x0, y0, z0, ref = x0[ok], y0[ok], z0[ok], ref[ok]
+        bbox = (b.left, b.bottom, b.right, b.top)
+        res = {}
+        for name, kw in [("V1_local_flat", dict(bbox=bbox, curved=False)),
+                         ("V2_local_curved", dict(bbox=bbox, curved=True)),
+                         ("V3_far_curved", dict(bbox=None, curved=True))]:
+            H = horizons(x0, y0, z0, **kw)
+            lit = sun_visibility(x0, y0, H)
+            rho = float(spearmanr(lit, ref)[0])
+            mae = float(np.mean(np.abs(lit - ref)))
+            res[name] = dict(spearman_rho=round(rho, 3), mean_abs_error=round(mae, 3), bias=round(float(np.mean(lit - ref)), 3))
+            if name == "V3_far_curved":
+                maps[sid] = (X.shape, ok, lit, ref)
+            print(f"{sid:24s} {name:16s} ρ = {rho:.3f}   MAE = {mae:.3f}   ({time.time()-t0:.0f}s)", flush=True)
+        out[sid] = dict(label=s["label"], n_points=int(ok.sum()), pipeline_rho=prev.get(sid, {}).get("spearman_rho"), **res)
+    json.dump(dict(sites=out, settings=dict(spacing_m=SPACING, border_m=BORDER, n_azimuths=N_AZ, max_distance_m=MAX_D,
+                                            sun_disk_deg=SUN_DISK, subsolar_lat_amplitude_deg=DEC_MAX,
+                                            dem="LOLA LDEM_85S_40M (PDS)")),
+              open(PROCESSED / "far_horizons.json", "w"), indent=1)
+
+    # ---- figure: rho per site and variant
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    SURF, INK, INK2 = "#fcfcfb", "#0b0b0b", "#52514e"
+    COL = ["#c9c8c2", "#86b6ef", "#1c5cab"]
+    names = {"V1_local_flat": "local DEM, flat", "V2_local_curved": "local DEM, curved", "V3_far_curved": "150 km of terrain, curved"}
+    sites = list(out)
+    fig, ax = plt.subplots(figsize=(9, 4.2), facecolor=SURF); ax.set_facecolor(SURF)
+    w = 0.26
+    for k, v in enumerate(names):
+        vals = [out[s][v]["spearman_rho"] for s in sites]
+        bars = ax.bar(np.arange(len(sites)) + (k - 1) * w, vals, w - 0.02, color=COL[k], label=names[v])
+        for bx, val in zip(bars, vals):
+            ax.text(bx.get_x() + bx.get_width() / 2, val + 0.01, f"{val:.2f}", ha="center", fontsize=8.5, color=INK2)
+    ax.set_xticks(range(len(sites)), [out[s]["label"].split("·")[1].split("(")[0].strip() for s in sites])
+    ax.set_ylim(0, 1.05); ax.set_ylabel("Spearman ρ vs NASA LOLA illumination")
+    for sp in ["top", "right"]: ax.spines[sp].set_visible(False)
+    ax.grid(axis="y", color="#e8e7e2", lw=0.8); ax.set_axisbelow(True)
+    ax.legend(frameon=False, fontsize=9, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
+    fig.suptitle("Distant horizons close the gap: our light model vs NASA LOLA illumination", x=0.02, ha="left",
+                 fontsize=12.5, color=INK, fontweight="bold")
+    fig.tight_layout(rect=(0, 0, 1, 0.95)); fig.savefig(FIGURES / "fig7_far_horizons.png", dpi=150)
+    print("done", round(time.time() - t0), "s")

@@ -12,6 +12,7 @@ import streamlit as st
 from pen.config import load_config, PROCESSED, FIGURES
 from pen.features import DIMENSIONS
 from pen.scoring import explain, FEATURE_LABELS
+from pen.eonet import events_near, parse as eonet_parse
 
 st.set_page_config(page_title="P.E.N. · Planetary Environmental Navigator", page_icon="🌗", layout="wide")
 cfg = load_config()
@@ -48,10 +49,25 @@ def load():
     known = json.load(open(PROCESSED / "known_analogs.json")) if (PROCESSED / "known_analogs.json").exists() else None
     countries = json.load(open(ASSETS / "countries_110m.geojson"))
     div = json.load(open(PROCESSED / "diviner.json")) if (PROCESSED / "diviner.json").exists() else None
-    return win, res, val, known, countries, div
+    far = json.load(open(PROCESSED / "far_horizons.json")) if (PROCESSED / "far_horizons.json").exists() else None
+    real = json.load(open(PROCESSED / "thumbs" / "real_credits.json")) if (PROCESSED / "thumbs" / "real_credits.json").exists() else {}
+    snap = json.load(open(PROCESSED / "eonet_snapshot.json")) if (PROCESSED / "eonet_snapshot.json").exists() else None
+    return win, res, val, known, countries, div, far, real, snap
 
 
-win, res, val, known, countries, div = load()
+win, res, val, known, countries, div, far, real, snap = load()
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def field_events(lat, lon, site):
+    """Open NASA EONET events within 150 km: live if possible, else the committed snapshot (with its date)."""
+    import os
+    live = None if os.environ.get("PEN_OFFLINE") else events_near(lat, lon, 150)
+    if live is not None:
+        return live, "live"
+    if snap and site in snap["events"]:
+        return eonet_parse({"events": snap["events"][site]}, lat, lon, 150), f"snapshot {snap['taken_utc']} UTC"
+    return None, "unavailable"
 
 
 def cant_reproduce(ref, body):
@@ -100,7 +116,10 @@ best = df.iloc[0] if len(df) else None
 target = label(ref).split("·")[1].split("(")[0].strip()
 v = val.get(ref)
 badges = ["NASA LRO · LOLA", "NASA LRO · Diviner", "NASA MRO · CTX", "ESA Copernicus DEM"]
-if v:
+fv = (far or {}).get("sites", {}).get(ref, {}).get("V3_far_curved")
+if fv:
+    badges.insert(0, f"Light model vs NASA LOLA · ρ = {fv['spearman_rho']:.2f}")
+elif v:
     badges.insert(0, f"Light model validated vs LOLA · ρ = {v['spearman_rho']:.2f}")
 st.markdown(f"""<div class="pen-hero"><h1>P.E.N.</h1>
 <div class="sub">Planetary Environmental Navigator · Earth analogs for the Moon Base and Mars, by terrain <b>and</b> low-Sun light</div>
@@ -186,7 +205,8 @@ with tab_card:
     else:
         opts = df.head(10).reset_index(drop=True)
         k = st.selectbox("Earth window", range(len(opts)),
-                         format_func=lambda n: f"#{n+1} · {short(opts.site[n])} · {opts.score[n]:.0f}/100")
+                         format_func=lambda n: f"#{n+1} · {short(opts.site[n])} · {opts.score[n]:.0f}/100",
+                         key=f"earth_window_{ref}")
         r = opts.iloc[k]
         p1, p2 = st.columns(2)
         ref_img, win_img = THUMBS / f"ref__{ref}.png", THUMBS / f"{r.site}_{int(r.i)}_{int(r.j)}.png"
@@ -196,6 +216,22 @@ with tab_card:
             p2.image(str(win_img), caption=f"{short(r.site)} ({r.lat:.3f}, {r.lon:.3f}) · same Sun, same scale", width="stretch")
         elif ref_img.exists():
             p2.info("Low-Sun preview not precomputed for this window (run scripts/make_thumbnails.py).")
+        wid = f"{r.site}_{int(r.i)}_{int(r.j)}"
+        ref_real, win_real = THUMBS / f"real__ref__{ref}.jpg", THUMBS / f"real__{wid}.jpg"
+        if ref_real.exists() or win_real.exists():
+            q1, q2 = st.columns(2)
+            if ref_real.exists():
+                q1.image(str(ref_real), caption=f"Real view · {real.get('ref__' + ref, 'NASA imagery')}", width="stretch")
+            if win_real.exists():
+                q2.image(str(win_real), caption=f"Real view · {real.get(wid, 'NASA imagery')}", width="stretch")
+            st.caption("Same 6 km windows, reprojected onto the same grid as the previews above, from NASA APIs "
+                       "(Moon/Mars Trek WMTS and GIBS, api.nasa.gov).")
+        evs, how = field_events(round(float(r.lat), 3), round(float(r.lon), 3), r.site)
+        if evs:
+            lines = "\n".join(f"- **{e['title']}** ({e['category']}, {e['date']}, ~{e['distance_km']} km away)" for e in evs[:4])
+            st.warning(f"🛰️ **Field safety · NASA EONET ({how}):** {len(evs)} open natural event(s) within 150 km\n\n{lines}")
+        elif evs is not None:
+            st.success(f"🛰️ **Field safety · NASA EONET ({how}):** no open natural events within 150 km.")
         d = {f: r[f"d_{f}"] for ks in DIMENSIONS.values() for f in ks if f"d_{f}" in r}
         similar, differs = explain(d, FEATURE_LABELS)
         a, b, c = st.columns(3)
@@ -226,6 +262,20 @@ with tab_val:
     f4 = FIGURES / "fig4_illumination_validation.png"
     if f4.exists():
         st.image(str(f4))
+    f7 = FIGURES / "fig7_far_horizons.png"
+    if far and f7.exists():
+        st.markdown("**Where the remaining gap comes from.** Away from the pole, the Sun is hidden by mountains tens of "
+                    "kilometres away. Re-computing the light with NASA's 40 m polar DEM out to 150 km, on the curved "
+                    "lunar surface and with real Sun positions, brings the agreement to:")
+        rows = [dict(site=label(k).split("·")[1].split("(")[0].strip(),
+                     **{"local DEM (ρ)": vv["V1_local_flat"]["spearman_rho"],
+                        "150 km horizons (ρ)": vv["V3_far_curved"]["spearman_rho"],
+                        "error, lit fraction": f"±{vv['V3_far_curved']['mean_abs_error']:.3f}"})
+                for k, vv in far["sites"].items()]
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+        st.image(str(f7))
+        st.caption("Scoring still uses local windows on both bodies, so Moon and Earth are treated the same way; "
+                   "this test shows the light model itself is right once distant terrain is included.")
     if known:
         st.subheader("2 · Does it rediscover known analog sites?")
         s = known["summary"]
@@ -233,8 +283,9 @@ with tab_val:
                  f"percentile** in illumination and **{s['median_percentile_terrain_best']:.0f}th** in terrain (median of "
                  f"{s['n_tests']} site × target tests; 50 = random).")
         st.success("**Blind rediscovery:** Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar "
-                   "prospecting mission in 2012 (PISCES ISRU field test), is the **#1 of 10,424** Earth windows for "
-                   "Malapert and **#23** for Connecting Ridge. P.E.N. was never told about it.")
+                   "prospecting mission in 2012 (PISCES ISRU field test), ranks **#1 of 10,424** Earth windows for "
+                   "Malapert and stays in the **top 0.2 %** for all four Moon Base sites (#9 Nobile Rim 1, #19 de Gerlache, "
+                   "#23 Connecting Ridge). P.E.N. was never told about it.")
         st.caption("Sites chosen for other reasons rank lower, as they should: Meteor Crater is an impact-geology analog and "
                    "University Valley a dry-permafrost (thermal) analog, not terrain-and-light analogs.")
         kt = pd.DataFrame(known["rows"])[["reference", "site", "score_combined_pct_best", "score_terrain_pct_best", "score_illumination_pct_best"]]
@@ -245,14 +296,14 @@ with tab_val:
     if f5.exists():
         st.subheader("3 · How robust is the ranking?")
         st.image(str(f5))
-        st.caption("Re-weighting illumination 0.5–2× keeps 8–10 of the top 10 for three targets (5–10 for Malapert); the "
+        st.caption("Re-weighting illumination 0.5–2× keeps 8–10 of the top 10 for five of six targets (5–10 for Malapert); the "
                    "window size (3/6/12 km) changes rankings much more — reported, not hidden.")
 
     f6 = FIGURES / "fig6_diviner.png"
     if div and f6.exists():
         st.subheader("4 · Where Earth stops being an analog")
-        st.write("Analogs reproduce terrain and light, not lunar polar temperature. LRO Diviner measurements show both "
-                 "reference sites sit almost entirely below Earth's coldest recorded temperature, with water ice stable "
+        st.write("Analogs reproduce terrain and light, not lunar polar temperature. LRO Diviner measurements show all four "
+                 "lunar sites average below Earth's coldest recorded temperature over 88–100 % of their area, with water ice stable "
                  "just under the surface. P.E.N. says so on every analog card instead of overselling the match.")
         st.image(str(f6))
 
@@ -260,5 +311,5 @@ with tab_about:
     st.markdown((ROOT / "docs" / "METHOD.md").read_text(encoding="utf-8"))
 
 st.markdown('<div class="pen-foot">P.E.N. · Pollones en Fuga · NASA Space Apps Challenge 2026 · Data: NASA LRO/LOLA (GSFC PGDA), '
-            'NASA LRO Diviner (PDS Geosciences), NASA MRO CTX DTMs (USGS Astrogeology), ESA Copernicus DEM GLO-30, Natural Earth. Code MIT. '
+            'NASA LRO Diviner (PDS Geosciences), NASA Moon/Mars Trek WMTS, NASA GIBS, NASA EONET, NASA MRO CTX DTMs (USGS Astrogeology), ESA Copernicus DEM GLO-30, Natural Earth. Code MIT. '
             'Built with AI assistance (see README → Use of AI).</div>', unsafe_allow_html=True)

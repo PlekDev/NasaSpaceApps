@@ -3,6 +3,14 @@
   "spearman_rho": 0.861,
   "n_pixels": 17167
  },
+ "moon_nobile_rim1": {
+  "spearman_rho": 0.605,
+  "n_pixels": 27081
+ },
+ "moon_de_gerlache_rim": {
+  "spearman_rho": 0.54,
+  "n_pixels": 16940
+ },
  "moon_malapert": {
   "spearman_rho": 0.548,
   "n_pixels": 22500

@@ -32,6 +32,14 @@
    8,
    7
   ],
+  "moon_de_gerlache_rim": [
+   10,
+   10,
+   10,
+   10,
+   10,
+   9
+  ],
   "moon_malapert": [
    3,
    3,
@@ -39,6 +47,14 @@
    10,
    9,
    8
+  ],
+  "moon_nobile_rim1": [
+   10,
+   10,
+   10,
+   10,
+   10,
+   10
   ]
  },
  "top_region": {
@@ -66,9 +82,25 @@
    "earth_hawaii_mauna_kea",
    "earth_hawaii_mauna_kea"
   ],
+  "moon_de_gerlache_rim": [
+   "earth_hawaii_mauna_kea",
+   "earth_hawaii_mauna_kea",
+   "earth_hawaii_mauna_kea",
+   "earth_hawaii_mauna_kea",
+   "earth_hawaii_mauna_kea",
+   "earth_hawaii_mauna_kea"
+  ],
   "moon_malapert": [
    "earth_mx_serdan_oriental",
    "earth_mx_serdan_oriental",
+   "earth_hawaii_mauna_kea",
+   "earth_hawaii_mauna_kea",
+   "earth_hawaii_mauna_kea",
+   "earth_hawaii_mauna_kea"
+  ],
+  "moon_nobile_rim1": [
+   "earth_hawaii_mauna_kea",
+   "earth_hawaii_mauna_kea",
    "earth_hawaii_mauna_kea",
    "earth_hawaii_mauna_kea",
    "earth_hawaii_mauna_kea",
@@ -124,6 +156,106 @@
     "earth_iceland_askja": 0,
     "earth_atacama_yungay": 3,
     "earth_hawaii_mauna_kea": 0
+   }
+  },
+  "moon_nobile_rim1": {
+   "3": {
+    "earth_pinacate": 0,
+    "earth_cuatrocienegas": 0,
+    "earth_haughton": 0,
+    "earth_sfvf": 0,
+    "earth_mx_chichinautzin": 0,
+    "earth_mx_valle_santiago": 0,
+    "earth_mx_serdan_oriental": 0,
+    "earth_mx_ceboruco": 0,
+    "earth_svalbard_bockfjorden": 0,
+    "earth_axel_heiberg": 0,
+    "earth_antarctica_university_valley": 0,
+    "earth_iceland_askja": 0,
+    "earth_atacama_yungay": 0,
+    "earth_hawaii_mauna_kea": 10
+   },
+   "6": {
+    "earth_pinacate": 0,
+    "earth_cuatrocienegas": 0,
+    "earth_haughton": 0,
+    "earth_sfvf": 0,
+    "earth_mx_chichinautzin": 0,
+    "earth_mx_valle_santiago": 0,
+    "earth_mx_serdan_oriental": 0,
+    "earth_mx_ceboruco": 0,
+    "earth_svalbard_bockfjorden": 0,
+    "earth_axel_heiberg": 0,
+    "earth_antarctica_university_valley": 0,
+    "earth_iceland_askja": 0,
+    "earth_atacama_yungay": 0,
+    "earth_hawaii_mauna_kea": 10
+   },
+   "12": {
+    "earth_pinacate": 0,
+    "earth_cuatrocienegas": 0,
+    "earth_haughton": 0,
+    "earth_sfvf": 0,
+    "earth_mx_chichinautzin": 1,
+    "earth_mx_valle_santiago": 0,
+    "earth_mx_serdan_oriental": 5,
+    "earth_mx_ceboruco": 2,
+    "earth_svalbard_bockfjorden": 0,
+    "earth_axel_heiberg": 0,
+    "earth_antarctica_university_valley": 0,
+    "earth_iceland_askja": 0,
+    "earth_atacama_yungay": 0,
+    "earth_hawaii_mauna_kea": 2
+   }
+  },
+  "moon_de_gerlache_rim": {
+   "3": {
+    "earth_pinacate": 0,
+    "earth_cuatrocienegas": 0,
+    "earth_haughton": 0,
+    "earth_sfvf": 0,
+    "earth_mx_chichinautzin": 0,
+    "earth_mx_valle_santiago": 0,
+    "earth_mx_serdan_oriental": 0,
+    "earth_mx_ceboruco": 0,
+    "earth_svalbard_bockfjorden": 0,
+    "earth_axel_heiberg": 0,
+    "earth_antarctica_university_valley": 0,
+    "earth_iceland_askja": 0,
+    "earth_atacama_yungay": 0,
+    "earth_hawaii_mauna_kea": 10
+   },
+   "6": {
+    "earth_pinacate": 0,
+    "earth_cuatrocienegas": 0,
+    "earth_haughton": 0,
+    "earth_sfvf": 0,
+    "earth_mx_chichinautzin": 0,
+    "earth_mx_valle_santiago": 0,
+    "earth_mx_serdan_oriental": 0,
+    "earth_mx_ceboruco": 0,
+    "earth_svalbard_bockfjorden": 0,
+    "earth_axel_heiberg": 0,
+    "earth_antarctica_university_valley": 0,
+    "earth_iceland_askja": 0,
+    "earth_atacama_yungay": 0,
+    "earth_hawaii_mauna_kea": 10
+   },
+   "12": {
+    "earth_pinacate": 0,
+    "earth_cuatrocienegas": 0,
+    "earth_haughton": 0,
+    "earth_sfvf": 0,
+    "earth_mx_chichinautzin": 0,
+    "earth_mx_valle_santiago": 0,
+    "earth_mx_serdan_oriental": 4,
+    "earth_mx_ceboruco": 1,
+    "earth_svalbard_bockfjorden": 0,
+    "earth_axel_heiberg": 0,
+    "earth_antarctica_university_valley": 0,
+    "earth_iceland_askja": 0,
+    "earth_atacama_yungay": 0,
+    "earth_hawaii_mauna_kea": 5
    }
   },
   "moon_malapert": {

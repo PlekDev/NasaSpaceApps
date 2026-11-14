@@ -21,6 +21,20 @@ sites:
     file: Site01_final_adj_5mpp_surf.tif
     url: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_surf.tif
     source: "NASA GSFC PGDA — High-Resolution LOLA Topography for Lunar South Pole Sites (product 78)"
+  moon_nobile_rim1:
+    role: reference
+    body: moon
+    label: "Moon · Nobile Rim 1 (LOLA Site06, Artemis candidate region)"
+    file: Site06_final_adj_5mpp_surf.tif
+    url: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site06/Site06_final_adj_5mpp_surf.tif
+    source: "NASA GSFC PGDA — High-Resolution LOLA Topography for Lunar South Pole Sites (product 78)"
+  moon_de_gerlache_rim:
+    role: reference
+    body: moon
+    label: "Moon · de Gerlache Rim (LOLA Site11)"
+    file: Site11_final_adj_5mpp_surf.tif
+    url: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site11/Site11_final_adj_5mpp_surf.tif
+    source: "NASA GSFC PGDA — High-Resolution LOLA Topography for Lunar South Pole Sites (product 78)"
   moon_malapert:
     role: reference
     body: moon
@@ -159,6 +173,11 @@ auxiliary:
     filter_lat_max: -84   # download_data.py streams the 605 MB table and keeps only these rows and 5 columns
     note: "Filtered to lat <= -84 (columns clon, clat, temp_avg, temp_max, ice_depth)"
     source: "NASA PDS Geosciences — LRO Diviner polar resource product (Paige et al.)"
+  lola_ldem_85s_40m:
+    file: ldem_85s_40m_float.img
+    url: https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/float_img/ldem_85s_40m_float.img
+    note: "7584 x 7584 little-endian float32, km above 1737.4 km, polar stereographic, 40 m (only used by validate_far_horizons.py)"
+    source: "NASA PDS Geosciences — LRO LOLA gridded polar DEM (LDEM_85S_40M)"
   lola_permanent_shadow_85s:
     file: LPSR_85S_060M_201608.TIF
     url: https://pgda.gsfc.nasa.gov/data/MoonIllumination/LPSR_85S_060M_201608.TIF

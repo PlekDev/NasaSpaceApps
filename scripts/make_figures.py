@@ -76,6 +76,7 @@ fig.tight_layout(rect=(0, 0.02, 1, 0.96)); fig.savefig(FIGURES / "fig1_low_sun_s
 dims = [c for c in summ.columns if c.startswith("score_") and c != "score_combined"] + ["score_combined"]
 order = sorted(CANDS, key=lambda c: -summ[summ.site == c]["score_combined"].mean())
 RLAB = {"moon_connecting_ridge": "Moon\nConn. Ridge", "moon_malapert": "Moon\nMalapert",
+        "moon_nobile_rim1": "Moon\nNobile R1", "moon_de_gerlache_rim": "Moon\nde Gerlache",
         "mars_arcadia": "Mars\nArcadia", "mars_jezero": "Mars\nJezero"}
 fig, axs = plt.subplots(1, len(dims), figsize=(3.6 * len(dims) + 2.4, 0.42 * len(order) + 2.2), sharey=True)
 for ax, key in zip(axs, dims):

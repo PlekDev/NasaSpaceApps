@@ -1,0 +1,93 @@
+{
+ "sites": {
+  "moon_connecting_ridge": {
+   "label": "Moon \u00b7 Shackleton Connecting Ridge (LOLA Site01)",
+   "n_points": 3025,
+   "pipeline_rho": 0.861,
+   "V1_local_flat": {
+    "spearman_rho": 0.881,
+    "mean_abs_error": 0.049,
+    "bias": 0.037
+   },
+   "V2_local_curved": {
+    "spearman_rho": 0.881,
+    "mean_abs_error": 0.05,
+    "bias": 0.039
+   },
+   "V3_far_curved": {
+    "spearman_rho": 0.92,
+    "mean_abs_error": 0.032,
+    "bias": -0.007
+   }
+  },
+  "moon_nobile_rim1": {
+   "label": "Moon \u00b7 Nobile Rim 1 (LOLA Site06, Artemis candidate region)",
+   "n_points": 5041,
+   "pipeline_rho": 0.605,
+   "V1_local_flat": {
+    "spearman_rho": 0.737,
+    "mean_abs_error": 0.076,
+    "bias": 0.064
+   },
+   "V2_local_curved": {
+    "spearman_rho": 0.74,
+    "mean_abs_error": 0.076,
+    "bias": 0.066
+   },
+   "V3_far_curved": {
+    "spearman_rho": 0.987,
+    "mean_abs_error": 0.02,
+    "bias": -0.018
+   }
+  },
+  "moon_de_gerlache_rim": {
+   "label": "Moon \u00b7 de Gerlache Rim (LOLA Site11)",
+   "n_points": 3025,
+   "pipeline_rho": 0.54,
+   "V1_local_flat": {
+    "spearman_rho": 0.701,
+    "mean_abs_error": 0.103,
+    "bias": 0.098
+   },
+   "V2_local_curved": {
+    "spearman_rho": 0.702,
+    "mean_abs_error": 0.103,
+    "bias": 0.099
+   },
+   "V3_far_curved": {
+    "spearman_rho": 0.969,
+    "mean_abs_error": 0.027,
+    "bias": -0.025
+   }
+  },
+  "moon_malapert": {
+   "label": "Moon \u00b7 Malapert Massif (LOLA Site23)",
+   "n_points": 5776,
+   "pipeline_rho": 0.548,
+   "V1_local_flat": {
+    "spearman_rho": 0.552,
+    "mean_abs_error": 0.063,
+    "bias": 0.051
+   },
+   "V2_local_curved": {
+    "spearman_rho": 0.551,
+    "mean_abs_error": 0.063,
+    "bias": 0.053
+   },
+   "V3_far_curved": {
+    "spearman_rho": 0.975,
+    "mean_abs_error": 0.023,
+    "bias": -0.021
+   }
+  }
+ },
+ "settings": {
+  "spacing_m": 240.0,
+  "border_m": 1500.0,
+  "n_azimuths": 72,
+  "max_distance_m": 150000.0,
+  "sun_disk_deg": 0.533,
+  "subsolar_lat_amplitude_deg": 1.54,
+  "dem": "LOLA LDEM_85S_40M (PDS)"
+ }
+}

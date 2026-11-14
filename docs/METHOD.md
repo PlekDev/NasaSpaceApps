@@ -34,9 +34,10 @@ difference is divided by the inter-quartile range of all Earth windows at that s
 37 means one IQR apart on average. The app lets users re-weight dimensions.
 
 **5. Validation of illumination.** For each lunar site we compute the lit fraction with the Sun at 0.5°, 1.5° and
-2.5° over 16 azimuths. We compare it with the official LOLA 18.6-year average-illumination map (Mazarico et al.
-2011) resampled to the same grid, excluding a 1.5 km border and sampling every 120 m. Spearman ρ = 0.86 at
-Connecting Ridge and ρ = 0.55 at Malapert.
+2.5° over 17 azimuths (every 22°). We compare it with the official LOLA 18.6-year average-illumination map
+(Mazarico et al. 2011) resampled to the same grid, excluding a 1.5 km border and sampling every 120 m. With the
+local DEM only, Spearman ρ = 0.86 at Connecting Ridge, 0.61 at Nobile Rim 1, 0.54 at de Gerlache Rim and 0.55 at
+Malapert; the far-horizon test below raises this to 0.92–0.99.
 
 **6. Analog in time.** Hours per day with solar elevation between 0° and 7° at each Earth site's latitude, by
 month. This uses a standard declination and hour-angle formula without refraction.
@@ -46,14 +47,19 @@ the LRO Diviner polar resource product (Paige et al.): average and maximum surfa
 the site where water ice is thermally stable at the surface or within 1 m. These numbers feed the "Earth can't
 reproduce" panel of every analog card. They are not scored, because no Earth layer has a comparable meaning.
 
-**Known-analog test.** `scripts/validate_known_analogs.py` takes 8 classic analog sites that fall inside our
-regions (Meteor Crater, SP Crater, Pinacate Peaks, Haughton, Pu'u Hiwahine on Mauna Kea, Askja, Yungay and
-University Valley) and reports the percentile of the windows containing them among all Earth windows.
+**Far-horizon test (Moon only).** `scripts/validate_far_horizons.py` recomputes illumination for the lunar
+references with the LOLA 85°S 40 m DEM, horizons traced to 150 km in exact 3D on the lunar sphere, and 1,728 real
+Sun positions (subsolar latitude ±1.54°, Sun as a 0.53° disk). Against the LOLA average-illumination map, ρ rises
+from 0.55–0.88 (local DEM) to 0.92–0.99 (150 km), and the mean error falls to 2–3 percentage points of lit time.
+
+**Known-analog test.** `scripts/validate_known_analogs.py` takes 10 classic analog sites that fall inside our
+regions (Meteor Crater, SP Crater, Cinder Lake Crater Field, Pinacate Peaks, Haughton crater, the HMP Research
+Station, Pu'u Hiwahine on Mauna Kea, Askja, Yungay and University Valley) and reports the percentile of the windows containing them among all Earth windows.
 
 ### Limitations
 
-- **Local horizons only.** There is no body curvature and no terrain outside the DEM. Far mountains shape polar
-  lunar light, which explains the lower ρ at Malapert. Fix: compute on a larger DEM and crop afterwards.
+- **Local horizons in scoring.** Scoring uses the site DEM only, on both bodies. The far-horizon test shows that
+  distant mountains explain the lower local ρ (Malapert 0.55 → 0.975 with 150 km of terrain).
 - **Surface model on Earth.** Copernicus includes vegetation and buildings.
 - **Resolution.** 30 m hides boulders and small craters that matter for landing hazards.
 - **Flat-plains degeneracy.** Mars plains match much of Earth's flat terrain. Finer texture, ice or thermal
@@ -71,4 +77,6 @@ University Valley) and reports the percentile of the windows containing them amo
 - Klingelhoefer, G. et al. (2014) — The ISRU field tests 2010 and 2012 at Mauna Kea, Hawaii (NTRS 20140008708).
 - McKay, C. P. et al. (2003) — Temperature and moisture conditions for life in the extreme arid region of the Atacama desert. *Astrobiology*.
 - Marinova, M. M. et al. (2022) — Climate and energy balance of the ground in University Valley, Antarctica. *Antarctic Science*.
+- NASA (2024) — NASA Provides Update on Artemis III Moon Landing Regions (nine candidate regions), Oct 28.
+- USGS (2026) — Cinder Lake Crater Field UAS-derived DEMs 2023 and 2024, doi:10.5066/P13W5FTZ.
 - NASA Moon Base overview: https://www.nasa.gov/reference/moonbase-about/
