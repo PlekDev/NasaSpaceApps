@@ -100,13 +100,14 @@ st.sidebar.markdown("## 🌗 P.E.N.")
 st.sidebar.caption("Planetary Environmental Navigator")
 ref = st.sidebar.selectbox("Moon / Mars target site", refs, format_func=label)
 st.sidebar.markdown("**Weight of each dimension**")
-weights = {d: st.sidebar.slider(d.capitalize(), 0.0, 2.0, 1.0, 0.1) for d in DIMENSIONS}
+active_dims = {d: k for d, k in DIMENSIONS.items() if f"score_{d}" in win.columns}
+weights = {d: st.sidebar.slider(d.capitalize(), 0.0, 2.0, 1.0, 0.1) for d in active_dims}
 regions = st.sidebar.multiselect("Earth regions", cands, default=cands, format_func=short)
 min_score = st.sidebar.slider("Minimum combined score", 0, 100, 60)
 
 df = win[(win.reference == ref) & (win.site.isin(regions))].copy()
-num = sum(weights[d] * len(k) * (-np.log(df[f"score_{d}"] / 100)) ** 2 for d, k in DIMENSIONS.items())
-den = sum(weights[d] * len(k) for d, k in DIMENSIONS.items()) or 1
+num = sum(weights[d] * len(k) * (-np.log(df[f"score_{d}"] / 100)) ** 2 for d, k in active_dims.items())
+den = sum(weights[d] * len(k) for d, k in active_dims.items()) or 1
 df["score"] = (100 * np.exp(-np.sqrt(num / den))).round(1)
 df = df.sort_values("score", ascending=False)
 shown = df[df.score >= min_score].copy()
@@ -156,10 +157,11 @@ with tab_map:
     shown["color"] = shown.score.apply(lambda s: ramp(s, min_score) + [235])
     shown["region"] = shown.site.map(short)
     shown["height"] = (shown.score - min_score + 3) ** 2 * (5000 if view == "3D globe" else 25)
-    tooltip = {"html": "<b>{region}</b><br/>combined <b>{score}</b><br/>terrain {score_terrain} · illumination "
-                       "{score_illumination}<br/>{lat}, {lon}",
+    dim_cols = [f"score_{d}" for d in active_dims]
+    dim_tip = " · ".join(f"{d} {{score_{d}}}" for d in active_dims)
+    tooltip = {"html": f"<b>{{region}}</b><br/>combined <b>{{score}}</b><br/>{dim_tip}<br/>{{lat}}, {{lon}}",
                "style": {"backgroundColor": "#111723", "color": "#f0efec", "fontSize": "12px"}}
-    cols = ["lon", "lat", "score", "score_terrain", "score_illumination", "region", "color", "height", "polygon", "radius"]
+    cols = ["lon", "lat", "score", *dim_cols, "region", "color", "height", "polygon", "radius"]
     labels = pd.DataFrame([dict(name=short(c), lon=res["site_centers"][c][0], lat=res["site_centers"][c][1]) for c in regions])
     shown["radius"] = 14000 + (shown.score - min_score) * 2500
     best_by_region = df.groupby("site").score.max()
@@ -192,11 +194,12 @@ with tab_map:
                         initial_view_state=pdk.ViewState(latitude=float(center.lat), longitude=float(center.lon),
                                                          zoom=8, pitch=45, bearing=-15))
     st.pydeck_chart(deck, height=560)
-    top = df.head(15)[["site", "lat", "lon", "score", "score_terrain", "score_illumination"]].copy()
+    top = df.head(15)[["site", "lat", "lon", "score", *dim_cols]].copy()
     top["site"] = top.site.map(short)
     top[["lat", "lon"]] = top[["lat", "lon"]].round(4)
-    st.dataframe(top.rename(columns={"site": "Earth region", "score": "combined", "score_terrain": "terrain",
-                                     "score_illumination": "illumination"}), hide_index=True, width="stretch")
+    st.dataframe(top.rename(columns={"site": "Earth region", "score": "combined",
+                                     **{f"score_{d}": d for d in active_dims}}),
+                 hide_index=True, width="stretch")
     st.download_button("Download all windows (CSV)", df.drop(columns=["polygon"]).to_csv(index=False),
                        file_name=f"pen_{ref}_windows.csv", mime="text/csv")
 
@@ -233,7 +236,9 @@ with tab_card:
             st.warning(f"🛰️ **Field safety · NASA EONET ({how}):** {len(evs)} open natural event(s) within 150 km\n\n{lines}")
         elif evs is not None:
             st.success(f"🛰️ **Field safety · NASA EONET ({how}):** no open natural events within 150 km.")
-        d = {f: r[f"d_{f}"] for ks in DIMENSIONS.values() for f in ks if f"d_{f}" in r}
+        d = {f: r[f"d_{f}"] for ks in active_dims.values() for f in ks if f"d_{f}" in r}
+        dim_summary = " · ".join(f"**{dim.capitalize()}:** {r[f'score_{dim}']:.0f}/100" for dim in active_dims)
+        st.caption(f"Dimension scores — {dim_summary}")
         similar, differs = explain(d, FEATURE_LABELS)
         a, b, c = st.columns(3)
         a.subheader("✅ Similar in"); a.write("\n".join(f"- {s}" for s in similar) or "—")
@@ -289,10 +294,13 @@ with tab_val:
                    "#23 Connecting Ridge). P.E.N. was never told about it.")
         st.caption("Sites chosen for other reasons rank lower, as they should: Meteor Crater is an impact-geology analog and "
                    "University Valley a dry-permafrost (thermal) analog, not terrain-and-light analogs.")
-        kt = pd.DataFrame(known["rows"])[["reference", "site", "score_combined_pct_best", "score_terrain_pct_best", "score_illumination_pct_best"]]
+        raw_kt = pd.DataFrame(known["rows"])
+        kt_dim_cols = [f"score_{d}_pct_best" for d in DIMENSIONS if f"score_{d}_pct_best" in raw_kt.columns]
+        kt = raw_kt[["reference", "site", "score_combined_pct_best", *kt_dim_cols]].copy()
         kt["reference"] = kt.reference.map(lambda x: label(x).split("(")[0].strip())
-        st.dataframe(kt.rename(columns={"score_combined_pct_best": "combined pct", "score_terrain_pct_best": "terrain pct",
-                                        "score_illumination_pct_best": "illumination pct"}), hide_index=True, width="stretch")
+        st.dataframe(kt.rename(columns={"score_combined_pct_best": "combined pct",
+                                        **{f"score_{d}_pct_best": f"{d} pct" for d in DIMENSIONS}}),
+                     hide_index=True, width="stretch")
     f5 = FIGURES / "fig5_sensitivity.png"
     if f5.exists():
         st.subheader("3 · How robust is the ranking?")
