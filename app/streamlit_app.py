@@ -176,7 +176,7 @@ with tab_map:
                unsafe_allow_html=True)
     shown["color"] = shown[color_col].apply(lambda s: ramp(s, min_score) + [235])
     shown["region"] = shown.site.map(short)
-    shown["height"] = (shown.score - min_score + 3) ** 2 * (5000 if view == "3D globe" else 25)
+    shown["height"] = np.maximum(shown[color_col] - min_score + 3, 1) ** 2 * (5000 if view == "3D globe" else 25)
     dim_cols = [f"score_{d}" for d in active_dims]
     dim_tip = " · ".join(f"{d} {{score_{d}}}" for d in active_dims)
     tooltip = {"html": f"<b>{{region}}</b><br/>combined <b>{{score}}</b><br/>{dim_tip}<br/>{{lat}}, {{lon}}",
@@ -311,10 +311,12 @@ with tab_val:
         st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
         rm = far["sites"].get("moon_malapert", {}).get("ray_reach")
         rn = far["sites"].get("moon_nobile_rim1", {}).get("ray_reach")
+        rl = far["sites"].get("moon_leibnitz_beta", {}).get("ray_reach")
         m_rng = f"{rm['outward_ray_km_min']:.0f}–{rm['outward_ray_km_max']:.0f} km" if rm else "21–39 km"
         n_rng = f"{rn['outward_ray_km_min']:.0f}–{rn['outward_ray_km_max']:.0f} km" if rn else "41–66 km"
-        st.caption(f"Malapert and Nobile Rim 1 sit near the edge of NASA's 85°S DEM: rays toward lower latitudes reach "
-                   f"only {m_rng} and {n_rng}.")
+        l_rng = f"{rl['outward_ray_km_min']:.0f}–{rl['outward_ray_km_max']:.0f} km" if rl else "31–49 km"
+        st.caption(f"Malapert, Nobile Rim 1 and Leibnitz Beta sit near the edge of NASA's 85°S DEM: rays toward lower "
+                   f"latitudes reach only {m_rng}, {n_rng} and {l_rng}.")
         st.image(str(f7))
         st.caption("Scoring still uses local windows on both bodies, so Moon and Earth are treated the same way; "
                    "this test shows the light model itself is right once distant terrain is included.")
@@ -345,12 +347,18 @@ with tab_val:
                    "window size (3/6/12 km) changes rankings much more — reported, not hidden.")
 
     f6 = FIGURES / "fig6_diviner.png"
+    f8 = FIGURES / "fig8_thermal_gap.png"
     if div and f6.exists():
         st.subheader("4 · Where Earth stops being an analog")
         st.write("Analogs reproduce terrain and light, not lunar polar temperature. LRO Diviner measurements show all six "
                  "lunar sites average below Earth's coldest recorded temperature over 88–100 % of their area, with water ice stable "
                  "just under the surface. P.E.N. says so on every analog card instead of overselling the match.")
         st.image(str(f6))
+        if f8.exists():
+            st.image(str(f8))
+            st.caption("Even our coldest Earth analog region (University Valley, 239 K annual mean skin temperature from NASA POWER) "
+                       "is 95–132 K warmer than the six Moon Base sites (107–144 K), while lunar daytime peaks (306–342 K) are within "
+                       "reach of Earth's desert regions (up to 328 K).")
 
 with tab_about:
     st.markdown((ROOT / "docs" / "METHOD.md").read_text(encoding="utf-8"))

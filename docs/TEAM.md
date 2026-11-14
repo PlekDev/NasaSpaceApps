@@ -68,8 +68,8 @@ Checkpoint = 10-minute stand-up: what's done, what's blocked, and what's next.
 ### Aaron — app engineering & deploy
 - ✅ Low-Sun previews in the analog card, CSV download, caching, AppTest smoke test in CI.
 - ✅ NASA APIs (advisor's suggestion): real imagery in the analog card (Moon/Mars Trek WMTS, GIBS) and a live EONET field-safety check with an offline snapshot. None of them needs an API key.
+- ✅ **B2–B3** Colour the map by any dimension; mark the reference sites; make new dimensions in `DIMENSIONS` appear automatically in sliders, card and map (PRs #3, #4, #5).
 - **B1 (top priority)** Deploy `app/streamlit_app.py` to **Streamlit Community Cloud** from `main` (public, no login) and share the URL. Check load time (`windows.csv` is ~16 MB) and that the EONET box says "live" there, not "snapshot".
-- **B2** Colour the map by any dimension; mark the reference sites; make new dimensions in `DIMENSIONS` appear automatically in sliders, card and map.
 - **B4** Final deploy, FortiGuard classification request (see the submission guide), 20–30 s of clean screen capture for Angel.
 
 ### Paul — UI/UX & visual design
