@@ -47,7 +47,7 @@ lunar-pole light: an "analog in time" that tells field teams the best weeks to t
    - Blind rediscovery: Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar prospecting
      mission in 2012, is window #1 of 10,424 for Malapert and in the top 0.2 % for all four Moon Base sites.
      No labels were used.
-   - The light model matches NASA's LOLA illumination map with ρ = 0.92–0.99 once terrain out to 150 km is included
+   - The light model matches NASA's LOLA illumination map with ρ = 0.92–0.99 once terrain up to 150 km away is included
      (mean error 2.0–3.2 percentage points of lit time).
    - Best matches: the four Moon sites ↔ Mauna Kea (79–91), Arcadia Planitia ↔ Atacama near Yungay (96),
      Jezero ↔ Sierra Chichinautzin, Mexico (89). El Pinacate is in the top 3 % for all four Moon Base sites.
@@ -94,3 +94,19 @@ AI-assisted file is marked in its header. No AI-generated images.
 5. **Results** — fig1 side by side + blind rediscovery + top matches (Mauna Kea, Atacama, Chichinautzin; El Pinacate top 3 %)
 6. **Where Earth stops being an analog** — fig6 (Diviner) + analog in time (fig3); app screenshot
 7. **Impact & next steps** — field-test planning, Mexican analogs, thermal/mineral layers, global search
+
+## Judge Q&A: the light validation
+
+Numbers come from `data/processed/far_horizons.json` (`V3_far_curved`) and `data/processed/validation.json`.
+
+**"How do you know your light model is right?"**
+We compared it with NASA's own LOLA illumination map, averaged over 18.6 years: Spearman ρ = 0.92–0.99 at all four
+Moon Base sites, with a mean error of 2.0–3.2 percentage points of lit time.
+
+**"Why does the local model do worse?"**
+Distant mountains. Near the pole the Sun is hidden by terrain tens of kilometres away. Adding NASA's 85°S DEM up to
+150 km closes the gap; lunar curvature alone barely matters.
+
+**"Any caveat?"**
+Two sites, Malapert and Nobile Rim 1, sit near the edge of NASA's DEM, so some rays stop after 21–66 km. They still
+reach ρ ≥ 0.975. Do not say "150 km in every direction".
