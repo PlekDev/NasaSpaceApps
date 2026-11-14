@@ -18,7 +18,8 @@
   "owner_name": "Victor",
   "block": "B2",
   "title": "[B2] Merge B1 PRs, publish pipeline v0.2, sensitivity table + figure",
-  "body": "`make pipeline validate figures`; top-10 changes vs dimension weights and window size (3/6/12 km). Hand the figure to Angel.\n\n**Owner:** Victor · **Block:** B2 · see docs/TEAM.md"
+  "body": "`make pipeline validate figures`; top-10 changes vs dimension weights and window size (3/6/12 km). Hand the figure to Angel.\n\n**Owner:** Victor · **Block:** B2 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "victor",
@@ -39,7 +40,8 @@
   "owner_name": "Diego Lizárraga",
   "block": "B1",
   "title": "[B1] Diviner Polar Resource Product (temp_avg, temp_max, ice_depth) for lunar references",
-  "body": "PDS Geosciences `lro_diviner_derived1/data_derived_prp/dlre_prp_south.tab` (605 MB, 2.88 M triangles). Read in pandas chunks, keep triangles inside each site, rasterise onto the site grid with the same CRS. Listed in the challenge resources.\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md"
+  "body": "PDS Geosciences `lro_diviner_derived1/data_derived_prp/dlre_prp_south.tab` (605 MB, 2.88 M triangles). Read in pandas chunks, keep triangles inside each site, rasterise onto the site grid with the same CRS. Listed in the challenge resources.\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "dlizarraga",
@@ -67,14 +69,16 @@
   "owner_name": "Diego Doña",
   "block": "B1",
   "title": "[B1] Add 6–10 Copernicus tiles (Mexico + high-latitude light analogs + regions other teams flag)",
-  "body": "Mexico: Sierra Chichinautzin, Valle de Santiago, Serdán-Oriental (Alchichica), Ceboruco. High latitude: Svalbard, Axel Heiberg, Antarctic Dry Valleys, Iceland highlands. Also Chersky Range, Prince Charles Mountains, Baffin Island. Verify each tile URL returns 200.\n\n**Owner:** Diego Doña · **Block:** B1 · see docs/TEAM.md"
+  "body": "Mexico: Sierra Chichinautzin, Valle de Santiago, Serdán-Oriental (Alchichica), Ceboruco. High latitude: Svalbard, Axel Heiberg, Antarctic Dry Valleys, Iceland highlands. Also Chersky Range, Prince Charles Mountains, Baffin Island. Verify each tile URL returns 200.\n\n**Owner:** Diego Doña · **Block:** B1 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "ddona",
   "owner_name": "Diego Doña",
   "block": "B2",
   "title": "[B2] Known-analog test: rank percentile of classic analog sites",
-  "body": "Haughton crater centre, SFVF Cinder Lake crater field, Dry Valleys. Target: top 20 %. Our answer to other teams' ROC-AUC.\n\n**Owner:** Diego Doña · **Block:** B2 · see docs/TEAM.md"
+  "body": "Haughton crater centre, SFVF Cinder Lake crater field, Dry Valleys. Target: top 20 %. Our answer to other teams' ROC-AUC.\n\n**Owner:** Diego Doña · **Block:** B2 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "ddona",
@@ -137,7 +141,8 @@
   "owner_name": "Aaron",
   "block": "B1",
   "title": "[B1] Low-Sun preview image of the selected window in the Analog card",
-  "body": "Thumbnails precomputed in the pipeline with `lowsun_hillshade` (coordinate with Victor).\n\n**Owner:** Aaron · **Block:** B1 · see docs/TEAM.md"
+  "body": "Thumbnails precomputed in the pipeline with `lowsun_hillshade` (coordinate with Victor).\n\n**Owner:** Aaron · **Block:** B1 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "aaron",
@@ -165,7 +170,8 @@
   "owner_name": "Paul",
   "block": "B1",
   "title": "[B1] UI redesign plan: layout, colour/type system, agree changes with Aaron",
-  "body": "**Owner:** Paul · **Block:** B1 · see docs/TEAM.md"
+  "body": "**Owner:** Paul · **Block:** B1 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "paul",
@@ -187,5 +193,40 @@
   "block": "B4",
   "title": "[B4] UI polish after freeze; projector legibility check; help Angel lay out slides",
   "body": "**Owner:** Paul · **Block:** B4 · see docs/TEAM.md"
+ },
+ {
+  "owner": "victor",
+  "owner_name": "Victor",
+  "block": "B2",
+  "title": "[B2] Re-run pipeline after data PRs; commit data/processed",
+  "body": "- `make pipeline validate figures extras`\n- Commit `data/processed/` and `figures/`\n- Check README numbers still match\n\n**Owner:** Victor · **Block:** B2 · see docs/TEAM.md"
+ },
+ {
+  "owner": "dlizarraga",
+  "owner_name": "Diego Lizárraga",
+  "block": "B1",
+  "title": "[B1] Sanity-check Diviner numbers against the PDS label",
+  "body": "- Units of temp_avg / temp_max (K) and meaning of ice_depth = −999\n- Confirm the per-site numbers in README and app (`data/processed/diviner.json`)\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "ddona",
+  "owner_name": "Diego Doña",
+  "block": "B1",
+  "title": "[B1] Verify known-site coordinates and add 2–4 more sites inside our tiles",
+  "body": "- One primary source per site (paper, NTRS, agency page)\n- Candidates: Cinder Lake crater field (SFVF), Haughton-Mars Project base camp\n- Edit `KNOWN` in `scripts/validate_known_analogs.py`, re-run it\n\n**Owner:** Diego Doña · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "angel",
+  "owner_name": "Angel",
+  "block": "B1",
+  "title": "[B1] Rewrite the hook around the blind rediscovery (Mauna Kea)",
+  "body": "- Pu'u Hiwahine is #1 of 10,424 windows for Malapert, #23 for Connecting Ridge\n- Then: light validated vs NASA (ρ = 0.86), Diviner limits, Mexico\n- Every number from `data/processed/`\n\n**Owner:** Angel · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "paul",
+  "owner_name": "Paul",
+  "block": "B1",
+  "title": "[B1] Polish the dark UI: globe labels, legend, card spacing, phone check",
+  "body": "- Check globe labels render on a real GPU (headless screenshots may not show them)\n- Keep the colour ramp readable on a projector\n\n**Owner:** Paul · **Block:** B1 · see docs/TEAM.md"
  }
 ]

@@ -9,10 +9,10 @@
 |---|---|---|---|
 | **Victor** | Tech lead & integrator | repo, `pen/` core, merges, sensitivity analysis, final pipeline run, release `v1.0` | `victor/` |
 | **Diego Lizárraga** | Moon & Mars data lead | lunar/Martian references, LRO **Diviner** thermal + ice layer, far-horizon test | `dlizarraga/` |
-| **Diego Doña** | Earth data lead | more Earth regions, known-analog validation test, MODIS/ECOSTRESS temperature, EMIT minerals | `ddona/` |
+| **Diego Doña** | Earth data & validation lead | Earth regions, known-analog validation test, MODIS/ECOSTRESS temperature, EMIT minerals | `ddona/` |
 | **Angel** | Presentation & submission lead | story, 7-slide deck / 30-s video (English), project page, fact-check, final submission | `angel/` |
-| **Aaron** | App engineering & deployment | `app/` logic and data loading, public deploy (Streamlit Community Cloud), performance | `aaron/` |
-| **Paul** | UI/UX & visual design | app layout and look, map legend and colours, analog-card design, visual identity, screenshots and visuals for the deck | `paul/` |
+| **Aaron** | App engineering & deployment | `app/` logic and data loading, public deploy (Streamlit Community Cloud), performance, tests/CI | `aaron/` |
+| **Paul** | UI/UX & visual design | app look (dark theme, globe and map), legend and colours, analog-card design, visual identity, visuals for the deck | `paul/` |
 
 Review pairs: Victor ↔ Aaron · D. Lizárraga ↔ D. Doña · Angel ↔ Paul. Paul and Aaron both work on `app/streamlit_app.py`:
 Paul owns how it looks, Aaron owns how it works. Small PRs and frequent pulls avoid conflicts.
@@ -31,59 +31,49 @@ Checkpoint = 10-minute stand-up: what's done, what's blocked, and what's next.
 | B4 | Sun 12:00–16:00 | Final pipeline run, figures, final deploy, demo recorded | 16:00 |
 | B5 | Sun 16:00–18:00 | Project page filled, every link tested in incognito, **SUBMIT 18:00** | 18:00 |
 
-## Individual plans
+## Individual plans (updated Sat 14:00)
 
-Each line is one GitHub issue (see `docs/issues/issues.json`, created by `scripts/create_issues.sh`).
+✅ = done (in `main` with v0.2). Each open line is one GitHub issue (`docs/issues/issues.json`, created by
+`scripts/create_issues.sh`, which skips the done ones).
 
 ### Victor — tech lead & integrator
-- **B0** Push the repo, invite the team, protect `main` (PR + 1 review), run `scripts/create_issues.sh`, and lead the kickoff.
-- **B1** Generic **raster-layer hook** in `pen/features.py`: any GeoTIFF on the site grid → window stats (mean, P10, P90). This is how thermal, ice and mineral layers plug in. Add tests.
-- **B2** Merge B1 PRs, re-run `make pipeline validate figures`, commit `data/processed` as **v0.2**. **Sensitivity:** how the top 10 changes with dimension weights and window size (3/6/12 km). Produce one table and one figure for Angel's deck.
-- **B3** Integrate the Diviner thermal/ice dimensions into scoring. Final run before the 12:00 freeze. Tag `v1.0`.
-- **B4–B5** Bug fixes only. Make sure the repo is public, the README numbers match the final run, and the license and credits are in place.
+- ✅ v0.2 pipeline run (14 regions), sensitivity analysis (fig5), known-analog test, Diviner context, README with the exact algorithm.
+- **B1** Generic **raster-layer hook** in `pen/features.py`: any GeoTIFF on the site grid → window stats (mean, P10, P90). This is how thermal and mineral layers plug in. Add tests.
+- **B2** Review and merge PRs; re-run `make pipeline validate figures extras` after any data change and commit `data/processed`.
+- **B3** Thermal as a **scored** dimension (Diviner on the Moon vs Diego Doña's MODIS/ECOSTRESS on Earth) if it is ready by 10:00; otherwise keep it as context. Final run before the 12:00 freeze, tag `v1.0`.
+- **B4–B5** Bug fixes only. Repo public, README numbers = final run, license and credits in place.
 
-### Diego Lizárraga — Moon & Mars data lead
-- **B1** **Diviner Polar Resource Product** (named in the challenge resources): `dlre_prp_south.tab` from PDS Geosciences.
-  - It is a 605 MB table of 2.88 M triangles with `temp_avg`, `temp_max` and `ice_depth` (ice-stability depth).
-  - Read it in pandas chunks, keep only the triangles inside each lunar reference site, and rasterise them onto the site grid.
-  - `ice_depth` gives us a new ice dimension, to compare with Earth permafrost.
-- **B2** Add 2–3 lunar references from PGDA product 78 (e.g. Site06 Nobile Rim 1, Site11 de Gerlache Rim) and one Mars reference with buried ice (a Deuteronilus Mensae CTX DTM from the USGS STAC). Re-run.
-- **B3** **Far-horizon test:** compute shadows on a ≥60 km DEM crop around one site, then crop back to the site. Report the new ρ against LOLA, so we can say how much of the Malapert gap (ρ = 0.55) is distant horizons.
-- **B4** Write the Moon/Mars data paragraph for Angel's project page (NASA data used, exact products).
+### Diego Lizárraga — Moon & Mars data
+- ✅ Diviner polar resource product: filtered to lat ≤ −84° (811,652 facets) and summarised per lunar site (fig6).
+- **B1** Sanity-check the Diviner numbers in the README and app (units, `ice_depth` = −999 meaning) against the PDS label.
+- **B2** **Far-horizon test:** compute shadows on a ≥ 60 km DEM crop around Malapert, crop back to the site and report the new ρ against LOLA. This tells us how much of the ρ = 0.55 gap is distant horizons.
+- **B3 (stretch)** Add 2–3 lunar references from PGDA product 78 (Site06 Nobile Rim 1, Site11 de Gerlache Rim) and one Mars reference with buried ice (Deuteronilus Mensae CTX DTM).
+- **B4** Write the Moon/Mars data paragraph for Angel's project page (NASA products used, exact names).
 
-### Diego Doña — Earth data lead
-- **B1** Add **6–10 Copernicus tiles**:
-  - Mexico: Sierra Chichinautzin, Valle de Santiago, Serdán-Oriental (Alchichica), Ceboruco.
-  - **High-latitude light analogs:** Svalbard, Axel Heiberg, Antarctic Dry Valleys, Icelandic highlands.
-  - Candidate regions other teams flag but cannot zoom into: Chersky Range, Prince Charles Mountains, Baffin Island.
-  - Verify each tile URL returns 200 before committing.
-- **B2** **Known-analog test:** list the coordinates of classic analog sites inside our tiles (Haughton crater centre, SFVF Cinder Lake crater field, Dry Valleys). Report their window rank percentile. A good method puts them in the top 20 %. This is our answer to other teams' ROC-AUC numbers.
-- **B3** **Earth temperature layer:** MODIS LST 8-day (MOD11A2) or ECOSTRESS per region via Earthdata (needs an Earthdata Login). Compute the annual range and minimum per window, pairing with Diviner. Stretch: **EMIT** minerals for the Mexican regions.
+### Diego Doña — Earth data & validation
+- ✅ 10 new Copernicus tiles (4 Mexico, Svalbard, Axel Heiberg, University Valley, Askja, Atacama, Mauna Kea) and the known-analog test with 8 sites.
+- **B1** **Verify every known-site coordinate** in `scripts/validate_known_analogs.py` against a primary source and add 2–4 more inside our tiles (e.g. Cinder Lake crater field in the SFVF, the Haughton-Mars Project base camp).
+- **B2–B3** **Earth temperature layer:** MODIS LST 8-day (MOD11A2) or ECOSTRESS per region via Earthdata (needs an Earthdata Login). Annual minimum and range per window, saved as GeoTIFFs Victor's hook can read. Stretch: **EMIT** minerals for the Mexican regions.
 - **B4** Write the Earth-data and partner-data paragraphs for Angel.
 
-### Angel — presentation & submission lead
-- **B1** Story and demo format: **7 slides** (recommended) and, if time allows, a ≤30-s video with English subtitles. Draft the project page in English from `docs/SUBMISSION.md`.
-- **B2** Build the 7-slide deck in English: title + team, problem, idea (terrain + light, validated against NASA), how it works, results, analog in time + Mexico, impact and next steps. Use Paul's visuals.
-- **B3** **Analog cards** for the top 5 sites (similar / differs / Earth cannot reproduce / what a mission would test there). Fact-check every number in the README, deck and page against `data/processed/`.
-- **B4** Final deck with the frozen numbers; record the video if we are doing one. Collect the paragraphs from both Diegos.
-- **B5** Fill every field on the Space Apps project page, test every link in an incognito window, answer the AI-use question, and **press "Submit for Judging" at 18:00**.
+### Angel — presentation & submission
+- **B1** Story: lead with the **blind rediscovery** (Mauna Kea's NASA lunar test site is #1 of 10,424 windows for Malapert, found without labels), then light validated against NASA (ρ = 0.86), then "where Earth stops being an analog" (Diviner), then Mexico. Draft the project page in English from `docs/SUBMISSION.md`.
+- **B2** Build the 7-slide deck in English with Paul's visuals and figures 1, 2, 5 and 6.
+- **B3** Analog cards for the top 5 sites; fact-check every number in the README, deck and page against `data/processed/`.
+- **B4** Final deck with the frozen numbers; video only if time allows. Collect the paragraphs from both Diegos.
+- **B5** Fill every field of the project page, test every link in incognito, answer the AI-use question, **submit at 18:00**.
 
-### Aaron — app engineering & deployment
-- **B1** Deploy `app/streamlit_app.py` to **Streamlit Community Cloud** from `main` (public, no login) and share the URL in the chat.
-- **B1** **Low-Sun preview** in the Analog card: thumbnails precomputed in the pipeline with `lowsun_hillshade` (coordinate with Victor).
-- **B2** Functionality: colour the map by any dimension, reference-site markers, a CSV download button, and caching for speed.
-- **B3** New dimensions (thermal, ice) appear automatically from `DIMENSIONS` in the sliders, card and map.
-- **B4** Final deploy and the FortiGuard web-filter classification request (see the submission guide). Record 20–30 s of clean screen capture for Angel's demo.
+### Aaron — app engineering & deploy
+- ✅ Low-Sun previews in the analog card, CSV download, caching, AppTest smoke test in CI.
+- **B1 (top priority)** Deploy `app/streamlit_app.py` to **Streamlit Community Cloud** from `main` (public, no login) and share the URL. Check load time: `windows.csv` is 11 MB.
+- **B2** Colour the map by any dimension; mark the reference sites; make new dimensions in `DIMENSIONS` appear automatically in sliders, card and map.
+- **B4** Final deploy, FortiGuard classification request (see the submission guide), 20–30 s of clean screen capture for Angel.
 
 ### Paul — UI/UX & visual design
-- **B1** **UI redesign plan:** sketch the layout (hero/header, map, ranking, card), pick the colour and type system, and agree with Aaron on what changes in `app/streamlit_app.py` and `.streamlit/config.toml`.
-- **B2** Implement the look:
-  - A clear map legend (score colour ramp).
-  - A readable analog card ("Similar in / Differs in / Earth cannot reproduce").
-  - The headline metrics and a data-credits footer.
-  - A phone check.
-- **B3** **Visual identity:** the P.E.N. wordmark and a simple logo. No NASA logos. If anything is AI-generated, it needs a visible watermark (Space Apps rule). Export the app screenshots and the visual assets for Angel's deck.
-- **B4** UI polish only, after the freeze. Check that figures and screenshots are legible on a projector, and help Angel lay out the slides.
+- ✅ Base UI: dark theme, 3D globe / flat map toggle, hero header, metric cards, analog card layout.
+- **B1** Polish on top of the base: globe labels (check they render on a real GPU), legend, analog-card spacing, phone check.
+- **B2–B3** **Visual identity:** P.E.N. wordmark and a simple logo. No NASA logos; anything AI-generated needs a visible watermark. Export app screenshots and visuals for Angel's deck.
+- **B4** UI polish only after the freeze; check legibility on a projector; help Angel lay out the slides.
 
 ## Working rules
 

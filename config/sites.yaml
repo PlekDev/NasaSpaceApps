@@ -156,7 +156,8 @@ auxiliary:
   diviner_polar_south_84s:
     file: dlre_prp_south_84S.csv
     url: https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/dlre_prp_south.tab
-    note: "Filtered to lat <= -84 (columns clon, clat, temp_avg, temp_max, ice_depth) — the full table is 605 MB"
+    filter_lat_max: -84   # download_data.py streams the 605 MB table and keeps only these rows and 5 columns
+    note: "Filtered to lat <= -84 (columns clon, clat, temp_avg, temp_max, ice_depth)"
     source: "NASA PDS Geosciences — LRO Diviner polar resource product (Paige et al.)"
   lola_permanent_shadow_85s:
     file: LPSR_85S_060M_201608.TIF
