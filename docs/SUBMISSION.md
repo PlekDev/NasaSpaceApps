@@ -98,10 +98,10 @@ mid-latitude region with buried ice), and the CTX global mosaic
 **Space Agency Partner data and other references:**
 - ESA Copernicus DEM GLO-30 (via AWS Open Data)
 - Mars Climate Database v6.2 (LMD/OU/IAA, supported by ESA and CNES): modelled surface temperature and pressure at
-  the Mars sites
+  the Mars sites. It is a model supported by ESA, not an ESA product; list it as a reference, not as ESA data
 - Open-source libraries: rasterio, GDAL, NumPy, SciPy, pandas, Matplotlib, Streamlit, pydeck
 - Literature: Mazarico et al. 2011; Barker et al. (PGDA); Paige et al. (Diviner); Klingelhoefer et al. 2014 (Mauna Kea
-  ISRU tests, NTRS 20140008708); McKay et al. 2003 (Atacama); Plaut et al. 2009 and Petersen et al. 2018 (Deuteronilus Mensae ice, SHARAD); Marinova et al. 2022 (University Valley);
+  ISRU tests, NTRS 20140008708); McKay et al. 2003 (Atacama); Plaut et al. 2009 (GRL 36, L02203) and Petersen, Holt & Levy 2018 (GRL 45, 11595–11604) (Deuteronilus Mensae ice, SHARAD); Marinova et al. 2022 (University Valley);
   Preston & Dartnell 2014; NASA Moon Base overview
 
 **Use of Super Intelligence (SI):** see README "Use of AI". AI was used for literature/dataset discovery and to draft
@@ -113,7 +113,7 @@ AI-assisted file is marked in its header. No AI-generated images.
 1. **P.E.N.** (Planetary Environmental Navigator) — by **Pollones en Fuga**: 6 members, challenge title. Hook: without being told, P.E.N. picked the exact spot on Mauna Kea where NASA rehearsed a lunar-polar mission, #1 of 10,424 places
 2. **The problem** — the Moon Base goes where the Sun never climbs above 7°; existing analog searches ignore light
 3. **Our idea** — score Earth places by terrain *and* low-Sun light; explain where the analogy breaks
-4. **How it works** — common grid → shadow model → scores; validated against NASA: ρ = 0.92–0.99 (fig7)
-5. **Results** — fig1 side by side + blind rediscovery + top matches (Mauna Kea, Atacama, Chichinautzin; El Pinacate top 3 %)
-6. **Where Earth stops being an analog** — fig6 (Diviner) + analog in time (fig3); app screenshot
+4. **How it works** — common grid → shadow model → scores; validated against NASA: ρ = 0.92–0.99 at all six Moon Base sites (fig7)
+5. **Results** — fig1 side by side + blind rediscovery (#1 of 10,424 for Malapert; top 0.2 % for four of the six Moon Base sites, top 5 % for all six) + top matches (Mauna Kea and Mauna Loa 79–91, Atacama 93–96, Chichinautzin 89; El Pinacate top 3 % for four sites, top 8 % for six)
+6. **Where Earth stops being an analog** — fig8 (Moon, Mars and Earth together: "Earth's coldest places come close to Mars, but not to the Moon Base") + fig6 (Diviner) + analog in time (fig3); app screenshot. Line for the slide: "Our Mars sites average 200–224 K, only 15–38 K colder than Antarctica's University Valley. The Moon Base sites are 95–132 K colder. What Earth cannot give Mars is the air: under 1 % of sea-level pressure." Say "modelled" for Mars (Mars Climate Database v6.2) and "measured" only for the Moon (LRO Diviner).
 7. **Impact & next steps** — field-test planning, Mexican analogs, thermal/mineral layers, global search
