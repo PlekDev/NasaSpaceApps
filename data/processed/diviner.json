@@ -51,6 +51,32 @@
    "share_ice_stable_within_1m": 0.22,
    "median_ice_depth_m": 0.209,
    "share_colder_than_earth_record": 0.879
+  },
+  "moon_haworth": {
+   "label": "Moon \u00b7 Haworth (LOLA Haworth, Artemis candidate region)",
+   "n_facets": 6962,
+   "temp_avg_mean_K": 106.8,
+   "temp_avg_min_K": 40.8,
+   "temp_max_mean_K": 242.0,
+   "temp_max_max_K": 305.9,
+   "share_below_110K_avg": 0.553,
+   "share_ice_stable_surface": 0.001,
+   "share_ice_stable_within_1m": 0.636,
+   "median_ice_depth_m": 0.117,
+   "share_colder_than_earth_record": 1.0
+  },
+  "moon_leibnitz_beta": {
+   "label": "Moon \u00b7 Leibnitz Beta Plateau (LOLA Site20, Artemis candidate region)",
+   "n_facets": 2048,
+   "temp_avg_mean_K": 117.3,
+   "temp_avg_min_K": 40.9,
+   "temp_max_mean_K": 249.0,
+   "temp_max_max_K": 314.9,
+   "share_below_110K_avg": 0.393,
+   "share_ice_stable_surface": 0.001,
+   "share_ice_stable_within_1m": 0.459,
+   "median_ice_depth_m": 0.253,
+   "share_colder_than_earth_record": 1.0
   }
  },
  "earth_record_low_K": 183.9,

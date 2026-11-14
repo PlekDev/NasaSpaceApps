@@ -13,16 +13,16 @@ of both sites from NASA imagery APIs and a **live field-safety check** from NASA
 > **Why light?** At the lunar south pole the Sun never rises above ~7°. Long shadows define landing safety,
 > rover vision, power and EVA planning. P.E.N. scores **terrain-cast shadows** with an exact shadow model and
 > **validates them against NASA's official LOLA illumination maps**: with distant horizons included, Spearman
-> ρ = 0.92–0.99 at all four Moon Base sites, with a mean error of 2.0–3.2 percentage points of lit time.
+> ρ = 0.92–0.99 at all six Moon Base sites, with a mean error of 2.0–3.2 percentage points of lit time.
 > It also finds **when** Earth sites reproduce lunar-pole light (an *analog in time*), not only **where**.
 
 **Where it fits:** regional screeners tell you *which region* of Earth to look at, on ~50 km cells. P.E.N.
 is the zoom-in stage: *which 6 km site* inside that region matches the target's terrain and light, compared against
-the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's Artemis candidate landing regions.
+the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Artemis candidate landing regions.
 
 ![Low-Sun side-by-side](figures/fig1_low_sun_side_by_side.png)
 
-## Key results (v0.3, 6 km windows, 30 m grid, 6 targets, 14 Earth regions, 10,424 windows)
+## Key results (v0.5, 6 km windows, 30 m grid, 9 targets, 14 Earth regions, 10,424 windows)
 
 | Reference | Best Earth window | Combined | Terrain | Illumination |
 |---|---|---|---|---|
@@ -30,39 +30,49 @@ the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's 
 | Moon · de Gerlache Rim | Mauna Kea, Hawaiʻi (19.865, −155.516) | 85 | 83 | 92 |
 | Moon · Nobile Rim 1 (Artemis candidate region) | Mauna Kea, Hawaiʻi (19.865, −155.516) | 81 | 78 | 95 |
 | Moon · Malapert Massif (Artemis candidate region) | Mauna Kea, Hawaiʻi (19.784, −155.487) | 79 | 76 | 91 |
+| Moon · Haworth (Artemis candidate region) | Mauna Loa flank, Hawaiʻi (19.459, −155.516) | 89 | 91 | 87 |
+| Moon · Leibnitz Beta Plateau (Artemis candidate region) | Mauna Loa flank, Hawaiʻi (19.296, −155.830) | 85 | 84 | 91 |
 | Mars · Arcadia Planitia | Hyperarid Atacama near Yungay, Chile (−24.893, −69.914) | 96 | 95 | 98 |
 | Mars · Jezero | Sierra Chichinautzin volcanic field, Mexico (19.323, −99.887) | 89 | 87 | 97 |
+| Mars · Deuteronilus Mensae (buried ice) | Hyperarid Atacama near Yungay, Chile (−24.596, −69.499) | 93 | 93 | 93 |
 
 - **Blind rediscovery of a NASA lunar test site.** Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR ran
   ISRU field tests in 2010 and 2012 (the 2012 test simulated a lunar-polar prospecting mission), is window
-  **#1 of 10,424** for Malapert and stays in the **top 0.2 %** for all four Moon Base sites (#9 Nobile Rim 1,
-  #19 de Gerlache, #23 Connecting Ridge). P.E.N. never saw any analog labels. For the Mars targets it ranks low,
+  **#1 of 10,424** for Malapert and in the **top 0.2 %** for four of the six Moon Base sites (#9 Nobile Rim 1,
+  #19 de Gerlache, #23 Connecting Ridge). For the two sites added last it is in the top 1.1 % (Leibnitz Beta, #115)
+  and the top 5 % (Haworth, #483). That drop has a measured reason: those two sites are gentler (median slope
+  9–11°, relief 830–860 m) than the four massif and rim sites (12–18°, 900–1,700 m), so their best matches move to
+  the smoother flanks of Mauna Loa. P.E.N. never saw any analog labels. For the Mars targets it ranks low,
   as a lunar site should.
 - **The light model matches NASA.** With NASA's 40 m polar DEM up to 150 km away, exact lunar curvature and real Sun
   positions, our illumination reproduces the LOLA 18.6-year average-illumination map with Spearman ρ = 0.92
-  (Connecting Ridge), 0.99 (Nobile Rim 1), 0.97 (de Gerlache) and 0.975 (Malapert), with a mean error of 2.0–3.2
-  percentage points of lit time. With the local DEM alone ρ is 0.55–0.88: the gap was distant mountains, and
+  (Connecting Ridge), 0.99 (Nobile Rim 1), 0.97 (de Gerlache), 0.975 (Malapert), 0.99 (Haworth) and 0.98 (Leibnitz
+  Beta), with a mean error of 2.0–3.2 percentage points of lit time. With the local DEM alone ρ is 0.46–0.88: the gap was distant mountains, and
   curvature by itself barely matters.
-- **Known-analog test:** 8 classic analog sites, 32 site × target tests. The median rank is the 83rd percentile for
-  illumination and the 58th for terrain (50 = random). El Pinacate, the Apollo training ground in Sonora, ranks in
-  the top 3 % for all four Moon Base sites. Sites chosen for other reasons rank lower, as they should: Meteor Crater
+- **Known-analog test:** 8 classic analog sites, 48 site × target tests. The median rank is the 84th percentile for
+  illumination and the 61st for terrain (50 = random). El Pinacate, the Apollo training ground in Sonora, ranks in
+  the top 3 % for four Moon Base sites and the top 8 % for all six. Sites chosen for other reasons rank lower, as they should: Meteor Crater
   is an impact-geology analog, University Valley a dry-permafrost (thermal) analog, and Yungay a chemical and
   aridity analog, not a terrain or light one.
 - **Where Earth stops being an analog:** per LRO Diviner, in 88–100 % of each lunar site the annual mean
   temperature (2 cm below the surface) is colder than the lowest air temperature ever measured on Earth (184 K,
-  Vostok), and water ice is thermally stable within 1 m in 22–40 % of it. Surface peaks reach 320–342 K.
+  Vostok), and water ice is thermally stable within 1 m in 22–64 % of it. Surface peaks reach 306–342 K.
 - **Diviner vs Earth's cold analogs** (the comparison the challenge resources suggest): the coldest Earth region we
   search, University Valley in Antarctica, has a mean skin temperature of 239 K (NASA POWER). The Moon Base sites
-  average 122–144 K, which is 95–116 K colder. The heat is within reach: Earth's desert regions peak at up to 328 K,
-  against lunar surface peaks of 320–342 K (fig8).
+  average 107–144 K, which is 95–132 K colder. The heat is within reach: Earth's desert regions peak at up to 328 K,
+  against lunar surface peaks of 306–342 K (fig8).
+- **Mars is a much closer thermal match than the Moon.** The Mars Climate Database (a model, v6.2) gives the three
+  Mars sites a mean surface temperature of 200–224 K, only 15–38 K colder than University Valley, with midday peaks
+  of 275–287 K. What Earth cannot give is the air: 680–830 Pa on average, under 1 % of sea level and close to water's
+  triple point (612 Pa). Every Mars analog card now shows these numbers.
 - **Analog in time:** polar sites (Haughton, Axel Heiberg, Svalbard, University Valley) give 4–7 h/day of
   lunar-pole-like low Sun (0–7°) around the equinoxes; sites below 40° latitude get about 1 h/day.
 - **NASA APIs in the app** ([api.nasa.gov](https://api.nasa.gov/)): Moon Trek WMTS (LRO NAC south-pole mosaic, 1 m),
   Mars Trek WMTS (CTX global mosaic) and GIBS (Landsat/HLS 30 m) give a real photo of both windows, reprojected onto
   the same grid as the low-Sun preview. EONET flags open natural events within 150 km of the Earth site; when we
   checked, it listed active wildfires 20–35 km from our best Mauna Kea window.
-- **Robustness:** re-weighting illumination 0.5–2× keeps 8–10 of the top 10 for five of the six targets (5–10 for
-  Malapert). Window size (3/6/12 km) changes rankings much more; we report it instead of hiding it.
+- **Robustness:** re-weighting illumination 0.5–2× keeps 7–10 of the top 10 for seven of the nine targets (it drops to
+  5 at one end for Malapert and Haworth). Window size (3/6/12 km) changes rankings much more; we report it instead of hiding it.
 
 ![Scores](figures/fig2_score_matrix.png)
 
@@ -75,14 +85,16 @@ the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's 
 | Common 30 m grid for Moon, Mars and Earth; Earth sea/lake mask | `pen/grid.py` | Victor |
 | Exact O(N) cast-shadow model, 2 Sun elevations × 8 azimuths | `pen/shadows.py` | Victor |
 | Terrain + illumination features, IQR-scaled similarity, per-dimension scores | `pen/features.py`, `pen/scoring.py` | Victor |
-| 6 references (4 Moon Base sites incl. Artemis candidates Nobile Rim 1 and Malapert, 2 Mars) and 14 Earth regions | `config/sites.yaml` | D. Lizárraga · D. Dona |
-| Light model vs NASA LOLA illumination, local (ρ 0.55–0.88) and with 150 km horizons + curvature (ρ 0.92–0.99) | `scripts/validate_illumination.py`, `scripts/validate_far_horizons.py`, fig4, fig7 | D. Lizárraga · Victor |
-| Known-analog test with 8 classic sites (Mauna Kea ISRU site #1 for Malapert, top 0.2 % for all Moon sites) | `scripts/validate_known_analogs.py` | D. Dona |
+| 9 references (6 Moon Base sites incl. Artemis candidates Nobile Rim 1, Malapert, Haworth and Leibnitz Beta; 3 Mars incl. Deuteronilus Mensae, buried ice) and 14 Earth regions | `config/sites.yaml` | D. Lizárraga · D. Dona |
+| Light model vs NASA LOLA illumination, local (ρ 0.46–0.88) and with 150 km horizons + curvature (ρ 0.92–0.99) | `scripts/validate_illumination.py`, `scripts/validate_far_horizons.py`, fig4, fig7 | D. Lizárraga · Victor |
+| Known-analog test with 8 classic sites (Mauna Kea ISRU site #1 for Malapert, top 0.2 % for four of six Moon sites) | `scripts/validate_known_analogs.py` | D. Dona |
 | Sensitivity to weights and window size | `scripts/sensitivity.py`, fig5 | Victor |
 | LRO Diviner temperature and ice context for the Moon sites | `scripts/diviner_context.py`, fig6 | D. Lizárraga |
 | Diviner vs Earth analog regions (NASA POWER skin temperature) | `scripts/thermal_gap.py`, fig8 | D. Lizárraga |
+| Mars surface temperature and pressure per Mars site (Mars Climate Database), in fig8 and on the Mars analog cards | `scripts/mars_context.py` | D. Lizárraga |
+| Moon/Mars data paragraph for the project page; Mars DTMs checked against their headers (metres above the MOLA geoid, R = 3,396,190 m) | `docs/SUBMISSION.md` | D. Lizárraga |
 | Analog in time (hours/day of 0–7° Sun per month) | `pen/sun.py`, fig3 | Victor |
-| Dark app with 3D globe / flat map, analog card with low-Sun previews, validation tab, CSV download | `app/` | Paul · Aaron |
+| Dark app with 3D globe / flat map, colour-by-dimension, NASA reference analog markers, dynamic `DIMENSIONS` support, analog card with low-Sun previews, validation tab, CSV download | `app/` | Paul · Aaron |
 | Far-horizon method and Diviner numbers reviewed against the NASA labels (PDS3 LDEM, AVGVISIB scale, PDS4 Diviner); `ray_reach` and the AVGVISIB scale guard added | `scripts/validate_far_horizons.py`, `scripts/diviner_context.py` | D. Lizárraga |
 | Real NASA imagery for every analog card (Moon/Mars Trek WMTS, GIBS), aligned with the previews | `scripts/real_imagery.py` | Aaron · Paul |
 | Live field-safety check from NASA EONET, with an offline snapshot | `pen/eonet.py`, `scripts/eonet_snapshot.py` | Aaron |
@@ -95,12 +107,11 @@ the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's 
 | Public deploy on Streamlit Community Cloud; check that EONET answers live there | The judges need a link that opens without installing anything | Aaron |
 | Deck (7 slides) and project page around the blind-rediscovery result | It's the demo the judges see | Angel |
 | Visual identity (wordmark), UI polish, phone check, visuals for the deck | First impression | Paul |
-| Moon/Mars data paragraph for the project page | Angel needs it for the submission | D. Lizárraga |
 | Earth surface temperature (MODIS/ECOSTRESS) so thermal becomes a **scored** dimension | Today Diviner is context only | D. Dona → Victor |
 | Fact-check every number in README, deck and page; tag `v1.0` | No wrong number in front of judges | Angel · Victor |
 
-**Stretch (only if time allows):** a Mars ice reference (Deuteronilus Mensae CTX DTM); the remaining Artemis regions
-(Nobile Rim 2, de Gerlache Rim 2, Haworth, Mons Mouton) once 5 m DEMs are available; EMIT mineralogy for the Mexican
+**Stretch (only if time allows):** the remaining Artemis regions (Nobile Rim 2 has a 5 m DEM but lies at 84°S, outside
+the 85°S illumination map and DEM we validate against; de Gerlache Rim 2); EMIT mineralogy for the Mexican
 regions; a 30-second video.
 
 ## Quick start
@@ -119,7 +130,7 @@ make data        # python scripts/download_data.py
 make pipeline    # python scripts/run_pipeline.py
 make validate    # python scripts/validate_illumination.py
 make figures     # python scripts/make_figures.py
-make extras      # thumbnails, known-analog test, sensitivity, Diviner context, thermal gap
+make extras      # thumbnails, known-analog test, sensitivity, Diviner and Mars context, thermal gap
 make far         # far-horizon light validation (~4 min, needs the 230 MB LOLA polar DEM)
 make imagery     # real NASA imagery for the analog cards (Trek WMTS + GIBS, ~150 requests, no API key)
 make eonet       # refresh the offline EONET snapshot
@@ -177,7 +188,7 @@ The main results use 6 km.
 
 **6 · Reference vector.** For each Moon/Mars target, the reference value of each feature is the **median** over
 all valid windows of that target's DEM, at the same window size (at 6 km: 10 windows at Connecting Ridge, 36 at
-Malapert, 94 at Arcadia, 82 at Jezero).
+Malapert, 64 at Haworth, 94 at Arcadia, 82 at Jezero, 165 at Deuteronilus Mensae).
 
 **7 · Score** (`pen/scoring.py`). Every Earth window *x* is compared with the reference *r*:
 
@@ -225,6 +236,10 @@ mean is colder than Earth's record low (184 K, Vostok), and the share where wate
 POWER climatology API (MERRA-2, 2001–2025, no key) for the skin temperature TS (annual mean) and for TS_MIN / TS_MAX
 (coldest / warmest monthly mean of the daily extremes), and writes `thermal_gap.json` and fig8. This is region scale
 (a ~50 km model cell, so Mauna Kea's cell is mostly low ground), and context only: it is not scored.
+For Mars there is no per-site product like Diviner in our pipeline, so `scripts/mars_context.py` asks the public web
+interface of the Mars Climate Database v6.2 for surface temperature and pressure at the centre of each Mars reference,
+over 12 seasons × 24 local hours with the climatology dust scenario, and writes `mars_context.json`. These are
+modelled values, not measurements; they appear in fig8 and in the "Earth can't reproduce" list of the Mars cards.
 
 **11 · Analog in time** (`pen/sun.py`). Solar elevation from the standard declination and hour-angle formula (no
 refraction), sampled every 3 min for every day of the year at each region's centre latitude, gives the hours per day
@@ -260,6 +275,7 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 | [Moon Trek / Mars Trek WMTS](https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon) (via api.nasa.gov) | **NASA** SSERVI / JPL | Real view of Moon (LRO NAC mosaic) and Mars (CTX mosaic) windows |
 | [GIBS](https://nasa-gibs.github.io/gibs-api-docs/) (via api.nasa.gov) | **NASA** ESDIS | Real view of Earth windows (Landsat WELD, HLS, MODIS) |
 | [EONET v3](https://eonet.gsfc.nasa.gov/docs/v3) (via api.nasa.gov) | **NASA** Earth Observatory | Live field-safety check (open natural events near the site) |
+| [Mars Climate Database v6.2](https://www-mars.lmd.jussieu.fr/mcd_python/) | LMD/OU/IAA with **ESA** and CNES | Modelled surface temperature and pressure at the Mars sites (context) |
 | [Copernicus DEM GLO-30](https://registry.opendata.aws/copernicus-dem/) | **ESA** (Space Agency Partner) | Earth candidate terrain (14 one-degree tiles) |
 
 ![Diviner](figures/fig6_diviner.png)
@@ -276,17 +292,26 @@ RADARSAT / Sentinel-1 radar (CSA / ESA).
 - Scoring uses shadows from **local** terrain only, on both bodies, so Moon and Earth are treated the same way.
   The far-horizon test shows the light model is right once distant terrain is added (ρ 0.92–0.99), but Earth
   windows are not re-scored with their own distant horizons.
-- The far-horizon test does not reach 150 km in every direction. Malapert and Nobile Rim 1 (85.1–86.3°S) sit near
-  the edge of the 85°S DEM: their rays toward lower latitudes stop after 21–39 km and 41–66 km, and 49 % and 63 % of
-  all their rays end before 150 km (`ray_reach` in `far_horizons.json`). Both still reach ρ ≥ 0.975.
-- The full far-horizon model is slightly darker than NASA's map at all four sites (bias −0.7 to −2.5 percentage
+- The far-horizon test does not reach 150 km in every direction. Malapert, Nobile Rim 1 and Leibnitz
+  Beta (85.1–86.3°S) sit near the edge of the 85°S DEM: their rays toward lower latitudes stop after 21–39 km,
+  41–66 km and 31–49 km, and 49 %, 63 % and 63 % of all their rays end before 150 km (Haworth: 50–91 km, 55 %;
+  `ray_reach` in `far_horizons.json`). All of them still reach ρ ≥ 0.975.
+- The full far-horizon model is slightly darker than NASA's map at all six sites (bias −0.7 to −2.5 percentage
   points of lit time). We have not isolated the cause; candidates are the different DEM resolution and our linear
   approximation of the partly hidden Sun disk.
 - Copernicus is a surface model: vegetation and buildings are included. Sea (≤ 0.5 m) and flattened lakes are masked.
 - Real imagery is context, not scored. The LRO NAC mosaic averages many Sun angles, so it does not show the 3° Sun
   of the preview; the Landsat WELD mosaic is ~2010 and has no Antarctic coverage (MODIS 250 m is used there).
 - EONET keeps some events "open" for months (e.g. Kīlauea), so the list is a prompt to check, not a hazard map.
+- The Mars temperatures and pressures come from a climate model (Mars Climate Database), interpolated to the site
+  centre, while the Moon numbers are Diviner measurements per footprint. They are context, not scored.
 - Diviner is used as context for the Moon sites, not scored: there is no Earth layer with comparable meaning yet.
+- Deuteronilus Mensae is our "buried ice" Mars reference because orbital radar (SHARAD) found debris aprons of
+  more than 80 % water ice across that region (Plaut et al. 2009; Petersen et al. 2018). Our DTM lies inside it
+  (43.6–45.3°N, 27.4–28.3°E), but we did not check that this footprint itself contains an apron, and ice is not a
+  scored feature: the match with Atacama is in terrain and light only.
+- Leibnitz Beta is the massif the IAU named Mons Mouton in 2023; we keep the name of NASA's 2022 Artemis III
+  candidate-region list and of the LOLA product.
 - Flat Mars plains score high against much of Earth. Plains need finer texture, ice or thermal features to discriminate.
 - Rankings depend on window size; see `stability_top10_by_window_km` in `data/processed/results.json`.
 - Earth cannot reproduce reduced gravity, vacuum, the thin CO₂ atmosphere or the radiation environment.

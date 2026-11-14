@@ -36,8 +36,8 @@ difference is divided by the inter-quartile range of all Earth windows at that s
 **5. Validation of illumination.** For each lunar site we compute the lit fraction with the Sun at 0.5°, 1.5° and
 2.5° over 17 azimuths (every 22°). We compare it with the official LOLA 18.6-year average-illumination map
 (Mazarico et al. 2011) resampled to the same grid, excluding a 1.5 km border and sampling every 120 m. With the
-local DEM only, Spearman ρ = 0.86 at Connecting Ridge, 0.61 at Nobile Rim 1, 0.54 at de Gerlache Rim and 0.55 at
-Malapert; the far-horizon test below raises this to 0.92–0.99.
+local DEM only, Spearman ρ = 0.86 at Connecting Ridge, 0.61 at Nobile Rim 1, 0.54 at de Gerlache Rim, 0.55 at
+Malapert, 0.44 at Haworth and 0.64 at Leibnitz Beta; the far-horizon test below raises this to 0.92–0.99.
 
 **6. Analog in time.** Hours per day with solar elevation between 0° and 7° at each Earth site's latitude, by
 month. This uses a standard declination and hour-angle formula without refraction.
@@ -48,14 +48,17 @@ surface temperature, and the share of
 the site where water ice is thermally stable at the surface or within 1 m. These numbers feed the "Earth can't
 reproduce" panel of every analog card. They are not scored, because no Earth layer has a comparable meaning.
 `scripts/thermal_gap.py` compares them with NASA POWER skin temperatures (MERRA-2 climatology) at the centre of each
-Earth region: the coldest region (University Valley, 239 K mean) is still 95–116 K warmer than the Moon Base sites.
+Earth region: the coldest region (University Valley, 239 K mean) is still 95–132 K warmer than the Moon Base sites.
+For the Mars references, `scripts/mars_context.py` takes modelled surface temperature and pressure from the Mars
+Climate Database v6.2 (mean 200–224 K, 680–830 Pa): 15–38 K colder than University Valley, at under 1 % of Earth's
+sea-level pressure.
 
 **Far-horizon test (Moon only).** `scripts/validate_far_horizons.py` recomputes illumination for the lunar
 references with the LOLA 85°S 40 m DEM, horizons traced up to 150 km in exact 3D on the lunar sphere, and 1,728 real
 Sun positions (subsolar latitude ±1.54°, Sun as a 0.53° disk). Against the LOLA average-illumination map, ρ rises
-from 0.55–0.88 (local DEM) to 0.92–0.99 (150 km), and the mean error falls to 2.0–3.2 percentage points of lit time.
-Malapert and Nobile Rim 1 lie near the DEM edge, so their rays toward lower latitudes stop after 21–39 km and
-41–66 km (`ray_reach` in `far_horizons.json`).
+from 0.46–0.88 (local DEM) to 0.92–0.99 (150 km), and the mean error falls to 2.0–3.2 percentage points of lit time.
+Malapert, Nobile Rim 1 and Leibnitz Beta lie near the DEM edge, so their rays toward lower latitudes stop after
+21–39 km, 41–66 km and 31–49 km (`ray_reach` in `far_horizons.json`).
 
 **Known-analog test.** `scripts/validate_known_analogs.py` takes 8 classic analog sites that fall inside our
 regions (Meteor Crater, SP Crater, Cinder Lake Crater Field, Pinacate Peaks, Haughton crater, Pu'u Hiwahine on
@@ -86,6 +89,9 @@ publication, listed in the `note` field of the script; Pinacate comes from a sec
   cloud flags: look at `n_valid` and `n_pixels_valid` before trusting those windows.
 - **Caveats.** An 8-day composite averages the extremes down, a 1 km pixel is coarse against 30 m terrain, and a 6 km window
   holds only ~36 pixels.
+
+**Relation to `thermal_gap.py`.** This layer is per window (1 km pixels, year 2025); `scripts/thermal_gap.py` gives NASA POWER
+skin temperatures per region. They complement each other and neither replaces the other.
 
 **Pairing with LRO Diviner (for the scorer).** Diviner `temp_avg` ↔ `lst_mean_K` and Diviner `temp_max` ↔ `lst_max_K`
 (`data/processed/diviner.json`: `temp_avg_mean_K`, `temp_max_mean_K`). They are not the same quantity: Diviner `temp_avg` is
