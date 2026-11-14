@@ -54,6 +54,9 @@ lunar-pole light: an "analog in time" that tells field teams the best weeks to t
    - Known analog sites rank at the 80th percentile in illumination (median of 38 tests with 10 sites; 50 = random).
    - LRO Diviner: in 88–100 % of each lunar site the annual mean temperature (2 cm below the surface) is colder than
      Earth's record low air temperature (184 K); ice is stable within 1 m in 22–40 %.
+   - Diviner vs Earth's cold analogs (NASA POWER): University Valley, Antarctica, the coldest region we search, has a
+     mean skin temperature of 239 K, still 95–116 K warmer than the Moon Base sites (122–144 K). Lunar surface peaks
+     (320–342 K) are within reach of Earth's deserts (up to 328 K). See fig8.
    - Polar sites give 4–7 h/day of lunar-pole-like light around the equinoxes.
 4. *Benefits:* regional screeners say which region to look at; P.E.N. picks the exact 6 km site and the best weeks.
    Choose and schedule analog field tests for rover vision, EVA lighting and landing-hazard rehearsal.
@@ -72,7 +75,21 @@ lunar-pole light: an "analog in time" that tells field teams the best weeks to t
   EONET v3 (open natural events, live field-safety check)
 - MRO CTX stereo DTMs (USGS Astrogeology analysis-ready data)
 - LRO Diviner polar resource product (NASA PDS Geosciences, Paige et al.)
+- NASA POWER climatology API (NASA LaRC, MERRA-2): Earth skin temperature for the Diviner comparison
 - *(add MODIS/ECOSTRESS or EMIT only if they make it into the final run)*
+
+**Moon & Mars data paragraph (Diego Lizárraga, ~190 words; numbers from `data/processed/`):**
+Every reference site in P.E.N. comes from NASA missions archived in the Planetary Data System (PDS). For the Moon
+Base we use four lunar south-pole sites observed by the Lunar Reconnaissance Orbiter (LRO): Shackleton Connecting
+Ridge, Nobile Rim 1, de Gerlache Rim and Malapert Massif. Their terrain is the 5 m LOLA topography (NASA GSFC PGDA).
+LOLA's 18.6-year average-illumination map validates our shadow model, and the 40 m LOLA polar DEM (LDEM_85S_40M, PDS
+Geosciences) adds horizons up to 150 km away: ρ = 0.92–0.99 against NASA at all four sites. The LRO Diviner polar
+resource product (PDS Geosciences) gives temperature and ice stability. As the challenge suggests, we compare it with
+Earth's cold, ice-bearing analogs using NASA POWER skin temperatures: even University Valley in Antarctica averages
+239 K, which is 95–116 K warmer than the Moon Base sites (122–144 K), while lunar surface peaks (320–342 K) are
+within reach of Earth's deserts (up to 328 K). LROC NAC mosaics (Moon Trek) show every lunar window. For Mars we use
+MRO CTX stereo terrain models (USGS Astrogeology) of Arcadia Planitia and Jezero crater, and the CTX global mosaic
+(Mars Trek).
 
 **Space Agency Partner data and other references:**
 - ESA Copernicus DEM GLO-30 (via AWS Open Data)

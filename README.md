@@ -50,6 +50,10 @@ the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's 
 - **Where Earth stops being an analog:** per LRO Diviner, in 88–100 % of each lunar site the annual mean
   temperature (2 cm below the surface) is colder than the lowest air temperature ever measured on Earth (184 K,
   Vostok), and water ice is thermally stable within 1 m in 22–40 % of it. Surface peaks reach 320–342 K.
+- **Diviner vs Earth's cold analogs** (the comparison the challenge resources suggest): the coldest Earth region we
+  search, University Valley in Antarctica, has a mean skin temperature of 239 K (NASA POWER). The Moon Base sites
+  average 122–144 K, which is 95–116 K colder. The heat is within reach: Earth's desert regions peak at up to 328 K,
+  against lunar surface peaks of 320–342 K (fig8).
 - **Analog in time:** polar sites (Haughton, Axel Heiberg, Svalbard, University Valley) give 4–7 h/day of
   lunar-pole-like low Sun (0–7°) around the equinoxes; sites below 40° latitude get about 1 h/day.
 - **NASA APIs in the app** ([api.nasa.gov](https://api.nasa.gov/)): Moon Trek WMTS (LRO NAC south-pole mosaic, 1 m),
@@ -75,6 +79,7 @@ the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's 
 | Known-analog test with 10 classic sites (Mauna Kea ISRU site #1 for Malapert, top 0.2 % for all Moon sites) | `scripts/validate_known_analogs.py` | D. Dona |
 | Sensitivity to weights and window size | `scripts/sensitivity.py`, fig5 | Victor |
 | LRO Diviner temperature and ice context for the Moon sites | `scripts/diviner_context.py`, fig6 | D. Lizárraga |
+| Diviner vs Earth analog regions (NASA POWER skin temperature) | `scripts/thermal_gap.py`, fig8 | D. Lizárraga |
 | Analog in time (hours/day of 0–7° Sun per month) | `pen/sun.py`, fig3 | Victor |
 | Dark app with 3D globe / flat map, analog card with low-Sun previews, validation tab, CSV download | `app/` | Paul · Aaron |
 | Real NASA imagery for every analog card (Moon/Mars Trek WMTS, GIBS), aligned with the previews | `scripts/real_imagery.py` | Aaron · Paul |
@@ -112,7 +117,7 @@ make data        # python scripts/download_data.py
 make pipeline    # python scripts/run_pipeline.py
 make validate    # python scripts/validate_illumination.py
 make figures     # python scripts/make_figures.py
-make extras      # thumbnails, known-analog test, sensitivity, Diviner context
+make extras      # thumbnails, known-analog test, sensitivity, Diviner context, thermal gap
 make far         # far-horizon light validation (~4 min, needs the 230 MB LOLA polar DEM)
 make imagery     # real NASA imagery for the analog cards (Trek WMTS + GIBS, ~150 requests, no API key)
 make eonet       # refresh the offline EONET snapshot
@@ -214,6 +219,10 @@ the facets inside each lunar reference footprint give: the mean and minimum of t
 mean is colder than Earth's record low (184 K, Vostok), and the share where water ice is thermally stable within
 1 m (`ice_depth` between 0 and 1 m, i.e. ice sublimates slower than 1 kg m⁻² per billion years; −999 = deeper than
 2.87 m, counted as not stable). Field definitions are from the PDS4 label `dlre_prp_south.xml`.
+`scripts/thermal_gap.py` then puts those numbers next to Earth: for the centre of each Earth region it asks the NASA
+POWER climatology API (MERRA-2, 2001–2025, no key) for the skin temperature TS (annual mean) and for TS_MIN / TS_MAX
+(coldest / warmest monthly mean of the daily extremes), and writes `thermal_gap.json` and fig8. This is region scale
+(a ~50 km model cell, so Mauna Kea's cell is mostly low ground), and context only: it is not scored.
 
 **11 · Analog in time** (`pen/sun.py`). Solar elevation from the standard declination and hour-angle formula (no
 refraction), sampled every 3 min for every day of the year at each region's centre latitude, gives the hours per day
@@ -245,6 +254,7 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 | [LOLA gridded polar DEM, 85°S, 40 m](https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/float_img/) | **NASA** LRO / PDS | Far-horizon validation (terrain up to 150 km) |
 | [MRO CTX stereo DTMs](https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms) | **NASA** MRO / USGS | Mars reference terrain |
 | [LRO Diviner polar resource product](https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/) (Paige et al.) | **NASA** LRO / PDS | Moon temperature and ice stability (where Earth stops being an analog) |
+| [NASA POWER climatology API](https://power.larc.nasa.gov/docs/services/api/temporal/climatology/) | **NASA** LaRC | Earth skin temperature per region, compared with Diviner |
 | [Moon Trek / Mars Trek WMTS](https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon) (via api.nasa.gov) | **NASA** SSERVI / JPL | Real view of Moon (LRO NAC mosaic) and Mars (CTX mosaic) windows |
 | [GIBS](https://nasa-gibs.github.io/gibs-api-docs/) (via api.nasa.gov) | **NASA** ESDIS | Real view of Earth windows (Landsat WELD, HLS, MODIS) |
 | [EONET v3](https://eonet.gsfc.nasa.gov/docs/v3) (via api.nasa.gov) | **NASA** Earth Observatory | Live field-safety check (open natural events near the site) |
@@ -253,6 +263,8 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 ![Diviner](figures/fig6_diviner.png)
 
 ![Far horizons](figures/fig7_far_horizons.png)
+
+![Thermal gap](figures/fig8_thermal_gap.png)
 
 Planned: EMIT surface mineralogy (NASA), MODIS/ECOSTRESS land-surface temperature (NASA),
 RADARSAT / Sentinel-1 radar (CSA / ESA).
