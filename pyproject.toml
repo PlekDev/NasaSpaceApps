@@ -1,0 +1,15 @@
+[project]
+name = "penumbra"
+version = "0.1.0"
+description = "Earth analogs for the Moon Base and Mars landing sites, scored by terrain and low-Sun illumination (NASA Space Apps 2026)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = ["numpy>=1.26", "scipy>=1.11", "rasterio>=1.3", "pandas>=2.0", "matplotlib>=3.8", "pyyaml>=6.0"]
+
+[project.optional-dependencies]
+app = ["streamlit>=1.40", "pydeck>=0.9"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools]
+packages = ["penumbra"]

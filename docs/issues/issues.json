@@ -1,0 +1,177 @@
+[
+ {
+  "owner": "victor",
+  "owner_name": "Victor",
+  "block": "B0",
+  "title": "[B0] Kickoff: push repo, protect main, invite team, create issues",
+  "body": "- Push to GitHub, add the 5 collaborators\n- Settings → Branches: require PR + 1 review on `main`\n- Run `scripts/create_issues.sh`\n- 14:00 checkpoint: everyone runs the app locally\n\n**Owner:** Victor · **Block:** B0 · see docs/TEAM.md"
+ },
+ {
+  "owner": "victor",
+  "owner_name": "Victor",
+  "block": "B1",
+  "title": "[B1] Generic raster-layer hook for new dimensions",
+  "body": "Any GeoTIFF on a site grid → per-window mean/P10/P90 features, registered in `DIMENSIONS`. Unit tests. Thermal and mineral layers plug in through this.\n\n**Owner:** Victor · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "victor",
+  "owner_name": "Victor",
+  "block": "B2",
+  "title": "[B2] Merge B1 PRs and publish pipeline v0.2",
+  "body": "`make pipeline validate figures`, commit `data/processed` + `figures`, update README numbers.\n\n**Owner:** Victor · **Block:** B2 · see docs/TEAM.md"
+ },
+ {
+  "owner": "victor",
+  "owner_name": "Victor",
+  "block": "B3",
+  "title": "[B3] Integrate thermal/mineral dimensions, final run before 14:00 freeze, tag v1.0",
+  "body": "**Owner:** Victor · **Block:** B3 · see docs/TEAM.md"
+ },
+ {
+  "owner": "victor",
+  "owner_name": "Victor",
+  "block": "B4",
+  "title": "[B4] Release checklist: public repo, README numbers = final run, credits, license",
+  "body": "**Owner:** Victor · **Block:** B4 · see docs/TEAM.md"
+ },
+ {
+  "owner": "dlizarraga",
+  "owner_name": "Diego Lizárraga",
+  "block": "B1",
+  "title": "[B1] Diviner polar temperature layer for lunar references",
+  "body": "Download Diviner south-polar products (avg/max/min T) covering Connecting Ridge and Malapert; add to `config/sites.yaml → auxiliary`; resample with `penumbra.grid.resample_onto`. Explicitly listed in the challenge resources.\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "dlizarraga",
+  "owner_name": "Diego Lizárraga",
+  "block": "B2",
+  "title": "[B2] Add 2–3 lunar references (PGDA 78) + 1 Mars ice reference (Deuteronilus Mensae CTX DTM)",
+  "body": "Check file sizes first; prefer Site06 / Site11. Use the USGS STAC API to find the DTM.\n\n**Owner:** Diego Lizárraga · **Block:** B2 · see docs/TEAM.md"
+ },
+ {
+  "owner": "dlizarraga",
+  "owner_name": "Diego Lizárraga",
+  "block": "B3",
+  "title": "[B3] Far-horizon test: shadows on ≥60 km DEM crop, report new ρ vs LOLA",
+  "body": "Quantify how much of the Malapert gap (ρ = 0.55) comes from distant horizons.\n\n**Owner:** Diego Lizárraga · **Block:** B3 · see docs/TEAM.md"
+ },
+ {
+  "owner": "dlizarraga",
+  "owner_name": "Diego Lizárraga",
+  "block": "B4",
+  "title": "[B4] Write Moon/Mars data paragraph for the project page",
+  "body": "**Owner:** Diego Lizárraga · **Block:** B4 · see docs/TEAM.md"
+ },
+ {
+  "owner": "ddona",
+  "owner_name": "Diego Doña",
+  "block": "B1",
+  "title": "[B1] Add 6–10 Copernicus tiles (Mexican volcanic fields + high-latitude light analogs)",
+  "body": "Mexico: Sierra Chichinautzin, Valle de Santiago, Serdán-Oriental (Alchichica), Ceboruco. High latitude: Svalbard, Axel Heiberg, Antarctic Dry Valleys, Iceland highlands. Verify each tile URL returns 200 before committing.\n\n**Owner:** Diego Doña · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "ddona",
+  "owner_name": "Diego Doña",
+  "block": "B2",
+  "title": "[B2] Earth temperature layer (MODIS MOD11A2 or ECOSTRESS) per Earth region",
+  "body": "Earthdata Login required. Per-window annual range and minimum, to pair with Diviner.\n\n**Owner:** Diego Doña · **Block:** B2 · see docs/TEAM.md"
+ },
+ {
+  "owner": "ddona",
+  "owner_name": "Diego Doña",
+  "block": "B3",
+  "title": "[B3] Stretch: EMIT mineral fractions for Mexican regions",
+  "body": "e.g. gypsum at Cuatro Ciénegas vs Gale-like sulfates. If not feasible, document in README next steps.\n\n**Owner:** Diego Doña · **Block:** B3 · see docs/TEAM.md"
+ },
+ {
+  "owner": "ddona",
+  "owner_name": "Diego Doña",
+  "block": "B4",
+  "title": "[B4] Write Earth data + partner data paragraph for the project page",
+  "body": "**Owner:** Diego Doña · **Block:** B4 · see docs/TEAM.md"
+ },
+ {
+  "owner": "angel",
+  "owner_name": "Angel",
+  "block": "B1",
+  "title": "[B1] Known-analog test: rank percentile of classic analog sites",
+  "body": "Haughton crater centre, SFVF Cinder Lake crater field, others in our tiles. Target: top 20 %.\n\n**Owner:** Angel · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "angel",
+  "owner_name": "Angel",
+  "block": "B2",
+  "title": "[B2] Sensitivity to weights and window size (3/6/12 km): one table + one figure",
+  "body": "**Owner:** Angel · **Block:** B2 · see docs/TEAM.md"
+ },
+ {
+  "owner": "angel",
+  "owner_name": "Angel",
+  "block": "B3",
+  "title": "[B3] Analog cards for the top 5 sites (similar / differs / Earth can't / what to test)",
+  "body": "**Owner:** Angel · **Block:** B3 · see docs/TEAM.md"
+ },
+ {
+  "owner": "angel",
+  "owner_name": "Angel",
+  "block": "B4",
+  "title": "[B4] Fact-check all numbers (README, deck, page) and finalise docs/METHOD.md",
+  "body": "**Owner:** Angel · **Block:** B4 · see docs/TEAM.md"
+ },
+ {
+  "owner": "aaron",
+  "owner_name": "Aaron",
+  "block": "B1",
+  "title": "[B1] Deploy app to Streamlit Community Cloud (public, no login)",
+  "body": "Share the URL in the team chat as soon as it works.\n\n**Owner:** Aaron · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "aaron",
+  "owner_name": "Aaron",
+  "block": "B1",
+  "title": "[B1] Low-Sun preview image of the selected window in the Analog card",
+  "body": "Thumbnails precomputed in the pipeline with `lowsun_hillshade` (coordinate with Victor).\n\n**Owner:** Aaron · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "aaron",
+  "owner_name": "Aaron",
+  "block": "B2",
+  "title": "[B2] UX: legend, colour-by-dimension, reference markers, CSV download, credits footer, mobile",
+  "body": "**Owner:** Aaron · **Block:** B2 · see docs/TEAM.md"
+ },
+ {
+  "owner": "aaron",
+  "owner_name": "Aaron",
+  "block": "B4",
+  "title": "[B4] Final deploy, FortiGuard classification request, 20–30 s screen capture for the demo",
+  "body": "**Owner:** Aaron · **Block:** B4 · see docs/TEAM.md"
+ },
+ {
+  "owner": "paul",
+  "owner_name": "Paul",
+  "block": "B0",
+  "title": "[B0] Confirm all 6 at the same Local Event; team name and team page",
+  "body": "**Owner:** Paul · **Block:** B0 · see docs/TEAM.md"
+ },
+ {
+  "owner": "paul",
+  "owner_name": "Paul",
+  "block": "B1",
+  "title": "[B1] Draft the project page (English) from docs/SUBMISSION.md; choose demo format",
+  "body": "**Owner:** Paul · **Block:** B1 · see docs/TEAM.md"
+ },
+ {
+  "owner": "paul",
+  "owner_name": "Paul",
+  "block": "B2",
+  "title": "[B2] Build the 7-slide deck in English",
+  "body": "Title+team, problem, idea, how it works, results, analog in time + Mexico, impact.\n\n**Owner:** Paul · **Block:** B2 · see docs/TEAM.md"
+ },
+ {
+  "owner": "paul",
+  "owner_name": "Paul",
+  "block": "B5",
+  "title": "[B5] Fill the Space Apps project page, test links in incognito, SUBMIT at 21:00 Sunday",
+  "body": "**Owner:** Paul · **Block:** B5 · see docs/TEAM.md"
+ }
+]

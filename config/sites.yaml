@@ -1,0 +1,87 @@
+# Sites used by the pipeline.
+# role: "reference" = Moon/Mars target we want to find analogs for
+#       "candidate" = Earth region searched for analog windows
+# To add an Earth region: copy a candidate block, set the Copernicus tile (1x1 degree, SW corner) and run
+#   python scripts/download_data.py && python scripts/run_pipeline.py
+#
+# Copernicus GLO-30 tile name pattern: Copernicus_DSM_COG_10_N{lat}_00_W{lon}_00_DEM
+
+resolution_m: 30
+window_km: [3, 6, 12]
+main_window_km: 6
+sun_elevations_deg: [2, 5]
+sun_azimuths_deg: [0, 45, 90, 135, 180, 225, 270, 315]
+
+sites:
+  # ---------------- Moon (NASA LRO / LOLA, 5 m/px, Barker et al.)
+  moon_connecting_ridge:
+    role: reference
+    body: moon
+    label: "Moon · Shackleton Connecting Ridge (LOLA Site01)"
+    file: Site01_final_adj_5mpp_surf.tif
+    url: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_surf.tif
+    source: "NASA GSFC PGDA — High-Resolution LOLA Topography for Lunar South Pole Sites (product 78)"
+  moon_malapert:
+    role: reference
+    body: moon
+    label: "Moon · Malapert Massif (LOLA Site23)"
+    file: Site23_final_adj_5mpp_surf.tif
+    url: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site23/Site23_final_adj_5mpp_surf.tif
+    source: "NASA GSFC PGDA — High-Resolution LOLA Topography for Lunar South Pole Sites (product 78)"
+
+  # ---------------- Mars (NASA MRO CTX stereo DTMs, 20 m/px, USGS Astrogeology ARD)
+  mars_arcadia:
+    role: reference
+    body: mars
+    label: "Mars · Arcadia Planitia (candidate human landing area)"
+    file: K19_060706_2194_XN_39N170W__K18_060416_2193_XN_39N170W_dtm.tif
+    url: https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/K19_060706_2194_XN_39N170W__K18_060416_2193_XN_39N170W/K19_060706_2194_XN_39N170W__K18_060416_2193_XN_39N170W_dtm.tif
+    source: "USGS Astrogeology STAC — MRO CTX controlled DTMs"
+  mars_jezero:
+    role: reference
+    body: mars
+    label: "Mars · Jezero crater"
+    file: P02_001820_1984_XI_18N282W__P06_003442_1987_XI_18N282W_dtm.tif
+    url: https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P02_001820_1984_XI_18N282W__P06_003442_1987_XI_18N282W/P02_001820_1984_XI_18N282W__P06_003442_1987_XI_18N282W_dtm.tif
+    source: "USGS Astrogeology STAC — MRO CTX controlled DTMs"
+
+  # ---------------- Earth (ESA Copernicus DEM GLO-30)
+  earth_pinacate:
+    role: candidate
+    body: earth
+    label: "Earth · El Pinacate volcanic field, Sonora (MX)"
+    file: Copernicus_DSM_COG_10_N31_00_W114_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N31_00_W114_00_DEM/Copernicus_DSM_COG_10_N31_00_W114_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_cuatrocienegas:
+    role: candidate
+    body: earth
+    label: "Earth · Cuatro Ciénegas, Coahuila (MX)"
+    file: Copernicus_DSM_COG_10_N26_00_W103_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N26_00_W103_00_DEM/Copernicus_DSM_COG_10_N26_00_W103_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_haughton:
+    role: candidate
+    body: earth
+    label: "Earth · Haughton impact crater, Devon Island (CA)"
+    file: Copernicus_DSM_COG_10_N75_00_W090_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N75_00_W090_00_DEM/Copernicus_DSM_COG_10_N75_00_W090_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_sfvf:
+    role: candidate
+    body: earth
+    label: "Earth · San Francisco Volcanic Field, Arizona (US)"
+    file: Copernicus_DSM_COG_10_N35_00_W112_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N35_00_W112_00_DEM/Copernicus_DSM_COG_10_N35_00_W112_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+
+# Auxiliary layers (not scored as sites)
+auxiliary:
+  lola_avg_illumination_85s:
+    file: AVGVISIB_85S_060M_201608.TIF
+    url: https://pgda.gsfc.nasa.gov/data/MoonIllumination/AVGVISIB_85S_060M_201608.TIF
+    source: "NASA GSFC PGDA — Lunar Polar Illumination, Mazarico et al. (product 69)"
+  lola_permanent_shadow_85s:
+    file: LPSR_85S_060M_201608.TIF
+    url: https://pgda.gsfc.nasa.gov/data/MoonIllumination/LPSR_85S_060M_201608.TIF
+    source: "NASA GSFC PGDA — Lunar Polar Illumination, Mazarico et al. (product 69)"

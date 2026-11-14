@@ -1,0 +1,21 @@
+# data: only data/processed is versioned
+data/raw/*
+!data/raw/.gitkeep
+data/cache/
+*.part
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+# secrets
+.env
+.netrc
+.streamlit/secrets.toml

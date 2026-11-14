@@ -1,0 +1,10 @@
+{
+ "moon_connecting_ridge": {
+  "spearman_rho": 0.861,
+  "n_pixels": 17167
+ },
+ "moon_malapert": {
+  "spearman_rho": 0.548,
+  "n_pixels": 22500
+ }
+}
