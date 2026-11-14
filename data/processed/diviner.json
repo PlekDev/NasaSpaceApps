@@ -1,0 +1,33 @@
+{
+ "sites": {
+  "moon_connecting_ridge": {
+   "label": "Moon \u00b7 Shackleton Connecting Ridge (LOLA Site01)",
+   "n_facets": 1985,
+   "temp_avg_mean_K": 122.5,
+   "temp_avg_min_K": 39.2,
+   "temp_max_mean_K": 247.7,
+   "temp_max_max_K": 321.1,
+   "share_below_110K_avg": 0.28,
+   "share_ice_stable_surface": 0.001,
+   "share_ice_stable_within_1m": 0.348,
+   "median_ice_depth_m": 0.115,
+   "share_colder_than_earth_record": 0.998
+  },
+  "moon_malapert": {
+   "label": "Moon \u00b7 Malapert Massif (LOLA Site23)",
+   "n_facets": 3486,
+   "temp_avg_mean_K": 143.5,
+   "temp_avg_min_K": 53.6,
+   "temp_max_mean_K": 274.0,
+   "temp_max_max_K": 342.1,
+   "share_below_110K_avg": 0.19,
+   "share_ice_stable_surface": 0.0,
+   "share_ice_stable_within_1m": 0.22,
+   "median_ice_depth_m": 0.209,
+   "share_colder_than_earth_record": 0.879
+  }
+ },
+ "earth_record_low_K": 183.9,
+ "earth_record_high_K": 329.9,
+ "source": "LRO Diviner polar resource product, NASA PDS Geosciences (Paige et al.)"
+}

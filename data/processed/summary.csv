@@ -1,17 +1,57 @@
 reference,reference_label,site,site_label,score_combined,score_terrain,score_illumination,lat,lon
-mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_cuatrocienegas,"Earth · Cuatro Ciénegas, Coahuila (MX)",88.8,87.4,93.8,26.053192710400243,-102.52056691681025
-mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_haughton,"Earth · Haughton impact crater, Devon Island (CA)",84.7,82.1,99.4,75.14046940815072,-89.58547510483662
-mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_pinacate,"Earth · El Pinacate volcanic field, Sonora (MX)",87.3,89.3,83.5,31.946624079825465,-113.75119997570845
-mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_sfvf,"Earth · San Francisco Volcanic Field, Arizona (US)",91.4,90.4,94.7,35.56795669040553,-111.83801490573525
-mars_jezero,Mars · Jezero crater,earth_cuatrocienegas,"Earth · Cuatro Ciénegas, Coahuila (MX)",83.9,84.3,82.7,26.404463582362595,-102.03953278029024
-mars_jezero,Mars · Jezero crater,earth_haughton,"Earth · Haughton impact crater, Devon Island (CA)",82.8,80.0,96.8,75.78531769739479,-89.80805399183308
-mars_jezero,Mars · Jezero crater,earth_pinacate,"Earth · El Pinacate volcanic field, Sonora (MX)",83.2,81.9,87.4,31.83864985695464,-113.49736579174603
-mars_jezero,Mars · Jezero crater,earth_sfvf,"Earth · San Francisco Volcanic Field, Arizona (US)",83.6,83.7,83.2,35.811244453076185,-111.14197096148038
-moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_cuatrocienegas,"Earth · Cuatro Ciénegas, Coahuila (MX)",64.7,62.2,73.1,26.269796587506786,-102.58067200422427
-moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_haughton,"Earth · Haughton impact crater, Devon Island (CA)",56.1,50.8,86.4,75.67797700259815,-89.37139529542189
-moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_pinacate,"Earth · El Pinacate volcanic field, Sonora (MX)",72.0,69.5,80.5,31.784539019586987,-113.49736740323695
-moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_sfvf,"Earth · San Francisco Volcanic Field, Arizona (US)",72.9,72.5,74.0,35.3520996064989,-111.44105335962502
-moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_cuatrocienegas,"Earth · Cuatro Ciénegas, Coahuila (MX)",69.8,68.4,73.7,26.5669226214052,-102.0388849495093
-moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_haughton,"Earth · Haughton impact crater, Devon Island (CA)",34.7,28.8,81.0,75.67797700259815,-89.37139529542189
-moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_pinacate,"Earth · El Pinacate volcanic field, Sonora (MX)",48.0,42.5,79.2,31.784539019586987,-113.49736740323695
-moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_sfvf,"Earth · San Francisco Volcanic Field, Arizona (US)",60.7,59.8,63.2,35.3520340288092,-111.63908289690409
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_antarctica_university_valley,"Earth · University Valley, McMurdo Dry Valleys (AQ)",90.5,89.7,92.8,-77.05374014204541,160.47776696182106
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_atacama_yungay,"Earth · Yungay, hyperarid Atacama Desert (CL)",96.0,95.4,97.9,-24.89321336693409,-69.91445386865051
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_axel_heiberg,Earth · Axel Heiberg Island high Arctic (CA),74.3,71.3,86.0,79.81229802407714,-90.43155228816948
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_cuatrocienegas,"Earth · Cuatro Ciénegas, Coahuila (MX)",89.9,89.1,92.6,26.053192710400243,-102.52056691681025
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_haughton,"Earth · Haughton impact crater, Devon Island (CA)",84.6,83.1,89.5,75.08654372085873,-89.79394845081256
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_hawaii_mauna_kea,"Earth · Mauna Kea / Mauna Loa saddle, Hawaiʻi (US)",73.0,71.9,76.2,19.404199310257177,-155.17292988908807
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_iceland_askja,"Earth · Askja caldera, Apollo training area (IS)",89.2,87.9,93.8,65.32794724431722,-16.233576320880026
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_mx_ceboruco,"Earth · Ceboruco volcano, Nayarit (MX)",62.7,73.3,48.5,21.45855822635318,-104.82788511873832
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_mx_chichinautzin,"Earth · Sierra Chichinautzin volcanic field, Morelos/CDMX (MX)",90.0,88.3,98.4,19.891756191019148,-99.0573501603572
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_mx_serdan_oriental,"Earth · Serdán-Oriental basin maars & domes, Puebla (MX)",92.9,93.2,92.4,19.05156343922408,-97.97165066036801
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_mx_valle_santiago,"Earth · Valle de Santiago maars, Guanajuato (MX)",92.4,91.3,96.5,20.72962423836149,-101.28228525141888
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_pinacate,"Earth · El Pinacate volcanic field, Sonora (MX)",86.1,85.2,88.7,31.622109531030542,-113.65546885915866
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_sfvf,"Earth · San Francisco Volcanic Field, Arizona (US)",90.7,89.9,93.3,35.56795669040553,-111.83801490573525
+mars_arcadia,Mars · Arcadia Planitia (candidate human landing area),earth_svalbard_bockfjorden,"Earth · Bockfjorden volcanic complex, Svalbard (NO)",66.8,71.6,58.3,79.03311912526868,13.563609354175268
+mars_jezero,Mars · Jezero crater,earth_antarctica_university_valley,"Earth · University Valley, McMurdo Dry Valleys (AQ)",80.2,77.3,93.0,-77.13413974766996,160.83956272977872
+mars_jezero,Mars · Jezero crater,earth_atacama_yungay,"Earth · Yungay, hyperarid Atacama Desert (CL)",86.6,84.6,94.5,-24.108339872950484,-69.49877635778134
+mars_jezero,Mars · Jezero crater,earth_axel_heiberg,Earth · Axel Heiberg Island high Arctic (CA),67.7,65.9,73.2,79.6778840026391,-90.73226858124909
+mars_jezero,Mars · Jezero crater,earth_cuatrocienegas,"Earth · Cuatro Ciénegas, Coahuila (MX)",86.0,86.2,85.5,26.404463582362595,-102.03953278029024
+mars_jezero,Mars · Jezero crater,earth_haughton,"Earth · Haughton impact crater, Devon Island (CA)",79.5,76.6,92.0,75.54343923147692,-89.80301699647232
+mars_jezero,Mars · Jezero crater,earth_hawaii_mauna_kea,"Earth · Mauna Kea / Mauna Loa saddle, Hawaiʻi (US)",82.9,81.6,86.9,19.729349292466157,-155.14365470223117
+mars_jezero,Mars · Jezero crater,earth_iceland_askja,"Earth · Askja caldera, Apollo training area (IS)",86.0,87.1,83.6,65.78546412082656,-16.687511951463062
+mars_jezero,Mars · Jezero crater,earth_mx_ceboruco,"Earth · Ceboruco volcano, Nayarit (MX)",86.4,86.1,87.0,21.323334557343735,-104.65408099150524
+mars_jezero,Mars · Jezero crater,earth_mx_chichinautzin,"Earth · Sierra Chichinautzin volcanic field, Morelos/CDMX (MX)",88.6,86.7,96.9,19.32277914626125,-99.88678420639802
+mars_jezero,Mars · Jezero crater,earth_mx_serdan_oriental,"Earth · Serdán-Oriental basin maars & domes, Puebla (MX)",87.6,85.8,94.8,19.75667500300271,-97.28671429650761
+mars_jezero,Mars · Jezero crater,earth_mx_valle_santiago,"Earth · Valle de Santiago maars, Guanajuato (MX)",84.8,82.4,95.9,20.214873631886704,-101.39783809334375
+mars_jezero,Mars · Jezero crater,earth_pinacate,"Earth · El Pinacate volcanic field, Sonora (MX)",83.3,82.5,85.5,31.83864985695464,-113.49736579174603
+mars_jezero,Mars · Jezero crater,earth_sfvf,"Earth · San Francisco Volcanic Field, Arizona (US)",86.1,87.5,83.3,35.811244453076185,-111.14197096148038
+mars_jezero,Mars · Jezero crater,earth_svalbard_bockfjorden,"Earth · Bockfjorden volcanic complex, Svalbard (NO)",80.1,77.3,92.6,79.05998497762857,13.422222203953659
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_antarctica_university_valley,"Earth · University Valley, McMurdo Dry Valleys (AQ)",75.9,72.6,91.0,-77.45678627137234,160.35338352009853
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_atacama_yungay,"Earth · Yungay, hyperarid Atacama Desert (CL)",78.7,76.5,86.7,-24.758011603563727,-69.17251203631314
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_axel_heiberg,Earth · Axel Heiberg Island high Arctic (CA),70.4,66.6,87.1,79.62415830686064,-90.28363972025018
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_cuatrocienegas,"Earth · Cuatro Ciénegas, Coahuila (MX)",63.3,61.7,68.0,26.269796587506786,-102.58067200422427
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_haughton,"Earth · Haughton impact crater, Devon Island (CA)",61.7,56.9,86.4,75.4358813255259,-89.15982398457774
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_hawaii_mauna_kea,"Earth · Mauna Kea / Mauna Loa saddle, Hawaiʻi (US)",90.9,89.3,98.5,19.81099549869839,-155.5443449314414
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_iceland_askja,"Earth · Askja caldera, Apollo training area (IS)",72.6,70.7,78.4,65.08555423129133,-16.873968289765862
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_mx_ceboruco,"Earth · Ceboruco volcano, Nayarit (MX)",77.7,75.8,83.7,21.13356532267014,-104.74052330295336
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_mx_chichinautzin,"Earth · Sierra Chichinautzin volcanic field, Morelos/CDMX (MX)",78.1,75.3,89.1,19.159976028948524,-99.03081898695895
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_mx_serdan_oriental,"Earth · Serdán-Oriental basin maars & domes, Puebla (MX)",75.8,74.1,81.4,19.56680288071075,-97.17260302829439
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_mx_valle_santiago,"Earth · Valle de Santiago maars, Guanajuato (MX)",79.3,76.6,90.4,20.052280868048555,-101.39794445529142
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_pinacate,"Earth · El Pinacate volcanic field, Sonora (MX)",71.8,69.4,79.9,31.784539019586987,-113.49736740323695
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_sfvf,"Earth · San Francisco Volcanic Field, Arizona (US)",74.7,77.5,69.2,35.3520996064989,-111.44105335962502
+moon_connecting_ridge,Moon · Shackleton Connecting Ridge (LOLA Site01),earth_svalbard_bockfjorden,"Earth · Bockfjorden volcanic complex, Svalbard (NO)",69.9,67.1,79.4,79.16739108354852,13.27853468240951
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_antarctica_university_valley,"Earth · University Valley, McMurdo Dry Valleys (AQ)",64.5,62.5,70.6,-77.88672858453134,160.3482788057299
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_atacama_yungay,"Earth · Yungay, hyperarid Atacama Desert (CL)",70.4,71.6,67.9,-24.947591022502927,-69.17201452688076
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_axel_heiberg,Earth · Axel Heiberg Island high Arctic (CA),69.4,68.2,73.0,79.11351982963353,-90.86261639606928
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_cuatrocienegas,"Earth · Cuatro Ciénegas, Coahuila (MX)",70.1,69.8,70.8,26.5669226214052,-102.0388849495093
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_haughton,"Earth · Haughton impact crater, Devon Island (CA)",49.1,43.4,84.4,75.65110131810214,-89.37163174005099
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_hawaii_mauna_kea,"Earth · Mauna Kea / Mauna Loa saddle, Hawaiʻi (US)",79.3,76.4,91.1,19.783900603911153,-155.4870798836244
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_iceland_askja,"Earth · Askja caldera, Apollo training area (IS)",55.1,50.7,73.8,65.08555423129133,-16.873968289765862
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_mx_ceboruco,"Earth · Ceboruco volcano, Nayarit (MX)",68.6,74.0,59.5,21.37698041459811,-104.04665684529272
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_mx_chichinautzin,"Earth · Sierra Chichinautzin volcanic field, Morelos/CDMX (MX)",66.6,69.0,61.8,19.26892186468443,-99.34442979731136
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_mx_serdan_oriental,"Earth · Serdán-Oriental basin maars & domes, Puebla (MX)",77.2,77.8,75.8,19.48550146051452,-97.17276675867446
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_mx_valle_santiago,"Earth · Valle de Santiago maars, Guanajuato (MX)",64.5,63.3,67.8,20.485753449155382,-101.71398650911551
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_pinacate,"Earth · El Pinacate volcanic field, Sonora (MX)",60.9,57.0,76.4,31.784539019586987,-113.49736740323695
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_sfvf,"Earth · San Francisco Volcanic Field, Arizona (US)",65.7,65.0,67.6,35.324951557098615,-111.6720304062381
+moon_malapert,Moon · Malapert Massif (LOLA Site23),earth_svalbard_bockfjorden,"Earth · Bockfjorden volcanic complex, Svalbard (NO)",60.8,66.9,50.6,79.27493742862072,13.565035688668543

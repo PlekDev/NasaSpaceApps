@@ -6,6 +6,8 @@ does the analogy break?
 **1. Common grid.** Each DEM is reprojected to a local azimuthal-equidistant projection centred on the DEM. The
 projection uses the body's radius (Moon 1,737.4 km, Mars 3,396.19 km, WGS84 for Earth), and the DEM is averaged
 to 30 m. 30 m is the native Copernicus resolution, so the 5 m lunar and 20 m Martian DEMs are degraded to match.
+On Earth, sea (≤ 0.5 m) and lakes (which Copernicus flattens to a constant height) are masked first, because
+both would otherwise look like perfect "Mars plains".
 
 **2. Windows.** Square windows of 3, 6 and 12 km slide over each grid with a step of half a window. A window is
 kept only if at least 95 % of its pixels are valid and its relief exceeds 1 m, which removes water and flat artefacts.
@@ -39,6 +41,15 @@ Connecting Ridge and ρ = 0.55 at Malapert.
 **6. Analog in time.** Hours per day with solar elevation between 0° and 7° at each Earth site's latitude, by
 month. This uses a standard declination and hour-angle formula without refraction.
 
+**Diviner context (Moon only).** For each lunar reference footprint, `scripts/diviner_context.py` summarises
+the LRO Diviner polar resource product (Paige et al.): average and maximum surface temperature, and the share of
+the site where water ice is thermally stable at the surface or within 1 m. These numbers feed the "Earth can't
+reproduce" panel of every analog card. They are not scored, because no Earth layer has a comparable meaning.
+
+**Known-analog test.** `scripts/validate_known_analogs.py` takes 8 classic analog sites that fall inside our
+regions (Meteor Crater, SP Crater, Pinacate Peaks, Haughton, Pu'u Hiwahine on Mauna Kea, Askja, Yungay and
+University Valley) and reports the percentile of the windows containing them among all Earth windows.
+
 ### Limitations
 
 - **Local horizons only.** There is no body curvature and no terrain outside the DEM. Far mountains shape polar
@@ -56,4 +67,8 @@ month. This uses a standard declination and hour-angle formula without refractio
 - Barker, M. K. et al. — High-resolution LOLA topography for lunar south pole sites (NASA GSFC PGDA product 78).
 - Mazarico, E. et al. (2011) — Illumination conditions of the lunar polar regions using LOLA topography. *Icarus*.
 - Preston, L. J. & Dartnell, L. R. (2014) — Planetary habitability: lessons learned from terrestrial analogues. *Int. J. Astrobiology*.
+- Paige, D. A. et al. — LRO Diviner polar resource product (NASA PDS Geosciences).
+- Klingelhoefer, G. et al. (2014) — The ISRU field tests 2010 and 2012 at Mauna Kea, Hawaii (NTRS 20140008708).
+- McKay, C. P. et al. (2003) — Temperature and moisture conditions for life in the extreme arid region of the Atacama desert. *Astrobiology*.
+- Marinova, M. M. et al. (2022) — Climate and energy balance of the ground in University Valley, Antarctica. *Antarctic Science*.
 - NASA Moon Base overview: https://www.nasa.gov/reference/moonbase-about/

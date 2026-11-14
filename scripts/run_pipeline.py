@@ -17,7 +17,7 @@ from pen.config import load_config, RAW, PROCESSED, CACHE, references, candidate
 from pen.grid import to_metric
 from pen.shadows import shadow_fraction_maps
 from pen.features import slope_deg, roughness_sq, window_features, DIMENSIONS
-from pen.scoring import iqr_scale, reference_vector, similarity
+from pen.scoring import iqr_scale, reference_vector, similarity, compact_windows
 from pen.sun import low_sun_hours_by_month
 
 t0 = time.time()
@@ -85,7 +85,7 @@ for km in WIN:
 df = pd.DataFrame(records)
 for c in [c for c in df.columns if c.startswith("score_")]:
     df[c] = df[c].round(1)
-df.to_csv(PROCESSED / "windows.csv", index=False)
+compact_windows(df).to_csv(PROCESSED / "windows.csv", index=False)
 
 best = (df.sort_values("score_combined", ascending=False).groupby(["reference", "site"], as_index=False).first())
 best["reference_label"] = best["reference"].map(lambda r: cfg["sites"][r]["label"])

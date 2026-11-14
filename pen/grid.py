@@ -36,6 +36,18 @@ def body_geog(body: str) -> CRS:
     return CRS.from_proj4(f"+proj=longlat +R={RADIUS_M[body]} +no_defs")
 
 
+def mask_water(arr: np.ndarray, sea_level_m: float = 0.5, flat_px: int = 5) -> np.ndarray:
+    """Earth only: Copernicus DEM stores the sea at ~0 m and flattens lakes to a constant height.
+    Both would look like perfect 'Mars plains', so they become NaN (windows need >=95 % valid pixels)."""
+    from scipy.ndimage import maximum_filter, minimum_filter
+    out = arr.copy()
+    out[out <= sea_level_m] = np.nan
+    filled = np.where(np.isfinite(arr), arr, -9999.0)
+    flat = (maximum_filter(filled, flat_px) - minimum_filter(filled, flat_px)) == 0
+    out[flat] = np.nan
+    return out
+
+
 def to_metric(path, body: str, res: float = 30.0) -> Grid:
     with rasterio.open(path) as src:
         b = src.bounds
@@ -53,6 +65,8 @@ def to_metric(path, body: str, res: float = 30.0) -> Grid:
         if src.nodata is not None and not np.isnan(src.nodata):
             arr[arr == src.nodata] = np.nan
         arr[arr < -1e4] = np.nan
+        if body == "earth":
+            arr = mask_water(arr)
         dst = np.full((h, w), np.nan, dtype=np.float32)
         reproject(arr, dst, src_transform=src.transform, src_crs=src.crs, dst_transform=transform,
                   dst_crs=dst_crs, resampling=Resampling.average, src_nodata=np.nan, dst_nodata=np.nan)

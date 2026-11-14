@@ -36,3 +36,22 @@ FEATURE_LABELS = {
     "shadow_e2": "shadow at 2° sun",
     "shadow_e5": "shadow at 5° sun",
 }
+
+
+def compact_windows(df):
+    """Round the per-window table for the repo/app (≈ half the size, no visible change in scores)."""
+    import json as _json
+    df = df.copy()
+    for c in df.columns:
+        if c in ("lon", "lat"):
+            df[c] = df[c].round(5)
+        elif c.startswith("score_"):
+            df[c] = df[c].round(1)
+        elif c.startswith("d_"):
+            df[c] = df[c].round(3)
+        elif df[c].dtype.kind == "f" and c not in ("i", "j", "window_km"):
+            df[c] = df[c].round(4)
+    if "polygon" in df:
+        df["polygon"] = df["polygon"].apply(
+            lambda s: _json.dumps([[round(a, 5), round(b, 5)] for a, b in _json.loads(s)]) if isinstance(s, str) and s != "null" else s)
+    return df

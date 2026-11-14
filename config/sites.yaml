@@ -75,12 +75,89 @@ sites:
     url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N35_00_W112_00_DEM/Copernicus_DSM_COG_10_N35_00_W112_00_DEM.tif
     source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
 
+  # ---------------- Earth, expansion set (Mexico, polar, classic analog sites)
+  earth_mx_chichinautzin:
+    role: candidate
+    body: earth
+    label: "Earth · Sierra Chichinautzin volcanic field, Morelos/CDMX (MX)"
+    file: Copernicus_DSM_COG_10_N19_00_W100_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N19_00_W100_00_DEM/Copernicus_DSM_COG_10_N19_00_W100_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_mx_valle_santiago:
+    role: candidate
+    body: earth
+    label: "Earth · Valle de Santiago maars, Guanajuato (MX)"
+    file: Copernicus_DSM_COG_10_N20_00_W102_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N20_00_W102_00_DEM/Copernicus_DSM_COG_10_N20_00_W102_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_mx_serdan_oriental:
+    role: candidate
+    body: earth
+    label: "Earth · Serdán-Oriental basin maars & domes, Puebla (MX)"
+    file: Copernicus_DSM_COG_10_N19_00_W098_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N19_00_W098_00_DEM/Copernicus_DSM_COG_10_N19_00_W098_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_mx_ceboruco:
+    role: candidate
+    body: earth
+    label: "Earth · Ceboruco volcano, Nayarit (MX)"
+    file: Copernicus_DSM_COG_10_N21_00_W105_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N21_00_W105_00_DEM/Copernicus_DSM_COG_10_N21_00_W105_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_svalbard_bockfjorden:
+    role: candidate
+    body: earth
+    label: "Earth · Bockfjorden volcanic complex, Svalbard (NO)"
+    file: Copernicus_DSM_COG_10_N79_00_E013_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N79_00_E013_00_DEM/Copernicus_DSM_COG_10_N79_00_E013_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_axel_heiberg:
+    role: candidate
+    body: earth
+    label: "Earth · Axel Heiberg Island high Arctic (CA)"
+    file: Copernicus_DSM_COG_10_N79_00_W091_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N79_00_W091_00_DEM/Copernicus_DSM_COG_10_N79_00_W091_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_antarctica_university_valley:
+    role: candidate
+    body: earth
+    label: "Earth · University Valley, McMurdo Dry Valleys (AQ)"
+    file: Copernicus_DSM_COG_10_S78_00_E160_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S78_00_E160_00_DEM/Copernicus_DSM_COG_10_S78_00_E160_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_iceland_askja:
+    role: candidate
+    body: earth
+    label: "Earth · Askja caldera, Apollo training area (IS)"
+    file: Copernicus_DSM_COG_10_N65_00_W017_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N65_00_W017_00_DEM/Copernicus_DSM_COG_10_N65_00_W017_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_atacama_yungay:
+    role: candidate
+    body: earth
+    label: "Earth · Yungay, hyperarid Atacama Desert (CL)"
+    file: Copernicus_DSM_COG_10_S25_00_W070_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S25_00_W070_00_DEM/Copernicus_DSM_COG_10_S25_00_W070_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+  earth_hawaii_mauna_kea:
+    role: candidate
+    body: earth
+    label: "Earth · Mauna Kea / Mauna Loa saddle, Hawaiʻi (US)"
+    file: Copernicus_DSM_COG_10_N19_00_W156_00_DEM.tif
+    url: https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N19_00_W156_00_DEM/Copernicus_DSM_COG_10_N19_00_W156_00_DEM.tif
+    source: "ESA Copernicus DEM GLO-30 (AWS Open Data)"
+
 # Auxiliary layers (not scored as sites)
 auxiliary:
   lola_avg_illumination_85s:
     file: AVGVISIB_85S_060M_201608.TIF
     url: https://pgda.gsfc.nasa.gov/data/MoonIllumination/AVGVISIB_85S_060M_201608.TIF
     source: "NASA GSFC PGDA — Lunar Polar Illumination, Mazarico et al. (product 69)"
+  diviner_polar_south_84s:
+    file: dlre_prp_south_84S.csv
+    url: https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/dlre_prp_south.tab
+    note: "Filtered to lat <= -84 (columns clon, clat, temp_avg, temp_max, ice_depth) — the full table is 605 MB"
+    source: "NASA PDS Geosciences — LRO Diviner polar resource product (Paige et al.)"
   lola_permanent_shadow_85s:
     file: LPSR_85S_060M_201608.TIF
     url: https://pgda.gsfc.nasa.gov/data/MoonIllumination/LPSR_85S_060M_201608.TIF

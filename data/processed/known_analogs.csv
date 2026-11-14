@@ -1,0 +1,19 @@
+reference,site,note,n_windows,score_combined_pct_best,score_combined_pct_mean,score_terrain_pct_best,score_terrain_pct_mean,score_illumination_pct_best,score_illumination_pct_mean
+mars_arcadia,"Haughton impact crater, Devon Island, CA",Haughton-Mars Project; lunar and Mars analog,4,83.5,66.0,80.7,71.7,78.1,53.6
+mars_arcadia,"Pu'u Hiwahine, Mauna Kea, HI",NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708,4,26.0,22.4,21.7,17.5,40.0,37.7
+mars_arcadia,"Yungay, Atacama Desert, CL","Hyperarid Mars analog (McKay et al. 2003, Astrobiology)",4,65.9,53.5,60.9,59.2,71.0,45.6
+mars_arcadia,"University Valley, McMurdo Dry Valleys, AQ",Dry-permafrost analog of the Phoenix site (Marinova et al. 2022),4,18.5,12.8,21.7,15.2,12.7,8.4
+mars_jezero,"Haughton impact crater, Devon Island, CA",Haughton-Mars Project; lunar and Mars analog,4,94.1,77.9,92.4,76.9,92.2,72.7
+mars_jezero,"Pu'u Hiwahine, Mauna Kea, HI",NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708,4,53.8,43.2,45.6,34.1,81.7,78.7
+mars_jezero,"Yungay, Atacama Desert, CL","Hyperarid Mars analog (McKay et al. 2003, Astrobiology)",4,81.3,64.3,76.4,57.7,99.1,83.8
+mars_jezero,"University Valley, McMurdo Dry Valleys, AQ",Dry-permafrost analog of the Phoenix site (Marinova et al. 2022),4,52.5,35.9,55.0,36.0,40.8,31.0
+moon_connecting_ridge,"Meteor Crater (Barringer), AZ",Apollo and Artemis astronaut training,2,15.2,14.7,20.3,20.0,6.2,5.3
+moon_connecting_ridge,"SP Crater, San Francisco Volcanic Field, AZ",NASA Desert RATS analog site since 1998,4,73.3,59.0,66.7,53.1,92.5,83.8
+moon_connecting_ridge,"Pinacate Peaks, Sonora, MX",Apollo astronaut geology training 1965–1970,4,97.6,94.4,97.6,91.7,98.7,96.1
+moon_connecting_ridge,"Haughton impact crater, Devon Island, CA",Haughton-Mars Project; lunar and Mars analog,4,65.5,53.2,60.8,49.4,78.0,68.5
+moon_connecting_ridge,"Pu'u Hiwahine, Mauna Kea, HI",NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708,4,99.8,98.2,99.7,97.5,99.5,97.9
+moon_malapert,"Meteor Crater (Barringer), AZ",Apollo and Artemis astronaut training,2,21.3,17.7,26.1,21.9,6.8,5.6
+moon_malapert,"SP Crater, San Francisco Volcanic Field, AZ",NASA Desert RATS analog site since 1998,4,54.1,46.4,52.0,44.7,91.2,84.5
+moon_malapert,"Pinacate Peaks, Sonora, MX",Apollo astronaut geology training 1965–1970,4,97.1,87.1,91.1,80.6,97.8,95.7
+moon_malapert,"Haughton impact crater, Devon Island, CA",Haughton-Mars Project; lunar and Mars analog,4,55.1,43.1,54.2,42.2,77.2,68.5
+moon_malapert,"Pu'u Hiwahine, Mauna Kea, HI",NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708,4,100.0,99.5,100.0,96.8,99.3,97.9

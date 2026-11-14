@@ -5,8 +5,9 @@
 
 P.E.N. finds the **exact field-test site on Earth** for the planned **lunar south-pole Moon Base** and for
 candidate **Mars landing areas**. It scores 6 km windows at 30 m resolution, **one dimension at a time**. Today
-those dimensions are terrain and **low-Sun illumination**; thermal and ice from LRO Diviner are next. For each
-candidate it says *how* similar it is, *in what*, and *where the analogy breaks*.
+those dimensions are terrain and **low-Sun illumination**, searched across **14 Earth regions** (~10,400 windows).
+For each candidate it says *how* similar it is, *in what*, and *where the analogy breaks*, with NASA LRO Diviner
+temperature and ice data quantifying that last part for the Moon sites.
 
 > **Why light?** At the lunar south pole the Sun never rises above ~7°. Long shadows define landing safety,
 > rover vision, power and EVA planning. P.E.N. scores **terrain-cast shadows** with an exact shadow model and
@@ -19,20 +20,30 @@ the official 5 m LOLA DEMs of the Moon Base sites.
 
 ![Low-Sun side-by-side](figures/fig1_low_sun_side_by_side.png)
 
-## Key results (v0.1, 6 km windows, 30 m grid)
+## Key results (v0.2, 6 km windows, 30 m grid, 14 Earth regions, 10,424 windows)
 
 | Reference | Best Earth window | Combined | Terrain | Illumination |
 |---|---|---|---|---|
-| Moon · Shackleton Connecting Ridge | San Francisco Volcanic Field, AZ (35.352, −111.441) | 73 | 72 | 74 |
-| Moon · Shackleton Connecting Ridge | El Pinacate, Sonora, MX (31.785, −113.497) | 72 | 70 | 81 |
-| Moon · Malapert Massif | Cuatro Ciénegas, Coahuila, MX (26.567, −102.039) | 70 | 68 | 74 |
-| Mars · Arcadia Planitia | San Francisco Volcanic Field, AZ | 91 | 90 | 95 |
-| Mars · Jezero | Cuatro Ciénegas, MX | 84 | 84 | 83 |
+| Moon · Shackleton Connecting Ridge | Mauna Kea upper slopes, Hawaiʻi (19.811, −155.544) | 91 | 89 | 98 |
+| Moon · Malapert Massif | Mauna Kea, Hawaiʻi (19.784, −155.487) | 79 | 76 | 91 |
+| Mars · Arcadia Planitia | Hyperarid Atacama near Yungay, Chile (−24.893, −69.914) | 96 | 95 | 98 |
+| Mars · Jezero | Sierra Chichinautzin volcanic field, Mexico (19.323, −99.887) | 89 | 87 | 97 |
 
-- **Validation:** our shadow model reproduces the official LOLA 18.6-year average-illumination map at Connecting
+- **Blind rediscovery of a NASA lunar test site.** Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR ran
+  ISRU field tests in 2010 and 2012 (the 2012 test simulated a lunar-polar prospecting mission), is window
+  **#1 of 10,424** for Malapert and **#23** for Connecting Ridge. P.E.N. never saw any analog labels.
+- **Known-analog test:** across 18 site × target tests with 8 classic analog sites, the median rank is the 80th
+  percentile for illumination and the 61st for terrain (50 = random). El Pinacate, the Apollo training ground in
+  Sonora, ranks in the top 3 % for both lunar targets. Sites chosen for other reasons rank lower, as they should:
+  Meteor Crater is an impact-geology analog and University Valley a dry-permafrost (thermal) analog.
+- **Validation of the light model:** it reproduces NASA's LOLA 18.6-year average-illumination map at Connecting
   Ridge (Spearman ρ = 0.86). Agreement is weaker at Malapert (ρ = 0.55), where distant horizons outside the local DEM matter.
-- **Analog in time:** Haughton crater (75° N) gives 4–6 h/day of lunar-pole-like low Sun (0–7°) in Mar–May and
-  Aug–Oct. The Mexican and Arizona sites get only ~1.1–1.3 h/day.
+- **Where Earth stops being an analog:** per LRO Diviner, 99.8 % of the Connecting Ridge site averages colder than
+  Earth's record low (184 K), and water ice is thermally stable within 1 m in 35 % of it. Malapert peaks at 342 K.
+- **Analog in time:** polar sites (Haughton, Axel Heiberg, Svalbard, University Valley) give 4–7 h/day of
+  lunar-pole-like low Sun (0–7°) around the equinoxes; sites below 40° latitude get about 1 h/day.
+- **Robustness:** re-weighting illumination 0.5–2× keeps 8–10 of the top 10 for three of the four targets (5–10 for
+  Malapert). Window size (3/6/12 km) changes rankings much more; we report it instead of hiding it.
 
 ![Scores](figures/fig2_score_matrix.png)
 
@@ -81,16 +92,20 @@ Details and limitations: [`docs/METHOD.md`](docs/METHOD.md).
 | [LOLA 5 m south-pole DEMs](https://pgda.gsfc.nasa.gov/products/78) (Barker et al.) | **NASA** GSFC / LRO | Moon Base reference terrain |
 | [LOLA polar illumination](https://pgda.gsfc.nasa.gov/products/69) (Mazarico et al.) | **NASA** GSFC / LRO | Validation of the shadow model |
 | [MRO CTX stereo DTMs](https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms) | **NASA** MRO / USGS | Mars reference terrain |
-| [Copernicus DEM GLO-30](https://registry.opendata.aws/copernicus-dem/) | **ESA** (Space Agency Partner) | Earth candidate terrain |
+| [LRO Diviner polar resource product](https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/) (Paige et al.) | **NASA** LRO / PDS | Moon temperature and ice stability (where Earth stops being an analog) |
+| [Copernicus DEM GLO-30](https://registry.opendata.aws/copernicus-dem/) | **ESA** (Space Agency Partner) | Earth candidate terrain (14 one-degree tiles) |
 
-Planned: LRO Diviner polar temperatures (NASA), EMIT surface mineralogy (NASA), MODIS/ECOSTRESS land-surface temperature (NASA),
+![Diviner](figures/fig6_diviner.png)
+
+Planned: EMIT surface mineralogy (NASA), MODIS/ECOSTRESS land-surface temperature (NASA),
 RADARSAT / Sentinel-1 radar (CSA / ESA).
 
 ## Limitations
 
 - Shadows come from **local** terrain only. There is no body curvature and no horizon outside the DEM, which is why
   agreement drops at Malapert.
-- Copernicus is a surface model: vegetation and buildings are included.
+- Copernicus is a surface model: vegetation and buildings are included. Sea (≤ 0.5 m) and flattened lakes are masked.
+- Diviner is used as context for the Moon sites, not scored: there is no Earth layer with comparable meaning yet.
 - Flat Mars plains score high against much of Earth. Plains need finer texture, ice or thermal features to discriminate.
 - Rankings depend on window size; see `stability_top10_by_window_km` in `data/processed/results.json`.
 - Earth cannot reproduce reduced gravity, vacuum, the thin CO₂ atmosphere or the radiation environment.

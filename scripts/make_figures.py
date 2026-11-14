@@ -59,7 +59,7 @@ for row, ref in enumerate(pairs):
     top = win[win.reference == ref].sort_values("score_combined", ascending=False).iloc[0]
     zc = np.load(CACHE / f"{top.site}_z.npy")
     panels = [(zr, i, j, cfg["sites"][ref]["label"]),
-              (zc, int(top.i), int(top.j), f"Best Earth analog: {SHORT[top.site]}  ({top.lat:.3f}, {top.lon:.3f})\n"
+              (zc, int(top.i), int(top.j), f"Best Earth analog: {SHORT[top.site]}\n({top.lat:.3f}, {top.lon:.3f}) · "
                f"terrain {top.score_terrain:.0f} · illumination {top.score_illumination:.0f} · combined {top.score_combined:.0f}")]
     for col, (z, ii, jj, title) in enumerate(panels):
         ax = axs[row, col]
@@ -72,40 +72,57 @@ fig.suptitle("Same low Sun (3° elevation, from SW), same scale: 6 km windows at
 fig.text(0.02, 0.005, "Black = cast shadow. " + CREDIT, fontsize=8, color=INK2)
 fig.tight_layout(rect=(0, 0.02, 1, 0.96)); fig.savefig(FIGURES / "fig1_low_sun_side_by_side.png", dpi=150); plt.close(fig)
 
-# 2 — score matrix per dimension
+# 2 — score matrix per dimension (regions as rows so 10+ regions stay readable)
 dims = [c for c in summ.columns if c.startswith("score_") and c != "score_combined"] + ["score_combined"]
-fig, axs = plt.subplots(1, len(dims), figsize=(4.5 * len(dims), 4.6), sharey=True)
+order = sorted(CANDS, key=lambda c: -summ[summ.site == c]["score_combined"].mean())
+RLAB = {"moon_connecting_ridge": "Moon\nConn. Ridge", "moon_malapert": "Moon\nMalapert",
+        "mars_arcadia": "Mars\nArcadia", "mars_jezero": "Mars\nJezero"}
+fig, axs = plt.subplots(1, len(dims), figsize=(3.6 * len(dims) + 2.4, 0.42 * len(order) + 2.2), sharey=True)
 for ax, key in zip(axs, dims):
-    M = np.array([[summ[(summ.reference == r) & (summ.site == c)][key].iloc[0] for c in CANDS] for r in REFS])
-    ax.imshow(M, cmap=SEQ, vmin=20, vmax=100)
-    for a in range(len(REFS)):
-        for b in range(len(CANDS)):
-            ax.text(b, a, f"{M[a, b]:.0f}", ha="center", va="center", fontsize=11, color="white" if M[a, b] > 65 else INK)
-    ax.set_xticks(range(len(CANDS)), [SHORT[c] for c in CANDS], rotation=30, ha="right")
-    ax.set_yticks(range(len(REFS)), [cfg["sites"][r]["label"].split("(")[0].strip() for r in REFS])
-    ax.set_title(key.replace("score_", "").capitalize(), loc="left", color=INK, fontsize=11)
-    for s in ax.spines.values(): s.set_visible(False)
+    M = np.array([[summ[(summ.reference == r) & (summ.site == c)][key].iloc[0] for r in REFS] for c in order])
+    ax.imshow(M, cmap=SEQ, vmin=20, vmax=100, aspect="auto")
+    for a in range(len(order)):
+        for b in range(len(REFS)):
+            ax.text(b, a, f"{M[a, b]:.0f}", ha="center", va="center", fontsize=9.5, color="white" if M[a, b] > 65 else INK)
+    ax.set_xticks(range(len(REFS)), [RLAB.get(r, r) for r in REFS], fontsize=9)
+    ax.xaxis.tick_top()
+    ax.set_yticks(range(len(order)), [SHORT[c] for c in order], fontsize=9.5)
+    ax.set_title(key.replace("score_", "").capitalize(), loc="left", color=INK, fontsize=11, pad=34)
+    for sp in ax.spines.values(): sp.set_visible(False)
     ax.tick_params(length=0)
 fig.suptitle("Similarity score (0–100) of the best 6 km window in each Earth region", x=0.01, ha="left",
              fontsize=12.5, color=INK, fontweight="bold")
-fig.text(0.01, 0.01, "100 = identical features; ~37 = one inter-quartile range apart on average.", fontsize=8.5, color=INK2)
-fig.tight_layout(rect=(0, 0.04, 1, 0.93)); fig.savefig(FIGURES / "fig2_score_matrix.png", dpi=150); plt.close(fig)
+fig.text(0.01, 0.01, "Regions sorted by mean combined score. 100 = identical features; ~37 = one inter-quartile range apart on average.",
+         fontsize=8.5, color=INK2)
+fig.tight_layout(rect=(0, 0.03, 1, 0.95)); fig.savefig(FIGURES / "fig2_score_matrix.png", dpi=150); plt.close(fig)
 
-# 3 — analog in time
+# 3 — analog in time: polar sites highlighted, all other regions as one grey band
 months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-fig, ax = plt.subplots(figsize=(10, 4.8))
-for k, c in enumerate(CANDS):
-    v = R["low_sun_hours_by_month"][c]
-    ax.plot(range(12), v, color=CAT[k % len(CAT)], lw=2, marker="o", ms=5, label=SHORT[c])
-ax.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.09), ncol=4, fontsize=9)
-ax.set_xticks(range(12), months); ax.set_ylabel("hours per day"); ax.set_ylim(0, 6.8)
+LS = R["low_sun_hours_by_month"]
+lat = {c: R["site_centers"][c][1] if c in R.get("site_centers", {}) else None for c in CANDS}
+polar = [c for c in CANDS if lat.get(c) is not None and abs(lat[c]) >= 60]
+groups = {}
+for c in polar:  # sites at the same latitude give identical curves → merge their labels
+    key = tuple(np.round(LS[c], 2)); groups.setdefault(key, []).append(c)
+rest = [c for c in CANDS if c not in polar]
+fig, ax = plt.subplots(figsize=(10, 5.2))
+if rest:
+    arr = np.array([LS[c] for c in rest])
+    ax.fill_between(range(12), arr.min(0), arr.max(0), color="#c9c8c2", alpha=0.6, lw=0)
+    ax.plot(range(12), arr.mean(0), color="#8a8984", lw=1.5, label=f"{len(rest)} sites below 40° latitude (range)")
+for k, (key, cs) in enumerate(groups.items()):
+    la = abs(lat[cs[0]]); hemi = "N" if lat[cs[0]] > 0 else "S"
+    ax.plot(range(12), list(key), color=CAT[k], lw=2.2, marker="o", ms=5,
+            label=" & ".join(SHORT[c] for c in cs) + f" ({la:.0f}°{hemi})")
+ax.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.08), ncol=2, fontsize=9)
+ax.set_xticks(range(12), months); ax.set_ylabel("hours per day with the Sun 0–7° up"); ax.set_ylim(0, 7.5)
 ax.grid(axis="y", color="#e8e7e2", lw=0.8); ax.set_axisbelow(True)
-for s in ["top", "right"]: ax.spines[s].set_visible(False)
-ax.set_title("High Arctic sites give 4–6 h/day of lunar-pole-like low Sun near the equinoxes", loc="left",
+for sp in ["top", "right"]: ax.spines[sp].set_visible(False)
+fig.suptitle("Polar sites give 4–7 h/day of lunar-pole-like low Sun around the equinoxes", x=0.02, ha="left",
              fontsize=12.5, color=INK, fontweight="bold")
-ax.text(0, 6.45, "Hours per day with the Sun 0–7° above the horizon. At the lunar south pole the Sun never rises above ~7°.",
-        fontsize=9, color=INK2)
-fig.tight_layout(rect=(0, 0.03, 1, 1)); fig.savefig(FIGURES / "fig3_analog_in_time.png", dpi=150); plt.close(fig)
+fig.text(0.02, 0.905, "At the lunar south pole the Sun never rises above ~7°. Below 40° latitude that light lasts ~1 h/day.",
+         fontsize=9, color=INK2)
+fig.tight_layout(rect=(0, 0.02, 1, 0.9)); fig.savefig(FIGURES / "fig3_analog_in_time.png", dpi=150); plt.close(fig)
 
 # 4 — validation
 if V:
