@@ -3,7 +3,7 @@
 Read-only on config/ and data/processed/. Run with:  python -I web/tools/export_data.py
 Nothing is typed by hand: targets, regions, dimensions and every number come from the repo files.
 AI-assisted (Claude Code); reviewed by the author."""
-import ast, csv, json, re, shutil, sys
+import ast, csv, hashlib, json, re, shutil, subprocess, sys
 from pathlib import Path
 import yaml
 from PIL import Image
@@ -23,10 +23,12 @@ def literal_assign(path, name):
 
 
 def split_label(label):
-    """'Moon · Nobile Rim 1 (LOLA Site06, Artemis candidate region)' -> short name, detail line, tags."""
-    body = label.split("·", 1)[1].strip() if "·" in label else label
+    """'Moon · Nobile Rim 1 (LOLA Site06, Artemis candidate region)' -> short name, detail line, tags.
+    Robust to labels without a "·" prefix, a parenthesis or a comma; never returns an empty name or an ellipsis."""
+    body = label.split("·", 1)[1].strip() if "·" in label else label.strip()
     m = re.match(r"^(.*?)\s*\((.*)\)\s*$", body)
     name, paren = (m.group(1), m.group(2)) if m else (body, "")
+    name = name.replace("…", "").replace("...", "").strip() or body.replace("…", "").strip() or label.strip()
     tags, detail = [], []
     for part in [p.strip() for p in paren.split(",")] if paren else []:
         (tags if "artemis" in part.lower() else detail).append(
@@ -35,13 +37,30 @@ def split_label(label):
 
 
 def region_label(label):
-    body = label.split("·", 1)[1].strip()
+    """'Earth · Yungay, hyperarid Atacama Desert (CL)' -> (name, place, country code); tolerant of missing parts."""
+    body = label.split("·", 1)[1].strip() if "·" in label else label.strip()
     m = re.match(r"^(.*?)\s*\(([A-Z]{2})\)\s*$", body)
     body, cc = (m.group(1), m.group(2)) if m else (body, "")
     name, sep, place = body.partition(",")
     if not sep:  # no comma: whole text is the name
-        return body.strip(), "", cc
-    return name.strip(), place.strip(), cc
+        return body.strip() or label.strip(), "", cc
+    return name.strip() or body.strip(), place.strip(), cc
+
+
+def source_stamp():
+    """Hash of every file in data/processed (name + bytes) and the git commit: the web app can never silently show other numbers."""
+    h = hashlib.sha256()
+    for p in sorted(PROC.rglob("*")):
+        if p.is_file() and "thumbs" not in p.parts and "imagery" not in p.parts:
+            h.update(str(p.relative_to(PROC)).encode()); h.update(p.read_bytes())
+    for p in sorted((PROC / "thumbs").glob("*.json")):
+        h.update(p.name.encode()); h.update(p.read_bytes())
+    try:
+        commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+        dirty = bool(subprocess.run(["git", "status", "--porcelain", "data/processed"], cwd=ROOT, capture_output=True, text=True).stdout.strip())
+    except Exception:
+        commit, dirty = "unknown", False
+    return h.hexdigest()[:8], commit + ("+dirty" if dirty else "")
 
 
 def thumb(src, dst, px=192, quality=80):
@@ -101,7 +120,9 @@ def main():
         name, place, cc = region_label(sites[s]["label"])
         rman.append(dict(id=s, label=sites[s]["label"], name=name, place=place, cc=cc, center=centers[s]))
 
+    dhash, commit = source_stamp()
     manifest = dict(
+        data_hash=dhash, git_commit=commit,
         window_km=win_km, dims={d: dims[d] for d in present}, feature_labels={f: labels.get(f, f) for f in feats},
         scale=dict(lonlat=1e5, score=10, d=1000), targets=tman, regions=rman,
         windows_per_target=len(by_ref[targets[0]]))
