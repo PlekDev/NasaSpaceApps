@@ -81,7 +81,20 @@ def cant_reproduce(ref, body):
                  f"Water ice thermally stable within 1 m in **{dv['share_ice_stable_within_1m']:.0%}** of it "
                  f"(median depth {dv['median_ice_depth_m']*100:.0f} cm)",
                  f"Surface peaks reach {dv['temp_max_max_K']:.0f} K ({dv['temp_max_max_K']-273.15:.0f} °C)"] + items
+    mc = mars_context().get("sites", {}).get(ref)
+    if mc:   # modelled, not measured: Mars Climate Database v6.2 (scripts/mars_context.py)
+        items = [f"Surface averages **{mc['tsurf_mean_K']:.0f} K** ({mc['tsurf_mean_K']-273.15:.0f} °C) over the year, from "
+                 f"{mc['tsurf_min_K']:.0f} K at night to {mc['tsurf_max_K']:.0f} K at midday; above freezing only "
+                 f"{mc['share_above_freezing']:.0%} of the time (Mars Climate Database, model)",
+                 f"Air pressure **{mc['ps_mean_Pa']:.0f} Pa**, {mc['ps_mean_Pa']/101325:.1%} of Earth's sea level and close to "
+                 f"water's triple point (612 Pa)"] + items
     return items
+
+
+@st.cache_data(show_spinner=False)
+def mars_context():
+    p = PROCESSED / "mars_context.json"
+    return json.load(open(p, encoding="utf-8")) if p.exists() else {}
 
 refs = [r for r in cfg["sites"] if cfg["sites"][r]["role"] == "reference" and r in set(win.reference)]
 cands = [c for c in cfg["sites"] if cfg["sites"][c]["role"] == "candidate" and c in set(win.site)]
@@ -99,14 +112,18 @@ EARTH_LIMITS = {
 st.sidebar.markdown("## 🌗 P.E.N.")
 st.sidebar.caption("Planetary Environmental Navigator")
 ref = st.sidebar.selectbox("Moon / Mars target site", refs, format_func=label)
+if ref in res.get("site_centers", {}):
+    rlon, rlat = res["site_centers"][ref]
+    st.sidebar.caption(f"Reference center: {rlat:.3f}°, {rlon:.3f}° ({cfg['sites'][ref]['body'].capitalize()})")
 st.sidebar.markdown("**Weight of each dimension**")
-weights = {d: st.sidebar.slider(d.capitalize(), 0.0, 2.0, 1.0, 0.1) for d in DIMENSIONS}
+active_dims = {d: k for d, k in DIMENSIONS.items() if f"score_{d}" in win.columns}
+weights = {d: st.sidebar.slider(d.capitalize(), 0.0, 2.0, 1.0, 0.1) for d in active_dims}
 regions = st.sidebar.multiselect("Earth regions", cands, default=cands, format_func=short)
 min_score = st.sidebar.slider("Minimum combined score", 0, 100, 60)
 
 df = win[(win.reference == ref) & (win.site.isin(regions))].copy()
-num = sum(weights[d] * len(k) * (-np.log(df[f"score_{d}"] / 100)) ** 2 for d, k in DIMENSIONS.items())
-den = sum(weights[d] * len(k) for d, k in DIMENSIONS.items()) or 1
+num = sum(weights[d] * len(k) * (-np.log(df[f"score_{d}"] / 100)) ** 2 for d, k in active_dims.items())
+den = sum(weights[d] * len(k) for d, k in active_dims.items()) or 1
 df["score"] = (100 * np.exp(-np.sqrt(num / den))).round(1)
 df = df.sort_values("score", ascending=False)
 shown = df[df.score >= min_score].copy()
@@ -147,22 +164,41 @@ def ramp(s, lo):
     return (stops[k] + f * (stops[k + 1] - stops[k])).astype(int).tolist()
 
 
+REFERENCE_ANALOGS = [
+    dict(name="★ Meteor Crater", lat=35.0281, lon=-111.0233, bodies=("moon",)),
+    dict(name="★ SP Crater", lat=35.5822, lon=-111.6318, bodies=("moon",)),
+    dict(name="★ Pinacate Peaks", lat=31.77, lon=-113.49, bodies=("moon",)),
+    dict(name="★ Haughton Crater", lat=75.383, lon=-89.667, bodies=("moon", "mars")),
+    dict(name="★ Cinder Lake", lat=35.3066, lon=-111.5048, bodies=("moon",)),
+    dict(name="★ HMP Station", lat=75.433, lon=-89.867, bodies=("moon", "mars")),
+    dict(name="★ Pu'u Hiwahine (ISRU)", lat=19.7609, lon=-155.4707, bodies=("moon", "mars")),
+    dict(name="★ Askja Caldera", lat=65.03, lon=-16.75, bodies=("moon",)),
+    dict(name="★ Yungay (Atacama)", lat=-24.067, lon=-69.86, bodies=("mars",)),
+    dict(name="★ University Valley", lat=-77.867, lon=160.75, bodies=("mars",)),
+]
+
 with tab_map:
-    a, b = st.columns([3, 1])
-    view = b.radio("View", ["3D globe", "Flat map"], horizontal=True, label_visibility="collapsed")
-    hint = "dot size & colour = score · gold rings = Earth regions" if view == "3D globe" else "column height = score · drag to tilt"
-    a.markdown(f'<div class="pen-legend">similarity <div class="bar"></div> {min_score} → 100 · {hint}</div>',
+    a, b, c = st.columns([2.3, 1.1, 1])
+    color_opts = ["combined"] + [d for d in DIMENSIONS if f"score_{d}" in shown.columns]
+    color_by = b.selectbox("Colour map by", color_opts, format_func=lambda k: f"Colour: {k}", label_visibility="collapsed")
+    color_col = "score" if color_by == "combined" else f"score_{color_by}"
+    view = c.radio("View", ["3D globe", "Flat map"], horizontal=True, label_visibility="collapsed")
+    hint = (f"dot size & colour = {color_by} · gold rings = regions · ★ = NASA reference analogs"
+            if view == "3D globe" else f"column height & colour = {color_by} · ★ = NASA reference analogs · drag to tilt")
+    a.markdown(f'<div class="pen-legend">{color_by} similarity <div class="bar"></div> {min_score} → 100 · {hint}</div>',
                unsafe_allow_html=True)
-    shown["color"] = shown.score.apply(lambda s: ramp(s, min_score) + [235])
+    shown["color"] = shown[color_col].apply(lambda s: ramp(s, min_score) + [235])
     shown["region"] = shown.site.map(short)
-    shown["height"] = (shown.score - min_score + 3) ** 2 * (5000 if view == "3D globe" else 25)
-    tooltip = {"html": "<b>{region}</b><br/>combined <b>{score}</b><br/>terrain {score_terrain} · illumination "
-                       "{score_illumination}<br/>{lat}, {lon}",
+    shown["height"] = np.maximum(shown[color_col] - min_score + 3, 1) ** 2 * (5000 if view == "3D globe" else 25)
+    dim_cols = [f"score_{d}" for d in active_dims]
+    dim_tip = " · ".join(f"{d} {{score_{d}}}" for d in active_dims)
+    tooltip = {"html": f"<b>{{region}}</b><br/>combined <b>{{score}}</b><br/>{dim_tip}<br/>{{lat}}, {{lon}}",
                "style": {"backgroundColor": "#111723", "color": "#f0efec", "fontSize": "12px"}}
-    cols = ["lon", "lat", "score", "score_terrain", "score_illumination", "region", "color", "height", "polygon", "radius"]
+    cols = ["lon", "lat", "score", *dim_cols, "region", "color", "height", "polygon", "radius"]
     labels = pd.DataFrame([dict(name=short(c), lon=res["site_centers"][c][0], lat=res["site_centers"][c][1]) for c in regions])
-    shown["radius"] = 14000 + (shown.score - min_score) * 2500
-    best_by_region = df.groupby("site").score.max()
+    ref_marks = pd.DataFrame([m for m in REFERENCE_ANALOGS if body in m["bodies"]])
+    shown["radius"] = 14000 + np.maximum(shown[color_col] - min_score, 0) * 2500
+    best_by_region = df.groupby("site")[color_col].max()
     rings = pd.DataFrame([dict(lon=res["site_centers"][c][0], lat=res["site_centers"][c][1],
                                r=120000 + 6000 * max(best_by_region.get(c, 0) - min_score, 0)) for c in regions])
     if view == "3D globe":
@@ -175,6 +211,8 @@ with tab_map:
                       get_fill_color="color", pickable=True, auto_highlight=True, opacity=0.9),
             pdk.Layer("ScatterplotLayer", rings, get_position=["lon", "lat"], get_radius="r", filled=False,
                       stroked=True, get_line_color=[255, 209, 102, 200], line_width_min_pixels=2),
+            pdk.Layer("ScatterplotLayer", ref_marks, get_position=["lon", "lat"], get_radius=45000, filled=False,
+                      stroked=True, get_line_color=[235, 104, 52, 230], line_width_min_pixels=2),
             pdk.Layer("TextLayer", labels, get_position=["lon", "lat"], get_text="name", get_size=13,
                       get_color=[255, 209, 102], get_pixel_offset=[0, -22], billboard=True, font_weight=700,
                       parameters={"depthTest": False}),
@@ -184,19 +222,27 @@ with tab_map:
                         initial_view_state=pdk.ViewState(latitude=float(center.lat), longitude=float(center.lon), zoom=1.6),
                         tooltip=tooltip, parameters={"cull": True})
     else:
-        layers = [pdk.Layer("PolygonLayer", shown[cols], get_polygon="polygon", get_fill_color="color",
-                            get_line_color=[255, 255, 255, 60], line_width_min_pixels=0.5, pickable=True,
-                            auto_highlight=True, extruded=True, get_elevation="height", elevation_scale=1)]
+        layers = [
+            pdk.Layer("PolygonLayer", shown[cols], get_polygon="polygon", get_fill_color="color",
+                      get_line_color=[255, 255, 255, 60], line_width_min_pixels=0.5, pickable=True,
+                      auto_highlight=True, extruded=True, get_elevation="height", elevation_scale=1),
+            pdk.Layer("ScatterplotLayer", ref_marks, get_position=["lon", "lat"], get_radius=1200,
+                      get_fill_color=[235, 104, 52, 220], get_line_color=[255, 255, 255, 230],
+                      stroked=True, line_width_min_pixels=1.5),
+            pdk.Layer("TextLayer", ref_marks, get_position=["lon", "lat"], get_text="name", get_size=12,
+                      get_color=[255, 209, 102], get_pixel_offset=[0, -16], billboard=True, font_weight=700),
+        ]
         center = shown.iloc[0] if len(shown) else pd.Series(dict(lat=35, lon=-100))
         deck = pdk.Deck(layers=layers, map_provider="carto", map_style="dark", tooltip=tooltip,
                         initial_view_state=pdk.ViewState(latitude=float(center.lat), longitude=float(center.lon),
                                                          zoom=8, pitch=45, bearing=-15))
     st.pydeck_chart(deck, height=560)
-    top = df.head(15)[["site", "lat", "lon", "score", "score_terrain", "score_illumination"]].copy()
+    top = df.head(15)[["site", "lat", "lon", "score", *dim_cols]].copy()
     top["site"] = top.site.map(short)
     top[["lat", "lon"]] = top[["lat", "lon"]].round(4)
-    st.dataframe(top.rename(columns={"site": "Earth region", "score": "combined", "score_terrain": "terrain",
-                                     "score_illumination": "illumination"}), hide_index=True, width="stretch")
+    st.dataframe(top.rename(columns={"site": "Earth region", "score": "combined",
+                                     **{f"score_{d}": d for d in active_dims}}),
+                 hide_index=True, width="stretch")
     st.download_button("Download all windows (CSV)", df.drop(columns=["polygon"]).to_csv(index=False),
                        file_name=f"pen_{ref}_windows.csv", mime="text/csv")
 
@@ -233,7 +279,9 @@ with tab_card:
             st.warning(f"🛰️ **Field safety · NASA EONET ({how}):** {len(evs)} open natural event(s) within 150 km\n\n{lines}")
         elif evs is not None:
             st.success(f"🛰️ **Field safety · NASA EONET ({how}):** no open natural events within 150 km.")
-        d = {f: r[f"d_{f}"] for ks in DIMENSIONS.values() for f in ks if f"d_{f}" in r}
+        d = {f: r[f"d_{f}"] for ks in active_dims.values() for f in ks if f"d_{f}" in r}
+        dim_summary = " · ".join(f"**{dim.capitalize()}:** {r[f'score_{dim}']:.0f}/100" for dim in active_dims)
+        st.caption(f"Dimension scores — {dim_summary}")
         similar, differs = explain(d, FEATURE_LABELS)
         a, b, c = st.columns(3)
         a.subheader("✅ Similar in"); a.write("\n".join(f"- {s}" for s in similar) or "—")
@@ -270,10 +318,18 @@ with tab_val:
                     "lunar surface and with real Sun positions, brings the agreement to:")
         rows = [dict(site=label(k).split("·")[1].split("(")[0].strip(),
                      **{"local DEM (ρ)": vv["V1_local_flat"]["spearman_rho"],
-                        "150 km horizons (ρ)": vv["V3_far_curved"]["spearman_rho"],
+                        "horizons up to 150 km (ρ)": vv["V3_far_curved"]["spearman_rho"],
                         "error, lit fraction": f"±{vv['V3_far_curved']['mean_abs_error']:.3f}"})
                 for k, vv in far["sites"].items()]
         st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+        rm = far["sites"].get("moon_malapert", {}).get("ray_reach")
+        rn = far["sites"].get("moon_nobile_rim1", {}).get("ray_reach")
+        rl = far["sites"].get("moon_leibnitz_beta", {}).get("ray_reach")
+        m_rng = f"{rm['outward_ray_km_min']:.0f}–{rm['outward_ray_km_max']:.0f} km" if rm else "21–39 km"
+        n_rng = f"{rn['outward_ray_km_min']:.0f}–{rn['outward_ray_km_max']:.0f} km" if rn else "41–66 km"
+        l_rng = f"{rl['outward_ray_km_min']:.0f}–{rl['outward_ray_km_max']:.0f} km" if rl else "31–49 km"
+        st.caption(f"Malapert, Nobile Rim 1 and Leibnitz Beta sit near the edge of NASA's 85°S DEM: rays toward lower "
+                   f"latitudes reach only {m_rng}, {n_rng} and {l_rng}.")
         st.image(str(f7))
         st.caption("Scoring still uses local windows on both bodies, so Moon and Earth are treated the same way; "
                    "this test shows the light model itself is right once distant terrain is included.")
@@ -285,28 +341,37 @@ with tab_val:
                  f"{s['n_tests']} site × target tests; 50 = random).")
         st.success("**Blind rediscovery:** Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar "
                    "prospecting mission in 2012 (PISCES ISRU field test), ranks **#1 of 10,424** Earth windows for "
-                   "Malapert and stays in the **top 0.2 %** for all four Moon Base sites (#9 Nobile Rim 1, #19 de Gerlache, "
-                   "#23 Connecting Ridge). P.E.N. was never told about it.")
+                   "Malapert and in the **top 0.2 %** for four of the six Moon Base sites (#9 Nobile Rim 1, #19 de Gerlache, "
+                   "#23 Connecting Ridge); top 1.1 % for Leibnitz Beta and top 5 % for Haworth. P.E.N. was never told about it.")
         st.caption("Sites chosen for other reasons rank lower, as they should: Meteor Crater is an impact-geology analog and "
                    "University Valley a dry-permafrost (thermal) analog, not terrain-and-light analogs.")
-        kt = pd.DataFrame(known["rows"])[["reference", "site", "score_combined_pct_best", "score_terrain_pct_best", "score_illumination_pct_best"]]
+        raw_kt = pd.DataFrame(known["rows"])
+        kt_dim_cols = [f"score_{d}_pct_best" for d in DIMENSIONS if f"score_{d}_pct_best" in raw_kt.columns]
+        kt = raw_kt[["reference", "site", "score_combined_pct_best", *kt_dim_cols]].copy()
         kt["reference"] = kt.reference.map(lambda x: label(x).split("(")[0].strip())
-        st.dataframe(kt.rename(columns={"score_combined_pct_best": "combined pct", "score_terrain_pct_best": "terrain pct",
-                                        "score_illumination_pct_best": "illumination pct"}), hide_index=True, width="stretch")
+        st.dataframe(kt.rename(columns={"score_combined_pct_best": "combined pct",
+                                        **{f"score_{d}_pct_best": f"{d} pct" for d in DIMENSIONS}}),
+                     hide_index=True, width="stretch")
     f5 = FIGURES / "fig5_sensitivity.png"
     if f5.exists():
         st.subheader("3 · How robust is the ranking?")
         st.image(str(f5))
-        st.caption("Re-weighting illumination 0.5–2× keeps 8–10 of the top 10 for five of six targets (5–10 for Malapert); the "
+        st.caption("Re-weighting illumination 0.5–2× keeps 7–10 of the top 10 for seven of nine targets (down to 5 for Malapert and Haworth); the "
                    "window size (3/6/12 km) changes rankings much more — reported, not hidden.")
 
     f6 = FIGURES / "fig6_diviner.png"
+    f8 = FIGURES / "fig8_thermal_gap.png"
     if div and f6.exists():
         st.subheader("4 · Where Earth stops being an analog")
-        st.write("Analogs reproduce terrain and light, not lunar polar temperature. LRO Diviner measurements show all four "
+        st.write("Analogs reproduce terrain and light, not lunar polar temperature. LRO Diviner measurements show all six "
                  "lunar sites average below Earth's coldest recorded temperature over 88–100 % of their area, with water ice stable "
                  "just under the surface. P.E.N. says so on every analog card instead of overselling the match.")
         st.image(str(f6))
+        if f8.exists():
+            st.image(str(f8))
+            st.caption("Even our coldest Earth analog region (University Valley, 239 K annual mean skin temperature from NASA POWER) "
+                       "is 95–132 K warmer than the six Moon Base sites (107–144 K), while lunar daytime peaks (306–342 K) are within "
+                       "reach of Earth's desert regions (up to 328 K).")
 
 with tab_about:
     st.markdown((ROOT / "docs" / "METHOD.md").read_text(encoding="utf-8"))

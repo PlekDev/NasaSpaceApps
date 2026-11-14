@@ -4,6 +4,11 @@ mars_arcadia,"HMP Research Station, Devon Island, CA","Haughton-Mars Project bas
 mars_arcadia,"Pu'u Hiwahine, Mauna Kea, HI",NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708,4,26.0,22.4,21.7,17.5,40.0,37.7
 mars_arcadia,"Yungay, Atacama Desert, CL","Hyperarid Mars analog (McKay et al. 2003, Astrobiology)",4,65.9,53.5,60.9,59.2,71.0,45.6
 mars_arcadia,"University Valley, McMurdo Dry Valleys, AQ",Dry-permafrost analog of the Phoenix site (Marinova et al. 2022),4,18.5,12.8,21.7,15.2,12.7,8.4
+mars_deuteronilus,"Haughton impact crater, Devon Island, CA",Haughton-Mars Project; lunar and Mars analog,4,84.8,77.1,81.2,74.4,97.4,76.4
+mars_deuteronilus,"HMP Research Station, Devon Island, CA","Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",2,86.4,78.4,85.1,74.8,83.1,80.2
+mars_deuteronilus,"Pu'u Hiwahine, Mauna Kea, HI",NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708,4,49.8,42.1,43.4,35.2,66.6,62.1
+mars_deuteronilus,"Yungay, Atacama Desert, CL","Hyperarid Mars analog (McKay et al. 2003, Astrobiology)",4,62.0,50.1,57.2,43.2,77.3,70.3
+mars_deuteronilus,"University Valley, McMurdo Dry Valleys, AQ",Dry-permafrost analog of the Phoenix site (Marinova et al. 2022),4,34.8,21.2,40.4,25.6,21.1,14.2
 mars_jezero,"Haughton impact crater, Devon Island, CA",Haughton-Mars Project; lunar and Mars analog,4,94.1,77.9,92.4,76.9,92.2,72.7
 mars_jezero,"HMP Research Station, Devon Island, CA","Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",2,75.9,60.7,81.2,60.9,54.5,52.2
 mars_jezero,"Pu'u Hiwahine, Mauna Kea, HI",NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708,4,53.8,43.2,45.6,34.1,81.7,78.7
@@ -23,6 +28,20 @@ moon_de_gerlache_rim,"Haughton impact crater, Devon Island, CA",Haughton-Mars Pr
 moon_de_gerlache_rim,"Cinder Lake Crater Field, AZ",Apollo-era crater field built by USGS for astronaut training (USGS data release 10.5066/P13W5FTZ),4,72.7,45.0,67.1,41.3,76.5,67.2
 moon_de_gerlache_rim,"HMP Research Station, Devon Island, CA","Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",2,50.6,48.2,47.5,45.4,68.1,65.6
 moon_de_gerlache_rim,"Pu'u Hiwahine, Mauna Kea, HI",NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708,4,99.8,99.6,99.8,99.6,98.1,95.8
+moon_haworth,"Meteor Crater (Barringer), AZ",Apollo and Artemis astronaut training,2,16.6,15.7,24.4,22.0,6.5,5.4
+moon_haworth,"SP Crater, San Francisco Volcanic Field, AZ",NASA Desert RATS analog site since 1998,4,84.0,69.8,79.7,63.4,93.8,86.0
+moon_haworth,"Pinacate Peaks, Sonora, MX",Apollo astronaut geology training 1965–1970,4,92.4,90.4,90.8,88.4,97.7,93.2
+moon_haworth,"Haughton impact crater, Devon Island, CA",Haughton-Mars Project; lunar and Mars analog,4,68.2,59.3,62.9,54.3,80.5,70.3
+moon_haworth,"Cinder Lake Crater Field, AZ",Apollo-era crater field built by USGS for astronaut training (USGS data release 10.5066/P13W5FTZ),4,81.9,56.2,79.1,51.2,80.2,70.7
+moon_haworth,"HMP Research Station, Devon Island, CA","Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",2,62.6,62.2,59.4,59.1,63.7,61.3
+moon_haworth,"Pu'u Hiwahine, Mauna Kea, HI",NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708,4,95.3,90.4,94.1,87.9,97.7,95.1
+moon_leibnitz_beta,"Meteor Crater (Barringer), AZ",Apollo and Artemis astronaut training,2,18.3,18.1,26.4,24.7,7.3,5.9
+moon_leibnitz_beta,"SP Crater, San Francisco Volcanic Field, AZ",NASA Desert RATS analog site since 1998,4,77.9,61.2,70.4,53.7,93.6,87.3
+moon_leibnitz_beta,"Pinacate Peaks, Sonora, MX",Apollo astronaut geology training 1965–1970,4,94.5,90.5,94.7,87.8,96.0,90.1
+moon_leibnitz_beta,"Haughton impact crater, Devon Island, CA",Haughton-Mars Project; lunar and Mars analog,4,66.1,57.5,61.4,52.4,81.4,71.5
+moon_leibnitz_beta,"Cinder Lake Crater Field, AZ",Apollo-era crater field built by USGS for astronaut training (USGS data release 10.5066/P13W5FTZ),4,75.5,49.0,70.6,43.4,77.6,69.8
+moon_leibnitz_beta,"HMP Research Station, Devon Island, CA","Haughton-Mars Project base camp, NW rim of Haughton crater (Mars Institute)",2,71.2,64.4,67.5,60.5,67.8,65.2
+moon_leibnitz_beta,"Pu'u Hiwahine, Mauna Kea, HI",NASA/CSA/DLR ISRU analog field tests 2010 & 2012 (PISCES); NTRS 20140008708,4,98.9,95.0,98.8,93.9,96.1,92.4
 moon_malapert,"Meteor Crater (Barringer), AZ",Apollo and Artemis astronaut training,2,21.3,17.7,26.1,21.9,6.8,5.6
 moon_malapert,"SP Crater, San Francisco Volcanic Field, AZ",NASA Desert RATS analog site since 1998,4,54.1,46.4,52.0,44.7,91.2,84.5
 moon_malapert,"Pinacate Peaks, Sonora, MX",Apollo astronaut geology training 1965–1970,4,97.1,87.1,91.1,80.6,97.8,95.7
