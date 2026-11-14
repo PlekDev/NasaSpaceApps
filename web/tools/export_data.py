@@ -63,6 +63,18 @@ def source_stamp():
     return h.hexdigest()[:8], commit + ("+dirty" if dirty else "")
 
 
+def app_cant_reproduce(diviner, mars):
+    """Run the app's own cant_reproduce() (and EARTH_LIMITS) from app/streamlit_app.py so the web text can never drift from it.
+    Only those two definitions are extracted (no Streamlit code is executed)."""
+    tree = ast.parse((ROOT / "app" / "streamlit_app.py").read_text(encoding="utf-8"))
+    keep = [n for n in tree.body if (isinstance(n, ast.Assign) and any(getattr(t, "id", None) == "EARTH_LIMITS" for t in n.targets))
+            or (isinstance(n, ast.FunctionDef) and n.name == "cant_reproduce")]
+    assert len(keep) == 2, "cant_reproduce / EARTH_LIMITS not found in app/streamlit_app.py"
+    ns = {"div": diviner, "mars_context": lambda: mars}
+    exec(compile(ast.Module(body=keep, type_ignores=[]), "app/streamlit_app.py", "exec"), ns)
+    return ns["cant_reproduce"]
+
+
 def thumb(src, dst, px=192, quality=80):
     if not src.exists():
         return None
@@ -95,6 +107,42 @@ def main():
     ridx = {s: n for n, s in enumerate(regions)}
 
     DATA.mkdir(parents=True, exist_ok=True)
+    cant = app_cant_reproduce(json.loads((PROC / "diviner.json").read_text()), json.loads((PROC / "mars_context.json").read_text()) if (PROC / "mars_context.json").exists() else {})
+    (DATA / "reproduce.json").write_text(json.dumps({t: cant(t, sites[t]["body"]) for t in targets}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    shutil.copyfile(PROC / "thumbs" / "real_credits.json", DATA / "credits.json")
+    # previews actually available (not every window has one): low-Sun render and real NASA imagery, 480 px JPEG
+    previews = {"low": [], "real": []}
+    for src in sorted((PROC / "thumbs").glob("*.png")):
+        if not src.name.startswith(("ref__", "real__")):
+            previews["low"].append(src.stem); thumb(src, OUT / "thumbs" / "win" / f"{src.stem}.jpg", 480, 78)
+    for src in sorted((PROC / "thumbs").glob("real__*.jpg")):
+        wid = src.stem[len("real__"):]
+        if wid.startswith("ref__"):
+            thumb(src, OUT / "thumbs" / "ref_real" / f"{wid[5:]}.jpg", 480, 78)
+        else:
+            previews["real"].append(wid); thumb(src, OUT / "thumbs" / "real" / f"{wid}.jpg", 480, 78)
+    for t in targets:
+        thumb(PROC / "thumbs" / f"ref__{t}.png", OUT / "thumbs" / "ref" / f"{t}.jpg", 480, 78)
+    # field extras (merged from extras/field-tools): copied only if present
+    EX, extras = ROOT / "figures" / "extras", {}
+    for t in targets:
+        e = {}
+        for key, name, px in [("twin", f"twin_light_{t}_poster.png", 720), ("astro", f"astronaut_view_{t}.png", 960), ("rover", f"rover_twin_{t}.png", 960)]:
+            if (EX / name).exists():
+                e[key] = thumb(EX / name, OUT / "extras" / f"{key}_{t}.jpg", px, 80)
+        if (EX / f"twin_light_{t}.mp4").exists():
+            (OUT / "extras").mkdir(parents=True, exist_ok=True); shutil.copyfile(EX / f"twin_light_{t}.mp4", OUT / "extras" / f"twin_{t}.mp4"); e["video"] = f"twin_{t}.mp4"
+        extras[t] = e
+    briefs = {}
+    for r in regions:
+        got = {}
+        for ext, key in [("md", "brief"), ("ics", "calendar"), ("_lowsun_windows.csv", "csv")]:
+            f = PROC / "briefs" / (f"{r}.{ext}" if not ext.startswith("_") else f"{r}{ext}")
+            if f.exists():
+                (OUT / "extras" / "briefs").mkdir(parents=True, exist_ok=True); shutil.copyfile(f, OUT / "extras" / "briefs" / f.name); got[key] = f.name
+        if got: briefs[r] = got
+    if (PROC / "briefs" / "rover_twin.json").exists():
+        shutil.copyfile(PROC / "briefs" / "rover_twin.json", DATA / "rover_twin.json")
     tman = []
     for t in targets:
         s = sites[t]
@@ -122,7 +170,7 @@ def main():
 
     dhash, commit = source_stamp()
     manifest = dict(
-        data_hash=dhash, git_commit=commit,
+        data_hash=dhash, git_commit=commit, previews=previews, extras=extras, briefs=briefs,
         window_km=win_km, dims={d: dims[d] for d in present}, feature_labels={f: labels.get(f, f) for f in feats},
         scale=dict(lonlat=1e5, score=10, d=1000), targets=tman, regions=rman,
         windows_per_target=len(by_ref[targets[0]]))

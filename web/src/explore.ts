@@ -7,6 +7,7 @@ import { createStore, type Store } from './store';
 import { loadTarget } from './data';
 import { $, $$, html, isPhone, popover } from './ui';
 import { footerHTML, creditsHTML } from './footer';
+import { mountDetail } from './detail';
 import type { Manifest, Target, TargetData } from './types';
 
 const where = (r: { place: string; cc: string }) => [r.place, r.cc].filter(Boolean).join(', ');
@@ -136,15 +137,18 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     if (t.classList.contains('match')) {
       const ri = Number(t.dataset.ri), r = m.regions[ri], was = S.expanded === r.id;
       store.set({ expanded: was ? null : r.id });
-      if (!was) { flyWindow(scored.byRegion.get(ri)![0], false, 6.4, true); if (!isPhone()) requestAnimationFrame(() => $(`.match[data-ri="${ri}"]`, listEl)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })); }
+      if (!was) { flyWindow(scored.byRegion.get(ri)![0], false, 6.4, true); if (!isPhone()) requestAnimationFrame(() => { const row = $(`.match[data-ri="${ri}"]`, listEl); if (row) listEl.scrollTo({ top: row.offsetTop - 8, behavior: 'smooth' }); }); }
     }
   });
   listEl.addEventListener('pointerover', e => { const w = (e.target as HTMLElement).closest('.win') as HTMLElement | null; store.set({ hover: w ? Number(w.dataset.k) : null }); });
   listEl.addEventListener('pointerleave', () => store.set({ hover: null }));
   listEl.addEventListener('focusin', e => { const w = (e.target as HTMLElement).closest('.win') as HTMLElement | null; store.set({ hover: w ? Number(w.dataset.k) : null }); });
 
+  /** Map padding so the focus point sits in the free part of the screen (beside the detail sheet, above the phone sheet). */
+  const pad = (detail: boolean) => isPhone() ? { top: 52, bottom: detail ? Math.round(innerHeight * .68) : Math.min(dock.getBoundingClientRect().height, innerHeight * .6), left: 0, right: 0 }
+    : { top: 0, bottom: 0, left: 0, right: detail ? 436 : 0 };
   function flyWindow(k: number, select: boolean, zoom = 9.4, keepSheet = false) {
-    view.fly(scored.lon[k], scored.lat[k], zoom);
+    view.fly(scored.lon[k], scored.lat[k], zoom, pad(select || S.selected != null));
     if (select) store.set({ selected: k });
     if (isPhone() && !keepSheet) { setSnap(0); dock.scrollTop = 0; }
   }
@@ -192,7 +196,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     if (ch.includes('weights') || ch.includes('minScore') || ch.includes('regions')) sched();
     if (ch.includes('expanded')) renderList();
     if (ch.includes('hover')) view.mark('hl', S.hover);
-    if (ch.includes('selected')) view.mark('sel', S.selected);
+    if (ch.includes('selected')) { view.mark('sel', S.selected); if (S.selected == null) view.setPadding(pad(false)); }
     if (ch.includes('target')) switchTarget();
   });
   view.onHover = (k, x, y) => {
@@ -202,7 +206,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     tip.innerHTML = `<b class="tnum">${scored.s[k].toFixed(0)}</b> <span>${esc(r.name)}</span>`; tip.hidden = false;
     tip.style.transform = `translate(${Math.min(x + 14, innerWidth - 260)}px, ${y + 14}px)`;
   };
-  view.onPick = k => { store.set({ selected: k }); view.fly(scored.lon[k], scored.lat[k], Math.max(view.map.getZoom(), 9.4)); };
+  view.onPick = k => { store.set({ selected: k }); view.fly(scored.lon[k], scored.lat[k], Math.max(view.map.getZoom(), 9.4), pad(true)); };
 
   async function switchTarget() {
     store.set({ selected: null, expanded: null, hover: null });
@@ -265,6 +269,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   credBtn.addEventListener('click', () => { credEl.style.cssText = ''; credPop.toggle(); credEl.style.left = credEl.style.top = ''; });
   $('#credits-close', root).addEventListener('click', () => credPop.close());
 
+  mountDetail(root.querySelector('#explore')!, m, store, () => ({ scored, d: data as unknown as Record<string, number[] | number>, km: m.window_km }));
   renderTarget();
   const ready = loadTarget(S.target).then(d => { data = d; recompute(); requestAnimationFrame(() => { edge(); setSnap(snap); }); });
   return { store, view, ready,

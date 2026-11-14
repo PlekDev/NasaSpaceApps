@@ -1,3 +1,5 @@
 node_modules
 dist
 public/data
+public/thumbs
+public/extras

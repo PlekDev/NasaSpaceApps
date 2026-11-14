@@ -18,7 +18,11 @@ and PNGs downscaled, link the mp4/ics/csv from the repo files copied to public/e
   (search + checkboxes + all/none), Top matches (best window per region, expandable, scroll fade), best-match overlay + pin, footer with data hash,
   phone bottom sheet with peek/half/full snaps, hash routes (secondary pages are stubs until M3).
 - Tests: `python -m pytest -q web/tests` (labels), `npm test` in web/ (W=1 recombination == precomputed for all 9 targets, max error <= 0.2).
-- M2 next: detail sheet (analog card), compare slider, diverging bars, Diviner rows, EONET, links, extras.
+- M2 done: detail sheet (right sheet / phone bottom sheet): combined + per-dimension scores, swipe/blink compare (low-Sun and NASA imagery, credits),
+  diverging IQR bars with the explain() thresholds, "Earth can't reproduce" (text produced by the app's own cant_reproduce() at export time, so Diviner
+  rows for all 6 lunar targets and Mars-climate rows for the 3 Mars targets match the app), EONET live-with-snapshot fallback, Google Maps and
+  NASA Worldview links, field extras from the merged PR (twin-light video, astronaut view, rover twin + numbers, region brief/.ics/CSV).
+- M3 next: secondary views (time chart, validation incl. native score-matrix heatmap and figure lightbox, method) + light theme everywhere.
 
 ## Open decisions / known issues
 See DECISIONS.md. Screenshots: /tmp/pen-web/.

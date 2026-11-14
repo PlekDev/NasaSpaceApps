@@ -32,3 +32,18 @@ def test_label_edge_cases():
     assert ex.split_label("Mars · Jezero crater") == ("Jezero crater", "", [])
     assert ex.split_label("Moon · Foo (LOLA Site99, Artemis candidate region)") == ("Foo", "LOLA Site99", ["Artemis candidate"])
     assert ex.split_label("No prefix at all")[0] == "No prefix at all"
+
+
+def test_reproduce_text_matches_the_app():
+    """reproduce.json is produced by the app's own cant_reproduce(); lunar targets carry 3 Diviner items, Mars targets 2 climate items."""
+    import json
+    out = ROOT / "web" / "public" / "data" / "reproduce.json"
+    if not out.exists():
+        import pytest; pytest.skip("run python -I web/tools/export_data.py first")
+    rep = json.loads(out.read_text(encoding="utf-8"))
+    for k, items in rep.items():
+        assert items and all(i.count("**") % 2 == 0 for i in items), k
+        if k.startswith("moon_"):
+            assert "Diviner" in items[0] and "Water ice thermally stable" in items[1] and items[2].startswith("Surface peaks reach"), k
+        if k.startswith("mars_"):
+            assert "Mars Climate Database" in items[0] and items[1].startswith("Air pressure"), k

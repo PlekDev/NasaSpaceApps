@@ -120,10 +120,10 @@ export class MapView {
       { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [squareRing(s.lon[k], s.lat[k], this.km)] } }] });
   }
   /** Eased flight, 600–1200 ms depending on distance. */
-  fly(lon: number, lat: number, zoom: number) {
+  fly(lon: number, lat: number, zoom: number, padding?: maplibregl.PaddingOptions) {
     const c = this.map.getCenter(), d = distKm([c.lng, c.lat], [lon, lat]);
     const duration = reduced() ? 0 : Math.round(Math.min(1200, Math.max(600, 600 + d / 12 + Math.abs(zoom - this.map.getZoom()) * 40)));
-    this.map.flyTo({ center: [lon, lat], zoom, duration, easing: ease, essential: false, curve: 1.2 });
+    this.map.flyTo({ center: [lon, lat], zoom, duration, easing: ease, essential: false, curve: 1.2, ...(padding ? { padding } : {}) });
   }
   setPadding(p: maplibregl.PaddingOptions) { this.map.easeTo({ padding: p, duration: reduced() ? 0 : 300 }); }
 }
@@ -133,7 +133,7 @@ const noop: any = new Proxy(function () {}, { get: () => noop, apply: () => noop
 export class NullView {
   dead = true; map: maplibregl.Map = noop;
   onPick: MapView['onPick'] = () => {}; onHover: MapView['onHover'] = () => {};
-  async setScored() {} mark() {} fly() {} setPadding() {}
+  async setScored() {} mark() {} fly(..._a: unknown[]) {} setPadding(..._a: unknown[]) {}
 }
 export const hasWebGL = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; } };
 export type View = MapView | NullView;
