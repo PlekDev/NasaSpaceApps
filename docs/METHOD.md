@@ -56,7 +56,7 @@ from 0.55–0.88 (local DEM) to 0.92–0.99 (150 km), and the mean error falls t
 regions (Meteor Crater, SP Crater, Cinder Lake Crater Field, Pinacate Peaks, Haughton crater, Pu'u Hiwahine on
 Mauna Kea, Yungay and University Valley) and reports the percentile of the windows containing them among all Earth windows. Askja (its point lies on a lake that the water mask removes, so no window is valid) and the
 HMP Research Station (same crater as Haughton) were removed. Each coordinate comes from an official gazetteer or a
-publication, listed in the `note` field of the script; Pinacate and Cinder Lake are not verified against an official database.
+publication, listed in the `note` field of the script; Pinacate comes from a secondary source (Wikipedia) and is not verified against an official database.
 
 ### Limitations
 
