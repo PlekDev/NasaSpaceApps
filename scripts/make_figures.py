@@ -75,17 +75,18 @@ fig.tight_layout(rect=(0, 0.02, 1, 0.96)); fig.savefig(FIGURES / "fig1_low_sun_s
 # 2 — score matrix per dimension (regions as rows so 10+ regions stay readable)
 dims = [c for c in summ.columns if c.startswith("score_") and c != "score_combined"] + ["score_combined"]
 order = sorted(CANDS, key=lambda c: -summ[summ.site == c]["score_combined"].mean())
-RLAB = {"moon_connecting_ridge": "Moon\nConn. Ridge", "moon_malapert": "Moon\nMalapert",
-        "moon_nobile_rim1": "Moon\nNobile R1", "moon_de_gerlache_rim": "Moon\nde Gerlache",
-        "mars_arcadia": "Mars\nArcadia", "mars_jezero": "Mars\nJezero"}
-fig, axs = plt.subplots(1, len(dims), figsize=(3.6 * len(dims) + 2.4, 0.42 * len(order) + 2.2), sharey=True)
+RLAB = {"moon_connecting_ridge": "Moon\nConn. R.", "moon_malapert": "Moon\nMalapert",
+        "moon_nobile_rim1": "Moon\nNobile 1", "moon_de_gerlache_rim": "Moon\nGerlache",
+        "moon_haworth": "Moon\nHaworth", "moon_leibnitz_beta": "Moon\nLeibnitz",
+        "mars_arcadia": "Mars\nArcadia", "mars_jezero": "Mars\nJezero", "mars_deuteronilus": "Mars\nDeuteron."}
+fig, axs = plt.subplots(1, len(dims), figsize=(max(3.6, 0.78 * len(REFS)) * len(dims) + 2.4, 0.42 * len(order) + 2.2), sharey=True)
 for ax, key in zip(axs, dims):
     M = np.array([[summ[(summ.reference == r) & (summ.site == c)][key].iloc[0] for r in REFS] for c in order])
     ax.imshow(M, cmap=SEQ, vmin=20, vmax=100, aspect="auto")
     for a in range(len(order)):
         for b in range(len(REFS)):
             ax.text(b, a, f"{M[a, b]:.0f}", ha="center", va="center", fontsize=9.5, color="white" if M[a, b] > 65 else INK)
-    ax.set_xticks(range(len(REFS)), [RLAB.get(r, r) for r in REFS], fontsize=9)
+    ax.set_xticks(range(len(REFS)), [RLAB.get(r, r) for r in REFS], fontsize=8)
     ax.xaxis.tick_top()
     ax.set_yticks(range(len(order)), [SHORT[c] for c in order], fontsize=9.5)
     ax.set_title(key.replace("score_", "").capitalize(), loc="left", color=INK, fontsize=11, pad=34)

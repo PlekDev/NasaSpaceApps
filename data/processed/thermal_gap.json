@@ -1,0 +1,195 @@
+{
+ "moon": {
+  "moon_connecting_ridge": {
+   "label": "Shackleton Connecting Ridge",
+   "temp_avg_mean_K": 122.5,
+   "temp_avg_min_K": 39.2,
+   "temp_max_max_K": 321.1
+  },
+  "moon_nobile_rim1": {
+   "label": "Nobile Rim 1",
+   "temp_avg_mean_K": 130.4,
+   "temp_avg_min_K": 45.3,
+   "temp_max_max_K": 331.2
+  },
+  "moon_de_gerlache_rim": {
+   "label": "de Gerlache Rim",
+   "temp_avg_mean_K": 122.8,
+   "temp_avg_min_K": 55.0,
+   "temp_max_max_K": 320.1
+  },
+  "moon_malapert": {
+   "label": "Malapert Massif",
+   "temp_avg_mean_K": 143.5,
+   "temp_avg_min_K": 53.6,
+   "temp_max_max_K": 342.1
+  },
+  "moon_haworth": {
+   "label": "Haworth",
+   "temp_avg_mean_K": 106.8,
+   "temp_avg_min_K": 40.8,
+   "temp_max_max_K": 305.9
+  },
+  "moon_leibnitz_beta": {
+   "label": "Leibnitz Beta Plateau",
+   "temp_avg_mean_K": 117.3,
+   "temp_avg_min_K": 40.9,
+   "temp_max_max_K": 314.9
+  }
+ },
+ "earth": {
+  "earth_pinacate": {
+   "label": "El Pinacate volcanic field, Sonora",
+   "lon": -113.5,
+   "lat": 31.5,
+   "ts_mean_K": 296.6,
+   "ts_min_K": 276.4,
+   "ts_max_K": 320.4,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_cuatrocienegas": {
+   "label": "Cuatro Ciénegas, Coahuila",
+   "lon": -102.5,
+   "lat": 26.5,
+   "ts_mean_K": 294.8,
+   "ts_min_K": 264.7,
+   "ts_max_K": 327.6,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_haughton": {
+   "label": "Haughton impact crater, Devon Island",
+   "lon": -89.5,
+   "lat": 75.5,
+   "ts_mean_K": 258.3,
+   "ts_min_K": 219.4,
+   "ts_max_K": 290.4,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_sfvf": {
+   "label": "San Francisco Volcanic Field, Arizona",
+   "lon": -111.5,
+   "lat": 35.5,
+   "ts_mean_K": 287.4,
+   "ts_min_K": 254.2,
+   "ts_max_K": 324.9,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_mx_chichinautzin": {
+   "label": "Sierra Chichinautzin volcanic field, Morelos/CDMX",
+   "lon": -99.5,
+   "lat": 19.5,
+   "ts_mean_K": 287.5,
+   "ts_min_K": 266.8,
+   "ts_max_K": 311.9,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_mx_valle_santiago": {
+   "label": "Valle de Santiago maars, Guanajuato",
+   "lon": -101.5,
+   "lat": 20.5,
+   "ts_mean_K": 292.8,
+   "ts_min_K": 269.0,
+   "ts_max_K": 322.1,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_mx_serdan_oriental": {
+   "label": "Serdán-Oriental basin maars & domes, Puebla",
+   "lon": -97.5,
+   "lat": 19.5,
+   "ts_mean_K": 287.8,
+   "ts_min_K": 266.6,
+   "ts_max_K": 311.3,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_mx_ceboruco": {
+   "label": "Ceboruco volcano, Nayarit",
+   "lon": -104.5,
+   "lat": 21.5,
+   "ts_mean_K": 293.7,
+   "ts_min_K": 273.9,
+   "ts_max_K": 316.5,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_svalbard_bockfjorden": {
+   "label": "Bockfjorden volcanic complex, Svalbard",
+   "lon": 13.5,
+   "lat": 79.5,
+   "ts_mean_K": 265.0,
+   "ts_min_K": 227.2,
+   "ts_max_K": 276.5,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_axel_heiberg": {
+   "label": "Axel Heiberg Island high Arctic",
+   "lon": -90.5,
+   "lat": 79.5,
+   "ts_mean_K": 251.4,
+   "ts_min_K": 210.9,
+   "ts_max_K": 279.3,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_antarctica_university_valley": {
+   "label": "University Valley, McMurdo Dry Valleys",
+   "lon": 160.5,
+   "lat": -77.5,
+   "ts_mean_K": 238.8,
+   "ts_min_K": 210.8,
+   "ts_max_K": 266.9,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_iceland_askja": {
+   "label": "Askja caldera, Apollo training area",
+   "lon": -16.5,
+   "lat": 65.5,
+   "ts_mean_K": 271.2,
+   "ts_min_K": 237.0,
+   "ts_max_K": 287.6,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_atacama_yungay": {
+   "label": "Yungay, hyperarid Atacama Desert",
+   "lon": -69.5,
+   "lat": -24.5,
+   "ts_mean_K": 288.9,
+   "ts_min_K": 267.4,
+   "ts_max_K": 318.9,
+   "period": "January 2001 - December 2025"
+  },
+  "earth_hawaii_mauna_kea": {
+   "label": "Mauna Kea / Mauna Loa saddle, Hawaiʻi",
+   "lon": -155.5,
+   "lat": 19.5,
+   "ts_mean_K": 293.1,
+   "ts_min_K": 280.8,
+   "ts_max_K": 308.3,
+   "period": "January 2001 - December 2025"
+  }
+ },
+ "summary": {
+  "coldest_earth_region": "earth_antarctica_university_valley",
+  "coldest_earth_mean_K": 238.8,
+  "coldest_earth_min_K": 210.8,
+  "hottest_earth_region": "earth_cuatrocienegas",
+  "hottest_earth_max_K": 327.6,
+  "moon_mean_K": [
+   106.8,
+   143.5
+  ],
+  "moon_peak_K": [
+   305.9,
+   342.1
+  ],
+  "gap_to_coldest_earth_mean_K": {
+   "moon_connecting_ridge": 116.3,
+   "moon_nobile_rim1": 108.4,
+   "moon_de_gerlache_rim": 116.0,
+   "moon_malapert": 95.3,
+   "moon_haworth": 132.0,
+   "moon_leibnitz_beta": 121.5
+  }
+ },
+ "sources": {
+  "moon": "LRO Diviner polar resource product, NASA PDS Geosciences (Paige et al.): annual mean 2 cm below the surface, annual maximum at the surface, per reference footprint",
+  "earth": "NASA POWER climatology API (MERRA-2): skin temperature TS at the region centre; min/max = coldest/warmest monthly mean of the daily minimum/maximum"
+ }
+}

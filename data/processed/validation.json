@@ -14,5 +14,13 @@
  "moon_malapert": {
   "spearman_rho": 0.548,
   "n_pixels": 22500
+ },
+ "moon_haworth": {
+  "spearman_rho": 0.443,
+  "n_pixels": 60799
+ },
+ "moon_leibnitz_beta": {
+  "spearman_rho": 0.642,
+  "n_pixels": 17045
  }
 }

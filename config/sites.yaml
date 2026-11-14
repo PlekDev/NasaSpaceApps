@@ -42,6 +42,20 @@ sites:
     file: Site23_final_adj_5mpp_surf.tif
     url: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site23/Site23_final_adj_5mpp_surf.tif
     source: "NASA GSFC PGDA — High-Resolution LOLA Topography for Lunar South Pole Sites (product 78)"
+  moon_haworth:
+    role: reference
+    body: moon
+    label: "Moon · Haworth (LOLA Haworth, Artemis candidate region)"
+    file: Haworth_final_adj_5mpp_surf.tif
+    url: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Haworth/Haworth_final_adj_5mpp_surf.tif
+    source: "NASA GSFC PGDA — High-Resolution LOLA Topography for Lunar South Pole Sites (product 78)"
+  moon_leibnitz_beta:
+    role: reference
+    body: moon
+    label: "Moon · Leibnitz Beta Plateau (LOLA Site20, Artemis candidate region)"
+    file: Site20_final_adj_5mpp_surf.tif
+    url: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site20/Site20_final_adj_5mpp_surf.tif
+    source: "NASA GSFC PGDA — High-Resolution LOLA Topography for Lunar South Pole Sites (product 78)"
 
   # ---------------- Mars (NASA MRO CTX stereo DTMs, 20 m/px, USGS Astrogeology ARD)
   mars_arcadia:
@@ -57,6 +71,13 @@ sites:
     label: "Mars · Jezero crater"
     file: P02_001820_1984_XI_18N282W__P06_003442_1987_XI_18N282W_dtm.tif
     url: https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P02_001820_1984_XI_18N282W__P06_003442_1987_XI_18N282W/P02_001820_1984_XI_18N282W__P06_003442_1987_XI_18N282W_dtm.tif
+    source: "USGS Astrogeology STAC — MRO CTX controlled DTMs"
+  mars_deuteronilus:
+    role: reference
+    body: mars
+    label: "Mars · Deuteronilus Mensae (mid-latitude buried ice)"
+    file: J13_049991_2248_XN_44N332W__J13_049714_2248_XN_44N332W_dtm.tif
+    url: https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/J13_049991_2248_XN_44N332W__J13_049714_2248_XN_44N332W/J13_049991_2248_XN_44N332W__J13_049714_2248_XN_44N332W_dtm.tif
     source: "USGS Astrogeology STAC — MRO CTX controlled DTMs"
 
   # ---------------- Earth (ESA Copernicus DEM GLO-30)

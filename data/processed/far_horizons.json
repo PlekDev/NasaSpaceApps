@@ -4,6 +4,12 @@
    "label": "Moon \u00b7 Shackleton Connecting Ridge (LOLA Site01)",
    "n_points": 3025,
    "pipeline_rho": 0.861,
+   "ray_reach": {
+    "share_rays_shorter_than_max": 0.228,
+    "median_ray_km": 150.0,
+    "outward_ray_km_min": 137.9,
+    "outward_ray_km_max": 150.0
+   },
    "V1_local_flat": {
     "spearman_rho": 0.881,
     "mean_abs_error": 0.049,
@@ -24,6 +30,12 @@
    "label": "Moon \u00b7 Nobile Rim 1 (LOLA Site06, Artemis candidate region)",
    "n_points": 5041,
    "pipeline_rho": 0.605,
+   "ray_reach": {
+    "share_rays_shorter_than_max": 0.632,
+    "median_ray_km": 81.6,
+    "outward_ray_km_min": 40.7,
+    "outward_ray_km_max": 65.5
+   },
    "V1_local_flat": {
     "spearman_rho": 0.737,
     "mean_abs_error": 0.076,
@@ -44,6 +56,12 @@
    "label": "Moon \u00b7 de Gerlache Rim (LOLA Site11)",
    "n_points": 3025,
    "pipeline_rho": 0.54,
+   "ray_reach": {
+    "share_rays_shorter_than_max": 0.355,
+    "median_ray_km": 150.0,
+    "outward_ray_km_min": 109.8,
+    "outward_ray_km_max": 147.9
+   },
    "V1_local_flat": {
     "spearman_rho": 0.701,
     "mean_abs_error": 0.103,
@@ -64,6 +82,12 @@
    "label": "Moon \u00b7 Malapert Massif (LOLA Site23)",
    "n_points": 5776,
    "pipeline_rho": 0.548,
+   "ray_reach": {
+    "share_rays_shorter_than_max": 0.487,
+    "median_ray_km": 150.0,
+    "outward_ray_km_min": 21.2,
+    "outward_ray_km_max": 39.3
+   },
    "V1_local_flat": {
     "spearman_rho": 0.552,
     "mean_abs_error": 0.063,
@@ -78,6 +102,58 @@
     "spearman_rho": 0.975,
     "mean_abs_error": 0.023,
     "bias": -0.021
+   }
+  },
+  "moon_haworth": {
+   "label": "Moon \u00b7 Haworth (LOLA Haworth, Artemis candidate region)",
+   "n_points": 12544,
+   "pipeline_rho": 0.443,
+   "ray_reach": {
+    "share_rays_shorter_than_max": 0.546,
+    "median_ray_km": 132.1,
+    "outward_ray_km_min": 49.6,
+    "outward_ray_km_max": 91.0
+   },
+   "V1_local_flat": {
+    "spearman_rho": 0.464,
+    "mean_abs_error": 0.101,
+    "bias": 0.089
+   },
+   "V2_local_curved": {
+    "spearman_rho": 0.468,
+    "mean_abs_error": 0.102,
+    "bias": 0.091
+   },
+   "V3_far_curved": {
+    "spearman_rho": 0.987,
+    "mean_abs_error": 0.023,
+    "bias": -0.022
+   }
+  },
+  "moon_leibnitz_beta": {
+   "label": "Moon \u00b7 Leibnitz Beta Plateau (LOLA Site20, Artemis candidate region)",
+   "n_points": 3025,
+   "pipeline_rho": 0.642,
+   "ray_reach": {
+    "share_rays_shorter_than_max": 0.627,
+    "median_ray_km": 87.2,
+    "outward_ray_km_min": 31.4,
+    "outward_ray_km_max": 49.1
+   },
+   "V1_local_flat": {
+    "spearman_rho": 0.594,
+    "mean_abs_error": 0.104,
+    "bias": 0.091
+   },
+   "V2_local_curved": {
+    "spearman_rho": 0.593,
+    "mean_abs_error": 0.104,
+    "bias": 0.092
+   },
+   "V3_far_curved": {
+    "spearman_rho": 0.983,
+    "mean_abs_error": 0.023,
+    "bias": -0.019
    }
   }
  },
