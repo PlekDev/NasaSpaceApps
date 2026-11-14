@@ -55,5 +55,11 @@
  },
  "earth_record_low_K": 183.9,
  "earth_record_high_K": 329.9,
- "source": "LRO Diviner polar resource product, NASA PDS Geosciences (Paige et al.)"
+ "source": "LRO Diviner polar resource product, NASA PDS Geosciences (Paige et al.)",
+ "definitions": {
+  "temp_avg": "annual mean temperature 2 cm below the surface (K)",
+  "temp_max": "annual maximum surface temperature (K)",
+  "ice_stable": "ice_depth >= 0: sublimation < 1 kg m-2 per billion years at that depth; -999 (deeper than 2.87 m) counts as not stable",
+  "earth_record_low": "lowest air temperature measured on Earth, Vostok 1983 (WMO)"
+ }
 }

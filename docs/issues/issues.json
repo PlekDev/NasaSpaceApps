@@ -207,7 +207,8 @@
   "owner_name": "Diego Lizárraga",
   "block": "B1",
   "title": "[B1] Sanity-check Diviner numbers against the PDS label",
-  "body": "- Units of temp_avg / temp_max (K) and meaning of ice_depth = −999\n- Confirm the per-site numbers in README and app (`data/processed/diviner.json`)\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md"
+  "body": "- Units of temp_avg / temp_max (K) and meaning of ice_depth = −999\n- Confirm the per-site numbers in README and app (`data/processed/diviner.json`)\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "ddona",
@@ -236,7 +237,8 @@
   "owner_name": "Diego Lizárraga",
   "block": "B1",
   "title": "[B1] Review the far-horizon validation (our strongest claim)",
-  "body": "- Read `scripts/validate_far_horizons.py`: Sun geometry, azimuth convention, AVGVISIB scale (4e-5)\n- Re-run `make far` and confirm ρ 0.92–0.99 in `data/processed/far_horizons.json`\n- Write two sentences for the project page\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md"
+  "body": "- Read `scripts/validate_far_horizons.py`: Sun geometry, azimuth convention, AVGVISIB scale (4e-5)\n- Re-run `make far` and confirm ρ 0.92–0.99 in `data/processed/far_horizons.json`\n- Write two sentences for the project page\n\n**Owner:** Diego Lizárraga · **Block:** B1 · see docs/TEAM.md",
+  "status": "done"
  },
  {
   "owner": "aaron",
