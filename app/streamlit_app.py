@@ -270,10 +270,16 @@ with tab_val:
                     "lunar surface and with real Sun positions, brings the agreement to:")
         rows = [dict(site=label(k).split("·")[1].split("(")[0].strip(),
                      **{"local DEM (ρ)": vv["V1_local_flat"]["spearman_rho"],
-                        "150 km horizons (ρ)": vv["V3_far_curved"]["spearman_rho"],
+                        "horizons up to 150 km (ρ)": vv["V3_far_curved"]["spearman_rho"],
                         "error, lit fraction": f"±{vv['V3_far_curved']['mean_abs_error']:.3f}"})
                 for k, vv in far["sites"].items()]
         st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+        rm = far["sites"].get("moon_malapert", {}).get("ray_reach")
+        rn = far["sites"].get("moon_nobile_rim1", {}).get("ray_reach")
+        m_rng = f"{rm['outward_ray_km_min']:.0f}–{rm['outward_ray_km_max']:.0f} km" if rm else "21–39 km"
+        n_rng = f"{rn['outward_ray_km_min']:.0f}–{rn['outward_ray_km_max']:.0f} km" if rn else "41–66 km"
+        st.caption(f"Malapert and Nobile Rim 1 sit near the edge of NASA's 85°S DEM: rays toward lower latitudes reach "
+                   f"only {m_rng} and {n_rng}.")
         st.image(str(f7))
         st.caption("Scoring still uses local windows on both bodies, so Moon and Earth are treated the same way; "
                    "this test shows the light model itself is right once distant terrain is included.")
