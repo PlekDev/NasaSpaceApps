@@ -2,14 +2,25 @@
 
 The main pipeline casts shadows from the local DEM only (flat, no body curvature), because that is what we can do
 the same way on Earth. Here, for the lunar references only, we rebuild the illumination with:
-  * the LOLA 85°S polar DEM at 40 m (covers ~150 km around each site),
+  * the LOLA 85°S polar DEM at 40 m (a ±151.7 km square around the pole; horizon rays go up to 150 km),
   * exact 3D geometry on the lunar sphere (curvature included),
   * real Sun positions: subsolar latitude oscillating ±1.54°, all subsolar longitudes, Sun as a 0.53° disk.
 For each site we compare three variants against the LOLA 18.6-year average illumination (Mazarico et al.):
   V1 local DEM only, flat      (what the pipeline assumes)
   V2 local DEM only, curved
-  V3 terrain out to 150 km, curved   (full model)
+  V3 terrain up to 150 km, curved   (full model)
+Sites near 85°S (Malapert, Nobile Rim 1) lose part of their rays at the DEM edge; `ray_reach` in the JSON says
+how much, so the "150 km" claim is never stated without that caveat.
 Writes data/processed/far_horizons.json and figures/fig7_far_horizons.png.
+
+Checked against the NASA labels (D. Lizárraga, 2026-11-14):
+  * LDEM_85S_40M_FLOAT.LBL: 7584 × 7584 PC_REAL (little-endian float32), UNIT = KILOMETER relative to
+    OFFSET = 1737.4 km, MAP_SCALE = 40 m, LINE/SAMPLE_PROJECTION_OFFSET = 3791.5, polar stereographic,
+    CENTER_LONGITUDE = 0, POSITIVE_LONGITUDE_DIRECTION = EAST (so x = ρ·sin λ, y = ρ·cos λ, as in PROJ).
+  * AVGVISIB_85S_060M_201608.TIF: int16, scale 4e-5, nodata −32768, +proj=stere +lat_0=-90 +lon_0=0 +R=1737400,
+    the same CRS as the four 5 m site DEMs. PGDA: hourly Sun positions over one 18.6-year nutation cycle.
+  * Horizon rays are straight lines on the map, not great circles: the azimuth error is ≤ 0.10° at 150 km
+    for all four sites (checked numerically), far below the 5° azimuth step.
 """
 # AI-assisted (Claude, Anthropic); reviewed by the team.
 import sys, json, math, time
@@ -25,7 +36,7 @@ R = RADIUS_M["moon"]
 cfg = load_config()
 LDEM = RAW / cfg["auxiliary"]["lola_ldem_85s_40m"]["file"]
 AVG = RAW / cfg["auxiliary"]["lola_avg_illumination_85s"]["file"]
-N, SCALE, OFF = 7584, 40.0, 3791.5          # from the PDS label (LDEM_85S_40M)
+N, SCALE, OFF = 7584, 40.0, 3791.5          # LINES, MAP_SCALE, LINE/SAMPLE_PROJECTION_OFFSET (LDEM_85S_40M_FLOAT.LBL)
 
 SPACING = 240.0          # target-point spacing (m); coarser than the main validation to keep the run ~10 min
 BORDER = 1500.0          # drop 1.5 km at the site edges, same as the main validation
@@ -130,7 +141,29 @@ def avgvisib_at(x, y):
         a = a * (src.scales[0] or 1.0) + (src.offsets[0] or 0.0)   # stored as int16 × 4e-5 → fraction of time lit
         inv = ~src.transform
         cols, rows = inv * (x, y)
+    # If the scale tag were ever lost, values would be raw counts (0–25,000): ρ would not notice, but the MAE would.
+    if np.nanmax(a) > 1.0 + 1e-6 or np.nanmin(a) < -1e-6:
+        raise ValueError(f"{AVG.name}: values outside [0, 1] (min {np.nanmin(a):g}, max {np.nanmax(a):g}); "
+                         "the 4e-5 scale factor was not applied")
     return map_coordinates(a, [rows - 0.5, cols - 0.5], order=1, mode="constant", cval=np.nan)
+
+
+def ray_reach(x0, y0):
+    """How far the N_AZ horizon rays get before leaving the 85°S DEM (capped at MAX_D).
+    Near 85°S the rays toward lower latitudes hit the edge of the DEM long before 150 km."""
+    half = N * SCALE / 2
+    a = 2 * np.pi * np.arange(N_AZ) / N_AZ
+    sx, sy = np.sin(a)[None, :], np.cos(a)[None, :]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        tx = np.where(sx > 0, (half - x0[:, None]) / sx, np.where(sx < 0, (-half - x0[:, None]) / sx, np.inf))
+        ty = np.where(sy > 0, (half - y0[:, None]) / sy, np.where(sy < 0, (-half - y0[:, None]) / sy, np.inf))
+    L = np.minimum(np.minimum(tx, ty), MAX_D)                                   # (n, N_AZ), metres
+    k_out = np.rint(np.degrees(np.arctan2(x0, y0)) / (360 / N_AZ)).astype(int) % N_AZ   # away from the pole
+    out = L[np.arange(len(x0)), k_out]
+    return dict(share_rays_shorter_than_max=round(float(np.mean(L < MAX_D)), 3),
+                median_ray_km=round(float(np.median(L)) / 1e3, 1),
+                outward_ray_km_min=round(float(out.min()) / 1e3, 1),
+                outward_ray_km_max=round(float(out.max()) / 1e3, 1))
 
 
 if __name__ == "__main__":
@@ -164,7 +197,8 @@ if __name__ == "__main__":
             if name == "V3_far_curved":
                 maps[sid] = (X.shape, ok, lit, ref)
             print(f"{sid:24s} {name:16s} ρ = {rho:.3f}   MAE = {mae:.3f}   ({time.time()-t0:.0f}s)", flush=True)
-        out[sid] = dict(label=s["label"], n_points=int(ok.sum()), pipeline_rho=prev.get(sid, {}).get("spearman_rho"), **res)
+        out[sid] = dict(label=s["label"], n_points=int(ok.sum()), pipeline_rho=prev.get(sid, {}).get("spearman_rho"),
+                        ray_reach=ray_reach(x0, y0), **res)
     json.dump(dict(sites=out, settings=dict(spacing_m=SPACING, border_m=BORDER, n_azimuths=N_AZ, max_distance_m=MAX_D,
                                             sun_disk_deg=SUN_DISK, subsolar_lat_amplitude_deg=DEC_MAX,
                                             dem="LOLA LDEM_85S_40M (PDS)")),
@@ -176,7 +210,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     SURF, INK, INK2 = "#fcfcfb", "#0b0b0b", "#52514e"
     COL = ["#c9c8c2", "#86b6ef", "#1c5cab"]
-    names = {"V1_local_flat": "local DEM, flat", "V2_local_curved": "local DEM, curved", "V3_far_curved": "150 km of terrain, curved"}
+    names = {"V1_local_flat": "local DEM, flat", "V2_local_curved": "local DEM, curved", "V3_far_curved": "terrain up to 150 km, curved"}
     sites = list(out)
     fig, ax = plt.subplots(figsize=(9, 4.2), facecolor=SURF); ax.set_facecolor(SURF)
     w = 0.26

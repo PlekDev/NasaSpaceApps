@@ -13,7 +13,7 @@ of both sites from NASA imagery APIs and a **live field-safety check** from NASA
 > **Why light?** At the lunar south pole the Sun never rises above ~7°. Long shadows define landing safety,
 > rover vision, power and EVA planning. P.E.N. scores **terrain-cast shadows** with an exact shadow model and
 > **validates them against NASA's official LOLA illumination maps**: with distant horizons included, Spearman
-> ρ = 0.92–0.99 at all four Moon Base sites, within 2–3 percentage points of lit time.
+> ρ = 0.92–0.99 at all four Moon Base sites, with a mean error of 2.0–3.2 percentage points of lit time.
 > It also finds **when** Earth sites reproduce lunar-pole light (an *analog in time*), not only **where**.
 
 **Where it fits:** regional screeners tell you *which region* of Earth to look at, on ~50 km cells. P.E.N.
@@ -38,17 +38,18 @@ the official 5 m LOLA DEMs of four Moon Base sites, three of them inside NASA's 
   **#1 of 10,424** for Malapert and stays in the **top 0.2 %** for all four Moon Base sites (#9 Nobile Rim 1,
   #19 de Gerlache, #23 Connecting Ridge). P.E.N. never saw any analog labels. For the Mars targets it ranks low,
   as a lunar site should.
-- **The light model matches NASA.** With NASA's 40 m polar DEM out to 150 km, exact lunar curvature and real Sun
+- **The light model matches NASA.** With NASA's 40 m polar DEM up to 150 km away, exact lunar curvature and real Sun
   positions, our illumination reproduces the LOLA 18.6-year average-illumination map with Spearman ρ = 0.92
-  (Connecting Ridge), 0.99 (Nobile Rim 1), 0.97 (de Gerlache) and 0.975 (Malapert), with a mean error of 2–3
+  (Connecting Ridge), 0.99 (Nobile Rim 1), 0.97 (de Gerlache) and 0.975 (Malapert), with a mean error of 2.0–3.2
   percentage points of lit time. With the local DEM alone ρ is 0.55–0.88: the gap was distant mountains, and
   curvature by itself barely matters.
 - **Known-analog test:** 10 classic analog sites, 38 site × target tests. The median rank is the 80th percentile for
   illumination and the 61st for terrain (50 = random). El Pinacate, the Apollo training ground in Sonora, ranks in
   the top 3 % for all four Moon Base sites. Sites chosen for other reasons rank lower, as they should: Meteor Crater
   is an impact-geology analog and University Valley a dry-permafrost (thermal) analog.
-- **Where Earth stops being an analog:** per LRO Diviner, 88–100 % of each lunar site averages colder than Earth's
-  record low (184 K), and water ice is thermally stable within 1 m in 22–40 % of it. Peaks reach 320–342 K.
+- **Where Earth stops being an analog:** per LRO Diviner, in 88–100 % of each lunar site the annual mean
+  temperature (2 cm below the surface) is colder than the lowest air temperature ever measured on Earth (184 K,
+  Vostok), and water ice is thermally stable within 1 m in 22–40 % of it. Surface peaks reach 320–342 K.
 - **Analog in time:** polar sites (Haughton, Axel Heiberg, Svalbard, University Valley) give 4–7 h/day of
   lunar-pole-like low Sun (0–7°) around the equinoxes; sites below 40° latitude get about 1 h/day.
 - **NASA APIs in the app** ([api.nasa.gov](https://api.nasa.gov/)): Moon Trek WMTS (LRO NAC south-pole mosaic, 1 m),
@@ -208,9 +209,11 @@ the measured Diviner numbers of step 10.
   ever used in scoring.
 
 **10 · Diviner context** (`scripts/diviner_context.py`). From the LRO Diviner polar resource product (lat ≤ −84°),
-the facets inside each lunar reference footprint give: mean and minimum average temperature, maximum temperature,
-the share colder than Earth's record low (184 K, Vostok), and the share where water ice is thermally stable within
-1 m (`ice_depth` between 0 and 1 m; −999 = not stable in the modelled column).
+the facets inside each lunar reference footprint give: the mean and minimum of the annual mean temperature
+(`temp_avg`, defined 2 cm below the surface), the maximum surface temperature (`temp_max`), the share whose annual
+mean is colder than Earth's record low (184 K, Vostok), and the share where water ice is thermally stable within
+1 m (`ice_depth` between 0 and 1 m, i.e. ice sublimates slower than 1 kg m⁻² per billion years; −999 = deeper than
+2.87 m, counted as not stable). Field definitions are from the PDS4 label `dlre_prp_south.xml`.
 
 **11 · Analog in time** (`pen/sun.py`). Solar elevation from the standard declination and hour-angle formula (no
 refraction), sampled every 3 min for every day of the year at each region's centre latitude, gives the hours per day
@@ -239,7 +242,7 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 |---|---|---|
 | [LOLA 5 m south-pole DEMs](https://pgda.gsfc.nasa.gov/products/78) (Barker et al.) | **NASA** GSFC / LRO | Moon Base reference terrain |
 | [LOLA polar illumination](https://pgda.gsfc.nasa.gov/products/69) (Mazarico et al.) | **NASA** GSFC / LRO | Validation of the shadow model |
-| [LOLA gridded polar DEM, 85°S, 40 m](https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/float_img/) | **NASA** LRO / PDS | Far-horizon validation (terrain out to 150 km) |
+| [LOLA gridded polar DEM, 85°S, 40 m](https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/float_img/) | **NASA** LRO / PDS | Far-horizon validation (terrain up to 150 km) |
 | [MRO CTX stereo DTMs](https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms) | **NASA** MRO / USGS | Mars reference terrain |
 | [LRO Diviner polar resource product](https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/) (Paige et al.) | **NASA** LRO / PDS | Moon temperature and ice stability (where Earth stops being an analog) |
 | [Moon Trek / Mars Trek WMTS](https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon) (via api.nasa.gov) | **NASA** SSERVI / JPL | Real view of Moon (LRO NAC mosaic) and Mars (CTX mosaic) windows |
@@ -258,8 +261,13 @@ RADARSAT / Sentinel-1 radar (CSA / ESA).
 
 - Scoring uses shadows from **local** terrain only, on both bodies, so Moon and Earth are treated the same way.
   The far-horizon test shows the light model is right once distant terrain is added (ρ 0.92–0.99), but Earth
-  windows are not re-scored with their own distant horizons. Malapert sits near the edge of the 85°S DEM, so its
-  rays toward lower latitudes stop after ~20–30 km.
+  windows are not re-scored with their own distant horizons.
+- The far-horizon test does not reach 150 km in every direction. Malapert and Nobile Rim 1 (85.1–86.3°S) sit near
+  the edge of the 85°S DEM: their rays toward lower latitudes stop after 21–39 km and 41–66 km, and 49 % and 63 % of
+  all their rays end before 150 km (`ray_reach` in `far_horizons.json`). Both still reach ρ ≥ 0.975.
+- The full far-horizon model is slightly darker than NASA's map at all four sites (bias −0.7 to −2.5 percentage
+  points of lit time). We have not isolated the cause; candidates are the different DEM resolution and our linear
+  approximation of the partly hidden Sun disk.
 - Copernicus is a surface model: vegetation and buildings are included. Sea (≤ 0.5 m) and flattened lakes are masked.
 - Real imagery is context, not scored. The LRO NAC mosaic averages many Sun angles, so it does not show the 3° Sun
   of the preview; the Landsat WELD mosaic is ~2010 and has no Antarctic coverage (MODIS 250 m is used there).

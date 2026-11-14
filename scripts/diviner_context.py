@@ -3,7 +3,14 @@
 Earth analogs can reproduce terrain and low-Sun lighting, but not lunar polar temperatures or ice stability.
 This script quantifies that gap with real data instead of a sentence: it takes the LRO Diviner polar resource
 product (Paige et al., PDS; filtered to lat <= -84 by us, see config/sites.yaml) and summarises, for each
-lunar reference footprint, the mean / max surface temperature and where water ice is thermally stable.
+lunar reference footprint, the annual mean and maximum temperature and where water ice is thermally stable.
+
+Field meanings, from the PDS4 label dlre_prp_south.xml (checked by D. Lizárraga, 2026-11-14):
+  tri_clon, tri_clat  planetocentric east longitude / latitude of the facet centre (deg)
+  temp_avg            annual AVERAGE temperature (K) at 2 cm BELOW the surface
+  temp_max            annual MAXIMUM temperature (K) at the surface
+  ice_depth           depth (m) below which water ice sublimates slower than 1 kg m⁻² per billion years;
+                      0 = stable at the surface; −999 = depth > 2.8738 m (not stable within the modelled column)
 
 Outputs
   data/processed/diviner.json      per-site summary used by the app ("Earth can't reproduce" panel)
@@ -26,7 +33,7 @@ R = RADIUS_M["moon"]
 to_ps = Transformer.from_crs(f"+proj=longlat +R={R} +no_defs",
                                f"+proj=stere +lat_0=-90 +lat_ts=-90 +lon_0=0 +R={R} +units=m +no_defs", always_xy=True)
 d["x"], d["y"] = to_ps.transform(d["clon"].values, d["clat"].values)
-d["ice"] = d["ice_depth"].where(d["ice_depth"] >= 0)  # -999 = ice not stable within the modelled column
+d["ice"] = d["ice_depth"].where(d["ice_depth"] >= 0)  # -999 = deeper than 2.87 m, i.e. never stable; stays in the denominators
 
 EARTH_RECORD_HIGH_K = 329.9   # 56.7 °C, Death Valley 1913 (WMO)
 EARTH_RECORD_LOW_K = 183.9    # -89.2 °C, Vostok 1983 (WMO)
@@ -56,7 +63,12 @@ for ref in references(cfg):
     print(ref, out[ref])
 
 json.dump(dict(sites=out, earth_record_low_K=EARTH_RECORD_LOW_K, earth_record_high_K=EARTH_RECORD_HIGH_K,
-               source="LRO Diviner polar resource product, NASA PDS Geosciences (Paige et al.)"),
+               source="LRO Diviner polar resource product, NASA PDS Geosciences (Paige et al.)",
+               definitions=dict(temp_avg="annual mean temperature 2 cm below the surface (K)",
+                                temp_max="annual maximum surface temperature (K)",
+                                ice_stable="ice_depth >= 0: sublimation < 1 kg m-2 per billion years at that depth; "
+                                           "-999 (deeper than 2.87 m) counts as not stable",
+                                earth_record_low="lowest air temperature measured on Earth, Vostok 1983 (WMO)")),
           open(PROCESSED / "diviner.json", "w"), indent=1)
 
 # ---------- figure: max temperature, 85°S–pole
@@ -83,7 +95,7 @@ for ref, b in boxes.items():
     ax.add_patch(Rectangle((b.left / 1e3, b.bottom / 1e3), (b.right - b.left) / 1e3, (b.top - b.bottom) / 1e3,
                            fill=False, ec="#5fd0ff", lw=2))
     ax.text(b.right / 1e3 + 3, b.top / 1e3, names.get(ref, ref), color="#5fd0ff", fontsize=10, va="top")
-cb = fig.colorbar(im, ax=ax, shrink=0.8); cb.set_label("Diviner average surface temperature (K)")
+cb = fig.colorbar(im, ax=ax, shrink=0.8); cb.set_label("Diviner annual mean temperature, 2 cm below the surface (K)")
 ax.set_xlabel("km (polar stereographic)"); ax.set_ylabel("km")
 ax.set_title("Lunar south pole: what no Earth site reproduces\n"
              f"Earth's record low is {EARTH_RECORD_LOW_K:.0f} K; almost all of this map averages below it", fontsize=11)
