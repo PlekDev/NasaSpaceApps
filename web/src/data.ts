@@ -1,0 +1,9 @@
+import type { Manifest, TargetData } from './types';
+const base = import.meta.env.BASE_URL;
+const cache = new Map<string, Promise<unknown>>();
+export function getJSON<T>(name: string): Promise<T> {
+  if (!cache.has(name)) cache.set(name, fetch(`${base}data/${name}.json`).then(r => { if (!r.ok) throw new Error(name); return r.json(); }));
+  return cache.get(name) as Promise<T>;
+}
+export const loadManifest = () => getJSON<Manifest>('manifest');
+export const loadTarget = (id: string) => getJSON<TargetData>(id);
