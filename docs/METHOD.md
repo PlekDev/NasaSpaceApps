@@ -47,6 +47,8 @@ the LRO Diviner polar resource product (Paige et al.): annual mean temperature (
 surface temperature, and the share of
 the site where water ice is thermally stable at the surface or within 1 m. These numbers feed the "Earth can't
 reproduce" panel of every analog card. They are not scored, because no Earth layer has a comparable meaning.
+`scripts/thermal_gap.py` compares them with NASA POWER skin temperatures (MERRA-2 climatology) at the centre of each
+Earth region: the coldest region (University Valley, 239 K mean) is still 95–116 K warmer than the Moon Base sites.
 
 **Far-horizon test (Moon only).** `scripts/validate_far_horizons.py` recomputes illumination for the lunar
 references with the LOLA 85°S 40 m DEM, horizons traced up to 150 km in exact 3D on the lunar sphere, and 1,728 real
