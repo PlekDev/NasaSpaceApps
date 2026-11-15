@@ -242,6 +242,56 @@ be that of the forest canopy, not the ground.
 - **Arcadia rankings are not evidence of a special analog**: a farm plain in Iowa and prairie hills in Kansas score above
   the median of our regions for Arcadia (section 6).
 
+## Q&A for the judges (validation)
+
+Answers use only the numbers in `data/processed/stats/`, `data/processed/controls/` and `data/processed/known_analogs.json`.
+
+**1. "Isn't this just finding mountains?"**
+Partly, for terrain, and that is why light is a separate dimension. Our hardest control, rugged non-volcanic Swiss Alps,
+reaches a terrain score of 80.4 for Malapert, but only 59.9 for illumination, and its best window would rank #82 of
+10,424; Mauna Kea's top-10 windows for Malapert score 90.7–98.0 in illumination. A farm plain (Iowa) and prairie hills
+(Kansas) fall below all 14 regions at P90 for every lunar target.
+
+**2. "Is the result statistically significant?"**
+One result is, with a caveat. Within Mauna Kea, only 0.4 % of the area scores as high as NASA's test site for Malapert
+(p = 0.004; 0.025 after correcting for 6 lunar targets), but it is the best of 36 lunar site–target tests, and corrected
+for all 36 it is p = 0.15, not significant. As a group, the 8 known sites do not beat random points of our regions
+(p = 0.367 global, 0.099 region-matched). We report all three numbers.
+
+**3. "Why doesn't Mars separate?"**
+For the three Mars targets the AUC is 0.33–0.50: the score does not rank the known Mars analog sites above other windows.
+Those sites (Haughton, Mauna Kea, Atacama, Dry Valleys) were chosen for chemistry, climate or ice, not terrain shape, and
+flat terrain is common on Earth: for Arcadia Planitia, prairie hills and a farm plain have median scores of 59.5 and
+53.4, above our regions' 44.0 (the flat-plains degeneracy). We present Mars scores as terrain similarity only.
+
+**4. "How is this different from other analog finders?"**
+Ranking Earth DEM windows by terrain similarity is not new: at least three other NASA Space Apps 2026 projects do it with
+the same open DEMs. In our search we found no other tool that scores Earth analog sites on how their terrain casts
+shadows under a low Sun, checks that light model against NASA's LOLA illumination maps (Spearman ρ 0.92–0.99), and tests
+a blind recovery of NASA's own lunar field-test site with a permutation null.
+
+**5. "Why did you pick these 8 sites?"**
+They are the classic NASA training and analog sites that fall inside our 14 regions, each with a sourced coordinate
+(`scripts/validate_known_analogs.py`); two candidates were dropped before testing (Askja falls on a masked lake, and the
+HMP base camp duplicates Haughton). The 14 regions themselves were chosen because they are analogs, so a random point in
+them is already a reasonable analog; that makes our group test conservative and explains its p = 0.367.
+
+**6. "Did you tune P.E.N. until it found Mauna Kea?"**
+The weights are equal and the known sites are used only to check the ranking, never to fit it. We cannot prove the site
+was chosen in advance (there is no dated record), which is exactly why we also report the correction over all 36 lunar
+site–target tests (p = 0.15).
+
+**7. "Is the #1 window robust?"**
+To slider weights, yes: the #1 window stays in the top 10 under at least 84 % of random weightings for every target. To
+resampling of the lunar reference terrain, less: Malapert's top window scores 79.3 [95 % CI 60.3–89.9] and its rank
+ranges #1–#78. To window size, least: regional rankings agree with Kendall τ 0.25–0.78, and the exact top-10 windows
+barely overlap between 3 and 6 km (Jaccard ≤ 0.19). So we say "top window" with its interval, never "the best place".
+
+**8. "An AUC of 0.75 is not impressive, is it?"**
+It is modest, and we say so. Illumination gives AUC 0.75 for the Moon with a 95 % CI just above 0.5 (lower bounds
+0.52–0.54); terrain alone does not separate. The six lunar targets share the same six known sites, so the six AUCs are
+nearly equal and are not independent evidence. With only 6 sites this is descriptive.
+
 ## Prior work
 
 **How we searched (15 Nov 2026).** General web search plus the primary sources it returned (papers, abstracts, NASA
