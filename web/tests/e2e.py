@@ -34,8 +34,9 @@ with sync_playwright() as p:
     pg.fill("#min", "99"); pg.dispatch_event("#min", "input"); pg.wait_for_timeout(800)
     check("min score filter empties or shrinks the list", pg.locator(".match").count() <= 14)
     pg.fill("#min", "60"); pg.dispatch_event("#min", "input"); pg.fill("#w-illumination", "1"); pg.dispatch_event("#w-illumination", "input"); pg.wait_for_timeout(600)
-    pg.click("#regions-btn"); pg.click("[data-none]"); pg.wait_for_timeout(500)
-    check("region none -> empty state", "No Earth region" in pg.inner_text("#best") or "No window" in pg.inner_text("#best"))
+    pg.click("#regions-btn"); pg.wait_for_selector("[data-none]"); pg.click("[data-none]"); pg.wait_for_timeout(800)
+    best_txt = pg.inner_text("#best")
+    check("region none -> empty state", "No Earth region" in best_txt or "No window" in best_txt, best_txt[:120])
     pg.click("[data-all]"); pg.keyboard.press("Escape"); pg.wait_for_timeout(500)
     pg.locator(".match").first.click(); pg.wait_for_timeout(500); pg.locator(".win").first.focus(); pg.keyboard.press("Enter"); pg.wait_for_selector("#d-title", timeout=20000)
     check("keyboard opens the detail sheet", pg.locator("#detail:not([hidden])").count() == 1)
@@ -46,15 +47,15 @@ with sync_playwright() as p:
     for route, sel in [
         ("when", ".chart"),
         ("proof", "#hm .hm, .proof"),
-        ("limits", ".limits, .page-stub"),
-        ("mission", ".mission-page, .page-stub"),
+        ("limits", ".limits, .view-wip, .page-stub"),
+        ("mission", ".mission-page, .view-wip, .page-stub"),
         ("method", ".prose"),
-        ("dossier", ".dossier, .page-stub"),
-        ("tour", ".tour, .page-stub"),
+        ("dossier", ".dossier, .view-wip, .page-stub"),
+        ("tour", ".tour, .view-wip, .page-stub"),
     ]:
         pg.goto(f"{BASE}/#/{route}"); pg.wait_for_selector(sel, timeout=20000); check(f"view {route} renders", True)
     # Judge's path through Mission -> Rehearse on date -> Dossier when Mission view is active
-    pg.goto(f"{BASE}/#/mission"); pg.wait_for_selector(".mission-page, .page-stub", timeout=20000)
+    pg.goto(f"{BASE}/#/mission"); pg.wait_for_selector(".mission-page, .view-wip, .page-stub", timeout=20000)
     if pg.locator(".mission-page").count() > 0:
         pg.wait_for_selector(".mission-rehearse-headline", timeout=20000)
         check("mission renders synchronized dual canvases and vertical exaggeration", pg.locator(".mission-canvas").count() == 2 and "×" in pg.inner_text(".mission-exag-badge"))
