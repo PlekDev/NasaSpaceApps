@@ -60,3 +60,23 @@ Glow, orbs, dot grids, three-equal-card rows, left colour stripes, skeleton shim
 
 ## Copy
 Short and literal. "Best match", "Top matches", "Weights", "Minimum score", "Earth regions". Numbers always come from the data export.
+
+## Navigation and routes (base phase)
+Wordmark → Home (`#/`). Primary items, left to right: **Explore, Proof, Mission, When, Limits, Method**. **Tour** is a quiet outlined pill on the right, next to the theme toggle. **Dossier is not in the nav**: it is reached from a window's analog card (`#/dossier?target=..&window=..&route=..`). Six items plus Tour fit at 1024 px on one line (labels are one word). Active item: `aria-current="page"` with the `--raise-2` pill. At <= 820 px the nav is a menu button (Esc closes it) and Tour becomes its last item.
+Aliases `#/validation` → `#/proof` and `#/time` → `#/when` use `history.replaceState` and keep the query. Unknown routes render Home. Every view module exports `render(el, m, params)` (and optionally `cleanup()`); `params` is the parsed query of the hash.
+
+## View files and CSS prefixes
+Each view lives in `src/views/<view>.ts` and imports its own `src/views/<view>.css`. Class names carry the view prefix: `.proof-*`, `.mission-*`, `.limits-*`, `.method-*`, `.home-*`, `.dossier-*`, `.tour-*`. A view never styles another view's prefix and never edits `style.css` or `tokens.css` (tokens are changed only by the integrator). Use the tokens (`var(--text-2)`, `var(--line)`, `var(--r-2)` ...), the shared classes (`.page-in`, `.prose`, `.tbl`, `.btn`, `.link`, `.seg`, `.muted`, `.sr-only`) and the 4/8 spacing scale.
+
+## Charts (`src/lib/chart.ts`)
+One way to draw a chart: Apache ECharts (modular, canvas or SVG), themed from the CSS variables, so dark and light match the rest of the UI.
+```ts
+import { mountChart } from '../lib/chart';
+const h = mountChart(el, option, { summary: 'Plain-text message of the chart, with its key numbers.' });
+h.update(next); h.update(next, { replace: true, summary: '…' }); h.dispose();   // dispose is automatic when the route is left
+```
+- `summary` is **required**: it becomes visually hidden text linked by `aria-describedby`; `label` adds an `aria-label`.
+- Colours come from tokens: `--series-1..7` (Okabe–Ito, colour-blind safe; separate light values), `--ramp-0..3` (score ramp, data encoding), `--text-*`, `--line*`, `--panel-solid`. The theme is rebuilt live when `html[data-theme]` changes. Do not hard-code colours in an option; use the theme or read `readVars()`.
+- Resize is handled (ResizeObserver); `prefers-reduced-motion` turns animation off; do not rely on colour alone (dashes, symbols, direct labels).
+- `renderSVG(option, { width, height })` renders to an SVG string without a DOM (tests, print, dossier).
+- Heavy libraries are loaded only through `lib/three.ts` (`loadThree()`), `lib/katex.ts` (`renderMath(el, tex)`) and `lib/scroll.ts` (`loadScrollama()`), and charts only through views, so none of them is in the first-load bundle. Views themselves are lazy chunks (`lib/lazy.ts`).

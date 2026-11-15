@@ -1,0 +1,1654 @@
+{
+ "_stub": false,
+ "moon_connecting_ridge": {
+  "earth_hawaii_mauna_kea_600_1500": {
+   "relief": 0.5765,
+   "slope_med": 0.1148,
+   "slope_p90": 0.004,
+   "rough": 0.1178,
+   "hypso": 0.1793,
+   "shadow_e2": 0.0035,
+   "shadow_e5": 0.0041
+  },
+  "earth_hawaii_mauna_kea_500_1900": {
+   "relief": 0.1222,
+   "slope_med": 0.6419,
+   "slope_p90": 0.0018,
+   "rough": 0.2283,
+   "hypso": 0.0005,
+   "shadow_e2": 0.0016,
+   "shadow_e5": 0.0037
+  },
+  "earth_hawaii_mauna_kea_600_2000": {
+   "relief": 0.2282,
+   "slope_med": 0.0842,
+   "slope_p90": 0.0272,
+   "rough": 0.325,
+   "hypso": 0.3283,
+   "shadow_e2": 0.0025,
+   "shadow_e5": 0.0047
+  },
+  "earth_hawaii_mauna_kea_2500_400": {
+   "relief": 0.3957,
+   "slope_med": 0.0279,
+   "slope_p90": 0.2797,
+   "rough": 0.2102,
+   "hypso": 0.0609,
+   "shadow_e2": 0.0042,
+   "shadow_e5": 0.0214
+  },
+  "earth_hawaii_mauna_kea_700_1900": {
+   "relief": 0.3788,
+   "slope_med": 0.0172,
+   "slope_p90": 0.021,
+   "rough": 0.4397,
+   "hypso": 0.129,
+   "shadow_e2": 0.0132,
+   "shadow_e5": 0.0011
+  },
+  "earth_hawaii_mauna_kea_1000_200": {
+   "relief": 0.4829,
+   "slope_med": 0.1424,
+   "slope_p90": 0.0438,
+   "rough": 0.0887,
+   "hypso": 0.0568,
+   "shadow_e2": 0.1815,
+   "shadow_e5": 0.004
+  },
+  "earth_hawaii_mauna_kea_2600_400": {
+   "relief": 0.148,
+   "slope_med": 0.2029,
+   "slope_p90": 0.4855,
+   "rough": 0.0649,
+   "hypso": 0.0735,
+   "shadow_e2": 0.0005,
+   "shadow_e5": 0.0247
+  },
+  "earth_hawaii_mauna_kea_1000_500": {
+   "relief": 0.025,
+   "slope_med": 0.1729,
+   "slope_p90": 0.1433,
+   "rough": 0.2849,
+   "hypso": 0.3672,
+   "shadow_e2": 0.0009,
+   "shadow_e5": 0.0058
+  },
+  "earth_hawaii_mauna_kea_2300_500": {
+   "relief": 0.0539,
+   "slope_med": 0.3088,
+   "slope_p90": 0.488,
+   "rough": 0.0023,
+   "hypso": 0.0098,
+   "shadow_e2": 0.099,
+   "shadow_e5": 0.0382
+  },
+  "earth_hawaii_mauna_kea_2400_500": {
+   "relief": 0.0584,
+   "slope_med": 0.2991,
+   "slope_p90": 0.4671,
+   "rough": 0.0253,
+   "hypso": 0.0067,
+   "shadow_e2": 0.1003,
+   "shadow_e5": 0.0431
+  },
+  "earth_hawaii_mauna_kea_500_1500": {
+   "relief": 0.3685,
+   "slope_med": 0.2627,
+   "slope_p90": 0.0073,
+   "rough": 0.2033,
+   "hypso": 0.1334,
+   "shadow_e2": 0.0025,
+   "shadow_e5": 0.0223
+  },
+  "earth_hawaii_mauna_kea_500_1600": {
+   "relief": 0.5363,
+   "slope_med": 0.0534,
+   "slope_p90": 0.0099,
+   "rough": 0.2032,
+   "hypso": 0.1833,
+   "shadow_e2": 0.0044,
+   "shadow_e5": 0.0094
+  },
+  "earth_hawaii_mauna_kea_2200_400": {
+   "relief": 0.0639,
+   "slope_med": 0.2597,
+   "slope_p90": 0.3263,
+   "rough": 0.1363,
+   "hypso": 0.1954,
+   "shadow_e2": 0.0038,
+   "shadow_e5": 0.0144
+  },
+  "earth_hawaii_mauna_kea_2000_400": {
+   "relief": 0.0088,
+   "slope_med": 0.5775,
+   "slope_p90": 0.3044,
+   "rough": 0.0643,
+   "hypso": 0.0278,
+   "shadow_e2": 0.0135,
+   "shadow_e5": 0.0037
+  },
+  "earth_hawaii_mauna_kea_600_1900": {
+   "relief": 0.0144,
+   "slope_med": 0.5262,
+   "slope_p90": 0.0404,
+   "rough": 0.0767,
+   "hypso": 0.3345,
+   "shadow_e2": 0.0025,
+   "shadow_e5": 0.0053
+  },
+  "earth_hawaii_mauna_kea_2200_500": {
+   "relief": 0.0134,
+   "slope_med": 0.4231,
+   "slope_p90": 0.4043,
+   "rough": 0.0131,
+   "hypso": 0.0094,
+   "shadow_e2": 0.0951,
+   "shadow_e5": 0.0416
+  },
+  "earth_hawaii_mauna_kea_500_1400": {
+   "relief": 0.1403,
+   "slope_med": 0.0257,
+   "slope_p90": 0.0274,
+   "rough": 0.0026,
+   "hypso": 0.7685,
+   "shadow_e2": 0.0219,
+   "shadow_e5": 0.0136
+  },
+  "earth_hawaii_mauna_kea_2500_500": {
+   "relief": 0.032,
+   "slope_med": 0.3387,
+   "slope_p90": 0.3502,
+   "rough": 0.0196,
+   "hypso": 0.0662,
+   "shadow_e2": 0.1458,
+   "shadow_e5": 0.0475
+  },
+  "earth_hawaii_mauna_kea_1000_300": {
+   "relief": 0.0545,
+   "slope_med": 0.433,
+   "slope_p90": 0.0027,
+   "rough": 0.431,
+   "hypso": 0.0439,
+   "shadow_e2": 0.0331,
+   "shadow_e5": 0.0018
+  },
+  "earth_hawaii_mauna_kea_400_1900": {
+   "relief": 0.2384,
+   "slope_med": 0.398,
+   "slope_p90": 0.0614,
+   "rough": 0.2447,
+   "hypso": 0.0232,
+   "shadow_e2": 0.0067,
+   "shadow_e5": 0.0276
+  }
+ },
+ "moon_nobile_rim1": {
+  "earth_hawaii_mauna_kea_400_1600": {
+   "relief": 0.0622,
+   "slope_med": 0.1005,
+   "slope_p90": 0.0885,
+   "rough": 0.7019,
+   "hypso": 0.0319,
+   "shadow_e2": 0.0143,
+   "shadow_e5": 0.0006
+  },
+  "earth_hawaii_mauna_kea_400_1700": {
+   "relief": 0.0018,
+   "slope_med": 0.1697,
+   "slope_p90": 0.0753,
+   "rough": 0.4793,
+   "hypso": 0.2359,
+   "shadow_e2": 0.0343,
+   "shadow_e5": 0.0038
+  },
+  "earth_hawaii_mauna_kea_400_1500": {
+   "relief": 0.0104,
+   "slope_med": 0.1625,
+   "slope_p90": 0.1172,
+   "rough": 0.4774,
+   "hypso": 0.2225,
+   "shadow_e2": 0.0077,
+   "shadow_e5": 0.0023
+  },
+  "earth_hawaii_mauna_kea_400_1900": {
+   "relief": 0.0177,
+   "slope_med": 0.2358,
+   "slope_p90": 0.0815,
+   "rough": 0.6012,
+   "hypso": 0.0625,
+   "shadow_e2": 0.0002,
+   "shadow_e5": 0.0011
+  },
+  "earth_hawaii_mauna_kea_500_1500": {
+   "relief": 0.0176,
+   "slope_med": 0.3692,
+   "slope_p90": 0.1491,
+   "rough": 0.4604,
+   "hypso": 0.0004,
+   "shadow_e2": 0.0033,
+   "shadow_e5": 0.0
+  },
+  "earth_hawaii_mauna_kea_400_1800": {
+   "relief": 0.0067,
+   "slope_med": 0.2423,
+   "slope_p90": 0.0751,
+   "rough": 0.5484,
+   "hypso": 0.1264,
+   "shadow_e2": 0.0006,
+   "shadow_e5": 0.0005
+  },
+  "earth_hawaii_mauna_kea_600_1600": {
+   "relief": 0.004,
+   "slope_med": 0.3542,
+   "slope_p90": 0.0531,
+   "rough": 0.5674,
+   "hypso": 0.0088,
+   "shadow_e2": 0.0112,
+   "shadow_e5": 0.0013
+  },
+  "earth_hawaii_mauna_kea_700_1600": {
+   "relief": 0.0659,
+   "slope_med": 0.05,
+   "slope_p90": 0.0556,
+   "rough": 0.5735,
+   "hypso": 0.2534,
+   "shadow_e2": 0.0017,
+   "shadow_e5": 0.0
+  },
+  "earth_hawaii_mauna_kea_700_1700": {
+   "relief": 0.0088,
+   "slope_med": 0.0357,
+   "slope_p90": 0.0201,
+   "rough": 0.8685,
+   "hypso": 0.0614,
+   "shadow_e2": 0.0001,
+   "shadow_e5": 0.0053
+  },
+  "earth_hawaii_mauna_kea_500_1600": {
+   "relief": 0.0044,
+   "slope_med": 0.4701,
+   "slope_p90": 0.1233,
+   "rough": 0.3961,
+   "hypso": 0.0021,
+   "shadow_e2": 0.0036,
+   "shadow_e5": 0.0003
+  },
+  "earth_hawaii_mauna_kea_600_1500": {
+   "relief": 0.0237,
+   "slope_med": 0.4548,
+   "slope_p90": 0.1674,
+   "rough": 0.2797,
+   "hypso": 0.0725,
+   "shadow_e2": 0.0002,
+   "shadow_e5": 0.0017
+  },
+  "earth_hawaii_mauna_kea_300_1700": {
+   "relief": 0.0145,
+   "slope_med": 0.0001,
+   "slope_p90": 0.022,
+   "rough": 0.3544,
+   "hypso": 0.5974,
+   "shadow_e2": 0.0116,
+   "shadow_e5": 0.0
+  },
+  "earth_hawaii_mauna_kea_300_1800": {
+   "relief": 0.0066,
+   "slope_med": 0.035,
+   "slope_p90": 0.0558,
+   "rough": 0.4363,
+   "hypso": 0.4637,
+   "shadow_e2": 0.002,
+   "shadow_e5": 0.0005
+  },
+  "earth_hawaii_mauna_kea_1000_200": {
+   "relief": 0.0132,
+   "slope_med": 0.3916,
+   "slope_p90": 0.2175,
+   "rough": 0.2859,
+   "hypso": 0.0532,
+   "shadow_e2": 0.0373,
+   "shadow_e5": 0.0013
+  },
+  "earth_hawaii_mauna_kea_1000_300": {
+   "relief": 0.0634,
+   "slope_med": 0.1708,
+   "slope_p90": 0.1234,
+   "rough": 0.5655,
+   "hypso": 0.0601,
+   "shadow_e2": 0.0153,
+   "shadow_e5": 0.0014
+  },
+  "earth_hawaii_mauna_kea_700_1800": {
+   "relief": 0.0148,
+   "slope_med": 0.3361,
+   "slope_p90": 0.0429,
+   "rough": 0.6053,
+   "hypso": 0.001,
+   "shadow_e2": 0.0,
+   "shadow_e5": 0.0
+  },
+  "earth_hawaii_mauna_kea_700_1900": {
+   "relief": 0.0201,
+   "slope_med": 0.4417,
+   "slope_p90": 0.094,
+   "rough": 0.3751,
+   "hypso": 0.0627,
+   "shadow_e2": 0.0045,
+   "shadow_e5": 0.002
+  },
+  "earth_hawaii_mauna_kea_300_1900": {
+   "relief": 0.0,
+   "slope_med": 0.1491,
+   "slope_p90": 0.0814,
+   "rough": 0.3832,
+   "hypso": 0.3855,
+   "shadow_e2": 0.0006,
+   "shadow_e5": 0.0001
+  },
+  "earth_hawaii_mauna_kea_1000_400": {
+   "relief": 0.0767,
+   "slope_med": 0.2009,
+   "slope_p90": 0.1044,
+   "rough": 0.5371,
+   "hypso": 0.08,
+   "shadow_e2": 0.0005,
+   "shadow_e5": 0.0005
+  },
+  "earth_hawaii_mauna_kea_1100_300": {
+   "relief": 0.003,
+   "slope_med": 0.295,
+   "slope_p90": 0.13,
+   "rough": 0.3638,
+   "hypso": 0.2069,
+   "shadow_e2": 0.0001,
+   "shadow_e5": 0.0013
+  }
+ },
+ "moon_de_gerlache_rim": {
+  "earth_hawaii_mauna_kea_400_1600": {
+   "relief": 0.1379,
+   "slope_med": 0.0415,
+   "slope_p90": 0.0064,
+   "rough": 0.7319,
+   "hypso": 0.0144,
+   "shadow_e2": 0.0234,
+   "shadow_e5": 0.0444
+  },
+  "earth_hawaii_mauna_kea_1000_200": {
+   "relief": 0.0265,
+   "slope_med": 0.2864,
+   "slope_p90": 0.1526,
+   "rough": 0.5148,
+   "hypso": 0.0067,
+   "shadow_e2": 0.0032,
+   "shadow_e5": 0.0098
+  },
+  "earth_hawaii_mauna_kea_400_1500": {
+   "relief": 0.0384,
+   "slope_med": 0.0036,
+   "slope_p90": 0.0103,
+   "rough": 0.7072,
+   "hypso": 0.1643,
+   "shadow_e2": 0.021,
+   "shadow_e5": 0.0551
+  },
+  "earth_hawaii_mauna_kea_600_1500": {
+   "relief": 0.048,
+   "slope_med": 0.3411,
+   "slope_p90": 0.0735,
+   "rough": 0.4478,
+   "hypso": 0.0195,
+   "shadow_e2": 0.0627,
+   "shadow_e5": 0.0075
+  },
+  "earth_hawaii_mauna_kea_500_1500": {
+   "relief": 0.0256,
+   "slope_med": 0.1401,
+   "slope_p90": 0.0297,
+   "rough": 0.6383,
+   "hypso": 0.1093,
+   "shadow_e2": 0.0322,
+   "shadow_e5": 0.0249
+  },
+  "earth_hawaii_mauna_kea_400_1900": {
+   "relief": 0.0238,
+   "slope_med": 0.0308,
+   "slope_p90": 0.0002,
+   "rough": 0.8225,
+   "hypso": 0.0037,
+   "shadow_e2": 0.0803,
+   "shadow_e5": 0.0388
+  },
+  "earth_hawaii_mauna_kea_500_1600": {
+   "relief": 0.004,
+   "slope_med": 0.2761,
+   "slope_p90": 0.0222,
+   "rough": 0.5418,
+   "hypso": 0.1198,
+   "shadow_e2": 0.0236,
+   "shadow_e5": 0.0125
+  },
+  "earth_hawaii_mauna_kea_600_1600": {
+   "relief": 0.0028,
+   "slope_med": 0.1145,
+   "slope_p90": 0.002,
+   "rough": 0.7056,
+   "hypso": 0.1591,
+   "shadow_e2": 0.0085,
+   "shadow_e5": 0.0074
+  },
+  "earth_hawaii_mauna_kea_700_1900": {
+   "relief": 0.0351,
+   "slope_med": 0.3252,
+   "slope_p90": 0.0159,
+   "rough": 0.5883,
+   "hypso": 0.0156,
+   "shadow_e2": 0.0159,
+   "shadow_e5": 0.004
+  },
+  "earth_hawaii_mauna_kea_1000_300": {
+   "relief": 0.1108,
+   "slope_med": 0.0201,
+   "slope_p90": 0.0262,
+   "rough": 0.8257,
+   "hypso": 0.0088,
+   "shadow_e2": 0.0024,
+   "shadow_e5": 0.006
+  },
+  "earth_hawaii_mauna_kea_900_300": {
+   "relief": 0.0072,
+   "slope_med": 0.1888,
+   "slope_p90": 0.0682,
+   "rough": 0.2803,
+   "hypso": 0.451,
+   "shadow_e2": 0.0029,
+   "shadow_e5": 0.0016
+  },
+  "earth_hawaii_mauna_kea_700_1600": {
+   "relief": 0.1313,
+   "slope_med": 0.0247,
+   "slope_p90": 0.0012,
+   "rough": 0.6404,
+   "hypso": 0.1556,
+   "shadow_e2": 0.0289,
+   "shadow_e5": 0.0179
+  },
+  "earth_hawaii_mauna_kea_400_1700": {
+   "relief": 0.006,
+   "slope_med": 0.0004,
+   "slope_p90": 0.0008,
+   "rough": 0.359,
+   "hypso": 0.6304,
+   "shadow_e2": 0.0002,
+   "shadow_e5": 0.0032
+  },
+  "earth_hawaii_mauna_kea_300_1800": {
+   "relief": 0.0185,
+   "slope_med": 0.0312,
+   "slope_p90": 0.0001,
+   "rough": 0.4841,
+   "hypso": 0.4204,
+   "shadow_e2": 0.0231,
+   "shadow_e5": 0.0226
+  },
+  "earth_hawaii_mauna_kea_1100_300": {
+   "relief": 0.0028,
+   "slope_med": 0.1562,
+   "slope_p90": 0.0495,
+   "rough": 0.5431,
+   "hypso": 0.1951,
+   "shadow_e2": 0.0489,
+   "shadow_e5": 0.0044
+  },
+  "earth_hawaii_mauna_kea_400_1800": {
+   "relief": 0.0044,
+   "slope_med": 0.0271,
+   "slope_p90": 0.0001,
+   "rough": 0.4941,
+   "hypso": 0.4229,
+   "shadow_e2": 0.0309,
+   "shadow_e5": 0.0204
+  },
+  "earth_hawaii_mauna_kea_300_1900": {
+   "relief": 0.0004,
+   "slope_med": 0.0186,
+   "slope_p90": 0.0085,
+   "rough": 0.5101,
+   "hypso": 0.4156,
+   "shadow_e2": 0.0287,
+   "shadow_e5": 0.0182
+  },
+  "earth_hawaii_mauna_kea_500_1400": {
+   "relief": 0.0475,
+   "slope_med": 0.4511,
+   "slope_p90": 0.0813,
+   "rough": 0.1647,
+   "hypso": 0.2491,
+   "shadow_e2": 0.0052,
+   "shadow_e5": 0.0011
+  },
+  "earth_hawaii_mauna_kea_700_1800": {
+   "relief": 0.0169,
+   "slope_med": 0.122,
+   "slope_p90": 0.0015,
+   "rough": 0.7299,
+   "hypso": 0.0754,
+   "shadow_e2": 0.0392,
+   "shadow_e5": 0.015
+  },
+  "earth_hawaii_mauna_kea_2500_400": {
+   "relief": 0.0261,
+   "slope_med": 0.4135,
+   "slope_p90": 0.1792,
+   "rough": 0.3391,
+   "hypso": 0.0033,
+   "shadow_e2": 0.038,
+   "shadow_e5": 0.0007
+  }
+ },
+ "moon_malapert": {
+  "earth_hawaii_mauna_kea_700_1700": {
+   "relief": 0.0139,
+   "slope_med": 0.1558,
+   "slope_p90": 0.0001,
+   "rough": 0.7371,
+   "hypso": 0.0474,
+   "shadow_e2": 0.0341,
+   "shadow_e5": 0.0116
+  },
+  "earth_mx_serdan_oriental_1800_2800": {
+   "relief": 0.2969,
+   "slope_med": 0.0001,
+   "slope_p90": 0.245,
+   "rough": 0.061,
+   "hypso": 0.0674,
+   "shadow_e2": 0.2139,
+   "shadow_e5": 0.1157
+  },
+  "earth_hawaii_mauna_kea_400_1600": {
+   "relief": 0.0,
+   "slope_med": 0.0991,
+   "slope_p90": 0.0035,
+   "rough": 0.8546,
+   "hypso": 0.0383,
+   "shadow_e2": 0.0038,
+   "shadow_e5": 0.0006
+  },
+  "earth_hawaii_mauna_kea_700_1600": {
+   "relief": 0.0037,
+   "slope_med": 0.0916,
+   "slope_p90": 0.0056,
+   "rough": 0.6114,
+   "hypso": 0.2771,
+   "shadow_e2": 0.0105,
+   "shadow_e5": 0.0002
+  },
+  "earth_hawaii_mauna_kea_700_1800": {
+   "relief": 0.0803,
+   "slope_med": 0.4397,
+   "slope_p90": 0.0045,
+   "rough": 0.456,
+   "hypso": 0.0019,
+   "shadow_e2": 0.0174,
+   "shadow_e5": 0.0002
+  },
+  "earth_hawaii_mauna_kea_400_1800": {
+   "relief": 0.0537,
+   "slope_med": 0.2659,
+   "slope_p90": 0.0102,
+   "rough": 0.6048,
+   "hypso": 0.0521,
+   "shadow_e2": 0.0127,
+   "shadow_e5": 0.0007
+  },
+  "earth_hawaii_mauna_kea_600_1600": {
+   "relief": 0.0469,
+   "slope_med": 0.3704,
+   "slope_p90": 0.0044,
+   "rough": 0.5758,
+   "hypso": 0.0001,
+   "shadow_e2": 0.0019,
+   "shadow_e5": 0.0005
+  },
+  "earth_hawaii_mauna_kea_1000_300": {
+   "relief": 0.1576,
+   "slope_med": 0.2349,
+   "slope_p90": 0.0395,
+   "rough": 0.4759,
+   "hypso": 0.0911,
+   "shadow_e2": 0.0003,
+   "shadow_e5": 0.0007
+  },
+  "earth_mx_serdan_oriental_2800_2400": {
+   "relief": 0.1373,
+   "slope_med": 0.0473,
+   "slope_p90": 0.2178,
+   "rough": 0.0488,
+   "hypso": 0.0588,
+   "shadow_e2": 0.3236,
+   "shadow_e5": 0.1664
+  },
+  "earth_hawaii_mauna_kea_400_1900": {
+   "relief": 0.072,
+   "slope_med": 0.2407,
+   "slope_p90": 0.0103,
+   "rough": 0.5795,
+   "hypso": 0.0753,
+   "shadow_e2": 0.021,
+   "shadow_e5": 0.0012
+  },
+  "earth_atacama_yungay_3400_2700": {
+   "relief": 0.2987,
+   "slope_med": 0.0445,
+   "slope_p90": 0.1472,
+   "rough": 0.0433,
+   "hypso": 0.117,
+   "shadow_e2": 0.2647,
+   "shadow_e5": 0.0846
+  },
+  "earth_hawaii_mauna_kea_1000_400": {
+   "relief": 0.1973,
+   "slope_med": 0.311,
+   "slope_p90": 0.0414,
+   "rough": 0.3903,
+   "hypso": 0.0481,
+   "shadow_e2": 0.0118,
+   "shadow_e5": 0.0002
+  },
+  "earth_hawaii_mauna_kea_400_1700": {
+   "relief": 0.0162,
+   "slope_med": 0.1592,
+   "slope_p90": 0.0055,
+   "rough": 0.7356,
+   "hypso": 0.082,
+   "shadow_e2": 0.0,
+   "shadow_e5": 0.0014
+  },
+  "earth_cuatrocienegas_1500_3100": {
+   "relief": 0.1388,
+   "slope_med": 0.0147,
+   "slope_p90": 0.5303,
+   "rough": 0.0026,
+   "hypso": 0.0445,
+   "shadow_e2": 0.2197,
+   "shadow_e5": 0.0494
+  },
+  "earth_axel_heiberg_3200_0": {
+   "relief": 0.2479,
+   "slope_med": 0.0002,
+   "slope_p90": 0.1493,
+   "rough": 0.3118,
+   "hypso": 0.0784,
+   "shadow_e2": 0.1772,
+   "shadow_e5": 0.0352
+  },
+  "earth_hawaii_mauna_kea_400_1500": {
+   "relief": 0.0055,
+   "slope_med": 0.1618,
+   "slope_p90": 0.0195,
+   "rough": 0.6222,
+   "hypso": 0.1856,
+   "shadow_e2": 0.0034,
+   "shadow_e5": 0.002
+  },
+  "earth_mx_serdan_oriental_1400_3100": {
+   "relief": 0.4465,
+   "slope_med": 0.0911,
+   "slope_p90": 0.0394,
+   "rough": 0.0536,
+   "hypso": 0.0001,
+   "shadow_e2": 0.2786,
+   "shadow_e5": 0.0907
+  },
+  "earth_cuatrocienegas_1500_3000": {
+   "relief": 0.1664,
+   "slope_med": 0.0081,
+   "slope_p90": 0.518,
+   "rough": 0.0153,
+   "hypso": 0.0014,
+   "shadow_e2": 0.213,
+   "shadow_e5": 0.0777
+  },
+  "earth_cuatrocienegas_1500_2900": {
+   "relief": 0.2349,
+   "slope_med": 0.0072,
+   "slope_p90": 0.389,
+   "rough": 0.0173,
+   "hypso": 0.0117,
+   "shadow_e2": 0.2501,
+   "shadow_e5": 0.0898
+  },
+  "earth_atacama_yungay_2600_2700": {
+   "relief": 0.317,
+   "slope_med": 0.2224,
+   "slope_p90": 0.0041,
+   "rough": 0.136,
+   "hypso": 0.2105,
+   "shadow_e2": 0.0828,
+   "shadow_e5": 0.0273
+  }
+ },
+ "moon_haworth": {
+  "earth_hawaii_mauna_kea_1900_1600": {
+   "relief": 0.0449,
+   "slope_med": 0.0105,
+   "slope_p90": 0.2312,
+   "rough": 0.1546,
+   "hypso": 0.1252,
+   "shadow_e2": 0.3217,
+   "shadow_e5": 0.1119
+  },
+  "earth_hawaii_mauna_kea_1900_1700": {
+   "relief": 0.0279,
+   "slope_med": 0.0879,
+   "slope_p90": 0.2746,
+   "rough": 0.1216,
+   "hypso": 0.03,
+   "shadow_e2": 0.241,
+   "shadow_e5": 0.217
+  },
+  "earth_hawaii_mauna_kea_1900_1000": {
+   "relief": 0.0009,
+   "slope_med": 0.0118,
+   "slope_p90": 0.3052,
+   "rough": 0.0115,
+   "hypso": 0.0628,
+   "shadow_e2": 0.5538,
+   "shadow_e5": 0.0539
+  },
+  "earth_hawaii_mauna_kea_2700_400": {
+   "relief": 0.0183,
+   "slope_med": 0.0254,
+   "slope_p90": 0.1286,
+   "rough": 0.7983,
+   "hypso": 0.0081,
+   "shadow_e2": 0.0181,
+   "shadow_e5": 0.0032
+  },
+  "earth_hawaii_mauna_kea_2600_500": {
+   "relief": 0.0268,
+   "slope_med": 0.0112,
+   "slope_p90": 0.1105,
+   "rough": 0.4241,
+   "hypso": 0.1381,
+   "shadow_e2": 0.2753,
+   "shadow_e5": 0.0141
+  },
+  "earth_hawaii_mauna_kea_1200_100": {
+   "relief": 0.0115,
+   "slope_med": 0.0395,
+   "slope_p90": 0.1905,
+   "rough": 0.5367,
+   "hypso": 0.1042,
+   "shadow_e2": 0.0798,
+   "shadow_e5": 0.0378
+  },
+  "earth_hawaii_mauna_kea_1900_1100": {
+   "relief": 0.0066,
+   "slope_med": 0.0008,
+   "slope_p90": 0.216,
+   "rough": 0.0079,
+   "hypso": 0.2003,
+   "shadow_e2": 0.515,
+   "shadow_e5": 0.0535
+  },
+  "earth_hawaii_mauna_kea_2000_1800": {
+   "relief": 0.136,
+   "slope_med": 0.0007,
+   "slope_p90": 0.1153,
+   "rough": 0.1883,
+   "hypso": 0.1052,
+   "shadow_e2": 0.4133,
+   "shadow_e5": 0.0413
+  },
+  "earth_hawaii_mauna_kea_1800_1100": {
+   "relief": 0.1084,
+   "slope_med": 0.0153,
+   "slope_p90": 0.1678,
+   "rough": 0.0047,
+   "hypso": 0.336,
+   "shadow_e2": 0.2966,
+   "shadow_e5": 0.0711
+  },
+  "earth_hawaii_mauna_kea_2100_1400": {
+   "relief": 0.1439,
+   "slope_med": 0.0474,
+   "slope_p90": 0.1468,
+   "rough": 0.0034,
+   "hypso": 0.0856,
+   "shadow_e2": 0.4476,
+   "shadow_e5": 0.1253
+  },
+  "earth_hawaii_mauna_kea_1600_1300": {
+   "relief": 0.0192,
+   "slope_med": 0.0131,
+   "slope_p90": 0.2382,
+   "rough": 0.0006,
+   "hypso": 0.1739,
+   "shadow_e2": 0.4626,
+   "shadow_e5": 0.0925
+  },
+  "earth_hawaii_mauna_kea_2400_500": {
+   "relief": 0.1127,
+   "slope_med": 0.2078,
+   "slope_p90": 0.0297,
+   "rough": 0.3337,
+   "hypso": 0.2213,
+   "shadow_e2": 0.0945,
+   "shadow_e5": 0.0002
+  },
+  "earth_hawaii_mauna_kea_2000_1700": {
+   "relief": 0.2763,
+   "slope_med": 0.0647,
+   "slope_p90": 0.0403,
+   "rough": 0.2832,
+   "hypso": 0.0209,
+   "shadow_e2": 0.2736,
+   "shadow_e5": 0.0411
+  },
+  "earth_hawaii_mauna_kea_2200_1300": {
+   "relief": 0.0223,
+   "slope_med": 0.0571,
+   "slope_p90": 0.2701,
+   "rough": 0.0945,
+   "hypso": 0.0338,
+   "shadow_e2": 0.3039,
+   "shadow_e5": 0.2183
+  },
+  "earth_hawaii_mauna_kea_2700_500": {
+   "relief": 0.0,
+   "slope_med": 0.0364,
+   "slope_p90": 0.2574,
+   "rough": 0.2627,
+   "hypso": 0.219,
+   "shadow_e2": 0.1648,
+   "shadow_e5": 0.0597
+  },
+  "earth_hawaii_mauna_kea_2400_1600": {
+   "relief": 0.1343,
+   "slope_med": 0.0127,
+   "slope_p90": 0.0217,
+   "rough": 0.3962,
+   "hypso": 0.2072,
+   "shadow_e2": 0.2271,
+   "shadow_e5": 0.0007
+  },
+  "earth_hawaii_mauna_kea_1200_400": {
+   "relief": 0.0272,
+   "slope_med": 0.3339,
+   "slope_p90": 0.0546,
+   "rough": 0.1173,
+   "hypso": 0.3087,
+   "shadow_e2": 0.1093,
+   "shadow_e5": 0.049
+  },
+  "earth_hawaii_mauna_kea_2700_1400": {
+   "relief": 0.0407,
+   "slope_med": 0.0478,
+   "slope_p90": 0.0242,
+   "rough": 0.676,
+   "hypso": 0.1227,
+   "shadow_e2": 0.086,
+   "shadow_e5": 0.0026
+  },
+  "earth_hawaii_mauna_kea_2800_500": {
+   "relief": 0.0135,
+   "slope_med": 0.1581,
+   "slope_p90": 0.3761,
+   "rough": 0.2128,
+   "hypso": 0.0164,
+   "shadow_e2": 0.0997,
+   "shadow_e5": 0.1234
+  },
+  "earth_hawaii_mauna_kea_2500_1500": {
+   "relief": 0.0,
+   "slope_med": 0.1286,
+   "slope_p90": 0.1198,
+   "rough": 0.2576,
+   "hypso": 0.069,
+   "shadow_e2": 0.3873,
+   "shadow_e5": 0.0378
+  }
+ },
+ "moon_leibnitz_beta": {
+  "earth_hawaii_mauna_kea_2500_500": {
+   "relief": 0.1084,
+   "slope_med": 0.0499,
+   "slope_p90": 0.3401,
+   "rough": 0.3772,
+   "hypso": 0.0303,
+   "shadow_e2": 0.0923,
+   "shadow_e5": 0.002
+  },
+  "earth_hawaii_mauna_kea_2400_500": {
+   "relief": 0.1232,
+   "slope_med": 0.0096,
+   "slope_p90": 0.3147,
+   "rough": 0.3791,
+   "hypso": 0.1314,
+   "shadow_e2": 0.0341,
+   "shadow_e5": 0.0078
+  },
+  "earth_hawaii_mauna_kea_2100_1400": {
+   "relief": 0.109,
+   "slope_med": 0.0682,
+   "slope_p90": 0.401,
+   "rough": 0.0241,
+   "hypso": 0.2002,
+   "shadow_e2": 0.1704,
+   "shadow_e5": 0.0272
+  },
+  "earth_hawaii_mauna_kea_600_1900": {
+   "relief": 0.0525,
+   "slope_med": 0.0932,
+   "slope_p90": 0.0245,
+   "rough": 0.7866,
+   "hypso": 0.0148,
+   "shadow_e2": 0.0009,
+   "shadow_e5": 0.0276
+  },
+  "earth_hawaii_mauna_kea_2000_1500": {
+   "relief": 0.1511,
+   "slope_med": 0.0565,
+   "slope_p90": 0.3399,
+   "rough": 0.1086,
+   "hypso": 0.1455,
+   "shadow_e2": 0.1782,
+   "shadow_e5": 0.0202
+  },
+  "earth_hawaii_mauna_kea_2300_500": {
+   "relief": 0.084,
+   "slope_med": 0.0072,
+   "slope_p90": 0.2324,
+   "rough": 0.4535,
+   "hypso": 0.1922,
+   "shadow_e2": 0.0234,
+   "shadow_e5": 0.0073
+  },
+  "earth_hawaii_mauna_kea_2600_500": {
+   "relief": 0.0285,
+   "slope_med": 0.1095,
+   "slope_p90": 0.328,
+   "rough": 0.3016,
+   "hypso": 0.1467,
+   "shadow_e2": 0.0857,
+   "shadow_e5": 0.0
+  },
+  "earth_hawaii_mauna_kea_2300_1600": {
+   "relief": 0.2923,
+   "slope_med": 0.1453,
+   "slope_p90": 0.1683,
+   "rough": 0.231,
+   "hypso": 0.0586,
+   "shadow_e2": 0.1014,
+   "shadow_e5": 0.0031
+  },
+  "earth_hawaii_mauna_kea_500_1900": {
+   "relief": 0.004,
+   "slope_med": 0.0145,
+   "slope_p90": 0.0014,
+   "rough": 0.7704,
+   "hypso": 0.1378,
+   "shadow_e2": 0.0083,
+   "shadow_e5": 0.0635
+  },
+  "earth_hawaii_mauna_kea_1900_1600": {
+   "relief": 0.0325,
+   "slope_med": 0.2074,
+   "slope_p90": 0.3869,
+   "rough": 0.1131,
+   "hypso": 0.1758,
+   "shadow_e2": 0.0721,
+   "shadow_e5": 0.0123
+  },
+  "earth_hawaii_mauna_kea_2000_1700": {
+   "relief": 0.1696,
+   "slope_med": 0.0449,
+   "slope_p90": 0.22,
+   "rough": 0.217,
+   "hypso": 0.2576,
+   "shadow_e2": 0.0877,
+   "shadow_e5": 0.0033
+  },
+  "earth_hawaii_mauna_kea_2200_500": {
+   "relief": 0.0425,
+   "slope_med": 0.0489,
+   "slope_p90": 0.2343,
+   "rough": 0.4667,
+   "hypso": 0.1743,
+   "shadow_e2": 0.0308,
+   "shadow_e5": 0.0024
+  },
+  "earth_hawaii_mauna_kea_1700_1300": {
+   "relief": 0.0014,
+   "slope_med": 0.2414,
+   "slope_p90": 0.4105,
+   "rough": 0.0535,
+   "hypso": 0.0275,
+   "shadow_e2": 0.2062,
+   "shadow_e5": 0.0595
+  },
+  "earth_hawaii_mauna_kea_2000_1600": {
+   "relief": 0.228,
+   "slope_med": 0.012,
+   "slope_p90": 0.1961,
+   "rough": 0.1926,
+   "hypso": 0.2878,
+   "shadow_e2": 0.0826,
+   "shadow_e5": 0.0009
+  },
+  "earth_hawaii_mauna_kea_2700_1400": {
+   "relief": 0.034,
+   "slope_med": 0.2534,
+   "slope_p90": 0.1716,
+   "rough": 0.4059,
+   "hypso": 0.1144,
+   "shadow_e2": 0.0189,
+   "shadow_e5": 0.0018
+  },
+  "earth_hawaii_mauna_kea_2600_400": {
+   "relief": 0.1091,
+   "slope_med": 0.0002,
+   "slope_p90": 0.1498,
+   "rough": 0.4986,
+   "hypso": 0.2286,
+   "shadow_e2": 0.0024,
+   "shadow_e5": 0.0113
+  },
+  "earth_hawaii_mauna_kea_1900_400": {
+   "relief": 0.0369,
+   "slope_med": 0.2596,
+   "slope_p90": 0.0793,
+   "rough": 0.3289,
+   "hypso": 0.2893,
+   "shadow_e2": 0.0056,
+   "shadow_e5": 0.0005
+  },
+  "earth_hawaii_mauna_kea_2300_600": {
+   "relief": 0.0014,
+   "slope_med": 0.3078,
+   "slope_p90": 0.4056,
+   "rough": 0.1101,
+   "hypso": 0.0599,
+   "shadow_e2": 0.1109,
+   "shadow_e5": 0.0042
+  },
+  "earth_hawaii_mauna_kea_1900_1700": {
+   "relief": 0.0197,
+   "slope_med": 0.2636,
+   "slope_p90": 0.3443,
+   "rough": 0.0799,
+   "hypso": 0.2201,
+   "shadow_e2": 0.0427,
+   "shadow_e5": 0.0299
+  },
+  "earth_hawaii_mauna_kea_2000_400": {
+   "relief": 0.0305,
+   "slope_med": 0.0723,
+   "slope_p90": 0.1427,
+   "rough": 0.5395,
+   "hypso": 0.1914,
+   "shadow_e2": 0.0004,
+   "shadow_e5": 0.0232
+  }
+ },
+ "mars_arcadia": {
+  "earth_atacama_yungay_3200_200": {
+   "relief": 0.0957,
+   "slope_med": 0.1159,
+   "slope_p90": 0.0518,
+   "rough": 0.0425,
+   "hypso": 0.6181,
+   "shadow_e2": 0.0035,
+   "shadow_e5": 0.0724
+  },
+  "earth_atacama_yungay_3200_100": {
+   "relief": 0.3263,
+   "slope_med": 0.0417,
+   "slope_p90": 0.0087,
+   "rough": 0.0564,
+   "hypso": 0.1294,
+   "shadow_e2": 0.4223,
+   "shadow_e5": 0.0152
+  },
+  "earth_atacama_yungay_2900_100": {
+   "relief": 0.017,
+   "slope_med": 0.0234,
+   "slope_p90": 0.0187,
+   "rough": 0.1116,
+   "hypso": 0.7299,
+   "shadow_e2": 0.0968,
+   "shadow_e5": 0.0026
+  },
+  "earth_mx_serdan_oriental_3400_0": {
+   "relief": 0.0028,
+   "slope_med": 0.0439,
+   "slope_p90": 0.0853,
+   "rough": 0.1773,
+   "hypso": 0.3594,
+   "shadow_e2": 0.2852,
+   "shadow_e5": 0.046
+  },
+  "earth_mx_valle_santiago_900_2400": {
+   "relief": 0.0423,
+   "slope_med": 0.0047,
+   "slope_p90": 0.1466,
+   "rough": 0.0384,
+   "hypso": 0.7087,
+   "shadow_e2": 0.0388,
+   "shadow_e5": 0.0206
+  },
+  "earth_atacama_yungay_1700_500": {
+   "relief": 0.2085,
+   "slope_med": 0.1478,
+   "slope_p90": 0.0184,
+   "rough": 0.2168,
+   "hypso": 0.3174,
+   "shadow_e2": 0.0911,
+   "shadow_e5": 0.0
+  },
+  "earth_atacama_yungay_2900_200": {
+   "relief": 0.1906,
+   "slope_med": 0.0001,
+   "slope_p90": 0.0356,
+   "rough": 0.335,
+   "hypso": 0.1133,
+   "shadow_e2": 0.3074,
+   "shadow_e5": 0.018
+  },
+  "earth_atacama_yungay_400_400": {
+   "relief": 0.301,
+   "slope_med": 0.1047,
+   "slope_p90": 0.018,
+   "rough": 0.3459,
+   "hypso": 0.184,
+   "shadow_e2": 0.0239,
+   "shadow_e5": 0.0226
+  },
+  "earth_mx_valle_santiago_100_2000": {
+   "relief": 0.5052,
+   "slope_med": 0.0913,
+   "slope_p90": 0.0336,
+   "rough": 0.0892,
+   "hypso": 0.2185,
+   "shadow_e2": 0.0343,
+   "shadow_e5": 0.0279
+  },
+  "earth_sfvf_1500_400": {
+   "relief": 0.0712,
+   "slope_med": 0.0228,
+   "slope_p90": 0.0041,
+   "rough": 0.0311,
+   "hypso": 0.7268,
+   "shadow_e2": 0.1431,
+   "shadow_e5": 0.0008
+  },
+  "earth_mx_serdan_oriental_2700_600": {
+   "relief": 0.0973,
+   "slope_med": 0.0007,
+   "slope_p90": 0.0012,
+   "rough": 0.0023,
+   "hypso": 0.251,
+   "shadow_e2": 0.6178,
+   "shadow_e5": 0.0296
+  },
+  "earth_atacama_yungay_1500_500": {
+   "relief": 0.2275,
+   "slope_med": 0.1158,
+   "slope_p90": 0.0642,
+   "rough": 0.1489,
+   "hypso": 0.3566,
+   "shadow_e2": 0.0595,
+   "shadow_e5": 0.0274
+  },
+  "earth_antarctica_university_valley_100_300": {
+   "relief": 0.4858,
+   "slope_med": 0.0085,
+   "slope_p90": 0.0065,
+   "rough": 0.0633,
+   "hypso": 0.2775,
+   "shadow_e2": 0.1319,
+   "shadow_e5": 0.0265
+  },
+  "earth_mx_serdan_oriental_2400_700": {
+   "relief": 0.0137,
+   "slope_med": 0.0138,
+   "slope_p90": 0.0183,
+   "rough": 0.0076,
+   "hypso": 0.2917,
+   "shadow_e2": 0.6227,
+   "shadow_e5": 0.0322
+  },
+  "earth_mx_valle_santiago_100_1500": {
+   "relief": 0.2131,
+   "slope_med": 0.1287,
+   "slope_p90": 0.1865,
+   "rough": 0.0797,
+   "hypso": 0.0193,
+   "shadow_e2": 0.2871,
+   "shadow_e5": 0.0856
+  },
+  "earth_mx_serdan_oriental_2800_600": {
+   "relief": 0.012,
+   "slope_med": 0.0002,
+   "slope_p90": 0.003,
+   "rough": 0.1584,
+   "hypso": 0.5568,
+   "shadow_e2": 0.2575,
+   "shadow_e5": 0.0121
+  },
+  "earth_atacama_yungay_700_300": {
+   "relief": 0.0371,
+   "slope_med": 0.0053,
+   "slope_p90": 0.0048,
+   "rough": 0.3773,
+   "hypso": 0.5264,
+   "shadow_e2": 0.0374,
+   "shadow_e5": 0.0115
+  },
+  "earth_mx_chichinautzin_300_3200": {
+   "relief": 0.0438,
+   "slope_med": 0.024,
+   "slope_p90": 0.0637,
+   "rough": 0.0573,
+   "hypso": 0.8044,
+   "shadow_e2": 0.0068,
+   "shadow_e5": 0.0
+  },
+  "earth_cuatrocienegas_3400_1500": {
+   "relief": 0.4176,
+   "slope_med": 0.1146,
+   "slope_p90": 0.062,
+   "rough": 0.0028,
+   "hypso": 0.2523,
+   "shadow_e2": 0.1379,
+   "shadow_e5": 0.0127
+  },
+  "earth_mx_serdan_oriental_2600_700": {
+   "relief": 0.0462,
+   "slope_med": 0.0006,
+   "slope_p90": 0.0,
+   "rough": 0.0268,
+   "hypso": 0.7707,
+   "shadow_e2": 0.1298,
+   "shadow_e5": 0.0259
+  }
+ },
+ "mars_jezero": {
+  "earth_mx_chichinautzin_2400_300": {
+   "relief": 0.0005,
+   "slope_med": 0.2178,
+   "slope_p90": 0.1886,
+   "rough": 0.2784,
+   "hypso": 0.2957,
+   "shadow_e2": 0.016,
+   "shadow_e5": 0.003
+  },
+  "earth_mx_chichinautzin_2400_400": {
+   "relief": 0.0071,
+   "slope_med": 0.0138,
+   "slope_p90": 0.0914,
+   "rough": 0.4572,
+   "hypso": 0.0235,
+   "shadow_e2": 0.2851,
+   "shadow_e5": 0.1218
+  },
+  "earth_mx_serdan_oriental_800_2400": {
+   "relief": 0.3595,
+   "slope_med": 0.0085,
+   "slope_p90": 0.0533,
+   "rough": 0.2344,
+   "hypso": 0.2971,
+   "shadow_e2": 0.0037,
+   "shadow_e5": 0.0435
+  },
+  "earth_mx_serdan_oriental_700_2300": {
+   "relief": 0.0001,
+   "slope_med": 0.0472,
+   "slope_p90": 0.0252,
+   "rough": 0.3832,
+   "hypso": 0.5301,
+   "shadow_e2": 0.0024,
+   "shadow_e5": 0.0118
+  },
+  "earth_mx_chichinautzin_2600_600": {
+   "relief": 0.0585,
+   "slope_med": 0.0938,
+   "slope_p90": 0.092,
+   "rough": 0.5831,
+   "hypso": 0.1397,
+   "shadow_e2": 0.0268,
+   "shadow_e5": 0.0061
+  },
+  "earth_mx_chichinautzin_2500_600": {
+   "relief": 0.0348,
+   "slope_med": 0.0023,
+   "slope_p90": 0.0662,
+   "rough": 0.6357,
+   "hypso": 0.0155,
+   "shadow_e2": 0.0787,
+   "shadow_e5": 0.1667
+  },
+  "earth_mx_chichinautzin_2400_500": {
+   "relief": 0.0014,
+   "slope_med": 0.0002,
+   "slope_p90": 0.0936,
+   "rough": 0.4372,
+   "hypso": 0.0072,
+   "shadow_e2": 0.2087,
+   "shadow_e5": 0.2518
+  },
+  "earth_mx_chichinautzin_2800_800": {
+   "relief": 0.205,
+   "slope_med": 0.0137,
+   "slope_p90": 0.142,
+   "rough": 0.4618,
+   "hypso": 0.1234,
+   "shadow_e2": 0.0438,
+   "shadow_e5": 0.0103
+  },
+  "earth_mx_serdan_oriental_2900_2100": {
+   "relief": 0.0827,
+   "slope_med": 0.0346,
+   "slope_p90": 0.4385,
+   "rough": 0.0356,
+   "hypso": 0.0529,
+   "shadow_e2": 0.1842,
+   "shadow_e5": 0.1716
+  },
+  "earth_mx_chichinautzin_1800_1300": {
+   "relief": 0.0014,
+   "slope_med": 0.2622,
+   "slope_p90": 0.4054,
+   "rough": 0.1568,
+   "hypso": 0.0452,
+   "shadow_e2": 0.1157,
+   "shadow_e5": 0.0133
+  },
+  "earth_atacama_yungay_300_1600": {
+   "relief": 0.1836,
+   "slope_med": 0.0384,
+   "slope_p90": 0.5365,
+   "rough": 0.1828,
+   "hypso": 0.014,
+   "shadow_e2": 0.0074,
+   "shadow_e5": 0.0373
+  },
+  "earth_mx_ceboruco_2400_1100": {
+   "relief": 0.1631,
+   "slope_med": 0.0032,
+   "slope_p90": 0.1939,
+   "rough": 0.2456,
+   "hypso": 0.1368,
+   "shadow_e2": 0.2524,
+   "shadow_e5": 0.0049
+  },
+  "earth_mx_chichinautzin_2800_700": {
+   "relief": 0.2139,
+   "slope_med": 0.0274,
+   "slope_p90": 0.1214,
+   "rough": 0.3648,
+   "hypso": 0.2467,
+   "shadow_e2": 0.0021,
+   "shadow_e5": 0.0237
+  },
+  "earth_mx_ceboruco_1700_600": {
+   "relief": 0.0835,
+   "slope_med": 0.2645,
+   "slope_p90": 0.0012,
+   "rough": 0.4172,
+   "hypso": 0.0805,
+   "shadow_e2": 0.1251,
+   "shadow_e5": 0.0281
+  },
+  "earth_sfvf_600_2500": {
+   "relief": 0.0873,
+   "slope_med": 0.1441,
+   "slope_p90": 0.1333,
+   "rough": 0.1465,
+   "hypso": 0.0622,
+   "shadow_e2": 0.2257,
+   "shadow_e5": 0.201
+  },
+  "earth_mx_chichinautzin_2400_2600": {
+   "relief": 0.0259,
+   "slope_med": 0.0026,
+   "slope_p90": 0.1084,
+   "rough": 0.6999,
+   "hypso": 0.0536,
+   "shadow_e2": 0.0472,
+   "shadow_e5": 0.0623
+  },
+  "earth_iceland_askja_700_400": {
+   "relief": 0.0161,
+   "slope_med": 0.2061,
+   "slope_p90": 0.2085,
+   "rough": 0.1621,
+   "hypso": 0.0037,
+   "shadow_e2": 0.1499,
+   "shadow_e5": 0.2535
+  },
+  "earth_cuatrocienegas_2100_3100": {
+   "relief": 0.0136,
+   "slope_med": 0.0759,
+   "slope_p90": 0.316,
+   "rough": 0.0745,
+   "hypso": 0.213,
+   "shadow_e2": 0.0006,
+   "shadow_e5": 0.3064
+  },
+  "earth_mx_chichinautzin_2700_3200": {
+   "relief": 0.071,
+   "slope_med": 0.0225,
+   "slope_p90": 0.0909,
+   "rough": 0.4317,
+   "hypso": 0.3017,
+   "shadow_e2": 0.0066,
+   "shadow_e5": 0.0756
+  },
+  "earth_mx_chichinautzin_2300_100": {
+   "relief": 0.3253,
+   "slope_med": 0.0101,
+   "slope_p90": 0.008,
+   "rough": 0.5083,
+   "hypso": 0.0004,
+   "shadow_e2": 0.0084,
+   "shadow_e5": 0.1395
+  }
+ },
+ "mars_deuteronilus": {
+  "earth_atacama_yungay_2100_1600": {
+   "relief": 0.0001,
+   "slope_med": 0.032,
+   "slope_p90": 0.0186,
+   "rough": 0.3705,
+   "hypso": 0.2718,
+   "shadow_e2": 0.0659,
+   "shadow_e5": 0.2411
+  },
+  "earth_atacama_yungay_3300_1200": {
+   "relief": 0.0484,
+   "slope_med": 0.0388,
+   "slope_p90": 0.0195,
+   "rough": 0.0901,
+   "hypso": 0.2134,
+   "shadow_e2": 0.2677,
+   "shadow_e5": 0.3221
+  },
+  "earth_hawaii_mauna_kea_2700_1800": {
+   "relief": 0.0361,
+   "slope_med": 0.101,
+   "slope_p90": 0.4837,
+   "rough": 0.0005,
+   "hypso": 0.2112,
+   "shadow_e2": 0.049,
+   "shadow_e5": 0.1186
+  },
+  "earth_hawaii_mauna_kea_700_1100": {
+   "relief": 0.5181,
+   "slope_med": 0.0015,
+   "slope_p90": 0.0844,
+   "rough": 0.0674,
+   "hypso": 0.0893,
+   "shadow_e2": 0.186,
+   "shadow_e5": 0.0532
+  },
+  "earth_atacama_yungay_3400_1200": {
+   "relief": 0.3081,
+   "slope_med": 0.0778,
+   "slope_p90": 0.0036,
+   "rough": 0.0427,
+   "hypso": 0.195,
+   "shadow_e2": 0.0084,
+   "shadow_e5": 0.3644
+  },
+  "earth_atacama_yungay_2300_500": {
+   "relief": 0.1198,
+   "slope_med": 0.0628,
+   "slope_p90": 0.1726,
+   "rough": 0.1555,
+   "hypso": 0.0002,
+   "shadow_e2": 0.489,
+   "shadow_e5": 0.0001
+  },
+  "earth_hawaii_mauna_kea_1000_2500": {
+   "relief": 0.0172,
+   "slope_med": 0.0074,
+   "slope_p90": 0.2896,
+   "rough": 0.0301,
+   "hypso": 0.3918,
+   "shadow_e2": 0.1237,
+   "shadow_e5": 0.1401
+  },
+  "earth_atacama_yungay_2200_1600": {
+   "relief": 0.1048,
+   "slope_med": 0.0272,
+   "slope_p90": 0.0062,
+   "rough": 0.0526,
+   "hypso": 0.1475,
+   "shadow_e2": 0.4265,
+   "shadow_e5": 0.2352
+  },
+  "earth_hawaii_mauna_kea_1000_2300": {
+   "relief": 0.039,
+   "slope_med": 0.0003,
+   "slope_p90": 0.1828,
+   "rough": 0.1066,
+   "hypso": 0.153,
+   "shadow_e2": 0.4904,
+   "shadow_e5": 0.028
+  },
+  "earth_atacama_yungay_700_2300": {
+   "relief": 0.0031,
+   "slope_med": 0.0705,
+   "slope_p90": 0.0166,
+   "rough": 0.6799,
+   "hypso": 0.1735,
+   "shadow_e2": 0.0272,
+   "shadow_e5": 0.0293
+  },
+  "earth_hawaii_mauna_kea_1000_2600": {
+   "relief": 0.0008,
+   "slope_med": 0.0056,
+   "slope_p90": 0.2182,
+   "rough": 0.0346,
+   "hypso": 0.0666,
+   "shadow_e2": 0.0684,
+   "shadow_e5": 0.6058
+  },
+  "earth_mx_serdan_oriental_1000_2100": {
+   "relief": 0.0147,
+   "slope_med": 0.0904,
+   "slope_p90": 0.0098,
+   "rough": 0.0001,
+   "hypso": 0.4125,
+   "shadow_e2": 0.0062,
+   "shadow_e5": 0.4662
+  },
+  "earth_atacama_yungay_3200_2400": {
+   "relief": 0.0213,
+   "slope_med": 0.1998,
+   "slope_p90": 0.3683,
+   "rough": 0.0765,
+   "hypso": 0.0265,
+   "shadow_e2": 0.0618,
+   "shadow_e5": 0.2458
+  },
+  "earth_hawaii_mauna_kea_1200_2300": {
+   "relief": 0.0941,
+   "slope_med": 0.0027,
+   "slope_p90": 0.267,
+   "rough": 0.0267,
+   "hypso": 0.2456,
+   "shadow_e2": 0.1342,
+   "shadow_e5": 0.2297
+  },
+  "earth_atacama_yungay_900_2300": {
+   "relief": 0.0654,
+   "slope_med": 0.0695,
+   "slope_p90": 0.0003,
+   "rough": 0.665,
+   "hypso": 0.1371,
+   "shadow_e2": 0.0592,
+   "shadow_e5": 0.0034
+  },
+  "earth_atacama_yungay_1000_2300": {
+   "relief": 0.02,
+   "slope_med": 0.0023,
+   "slope_p90": 0.0174,
+   "rough": 0.0621,
+   "hypso": 0.5975,
+   "shadow_e2": 0.1532,
+   "shadow_e5": 0.1476
+  },
+  "earth_atacama_yungay_3200_1400": {
+   "relief": 0.0785,
+   "slope_med": 0.0042,
+   "slope_p90": 0.3749,
+   "rough": 0.0136,
+   "hypso": 0.0001,
+   "shadow_e2": 0.5267,
+   "shadow_e5": 0.0019
+  },
+  "earth_hawaii_mauna_kea_1100_2300": {
+   "relief": 0.011,
+   "slope_med": 0.0219,
+   "slope_p90": 0.3208,
+   "rough": 0.1511,
+   "hypso": 0.3443,
+   "shadow_e2": 0.0042,
+   "shadow_e5": 0.1466
+  },
+  "earth_atacama_yungay_3400_1100": {
+   "relief": 0.1913,
+   "slope_med": 0.0106,
+   "slope_p90": 0.0021,
+   "rough": 0.0014,
+   "hypso": 0.3134,
+   "shadow_e2": 0.113,
+   "shadow_e5": 0.3682
+  },
+  "earth_mx_serdan_oriental_1000_2000": {
+   "relief": 0.0397,
+   "slope_med": 0.0736,
+   "slope_p90": 0.5709,
+   "rough": 0.1285,
+   "hypso": 0.1865,
+   "shadow_e2": 0.0008,
+   "shadow_e5": 0.0
+  }
+ },
+ "_meta": {
+  "generated": "2026-11-15T16:59:11+00:00",
+  "seed": 20261115,
+  "params": {
+   "share": "d_k^2 / sum_j d_j^2 (combined score, equal weights)",
+   "top": 20
+  },
+  "git_commit": "f56955c",
+  "inputs": {
+   "data/processed/windows.csv": "1a18d90688c35044",
+   "data/processed/results.json": "b21b25f7a0810c90"
+  }
+ }
+}
