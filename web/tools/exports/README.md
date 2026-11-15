@@ -41,7 +41,7 @@ Start from [`_template.py`](_template.py). Owners (see the team plan): `sim.py` 
 
 Each `.bin` is **200 × 200 little-endian `int16`**, row-major. Height in metres = `offset + scale × value`;
 `-32768` = no data (filled with the nearest valid height before encoding, so it does not appear today; keep the check).
-Grid step `dx = 30 m`. Rows and columns follow the pipeline's 30 m azimuthal equidistant grid: row 0 is the +y edge
+Grid step `dx = 30 m`. Decode and use them through `web/src/sim/` (`loadSimTarget`, `loadSimGrid`). Rows and columns follow the pipeline's 30 m azimuthal equidistant grid: row 0 is the +y edge
 (towards the local north of the grid), column 0 the −x edge (west).
 
 `<target>.json`:
@@ -51,20 +51,23 @@ Grid step `dx = 30 m`. Rows and columns follow the pipeline's 30 m azimuthal equ
   "target": "moon_malapert", "label": "…", "body": "moon",
   "dx": 30, "n": 200,
   "center": {"lat": -85.99, "lon": -0.24, "of": "site"},
-  "grid": {"file": "moon_malapert.bin", "offset": 1234.5, "scale": 0.05, "i": 300, "j": 100, "nodata_filled": 0,
-           "min": 0.0, "max": 0.0},
+  "grid": {"file": "moon_malapert.bin", "offset": 1234.5, "scale": 0.05, "i": 300, "j": 100,
+           "lat": -86.04, "lon": -2.4, "up_az": 2.16, "nodata_filled": 0, "min": 0.0, "max": 0.0},
   "windows": [
     {"rank": 1, "site": "earth_hawaii_mauna_kea", "region": "Mauna Kea / Mauna Loa saddle", "i": 600, "j": 1500,
-     "lat": 19.811, "lon": -155.544, "score": 91, "terrain": 89, "illumination": 98,
+     "lat": 19.784, "lon": -155.487, "up_az": 0.0, "score": 91, "terrain": 89, "illumination": 98,
      "file": "moon_malapert__earth_hawaii_mauna_kea_600_1500.bin", "offset": 0.0, "scale": 0.05,
      "nodata_filled": 0, "min": 0.0, "max": 0.0}
   ]
 }
 ```
 
-- The target window is the one used for its thumbnails (`data/processed/thumbs/ref_windows.json`). For a target,
-  `center` is the site centre (`results.json → site_centers`), good to about 0.1° for a 6 km window; Earth windows carry
-  their own centre from `windows.csv`.
+- The target window is the one used for its thumbnails (`data/processed/thumbs/ref_windows.json`). `center` is the
+  site centre (`results.json → site_centers`); `grid.lat/lon` is the window's own centre. Earth windows carry their
+  centre from `windows.csv`.
+- `up_az`: geographic azimuth (degrees clockwise from north) of the grid's up edge at the window centre. Near the lunar
+  pole it differs from north by up to ~6°; turn any Sun azimuth into the grid frame with `az − up_az`
+  (`toGridAz` in `web/src/sim/sun.ts`) before casting shadows.
 - `windows` = the best window of each of the **5 best Earth regions** for that target (by combined score), so the window
   picker offers five different places; `rank` is the region's rank.
 - Scores are the stored ones (`score_combined` etc.), not recomputed.

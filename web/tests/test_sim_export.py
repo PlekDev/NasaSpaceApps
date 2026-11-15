@@ -35,7 +35,9 @@ def test_grids_decode_to_the_stated_range(exported):
         assert meta["n"] == 200 and meta["dx"] == 30 and len(meta["windows"]) == 5
         assert [w["rank"] for w in meta["windows"]] == [1, 2, 3, 4, 5]
         assert len({w["site"] for w in meta["windows"]}) == 5, "one window per region"
+        assert -90 <= meta["grid"]["lat"] <= 90 and 0 <= meta["grid"]["up_az"] < 360
         for g in [meta["grid"]] + meta["windows"]:
+            assert 0 <= g["up_az"] < 360
             raw = (OUT / g["file"]).read_bytes()
             assert len(raw) == 200 * 200 * 2
             q = np.frombuffer(raw, "<i2")
