@@ -1,18 +1,18 @@
 """Fact-check of the deck and project page: every number in docs/numbers.json is recomputed from data/processed.
 
-docs/numbers.json (filled by Angel) lists each number as it is written on a slide or on the project page:
+docs/numbers.json (Angel) lists each number as the deck and the project page write it:
 
-    {"numbers": [
-      {"key": "blind.rank_of_n", "text": "#1 of 10,424 Earth windows", "where": "slide 1"},
-      {"key": "light.rho_far",   "text": "ρ 0.92–0.99 vs NASA LOLA",  "where": "slide 4"}
-    ]}
+    {"numbers": [{"id": "blind_rank", "slide": [1, 4], "text": "#1 of 10,424", "value": [1, 10424],
+                  "source": "...", "pending": false}, ...]}
 
-The test passes when the value of `key`, computed now from data/processed (formatted as below), appears in `text`.
-If a rerun changes a result, CI fails and names the slide. See every key and its current value with:
+For every entry that is not pending, RULES[id] recomputes the value from data/processed now:
+  - `value` must equal it (numbers within 0.1 % or 1e-6, strings exactly), and
+  - `text` must contain it as written (Python rounding, en dash ranges, thousands with a comma).
+An id without a rule fails, so a new number on a slide cannot skip the check: add its rule here.
+If a rerun changes a result, CI fails and names the entry and its slides.
 
-    python tests/test_factcheck_numbers.py          (add --json for a numbers.json skeleton with every key)
-
-Formatting: Python rounding (half to even), en dash ranges, thousands with a comma, as in the README.
+`python tests/test_factcheck_numbers.py` lists the recomputed values (and the headline registry used by
+tests/test_factcheck_web.py to keep hand-typed numbers out of web/src).
 AI-assisted (Claude); reviewed by the author."""
 import csv
 import importlib.util
@@ -112,8 +112,8 @@ def registry():
     put("search.windows", f"{n:,}", "6 km Earth windows per target")
     with open(PROC / "earth_lst_windows.csv", newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
-    put("lst.windows_with_data", f"{sum(1 for r in rows if r['lst_mean_K'] not in ('', 'nan'))
-                                      :,} of {len(rows):,}", "windows with MODIS LST")
+    n_lst = sum(1 for r in rows if r["lst_mean_K"] not in ("", "nan"))
+    put("lst.windows_with_data", f"{n_lst:,} of {len(rows):,}", "windows with MODIS LST")
 
     # scalability (scripts/benchmark_tile.py)
     if (PROC / "benchmark_tile.json").exists():
@@ -132,10 +132,89 @@ def registry():
     return out
 
 
+def _ranks_of(ranks, site_word):
+    return {ref: v for ref, sites in ranks.items() if ref.startswith("moon_") for name, v in sites.items() if site_word in name}
+
+
+def _pct_range(shares):
+    return rng([100 * x for x in shares], 0)
+
+
+def rules():
+    """id -> (expected value, [strings the text must contain]). Every value comes from data/processed."""
+    ranks = known_ranks()
+    hiw, pin = _ranks_of(ranks, "Hiwahine"), _ranks_of(ranks, "Pinacate")
+    ref, b = min(hiw.items(), key=lambda kv: kv[1]["rank"])
+    pct = lambda v: 100 * v["rank"] / v["n"]
+    fh = load("far_horizons")["sites"]
+    sites = list(fh.values())
+    far = [s["V3_far_curved"]["spearman_rho"] for s in sites]
+    loc = [s["V1_local_flat"]["spearman_rho"] for s in sites]
+    mae = [s["V3_far_curved"]["mean_abs_error"] for s in sites]
+    psr = [s["psr"] for s in sites if s.get("psr")]
+    ka = load("known_analogs")["summary"]
+    t = load("thermal_gap")["summary"]
+    div = load("diviner")["sites"]
+    best = best_windows()
+    cfg = __import__("yaml").safe_load((ROOT / "config" / "sites.yaml").read_text(encoding="utf-8"))["sites"]
+    with open(PROC / "windows.csv", newline="", encoding="utf-8") as f:
+        n_win = sum(1 for r in csv.DictReader(f) if r["reference"] == "moon_malapert" and float(r["window_km"]) == 6)
+    low = load("results")["low_sun_hours_by_month"]
+    polar = [s for s in low if min(low[s]) == 0]                         # regions with polar night
+    rover = json.loads((PROC / "briefs" / "rover_twin.json").read_text(encoding="utf-8"))["moon_malapert"]
+    colder = [div[s]["share_colder_than_earth_record"] for s in div]
+    ice = [div[s]["share_ice_stable_within_1m"] for s in div]
+    n_moon = sum(1 for r in best if r.startswith("moon_"))
+    R = {
+        "blind_rank": ([b["rank"], b["n"]], [f"#{b['rank']} of {b['n']:,}"]),
+        "blind_top02": (sum(1 for v in hiw.values() if round(pct(v), 1) <= 0.2), []),
+        "blind_top5": (sum(1 for v in hiw.values() if pct(v) <= 5), []),
+        "blind_ranks": ({r: v["rank"] for r, v in hiw.items()}, []),
+        "windows": (n_win, [f"{n_win:,}"]),
+        "regions": (sum(1 for v in cfg.values() if v.get("role") == "candidate"), []),
+        "targets": ([n_moon, len(best) - n_moon], []),
+        "rho_far": (far, [rng(far, 2)]),
+        "rho_local": (loc, [rng(loc, 2)]),
+        "mae": (mae, [rng([100 * x for x in mae], 1)]),
+        "psr_agreement": ([p["agreement"] for p in psr], [rng([100 * p["agreement"] for p in psr], 1)]),
+        "psr_iou": ([p["iou"] for p in psr], [rng([p["iou"] for p in psr], 2)]),
+        "known_illum_pct": (ka["median_percentile_illumination_best"], [f"{ka['median_percentile_illumination_best']:.0f}"]),
+        "known_terrain_pct": (ka["median_percentile_terrain_best"], [f"{ka['median_percentile_terrain_best']:.0f}"]),
+        "best_scores": ({r: f"{float(w['score_combined']):.0f}" for r, w in best.items()}, []),
+        "best_region": ({r: w["site"] for r, w in best.items()}, []),
+        "colder_than_record": (colder, [_pct_range(colder)]),
+        "ice_within_1m": (ice, [_pct_range(ice)]),
+        "thermal_gap_moon": (t["gap_to_coldest_earth_mean_K"], [rng(list(t["gap_to_coldest_earth_mean_K"].values()), 0)]),
+        "coldest_earth": (t["coldest_earth_mean_K"], [f"{t['coldest_earth_mean_K']:.0f} K"]),
+        "moon_mean_K": (t["moon_mean_K"], [rng(t["moon_mean_K"], 0)]),
+        "moon_peak_K": (t["moon_peak_K"], [rng(t["moon_peak_K"], 0)]),
+        "mars_mean_K": (t["mars_mean_K"], [rng(t["mars_mean_K"], 0)]),
+        "mars_gap": (t["mars_gap_to_coldest_earth_mean_K"], [rng(list(t["mars_gap_to_coldest_earth_mean_K"].values()), 0)]),
+        "pinacate_top3": (sum(1 for v in pin.values() if pct(v) <= 3), ["top 3 %"]),
+        "pinacate_top8": (sum(1 for v in pin.values() if pct(v) <= 8), ["top 8 %"]),
+        "lowsun_mauna_kea": ([min(low["earth_hawaii_mauna_kea"]), max(low["earth_hawaii_mauna_kea"])], []),
+        "lowsun_polar": ([max(low[s]) for s in polar], [rng([max(low[s]) for s in polar], 1)]),
+        "rover_malapert": ([rover["target"]["length_km"], rover["earth"]["length_km"]],
+                           [f"{rover['target']['length_km']:.1f} km", f"{rover['earth']['length_km']:.1f} km"]),
+    }
+    if (PROC / "benchmark_tile.json").exists():
+        sec = load("benchmark_tile")["median_seconds"]["total_without_reproject"]
+        R["tile_seconds"] = (sec, [f"{sec:.0f}"])
+    return R
+
+
+def same(a, b):
+    if isinstance(a, dict):
+        return isinstance(b, dict) and a.keys() == b.keys() and all(same(a[k], b[k]) for k in a)
+    if isinstance(a, (list, tuple)):
+        return isinstance(b, (list, tuple)) and len(a) == len(b) and all(same(x, y) for x, y in zip(a, b))
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)) and not isinstance(a, bool):
+        return abs(a - b) <= max(1e-6, 1e-3 * abs(a))
+    return a == b
+
+
 def entries():
-    if not NUMBERS.exists():
-        return []
-    return json.loads(NUMBERS.read_text(encoding="utf-8")).get("numbers", [])
+    return json.loads(NUMBERS.read_text(encoding="utf-8")).get("numbers", []) if NUMBERS.exists() else []
 
 
 @pytest.fixture(scope="module")
@@ -147,18 +226,30 @@ def test_registry_is_computable(reg):
     assert len(reg) > 30 and all(v for v, _ in reg.values())
 
 
-@pytest.mark.skipif(not NUMBERS.exists(), reason="docs/numbers.json not written yet (Angel, after 19:00)")
-def test_every_deck_number_matches_the_data(reg):
-    bad = []
+@pytest.mark.skipif(not NUMBERS.exists(), reason="docs/numbers.json not written yet")
+def test_every_deck_number_matches_the_data():
+    R, bad = rules(), []
     for e in entries():
-        if e.get("key") not in reg:
-            bad.append(f"{e.get('where', '?')}: unknown key {e.get('key')!r} (run python tests/test_factcheck_numbers.py)")
-        elif reg[e["key"]][0] not in e.get("text", ""):
-            bad.append(f"{e.get('where', '?')}: {e['text']!r} should say {reg[e['key']][0]!r} ({reg[e['key']][1]})")
+        where = f"{e.get('id')} (slide {e.get('slide')})"
+        if e.get("pending"):
+            continue
+        if e.get("id") not in R:
+            bad.append(f"{where}: no rule to recompute it: add one to RULES in tests/test_factcheck_numbers.py")
+            continue
+        want, texts = R[e["id"]]
+        if not same(want, e.get("value")):
+            bad.append(f"{where}: value {e.get('value')!r}, data say {want!r}")
+        for w in texts:
+            if w not in e.get("text", ""):
+                bad.append(f"{where}: text {e.get('text')!r} should contain {w!r}")
     assert not bad, "\n".join(bad)
 
 
 if __name__ == "__main__":
+    if "--rules" in sys.argv:
+        for k, (v, texts) in rules().items():
+            print(f"{k:20s} {json.dumps(v, ensure_ascii=False)[:70]:72s} {texts}")
+        sys.exit()
     reg = registry()
     if "--json" in sys.argv:
         print(json.dumps({"numbers": [{"key": k, "text": v, "where": ""} for k, (v, _) in reg.items()]}, ensure_ascii=False, indent=1))
