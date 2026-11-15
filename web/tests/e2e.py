@@ -53,7 +53,10 @@ with sync_playwright() as p:
         ("dossier", ".dossier, .view-wip, .page-stub"),
         ("tour", ".tour, .view-wip, .page-stub"),
     ]:
-        pg.goto(f"{BASE}/#/{route}"); pg.wait_for_selector(sel, timeout=20000); check(f"view {route} renders", True)
+        pg.goto(f"{BASE}/#/{route}"); pg.wait_for_selector(sel, timeout=20000)
+        if route == "proof" and pg.locator("#proof-ka").count() > 0:
+            pg.wait_for_selector("#proof-ka table", state="attached", timeout=10000)
+        check(f"view {route} renders", True)
     # Judge's path through Mission -> Rehearse on date -> Dossier when Mission view is active
     pg.goto(f"{BASE}/#/mission"); pg.wait_for_selector(".mission-page, .view-wip, .page-stub", timeout=20000)
     if pg.locator(".mission-page").count() > 0:
@@ -63,6 +66,8 @@ with sync_playwright() as p:
         pg.click(".mission-dossier-btn"); pg.wait_for_selector(".dossier", timeout=20000)
         check("mission Open dossier passes route, date and fidelity to Dossier", "Rehearsal window chosen in Mission" in pg.inner_text(".dossier"))
     pg.goto(f"{BASE}/#/validation"); pg.wait_for_selector(".proof, #hm .hm", timeout=20000)
+    if pg.locator("#proof-ka").count() > 0:
+        pg.wait_for_selector("#proof-ka table", state="attached", timeout=10000)
     if pg.locator("[data-zoom]").count() > 0:
         pg.locator("[data-zoom]").first.click(); pg.wait_for_selector(".lightbox"); pg.keyboard.press("Escape"); pg.wait_for_timeout(300)
         check("lightbox opens and closes with Escape", pg.locator(".lightbox").count() == 0)
