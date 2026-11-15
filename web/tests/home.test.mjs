@@ -13,7 +13,9 @@ test('rank, N and rho come from the data (README ranks), not from typed numbers'
   const f = homeFacts(m, kr, far, nul, known);
   assert.ok(f); const hit = Object.entries(kr[f.target.id]).find(([s]) => /hiwahine/i.test(s))[1];
   assert.equal(f.rank, hit.rank); assert.equal(f.n, hit.n); assert.equal(f.rankText, `#${hit.rank.toLocaleString('en-US')}`);
-  assert.equal(f.rhoText, far.sites[f.target.id].V3_far_curved.spearman_rho.toFixed(2));
+  assert.equal(f.rhoText, far.sites[f.target.id].V3_far_curved.spearman_rho.toFixed(3));   // 0.975, as in README.md and docs/numbers.json
+  const readme = readFileSync(new URL('../../README.md', import.meta.url), 'utf8');
+  assert.ok(readme.includes(`${f.rhoText} (Malapert)`), 'README states the same Malapert rho');
   assert.match(f.rhoRange, /^\d\.\d\d–\d\.\d\d$/); assert.equal(f.horizonKm, far.settings.max_distance_m / 1000);
 });
 

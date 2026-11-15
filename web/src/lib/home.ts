@@ -48,7 +48,7 @@ export function homeFacts(m: Manifest, kr: Rec, far: Rec | null, nul: Rec | null
   const row = known?.rows?.find((r: Rec) => r.reference === tid && SITE.test(r.site));
   return {
     target: { id: tid, name }, rank: rk.rank, n: rk.n, rankText: `#${nf(rk.rank)}`,
-    rho: typeof v3 === 'number' ? v3 : null, rhoText: typeof v3 === 'number' ? fx(v3, 2) : null,
+    rho: typeof v3 === 'number' ? v3 : null, rhoText: typeof v3 === 'number' ? fx(v3, 3) : null,       // headline rho with the precision the README gives (Malapert 0.975); the range keeps two decimals like the README (0.92–0.99)
     rhoRange: rhos.length ? `${fx(Math.min(...rhos), 2)}–${fx(Math.max(...rhos), 2)}` : null,
     horizonKm: far?.settings?.max_distance_m ? far.settings.max_distance_m / 1000 : null,
     p, pText: p === null ? null : fx(p, 3), pending: p === null,
