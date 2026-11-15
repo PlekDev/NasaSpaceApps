@@ -1,0 +1,291 @@
+{
+ "note": "Seconds per 1° Copernicus GLO-30 tile on a 30 m grid, one core; see scripts/benchmark_tile.py",
+ "machine": {
+  "cpu": "x86_64",
+  "cores": 2,
+  "python": "3.13.18",
+  "numpy": "2.5.3"
+ },
+ "targets": 9,
+ "elevations": [
+  2,
+  5
+ ],
+ "azimuths": 8,
+ "window_km": [
+  3,
+  6,
+  12
+ ],
+ "median_seconds": {
+  "reproject": null,
+  "shadows": 46.57,
+  "terrain": 0.59,
+  "windows": 4.79,
+  "scoring": 0.27,
+  "total_without_reproject": 51.86
+ },
+ "tiles": [
+  {
+   "site": "earth_pinacate",
+   "shape": [
+    3700,
+    3184
+   ],
+   "valid_share": 0.641,
+   "windows_6km": 629,
+   "seconds": {
+    "reproject": null,
+    "shadows": 45.49,
+    "terrain": 0.55,
+    "windows": 3.43,
+    "scoring": 0.16,
+    "total_without_reproject": 49.63
+   },
+   "valid_cells": 7552088
+  },
+  {
+   "site": "earth_cuatrocienegas",
+   "shape": [
+    3697,
+    3338
+   ],
+   "valid_share": 0.995,
+   "windows_6km": 1111,
+   "seconds": {
+    "reproject": null,
+    "shadows": 47.65,
+    "terrain": 0.64,
+    "windows": 5.53,
+    "scoring": 0.27,
+    "total_without_reproject": 54.09
+   },
+   "valid_cells": 12279187
+  },
+  {
+   "site": "earth_haughton",
+   "shape": [
+    3723,
+    964
+   ],
+   "valid_share": 0.753,
+   "windows_6km": 176,
+   "seconds": {
+    "reproject": null,
+    "shadows": 17.52,
+    "terrain": 0.16,
+    "windows": 0.92,
+    "scoring": 0.04,
+    "total_without_reproject": 18.64
+   },
+   "valid_cells": 2704028
+  },
+  {
+   "site": "earth_sfvf",
+   "shape": [
+    3702,
+    3044
+   ],
+   "valid_share": 0.993,
+   "windows_6km": 1028,
+   "seconds": {
+    "reproject": null,
+    "shadows": 43.59,
+    "terrain": 0.55,
+    "windows": 4.89,
+    "scoring": 0.38,
+    "total_without_reproject": 49.41
+   },
+   "valid_cells": 11189179
+  },
+  {
+   "site": "earth_mx_chichinautzin",
+   "shape": [
+    3693,
+    3510
+   ],
+   "valid_share": 0.99,
+   "windows_6km": 1146,
+   "seconds": {
+    "reproject": null,
+    "shadows": 56.8,
+    "terrain": 0.74,
+    "windows": 6.98,
+    "scoring": 0.49,
+    "total_without_reproject": 65.01
+   },
+   "valid_cells": 12839223
+  },
+  {
+   "site": "earth_mx_valle_santiago",
+   "shape": [
+    3693,
+    3489
+   ],
+   "valid_share": 0.988,
+   "windows_6km": 1106,
+   "seconds": {
+    "reproject": null,
+    "shadows": 55.68,
+    "terrain": 0.77,
+    "windows": 6.36,
+    "scoring": 0.28,
+    "total_without_reproject": 63.09
+   },
+   "valid_cells": 12723990
+  },
+  {
+   "site": "earth_mx_serdan_oriental",
+   "shape": [
+    3693,
+    3510
+   ],
+   "valid_share": 0.995,
+   "windows_6km": 1182,
+   "seconds": {
+    "reproject": null,
+    "shadows": 53.23,
+    "terrain": 0.84,
+    "windows": 5.74,
+    "scoring": 0.29,
+    "total_without_reproject": 60.1
+   },
+   "valid_cells": 12893772
+  },
+  {
+   "site": "earth_mx_ceboruco",
+   "shape": [
+    3694,
+    3467
+   ],
+   "valid_share": 0.988,
+   "windows_6km": 1089,
+   "seconds": {
+    "reproject": null,
+    "shadows": 52.29,
+    "terrain": 0.75,
+    "windows": 5.7,
+    "scoring": 0.27,
+    "total_without_reproject": 59.01
+   },
+   "valid_cells": 12659471
+  },
+  {
+   "site": "earth_svalbard_bockfjorden",
+   "shape": [
+    3724,
+    711
+   ],
+   "valid_share": 0.599,
+   "windows_6km": 94,
+   "seconds": {
+    "reproject": null,
+    "shadows": 13.99,
+    "terrain": 0.13,
+    "windows": 0.57,
+    "scoring": 0.02,
+    "total_without_reproject": 14.71
+   },
+   "valid_cells": 1586788
+  },
+  {
+   "site": "earth_axel_heiberg",
+   "shape": [
+    3724,
+    711
+   ],
+   "valid_share": 0.937,
+   "windows_6km": 168,
+   "seconds": {
+    "reproject": null,
+    "shadows": 15.13,
+    "terrain": 0.14,
+    "windows": 0.77,
+    "scoring": 0.04,
+    "total_without_reproject": 16.08
+   },
+   "valid_cells": 2481619
+  },
+  {
+   "site": "earth_antarctica_university_valley",
+   "shape": [
+    3724,
+    838
+   ],
+   "valid_share": 0.962,
+   "windows_6km": 228,
+   "seconds": {
+    "reproject": null,
+    "shadows": 15.85,
+    "terrain": 0.17,
+    "windows": 1.14,
+    "scoring": 0.06,
+    "total_without_reproject": 17.22
+   },
+   "valid_cells": 3002683
+  },
+  {
+   "site": "earth_iceland_askja",
+   "shape": [
+    3720,
+    1573
+   ],
+   "valid_share": 0.975,
+   "windows_6km": 472,
+   "seconds": {
+    "reproject": null,
+    "shadows": 25.04,
+    "terrain": 0.31,
+    "windows": 2.51,
+    "scoring": 0.11,
+    "total_without_reproject": 27.97
+   },
+   "valid_cells": 5707502
+  },
+  {
+   "site": "earth_atacama_yungay",
+   "shape": [
+    3696,
+    3392
+   ],
+   "valid_share": 0.994,
+   "windows_6km": 1106,
+   "seconds": {
+    "reproject": null,
+    "shadows": 50.53,
+    "terrain": 0.73,
+    "windows": 5.39,
+    "scoring": 0.27,
+    "total_without_reproject": 56.92
+   },
+   "valid_cells": 12466649
+  },
+  {
+   "site": "earth_hawaii_mauna_kea",
+   "shape": [
+    3693,
+    3510
+   ],
+   "valid_share": 0.761,
+   "windows_6km": 889,
+   "seconds": {
+    "reproject": null,
+    "shadows": 61.81,
+    "terrain": 0.9,
+    "windows": 4.69,
+    "scoring": 0.29,
+    "total_without_reproject": 67.69
+   },
+   "valid_cells": 9868205
+  }
+ ],
+ "all_land_estimate": {
+  "land_km2": 149000000.0,
+  "land_source": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+  "cells_30m": 165555555556,
+  "seconds_per_million_cells": 5.01,
+  "core_hours": 230,
+  "hours_on_64_cores": 3.6,
+  "note": "Pipeline stages without reprojection or download; tiles are independent, so this divides across cores"
+ }
+}

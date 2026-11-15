@@ -1,7 +1,7 @@
 PY ?= python
 # EMIT needs netCDF4 + earthaccess + rasterio (conda-forge env), see docs/METHOD.md
 EMIT_PY ?= $(PY)
-.PHONY: web web-data web-dev web-test web-e2e setup data pipeline validate figures extras far imagery eonet lst-submit lst emit all app test
+.PHONY: sim benchmark timed-all web web-data web-dev web-test web-e2e setup data pipeline validate figures extras far imagery eonet lst-submit lst emit all app test
 setup:     ; $(PY) -m pip install -r requirements.txt
 data:      ; $(PY) scripts/download_data.py
 pipeline:  ; $(PY) scripts/run_pipeline.py
@@ -14,7 +14,13 @@ emit:      ; $(EMIT_PY) scripts/earth_emit.py run && $(EMIT_PY) scripts/earth_em
 far:       ; $(PY) scripts/validate_far_horizons.py
 imagery:   ; $(PY) scripts/real_imagery.py fetch
 eonet:     ; $(PY) scripts/eonet_snapshot.py
-all: data pipeline validate figures extras far imagery eonet
+sim:       ; $(PY) -I web/tools/exports/sim.py --build && $(PY) -I web/tools/exports/sim.py --fixtures
+benchmark: ; $(PY) scripts/benchmark_tile.py
+# end to end from the raw data (LST and EMIT need a NASA Earthdata login, so they run on their own: make lst-submit lst emit)
+STAGES = data pipeline validate figures extras far imagery eonet sim web-data test
+all: $(STAGES)
+# same, timing every stage (seconds per stage in timings.tsv, for the scalability numbers)
+timed-all: ; @rm -f timings.tsv; for s in $(STAGES); do t=$$(date +%s); $(MAKE) --no-print-directory $$s || exit 1; printf "%s\t%s\n" $$s $$(( $$(date +%s) - t )) | tee -a timings.tsv; done
 app:       ; streamlit run app/streamlit_app.py
 test:      ; $(PY) -m pytest -q
 web-data:  ; $(PY) -I web/tools/export_data.py
