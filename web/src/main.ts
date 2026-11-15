@@ -9,6 +9,7 @@ import { $, setTheme, isPhone } from './ui';
 import { footerHTML } from './footer';
 
 const ROUTES: [string, string][] = [['', 'Explore'], ['time', 'Analog in time'], ['validation', 'Validation'], ['method', 'Method']];
+function wireCredits() { /* the credits dialog lives in the Explore view; on pages the footer links to the README instead */ document.querySelector('#page #credits-btn')?.remove(); }
 const route = () => location.hash.replace(/^#\/?/, '').split('?')[0];
 
 async function boot() {
@@ -38,7 +39,7 @@ async function boot() {
     stage.hidden = !explore; page.hidden = explore;
     ex.show(explore && !introOn);
     if (explore) requestAnimationFrame(() => ex.view.map.resize?.());
-    else { renderPage(page, r, m); page.insertAdjacentHTML('beforeend', footerHTML(m).replace('class="foot"', 'class="foot static"')); window.scrollTo(0, 0); }
+    else { page.scrollTop = 0; renderPage(page, r, m).then(() => { page.insertAdjacentHTML('beforeend', footerHTML(m).replace('class="foot"', 'class="foot static"')); document.getElementById('credits-btn') && wireCredits(); }); }
     document.title = (explore ? '' : `${ROUTES.find(x => x[0] === r)?.[1] ?? ''} · `) + 'P.E.N. · Planetary Environmental Navigator';
   };
   addEventListener('hashchange', apply);

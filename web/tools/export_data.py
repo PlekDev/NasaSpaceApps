@@ -141,6 +141,17 @@ def main():
             if f.exists():
                 (OUT / "extras" / "briefs").mkdir(parents=True, exist_ok=True); shutil.copyfile(f, OUT / "extras" / "briefs" / f.name); got[key] = f.name
         if got: briefs[r] = got
+    # score matrix (fig2 as data): best window per Earth region x target, per dimension and combined
+    summ = list(csv.DictReader(open(PROC / "summary.csv", encoding="utf-8")))
+    mdims = [c[len("score_"):] for c in summ[0] if c.startswith("score_") and c != "score_combined"] + ["combined"]
+    cell = {(r["reference"], r["site"]): r for r in summ}
+    matrix = dict(dims=mdims, targets=targets, regions=regions,
+                  v={d: [[float(cell[(t, s)][f"score_{d}"]) if (t, s) in cell else None for t in targets] for s in regions] for d in mdims})
+    (DATA / "matrix.json").write_text(json.dumps(matrix, separators=(",", ":")))
+    (OUT / "figures").mkdir(parents=True, exist_ok=True)
+    for f in sorted((ROOT / "figures").glob("fig*.png")):
+        shutil.copyfile(f, OUT / "figures" / f.name)
+    shutil.copyfile(ROOT / "docs" / "METHOD.md", DATA / "method.md")
     if (PROC / "briefs" / "rover_twin.json").exists():
         shutil.copyfile(PROC / "briefs" / "rover_twin.json", DATA / "rover_twin.json")
     tman = []

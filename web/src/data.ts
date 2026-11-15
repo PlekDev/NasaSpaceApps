@@ -7,3 +7,5 @@ export function getJSON<T>(name: string): Promise<T> {
 }
 export const loadManifest = () => getJSON<Manifest>('manifest');
 export const loadTarget = (id: string) => getJSON<TargetData>(id);
+
+export const getText = (name: string) => fetch(`${base}data/${name}`).then(r => { if (!r.ok) throw new Error(name); return r.text(); });
