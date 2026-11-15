@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+message: "If you use P.E.N. or its analog catalog, please cite it as below."
+title: "P.E.N.: Planetary Environmental Navigator"
+abstract: >-
+  P.E.N. finds and schedules Earth analog sites for lunar south-pole Moon Base sites and Mars landing areas.
+  It scores 6 km Earth windows at 30 m by terrain and by low-Sun cast shadows, validates its light model against
+  NASA LOLA illumination maps, and reports where the analogy breaks (temperature, ice, minerals).
+type: software
+authors:
+  - family-names: Velázquez
+    given-names: Víctor
+  - family-names: Lizárraga
+    given-names: Diego
+  - family-names: Dominguez Najera
+    given-names: Diego
+  - family-names: Landin Lopez
+    given-names: Angel
+  - family-names: Hernández Rodriguez
+    given-names: Aaron Emmanuel
+  - name: Paul
+  - name: "Pollones en Fuga"
+repository-code: "https://github.com/PlekDev/NasaSpaceApps"
+url: "https://plekdev.github.io/NasaSpaceApps/"
+license: MIT
+version: "1.0"
+date-released: "2026-11-15"
+keywords:
+  - planetary analogs
+  - lunar south pole
+  - Artemis
+  - Moon Base
+  - Mars
+  - illumination
+  - cast shadows
+  - LOLA
+  - Copernicus DEM
+  - NASA Space Apps Challenge
