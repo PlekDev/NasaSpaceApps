@@ -24,14 +24,15 @@ Our Local Event ends **Sun Nov 15, 20:00 local time** (the global form closes at
 **High-level summary (≈100 words):**
 NASA plans its Moon Base near the lunar south pole, where the Sun never rises above about 7°. Long shadows rule
 landing, roving and power there. P.E.N. is an open tool that searches Earth for places that match a target
-Moon or Mars site **dimension by dimension**: terrain shape, low-Sun illumination, and (in progress) temperature.
-It explains what is similar and where the analogy breaks. Our cast-shadow model reproduces NASA's official LOLA
+Moon or Mars site **dimension by dimension** (terrain shape and low-Sun illumination) and explains what is similar
+and where the analogy breaks. Never told about it, P.E.N. ranks NASA's 2012 lunar-polar test site on Mauna Kea
+**#1 of 10,424** Earth windows for Malapert Massif. Its cast-shadow model reproduces NASA's official LOLA
 illumination map at all six Moon Base sites (ρ = 0.92–0.99). P.E.N. also finds *when* Earth sites reproduce
-lunar-pole light: an "analog in time" that tells field teams the best weeks to test.
+lunar-pole light, so field teams know the best weeks to test.
 
-**Link to project demo:** <deck or video URL>
+**Link to project demo:** <public link to the 7-slide deck>
 
-**Link to final project:** <GitHub URL> · <Streamlit app URL>
+**Link to final project:** https://plekdev.github.io/NasaSpaceApps/ (web app) · https://github.com/PlekDev/NasaSpaceApps (code and data)
 
 **Detailed description (outline):**
 1. *What it does:* scores every 6 km window of Earth regions against Moon and Mars reference sites, gives
@@ -64,8 +65,8 @@ lunar-pole light: an "analog in time" that tells field teams the best weeks to t
 4. *Benefits:* regional screeners say which region to look at; P.E.N. picks the exact 6 km site and the best weeks.
    Choose and schedule analog field tests for rover vision, EVA lighting and landing-hazard rehearsal.
    Find under-studied analogs, including in Mexico.
-5. *Tools:* Python (rasterio, NumPy, SciPy, pandas, Matplotlib), Streamlit + pydeck, GitHub; NASA APIs Trek WMTS,
-   GIBS and EONET.
+5. *Tools:* Python (rasterio, NumPy, SciPy, pandas, Matplotlib), a static web app (TypeScript, Vite, MapLibre GL JS)
+   on GitHub Pages, Streamlit + pydeck, GitHub; NASA APIs Trek WMTS, GIBS and EONET.
 6. *Limitations and next steps:* local horizons only, 30 m resolution, flat Mars plains, and Earth's limits
    (gravity, vacuum, radiation). Next: thermal as a scored dimension (Diviner vs MODIS/ECOSTRESS), EMIT minerals,
    global search.
@@ -79,7 +80,7 @@ lunar-pole light: an "analog in time" that tells field teams the best weeks to t
 - MRO CTX stereo DTMs (USGS Astrogeology analysis-ready data)
 - LRO Diviner polar resource product (NASA PDS Geosciences, Paige et al.)
 - NASA POWER climatology API (NASA LaRC, MERRA-2): Earth skin temperature for the Diviner comparison
-- *(add MODIS/ECOSTRESS or EMIT only if they make it into the final run)*
+- MODIS Terra MOD11A2 v061 land-surface temperature (NASA LP DAAC, via NASA Earthdata), 2025: per Earth window, shown on every analog card next to Diviner or the Mars Climate Database
 
 **Moon & Mars data paragraph (Diego Lizárraga, ~200 words; numbers from `data/processed/`):**
 Every reference site in P.E.N. comes from NASA missions archived in the Planetary Data System (PDS). For the Moon
