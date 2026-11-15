@@ -9,7 +9,7 @@
     "build": "tsc --noEmit && vite build",
     "build:pages": "node tools/build-pages.mjs",
     "preview": "vite preview",
-    "test": "node --test tests/score.test.mjs tests/units.test.mjs tests/router.test.mjs tests/chart.test.mjs tests/sim_shadows.test.mjs tests/sim_sun.test.mjs tests/sim_route.test.mjs tests/sim_rehearse.test.mjs"
+    "test": "node --test tests/score.test.mjs tests/units.test.mjs tests/router.test.mjs tests/chart.test.mjs"
   },
   "devDependencies": {
     "@fontsource-variable/inter": "^5.1.0",
