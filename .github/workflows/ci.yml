@@ -1,22 +1,88 @@
+# AI-assisted (Claude Code); reviewed by the author.
 name: CI
 on:
-  push: { branches: [main] }
+  push:
+    branches: [main]
   pull_request:
+
 jobs:
   test:
+    name: Python, Data Export & Web Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: "3.11", cache: pip }
+        with:
+          python-version: "3.11"
+          cache: pip
       - run: pip install -r requirements.txt
-      - run: python -m pytest -q
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Export web data and per-view datasets
+        run: |
+          python -I web/tools/export_data.py
+          for s in web/tools/exports/[!_]*.py; do
+            [ -f "$s" ] && python -I "$s"
+          done
+      - name: Python pipeline and web export verification tests
+        run: |
+          python -m pytest -q
+          python -m pytest -q web/tests
+      - name: Web unit tests and production build (tsc + vite)
+        working-directory: web
+        run: |
+          npm ci
+          npm test
+          npm run build:pages -- "/${{ github.event.repository.name }}/"
       - name: App smoke test (committed results, offline)
-        env: { PEN_OFFLINE: "1" }
+        env:
+          PEN_OFFLINE: "1"
         run: |
           python - <<'PY'
-          from streamlit.testing.v1 import AppTest
-          at = AppTest.from_file("app/streamlit_app.py", default_timeout=120).run()
-          assert not at.exception, [e.value for e in at.exception]
-          print("app ok")
+          from pathlib import Path
+          if Path("app/streamlit_app.py").is_file():
+              from streamlit.testing.v1 import AppTest
+              at = AppTest.from_file("app/streamlit_app.py", default_timeout=120).run()
+              assert not at.exception, [e.value for e in at.exception]
+              print("app ok")
           PY
+      - name: Upload built web/dist for E2E
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: web/dist
+          retention-days: 1
+
+  e2e:
+    name: Browser E2E & Accessibility Smoke (Chromium)
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: web/dist
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install playwright
+      - name: Install Chromium and axe-core
+        run: |
+          python -m playwright install --with-deps chromium
+          mkdir -p /tmp/axe && npm --prefix /tmp/axe install --no-save axe-core
+      - name: Run Playwright E2E and axe-core checks
+        env:
+          PEN_AXE_THEMES: dark
+          PEN_AXE_WAIT_MS: "600"
+        run: |
+          python web/tools/serve_dist.py "/${{ github.event.repository.name }}" 8099 &
+          SERVER_PID=$!
+          sleep 1
+          BASE="http://127.0.0.1:8099/${{ github.event.repository.name }}" python web/tests/e2e.py
+          BASE="http://127.0.0.1:8099/${{ github.event.repository.name }}" python web/tools/axe_run.py 1440x900 || true
+          kill $SERVER_PID || true

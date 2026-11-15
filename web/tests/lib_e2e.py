@@ -82,7 +82,7 @@ with sync_playwright() as p:
     ctx.close()
     # phone menu
     ctx = b.new_context(viewport={"width": 390, "height": 844}); pg = ctx.new_page(); pg.goto(f"{BASE}/#/explore"); pg.wait_for_selector(".col-r, #dock", timeout=20000)
-    pg.click("#menu"); items = pg.locator("#nav a:visible").count(); check("phone menu lists the six views and Tour", items == 7, str(items))
+    pg.click("#menu"); items = pg.locator("#nav a:visible").count(); check("phone menu lists the six views, Tour and the validation seal", items == 8, str(items))
     pg.keyboard.press("Escape"); check("phone menu closes with Escape", pg.locator("#nav.open").count() == 0)
     check("no page errors", not errs, str(errs[:3]))
     ctx.close(); b.close()

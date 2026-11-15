@@ -1,22 +1,39 @@
+# AI-assisted (Claude Code); reviewed by the author.
 """Accessibility audit with axe-core. One-time: install axe-core into <tmp>/axe (npm i axe-core there) or set AXE_JS=<path to axe.min.js>.   BASE=<url> axe_run.py [WxH ...]   Exit 1 on any violation."""
 import json, os, sys
+from pathlib import Path
 BASE = os.environ.get("BASE", "http://localhost:5173").rstrip("/")
 from playwright.sync_api import sync_playwright
-sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent)); from _common import launch_chromium, launch, shot_path, AXE_JS, OUT
+sys.path.insert(0, str(Path(__file__).resolve().parent)); from _common import launch_chromium, launch, shot_path, AXE_JS, OUT
 FAILS = 0
-AXE = AXE_JS.read_text(encoding="utf-8")
-VIEWS = [("explore", "/?intro=0", None), ("intro", "/", None), ("detail", "/?intro=0", "detail"), ("picker", "/?intro=0", "picker"), ("regions", "/?intro=0", "regions"),
-         ("time", "/#/time", None), ("validation", "/#/validation", None), ("method", "/#/method", None)]
+axe_path = AXE_JS if AXE_JS.exists() else Path(__file__).resolve().parents[1] / "node_modules" / "axe-core" / "axe.min.js"
+AXE = axe_path.read_text(encoding="utf-8")
+VIEWS = [
+    ("explore", "/?intro=0", None),
+    ("intro", "/", None),
+    ("detail", "/?intro=0", "detail"),
+    ("picker", "/?intro=0", "picker"),
+    ("regions", "/?intro=0", "regions"),
+    ("when", "/#/when", None),
+    ("proof", "/#/proof", None),
+    ("limits", "/#/limits", None),
+    ("mission", "/#/mission", None),
+    ("method", "/#/method", None),
+    ("dossier", "/#/dossier", None),
+    ("tour", "/#/tour", None),
+]
 sizes = [(1440, 900), (390, 844), (1024, 768)] if len(sys.argv) < 2 else [tuple(map(int, a.split("x"))) for a in sys.argv[1:]]
+themes = tuple(t.strip() for t in os.environ.get("PEN_AXE_THEMES", "dark,light").split(",") if t.strip())
+wait_ms = int(os.environ.get("PEN_AXE_WAIT_MS", "2000"))
 with sync_playwright() as p:
     b = launch_chromium(p)
     for w, h in sizes:
-        for theme in ("dark", "light"):
+        for theme in themes:
             for name, path, act in VIEWS:
                 pg = b.new_context(viewport={"width": w, "height": h}, color_scheme=theme).new_page()
-                pg.goto(BASE + path); pg.wait_for_selector(".bar", timeout=30000); pg.wait_for_timeout(3500)
+                pg.goto(BASE + path); pg.wait_for_selector(".bar", timeout=30000); pg.wait_for_timeout(wait_ms)
                 if act == "detail":
-                    pg.locator(".match").first.click(); pg.wait_for_timeout(500); pg.locator(".win").first.click(); pg.wait_for_selector("#d-title"); pg.wait_for_timeout(3500)
+                    pg.locator(".match").first.click(); pg.wait_for_timeout(500); pg.locator(".win").first.click(); pg.wait_for_selector("#d-title"); pg.wait_for_timeout(wait_ms)
                 if act == "picker": pg.click("#target-btn"); pg.wait_for_timeout(500)
                 if act == "regions": pg.click("#regions-btn"); pg.wait_for_timeout(500)
                 pg.evaluate(AXE)

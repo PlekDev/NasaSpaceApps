@@ -2,7 +2,8 @@ import './tokens.css';
 import './style.css';
 import { loadManifest } from './data';
 import { mountExplore, type Explore } from './explore';
-import { mountIntro } from './intro';
+import { mountHome } from './intro';
+import { loadHome } from './lib/homeload';
 import { VIEWS, enhance } from './pages';
 import { startRouter } from './lib/router';
 import { ROUTES, type Parsed } from './lib/routes';
@@ -17,11 +18,13 @@ async function boot() {
   const app = $('#app');
   const m = await loadManifest();
   const q = new URLSearchParams(location.search);
-  const t0 = m.targets.find(x => x.id === q.get('target')) ?? m.targets[0];
+  const home = await loadHome(m);            // Home facts: the blind-test headline target (Malapert Massif) is the default target
+  const t0 = m.targets.find(x => x.id === q.get('target')) ?? m.targets.find(x => x.id === home.facts?.target.id) ?? m.targets[0];
   app.innerHTML = `<header class="bar">
     <a class="brand" href="#/" aria-label="P.E.N. home"><b>P.E.N.</b><span>Planetary Environmental Navigator</span></a>
-    <nav class="nav" id="nav" aria-label="Views">${primary.map(r => `<a href="#/${r.path}" data-r="${r.id}">${r.title}</a>`).join('')}<a class="only-phone" href="#/${tour.path}" data-r="${tour.id}">${tour.title}</a></nav>
+    <nav class="nav" id="nav" aria-label="Views">${primary.map(r => `<a href="#/${r.path}" data-r="${r.id}">${r.title}</a>`).join('')}<a class="only-phone" href="#/${tour.path}" data-r="${tour.id}">${tour.title}</a>${home.facts?.rhoRange ? `<a class="only-phone seal-m" href="#/proof">Light model vs NASA LOLA · ρ ${home.facts.rhoRange}</a>` : ''}</nav>
     <div class="grow"></div>
+    <a class="seal" id="seal" href="#/proof" ${home.facts?.rhoRange ? '' : 'hidden'} aria-label="Validation: light model against NASA LOLA">${home.facts?.rhoRange ? `<span class="seal-l">Light model vs NASA LOLA · </span>ρ ${home.facts.rhoRange}` : ''}</a>
     <a class="nav-tour" href="#/${tour.path}" data-r="${tour.id}">${tour.title}</a>
     <button class="icon-btn" id="theme" aria-label="Switch to light or dark theme"><span class="only-dark">${icon.sun}</span><span class="only-light">${icon.moon}</span></button>
     <button class="icon-btn menu" id="menu" aria-label="Menu" aria-expanded="false" aria-controls="nav">${icon.menu}</button>
@@ -44,9 +47,10 @@ async function boot() {
       stage.hidden = !p.def.stage; page.hidden = p.def.stage;
       if (p.id === 'home' && !intro && q.get('intro') !== '0') {
         introOn = true;
-        intro = mountIntro(stage, t0, ex.view, () => { introOn = false; intro = null; if (router.current().id === 'home') router.navigate('explore'); }, m);
+        intro = mountHome(stage, { m, view: ex.view, targetName: t0.name });
       }
       if (p.id !== 'home' && intro) { const i = intro; intro = null; introOn = false; i.finish(); }
+      if (p.id === 'explore' && (p.params.target || p.params.region)) ex.focus(p.params);
       if (p.def.stage) {
         ex.show(!introOn);
         requestAnimationFrame(() => ex.view.resize());

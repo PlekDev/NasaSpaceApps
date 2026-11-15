@@ -19,6 +19,9 @@
 .limits-no b { color: var(--text-1); }
 .limits-na { border-style: dashed; color: var(--text-3); }
 .limits-matrix th small { display: block; font-weight: 400; color: var(--text-3); font-size: 12px; }
+.limits-matrix th a { color: var(--text-1); text-decoration: none; }
+.limits-matrix th a:hover, .limits-matrix th a:focus-visible { text-decoration: underline; }
+.limits-matrix th small a { color: var(--accent-text); }
 .limits-matrix td { vertical-align: top; }
 .limits-more { margin-top: var(--s-3); color: var(--text-2); font-size: 14px; }
 .limits-more summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--accent-text); }

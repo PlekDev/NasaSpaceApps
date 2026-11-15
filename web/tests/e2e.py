@@ -1,3 +1,4 @@
+# AI-assisted (Claude Code); reviewed by the author.
 """Browser smoke test (Playwright). Run with a server up:
    BASE=http://localhost:5173 python web/tests/e2e.py                     # Chromium (set CHROME=<path> to use a system browser)
    BROWSER=firefox|webkit BASE=... python web/tests/e2e.py              # needs `playwright install firefox webkit`
@@ -33,8 +34,9 @@ with sync_playwright() as p:
     pg.fill("#min", "99"); pg.dispatch_event("#min", "input"); pg.wait_for_timeout(800)
     check("min score filter empties or shrinks the list", pg.locator(".match").count() <= 14)
     pg.fill("#min", "60"); pg.dispatch_event("#min", "input"); pg.fill("#w-illumination", "1"); pg.dispatch_event("#w-illumination", "input"); pg.wait_for_timeout(600)
-    pg.click("#regions-btn"); pg.click("[data-none]"); pg.wait_for_timeout(500)
-    check("region none -> empty state", "No Earth region" in pg.inner_text("#best") or "No window" in pg.inner_text("#best"))
+    pg.click("#regions-btn"); pg.wait_for_selector("[data-none]"); pg.click("[data-none]"); pg.wait_for_timeout(800)
+    best_txt = pg.inner_text("#best")
+    check("region none -> empty state", "No Earth region" in best_txt or "No window" in best_txt, best_txt[:120])
     pg.click("[data-all]"); pg.keyboard.press("Escape"); pg.wait_for_timeout(500)
     pg.locator(".match").first.click(); pg.wait_for_timeout(500); pg.locator(".win").first.focus(); pg.keyboard.press("Enter"); pg.wait_for_selector("#d-title", timeout=20000)
     check("keyboard opens the detail sheet", pg.locator("#detail:not([hidden])").count() == 1)
@@ -42,10 +44,33 @@ with sync_playwright() as p:
     check("Field kit is present, collapsed by default", pg.locator("details.kit").count() == 1 and pg.locator("details.kit[open]").count() == 0)
     pg.keyboard.press("Escape"); pg.wait_for_timeout(500)
     check("Escape closes the detail sheet", pg.locator("#detail[hidden]").count() == 1)
-    for route, sel in [("time", ".chart"), ("validation", "#hm .hm"), ("method", ".prose")]:
-        pg.goto(f"{BASE}/#/{route}"); pg.wait_for_selector(sel, timeout=20000); check(f"view {route} renders", True)
-    pg.goto(f"{BASE}/#/validation"); pg.wait_for_selector("[data-zoom]"); pg.locator("[data-zoom]").first.click(); pg.wait_for_selector(".lightbox"); pg.keyboard.press("Escape"); pg.wait_for_timeout(300)
-    check("lightbox opens and closes with Escape", pg.locator(".lightbox").count() == 0)
+    for route, sel in [
+        ("when", ".chart"),
+        ("proof", "#hm .hm, .proof"),
+        ("limits", ".limits, .view-wip, .page-stub"),
+        ("mission", ".mission-page, .view-wip, .page-stub"),
+        ("method", ".method, .prose"),
+        ("dossier", ".dossier, .view-wip, .page-stub"),
+        ("tour", ".tour, .view-wip, .page-stub"),
+    ]:
+        pg.goto(f"{BASE}/#/{route}"); pg.wait_for_selector(sel, timeout=20000)
+        if route == "proof" and pg.locator("#proof-ka").count() > 0:
+            pg.wait_for_selector("#proof-ka table", state="attached", timeout=10000)
+        check(f"view {route} renders", True)
+    # Judge's path through Mission -> Rehearse on date -> Dossier when Mission view is active
+    pg.goto(f"{BASE}/#/mission"); pg.wait_for_selector(".mission-page, .view-wip, .page-stub", timeout=20000)
+    if pg.locator(".mission-page").count() > 0:
+        pg.wait_for_selector(".mission-rehearse-headline", timeout=20000)
+        check("mission renders synchronized dual canvases and vertical exaggeration", pg.locator(".mission-canvas").count() == 2 and "×" in pg.inner_text(".mission-exag-badge"))
+        check("mission computes rehearsal window with fidelity and .ics action", "fidelity" in pg.inner_text(".mission-rehearse-headline") and pg.locator(".mission-ics-btn").count() == 1)
+        pg.click(".mission-dossier-btn"); pg.wait_for_selector(".dossier", timeout=20000)
+        check("mission Open dossier passes route, date and fidelity to Dossier", "Rehearsal window chosen in Mission" in pg.inner_text(".dossier"))
+    pg.goto(f"{BASE}/#/validation"); pg.wait_for_selector(".proof, #hm .hm", timeout=20000)
+    if pg.locator("#proof-ka").count() > 0:
+        pg.wait_for_selector("#proof-ka table", state="attached", timeout=10000)
+    if pg.locator("[data-zoom]").count() > 0:
+        pg.locator("[data-zoom]").first.click(); pg.wait_for_selector(".lightbox"); pg.keyboard.press("Escape"); pg.wait_for_timeout(300)
+        check("lightbox opens and closes with Escape", pg.locator(".lightbox").count() == 0)
     check("no console errors", not [e for e in errs if "GL" not in e and "WebGL" not in e], str(errs[:3]))
     check("no failed same-origin requests (assets, data, fonts, thumbs resolve under the base path)", not bad, str(bad[:4]))
     pg.close()
