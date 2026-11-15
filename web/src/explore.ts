@@ -1,3 +1,4 @@
+import { BASE } from './base';
 import { esc, cap, nf, coord } from './format';
 import { icon } from './icons';
 import { ramp } from './score';
@@ -87,7 +88,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   // ---------- rendering
   function renderTarget() {
     const t = tgt();
-    $('#target-btn', root).innerHTML = `${t.thumb ? `<img src="./thumbs/${t.thumb}" alt="" width="48" height="48">` : '<span class="thumb"></span>'}
+    $('#target-btn', root).innerHTML = `${t.thumb ? `<img src="${BASE}thumbs/${t.thumb}" alt="" width="48" height="48">` : '<span class="thumb"></span>'}
       <span class="t"><span class="name" id="target-name">${esc(t.name)}</span><span class="sub"><span>${esc(t.detail)}</span>${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</span></span>${icon.chevron}`;
   }
   function renderBest() {
@@ -99,7 +100,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     }
     const r = m.regions[scored.site[k]];
     bestEl.innerHTML = `
-      <div class="tchip">${t.thumb ? `<img src="./thumbs/${t.thumb}" alt="" width="32" height="32">` : ''}<span><b>${esc(t.name)}</b><em>${esc(t.detail)}</em></span></div>
+      <div class="tchip">${t.thumb ? `<img src="${BASE}thumbs/${t.thumb}" alt="" width="32" height="32">` : ''}<span><b>${esc(t.name)}</b><em>${esc(t.detail)}</em></span></div>
       <div class="label">Best match</div>
       <button class="score" id="best-go" aria-label="Fly to the best match: ${esc(r.name)}, score ${scored.s[k].toFixed(0)} of 100"><b class="tnum">${scored.s[k].toFixed(0)}</b><span>/ 100</span></button>
       <div class="where">${esc(r.name)}</div>
@@ -225,7 +226,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
       <div role="listbox" aria-label="Moon and Mars targets" class="opts">${groups.filter(g => g[2].length).map(([b, label, ts]) => `
       <div role="group" aria-label="${label}"><div class="grp">${b === 'mars' ? icon.mars : icon.moon}<span>${label}</span><span class="muted tnum">${ts.length}</span></div>
       ${ts.map(t => `<button role="option" class="opt" data-id="${t.id}" aria-selected="${t.id === S.target}" tabindex="${t.id === S.target ? 0 : -1}">
-        ${t.thumb ? `<img src="./thumbs/${t.thumb}" alt="" width="40" height="40">` : '<span class="thumb"></span>'}
+        ${t.thumb ? `<img src="${BASE}thumbs/${t.thumb}" alt="" width="40" height="40">` : '<span class="thumb"></span>'}
         <span class="t"><span class="name">${esc(t.name)}</span><span class="sub"><span>${esc(t.detail)}</span>${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</span></span></button>`).join('')}</div>`).join('')}</div>`;
   }
   targetBtn.addEventListener('click', () => { renderPicker(); pick.toggle(); (pickerEl.querySelector('[aria-selected="true"]') as HTMLElement | null)?.focus(); });

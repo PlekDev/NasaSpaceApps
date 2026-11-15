@@ -1,2 +1,4 @@
 import { defineConfig } from 'vite';
-export default defineConfig({ base: './', build: { target: 'es2020', chunkSizeWarningLimit: 900 } });
+// BASE_PATH: "/" (default) or e.g. "/NasaSpaceApps/" for GitHub Pages
+const base = (process.env.BASE_PATH || '/').replace(/^(?!\/)/, '/').replace(/(?<!\/)$/, '/');
+export default defineConfig({ base, build: { target: 'es2020', chunkSizeWarningLimit: 900 } });

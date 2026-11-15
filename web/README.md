@@ -4,9 +4,11 @@ Static web app (Vite + TypeScript + MapLibre GL JS) for P.E.N. It reads the pipe
 UI AI-assisted (Claude Code); reviewed by the author. Design system: [DESIGN.md](DESIGN.md). Decisions: [DECISIONS.md](DECISIONS.md). Resume notes: [PROGRESS.md](PROGRESS.md).
 
 ```bash
+npm run dev:lan       # in web/: dev server on your LAN (vite --host) to test on a phone: open http://<your-ip>:5173
 make web-dev          # export data/processed -> web/public/data, then Vite dev server on :5173
 make web              # export + production build in web/dist (host the folder anywhere static)
-make web-test         # Python label tests + Node tests (score recombination for every target)
+make web-test         # Python label + README-rank tests, Node tests (score recombination for every target)
+make web-e2e          # production build under /NasaSpaceApps/, browser tests on Chromium, Firefox and WebKit, axe, LCP
 ```
 
 Without `make`: `python -I web/tools/export_data.py && cd web && npm install && npm run dev`.
@@ -14,5 +16,6 @@ Without `make`: `python -I web/tools/export_data.py && cd web && npm install && 
 `data/processed`. The footer shows `data <hash>` (hash of data/processed) and the manifest records the git commit.
 `web/pages.yml` is a GitHub Pages workflow, prepared but not enabled (copy it to `.github/workflows/` to turn it on).
 
-Browser checks (need Playwright and a Chromium): `BASE=http://localhost:5173 python web/tests/e2e.py`; accessibility audit with axe-core: `web/tools/axe_run.py`;
-LCP on the production build with 4G throttling: `web/tools/perf.py`.
+Deploy base path: `BASE_PATH=/NasaSpaceApps/ make web` (default `/`). Every asset, data, font and thumbnail URL goes through it (`src/base.ts`); `web/tools/serve_dist.py` serves `dist/` under a prefix like Pages does.
+Browser checks need Playwright (`python -m playwright install firefox webkit`; WebKit also needs system libraries: `sudo python -m playwright install-deps webkit`) and one-time `mkdir -p /tmp/axe && cd /tmp/axe && npm i axe-core`:
+`BROWSER=firefox BASE=http://localhost:5173 python web/tests/e2e.py`, `web/tools/axe_run.py`, `web/tools/perf.py <url>`.

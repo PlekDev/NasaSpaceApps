@@ -1,3 +1,4 @@
+import { BASE } from '../base';
 import { esc, cap, nf, pyFixed } from '../format';
 import { getJSON } from '../data';
 import { ramp } from '../score';
@@ -8,7 +9,8 @@ import type { Manifest } from '../types';
 type Rec = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export async function renderValidation(el: HTMLElement, m: Manifest) {
-  const [val, far, ka, sens, div, mx] = await Promise.all(['validation', 'far_horizons', 'known_analogs', 'sensitivity', 'diviner', 'matrix'].map(n => getJSON<Rec>(n)));
+  const [val, far, ka, sens, div, mx, kr] = await Promise.all(['validation', 'far_horizons', 'known_analogs', 'sensitivity', 'diviner', 'matrix', 'known_ranks'].map(n => getJSON<Rec>(n)));
+  const rankOf = (ref: string, site: string) => (kr as Rec)[ref]?.[site] as { rank: number; n: number } | undefined;
   const name = (id: string) => m.targets.find(t => t.id === id)?.name ?? id;
   const moonIds = m.targets.filter(t => t.body === 'moon').map(t => t.id);
 
@@ -21,10 +23,20 @@ export async function renderValidation(el: HTMLElement, m: Manifest) {
     <td class="tnum">±${v.V3_far_curved.mean_abs_error.toFixed(3)}</td><td class="tnum">${v.ray_reach ? `${v.ray_reach.outward_ray_km_min.toFixed(0)}–${v.ray_reach.outward_ray_km_max.toFixed(0)} km` : '—'}${edge.some(e => e[0] === id) ? ' <span class="tag">near DEM edge</span>' : ''}</td></tr>`).join('');
   const rays = edge.map(([, v]) => `${v.ray_reach.outward_ray_km_min.toFixed(0)}–${v.ray_reach.outward_ray_km_max.toFixed(0)} km`);
 
+  const psr = farSites.filter(([, x]) => x.psr) as [string, Rec][];
+  const rng = (f: (p: Rec) => number, d: number, mul = 1) => { const a = psr.map(([, x]) => f(x.psr) * mul); return `${pyFixed(Math.min(...a), d)}–${pyFixed(Math.max(...a), d)}`; };
+  const psrHtml = psr.length ? `<h3>Permanent shadow, a second check against NASA</h3>
+    <p class="prose-p">The same far-horizon run also says which points never see any part of the Sun. Compared with NASA's permanently-shadowed-region map (LOLA LPSR), the two agree on ${rng(p => p.agreement, 1, 100)} % of the points at every site. Permanent shadow is rare in these footprints (${rng(p => p.nasa_psr_share, 1, 100)} % of each), so the stricter number is the overlap of the two shadow masks: intersection over union ${rng(p => p.iou, 2)}.</p>
+    <div class="tbl"><table><thead><tr><th>Target</th><th>NASA shadow</th><th>Our shadow</th><th>Agreement</th><th>Precision</th><th>Recall</th><th>IoU</th></tr></thead><tbody>${psr.map(([id, x]) => `<tr><th scope="row">${esc(name(id))}</th>${[x.psr.nasa_psr_share, x.psr.model_psr_share].map((q: number) => `<td class="tnum">${pyFixed(q * 100, 1)} %</td>`).join('')}<td class="tnum">${pyFixed(x.psr.agreement * 100, 1)} %</td><td class="tnum">${x.psr.precision.toFixed(2)}</td><td class="tnum">${x.psr.recall.toFixed(2)}</td><td class="tnum"><b>${x.psr.iou.toFixed(2)}</b></td></tr>`).join('')}</tbody></table></div>
+    <p class="note">Share of points in permanent shadow, as a share of each footprint. Points are sampled every 240 m against NASA's 60 m map, and we use 1,728 Sun positions where NASA uses hourly steps over 18.6 years, so small or marginal shadows differ.</p>` : '';
+
   // 2 · known analogs
   const s = ka.summary, rows = ka.rows as Rec[];
-  const hiw = rows.filter(r => /hiwahine/i.test(r.site)).sort((a, b) => b.score_combined_pct_best - a.score_combined_pct_best);
+  const hiw = rows.filter(r => /hiwahine/i.test(r.site)).sort((a, b) => (rankOf(a.reference, a.site)?.rank ?? 1e9) - (rankOf(b.reference, b.site)?.rank ?? 1e9));
   const top = (p: number) => (100 - p) < 0.05 ? 'top < 0.1 %' : `top ${(100 - p).toFixed(1)} %`;
+
+  const lunarRanks = hiw.filter(r => moonIds.includes(r.reference)).map(r => ({ id: r.reference, k: rankOf(r.reference, r.site)! })).filter(x => x.k).sort((a, b) => a.k.rank - b.k.rank);
+  const hiwMoon = lunarRanks.length ? `is window #${nf(lunarRanks[0].k.rank)} of ${nf(lunarRanks[0].k.n)} for ${esc(name(lunarRanks[0].id))} and #${nf(lunarRanks[lunarRanks.length - 1].k.rank)} for ${esc(name(lunarRanks[lunarRanks.length - 1].id))}, across the ${lunarRanks.length} lunar targets` : 'ranks high for the lunar targets';
 
   // 3 · sensitivity
   const W = sens.illumination_weight as number[], iLo = W.indexOf(0.5), iHi = W.indexOf(2);
@@ -46,12 +58,13 @@ export async function renderValidation(el: HTMLElement, m: Manifest) {
     <p class="prose-p">Away from the pole, the Sun is hidden by mountains tens of kilometres away. Re-computing the light with NASA's 40 m polar DEM up to ${maxKm.toFixed(0)} km away, on the curved lunar surface and with real Sun positions, brings the agreement to:</p>
     <div class="tbl"><table><thead><tr><th>Target</th><th>Local DEM (ρ)</th><th>Horizons up to ${maxKm.toFixed(0)} km (ρ)</th><th>Error, lit fraction</th><th>Outward rays</th></tr></thead><tbody>${farRows}</tbody></table></div>
     <p class="note">${edge.length ? `${esc(list(edge.map(e => name(e[0]))))} sit near the edge of NASA's 85°S DEM: rays toward lower latitudes reach only ${esc(list(rays))}. ` : ''}Scoring still uses local windows on both bodies, so Moon and Earth are treated the same way; this test shows the light model itself is right once distant terrain is included.</p>
+    ${psrHtml}
     ${figureCard('fig7_far_horizons.png', 'Local DEM against horizons up to 150 km', 'Spearman ρ and mean error per lunar site, local DEM against far horizons.', { wide: true })}</section>
 
   <section class="vsec"><h2>2 · Does it rediscover known analog sites?</h2>
     <p class="prose-p">Classic NASA analog sites inside our regions rank at the <b>${pyFixed(s.median_percentile_illumination_best)}th percentile</b> in illumination and <b>${pyFixed(s.median_percentile_terrain_best)}th</b> in terrain (median of ${s.n_tests} site × target tests; 50 = random).</p>
-    ${hiw.length ? `<div class="callout"><h3>Blind rediscovery</h3><p>Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar prospecting mission in 2012 (PISCES ISRU field test), ranks among the best windows for every lunar target. P.E.N. was never told about it.</p>
-      <div class="rank-list">${hiw.map(r => `<div class="rk-row"><span>${esc(name(r.reference))}</span><span class="rk-bar"><i style="width:${r.score_combined_pct_best}%;background:${ramp(r.score_combined_pct_best, 20)}"></i></span><b class="tnum">${top(r.score_combined_pct_best)}</b></div>`).join('')}</div></div>` : ''}
+    ${hiw.length ? `<div class="callout"><h3>Blind rediscovery</h3><p>Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar prospecting mission in 2012 (PISCES ISRU field test), ${hiwMoon}. P.E.N. was never told about it.</p>
+      <div class="rank-list">${hiw.map(r => { const k = rankOf(r.reference, r.site); return `<div class="rk-row"><span>${esc(name(r.reference))}</span><span class="rk-bar"><i style="width:${r.score_combined_pct_best}%;background:${ramp(r.score_combined_pct_best, 20)}"></i></span><b class="tnum">${k ? `#${nf(k.rank)} of ${nf(k.n)}` : ''}</b><span class="tnum muted">${top(r.score_combined_pct_best)}</span></div>`; }).join('')}</div></div>` : ''}
     <p class="note">Sites chosen for other reasons rank lower, as they should: Meteor Crater is an impact-geology analog and University Valley a dry-permafrost (thermal) analog, not terrain-and-light analogs.</p>
     <div class="tbl scroll sortable" id="kt"></div></section>
 
@@ -67,21 +80,21 @@ export async function renderValidation(el: HTMLElement, m: Manifest) {
     ${figureCard('fig8_thermal_gap.png', 'Diviner against Earth analog regions', 'Surface temperature of each Earth region (NASA POWER) against the lunar and Martian sites.', { wide: true })}</section>
 
   <section class="vsec"><h2>Score matrix</h2>
-    <p class="prose-p">The best window in every Earth region against every target, from the exported data. <a class="link" href="./figures/fig2_score_matrix.png" target="_blank" rel="noopener">Figure 2 (static)</a></p>
+    <p class="prose-p">The best window in every Earth region against every target, from the exported data. <a class="link" href="${BASE}figures/fig2_score_matrix.png" target="_blank" rel="noopener">Figure 2 (static)</a></p>
     <div id="hm"></div>
     ${figureCard('fig1_low_sun_side_by_side.png', 'The same low Sun on a target and its best Earth analog', 'Same low Sun (3° elevation, from SW), same scale: 6 km windows at 30 m.', { wide: true })}</section></div>`;
   wireFigures(el);
   mountHeatmap(el.querySelector('#hm')!, m, mx as never);
 
   // known-analog table (sortable)
-  const cols: [string, string, (r: Rec) => string | number][] = [['Target', 'ref', r => name(r.reference)], ['Known site', 'site', r => r.site], ['Windows', 'n', r => r.n_windows],
+  const cols: [string, string, (r: Rec) => string | number][] = [['Target', 'ref', r => name(r.reference)], ['Known site', 'site', r => r.site], ['Windows', 'n', r => r.n_windows], ['Rank of best', 'rk', r => rankOf(r.reference, r.site)?.rank ?? 0],
     ['Combined pct', 'c', r => r.score_combined_pct_best], ['Terrain pct', 't', r => r.score_terrain_pct_best], ['Illumination pct', 'i', r => r.score_illumination_pct_best], ['Combined, mean', 'cm', r => r.score_combined_pct_mean]];
-  let sk = 3, sd = -1;
+  let sk = 4, sd = -1;
   const drawKT = () => {
     const sorted = rows.slice().sort((a, b) => { const x = cols[sk][2](a), y = cols[sk][2](b); return sd * (typeof x === 'number' ? x - (y as number) : String(x).localeCompare(String(y))); });
     el.querySelector('#kt')!.innerHTML = `<table><caption>Known analog sites: percentile of the best window among all Earth windows (50 = random)</caption><thead><tr>${cols.map((c, i) => `<th aria-sort="${i === sk ? (sd < 0 ? 'descending' : 'ascending') : 'none'}"><button data-s="${i}">${c[0]}${i === sk ? (sd < 0 ? ' ↓' : ' ↑') : ''}</button></th>`).join('')}</tr></thead>
-      <tbody>${sorted.map(r => `<tr>${cols.map((c, i) => `<${i < 2 ? 'th scope="row"' : 'td'} class="${i > 1 ? 'tnum' : ''}">${esc(String(i > 2 ? Number(c[2](r)).toFixed(1) : c[2](r)))}</${i < 2 ? 'th' : 'td'}>`).join('')}</tr>`).join('')}</tbody></table>`;
-    el.querySelectorAll<HTMLButtonElement>('#kt [data-s]').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.s!; sd = sk === i ? -sd : (i < 2 ? 1 : -1); sk = i; drawKT(); }));
+      <tbody>${sorted.map(r => `<tr>${cols.map((c, i) => `<${i < 2 ? 'th scope="row"' : 'td'} class="${i > 1 ? 'tnum' : ''}">${esc(String(i > 3 ? Number(c[2](r)).toFixed(1) : i === 3 ? nf(Number(c[2](r))) : c[2](r)))}</${i < 2 ? 'th' : 'td'}>`).join('')}</tr>`).join('')}</tbody></table>`;
+    el.querySelectorAll<HTMLButtonElement>('#kt [data-s]').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.s!; sd = sk === i ? -sd : (i < 2 || i === 3 ? 1 : -1); sk = i; drawKT(); }));
   };
   drawKT(); void moonIds;
 }

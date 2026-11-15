@@ -1,3 +1,4 @@
+import { BASE } from '../base';
 import { icon } from '../icons';
 import { esc } from '../format';
 import { html } from '../ui';
@@ -16,7 +17,7 @@ export function openLightbox(src: string, alt: string, opener?: HTMLElement) {
   el.addEventListener('click', e => { if (e.target === el || (e.target as HTMLElement).classList.contains('lb-scroll')) close(); });
 }
 export function figureCard(file: string, title: string, caption: string, opts: { wide?: boolean } = {}) {
-  const src = `./figures/${file}`;
+  const src = `${BASE}figures/${file}`;
   return `<figure class="fig${opts.wide ? ' wide' : ''}"><div class="fig-h"><h3>${esc(title)}</h3><a class="link" href="${src}" target="_blank" rel="noopener">${esc(file.replace(/\.png$/, '').replace(/^fig(\d)_.*/, 'Figure $1 (static)'))}</a></div>
     <button class="fig-frame" data-zoom="${src}" data-alt="${esc(title)}" aria-label="Zoom: ${esc(title)}"><img src="${src}" alt="${esc(title)}" loading="lazy"></button><figcaption>${esc(caption)}</figcaption></figure>`;
 }

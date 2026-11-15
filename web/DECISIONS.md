@@ -20,3 +20,6 @@ Format: decision · options · why. Autonomous mode: decisions are made against 
 16. **No WebGL:** static NASA Blue Marble tile in the intro, a notice in place of the map, and rankings/filters/detail unchanged (tested).
 17. **Phone nav is a menu button** (4 views do not fit beside the wordmark and theme toggle at 390 px).
 18. **Short desktop screens (<= 860 px tall) compact the controls** so the best match stays in view at 1024x768.
+19. **Rank = stable-sort position of the best window.** The README's ranks (including Leibnitz #115 and Haworth #483) only reproduce with ties (scores are rounded to 0.1) broken by file order, i.e. pandas rank(method="first"); a strict "windows scoring higher" count gives 112 for Leibnitz. The headline four are identical either way. The percentile (strict less-than) is recomputed and asserted against known_analogs.json.
+20. **Field kit collapsed by default.** Twin light, astronaut view, rover traverse and the region brief are optional field tools; they sit in one collapsed section below Field safety so the analog card's core stays first.
+21. **WebKit.** Not runnable without installing OS libraries (needs sudo); not done on the user's machine without being asked. Scripts support it.

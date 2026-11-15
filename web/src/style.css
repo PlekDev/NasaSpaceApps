@@ -214,7 +214,7 @@ html[data-intro] .nogl { display: none; }
 .callout { border: 1px solid var(--line-strong); border-radius: var(--r-3); padding: var(--s-5); margin: var(--s-4) 0; background: var(--raise); }
 .callout h3 { margin-top: 0; } .callout p { color: var(--text-2); line-height: 1.6; max-width: 70ch; }
 .rank-list { display: grid; gap: var(--s-2); margin-top: var(--s-4); max-width: 640px; }
-.rk-row { display: grid; grid-template-columns: minmax(130px, 200px) 1fr 100px; align-items: center; gap: var(--s-3); font-size: 13px; }
+.rk-row { display: grid; grid-template-columns: minmax(130px, 200px) 1fr 120px 84px; align-items: center; gap: var(--s-3); font-size: 13px; }
 .rk-row b { text-align: right; font-weight: 600; } .rk-bar { height: 8px; border-radius: 4px; background: var(--raise-2); overflow: hidden; } .rk-bar i { display: block; height: 100%; border-radius: 4px; }
 /* figures */
 .fig { margin: var(--s-5) 0; } .fig-h { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); margin-bottom: var(--s-2); } .fig-h h3 { margin: 0; }
@@ -258,7 +258,7 @@ html[data-intro] .nogl { display: none; }
 .prose .tbl { max-width: none; margin: var(--s-4) 0; } .prose .tbl th, .prose .tbl td { white-space: normal; font-size: 14px; color: var(--text-2); } .prose .tbl td:first-child { color: var(--text-1); }
 .prose .tbl td.tnum, .prose .tbl thead th { text-align: left; }
 .prose { padding-bottom: var(--s-4); }
-@media (max-width: 900px) { .time-grid { grid-template-columns: 1fr; } .rk-row { grid-template-columns: 1fr 100px; } .rk-bar { grid-column: 1 / -1; order: 3; } }
+@media (max-width: 900px) { .time-grid { grid-template-columns: 1fr; } .rk-row { grid-template-columns: 1fr auto auto; } .rk-bar { grid-column: 1 / -1; order: 4; } }
 
 /* ---- phone: one bottom sheet with peek / half / full */
 @media (max-width: 820px) {
@@ -393,3 +393,12 @@ html[data-intro] .pin { display: none; }
   .target { margin-top: var(--s-1); }
 }
 .sortable thead th:nth-child(-n+2) { text-align: left; }
+
+/* Field kit: collapsed by default so the core (score, compare, differences, can't reproduce, field safety) is never crowded */
+.kit-sec { padding-top: 0; padding-bottom: 0; }
+.kit > summary { list-style: none; cursor: pointer; display: flex; align-items: center; min-height: 56px; }
+.kit > summary::-webkit-details-marker { display: none; }
+.kit > summary::after { content: ""; margin-left: auto; width: 7px; height: 7px; border: solid var(--text-3); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); transition: transform var(--dur) var(--ease); }
+.kit[open] > summary::after { transform: rotate(-135deg); }
+.k-t { display: grid; gap: 2px; } .k-t h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.kit-in { padding-bottom: var(--s-3); }

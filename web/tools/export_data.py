@@ -63,6 +63,48 @@ def source_stamp():
     return h.hexdigest()[:8], commit + ("+dirty" if dirty else "")
 
 
+def extract_known():
+    """KNOWN analog sites from scripts/validate_known_analogs.py (a list of dict(...) calls), read by AST, not executed."""
+    tree = ast.parse((ROOT / "scripts" / "validate_known_analogs.py").read_text(encoding="utf-8"))
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(getattr(t, "id", None) == "KNOWN" for t in node.targets):
+            return [{kw.arg: ast.literal_eval(kw.value) for kw in c.keywords} for c in node.value.elts]
+    raise KeyError("KNOWN")
+
+
+def known_ranks(known_json):
+    """Rank of the best window containing each known analog site, per target (#rank of N windows).
+
+    Same windows and containment test as scripts/validate_known_analogs.py. Rank = position of the best window in the descending
+    order of score_combined over ALL windows of the target (stable sort: equal 0.1-rounded scores keep file order, pandas
+    rank(method="first")). This reproduces the README (Malapert #1, Nobile Rim 1 #9, de Gerlache #19, Connecting Ridge #23,
+    Leibnitz Beta #115, Haworth #483). The percentile is recomputed with the script's formula and must equal known_analogs.json."""
+    def inside(poly, x, y):  # even-odd ray casting; the windows are convex quadrilaterals, boundary cases do not matter here
+        c = False
+        for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1]):
+            if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:
+                c = not c
+        return c
+    by_ref = {}
+    for r in csv.DictReader(open(PROC / "windows.csv", encoding="utf-8")):
+        by_ref.setdefault(r["reference"], []).append((float(r["score_combined"]), r["polygon"]))
+    out, rows, known = {}, {(r["reference"], r["site"]): r for r in known_json["rows"]}, extract_known()
+    for ref, g in by_ref.items():
+        order = sorted(range(len(g)), key=lambda i: -g[i][0])          # stable: ties keep file order
+        pos = {i: n + 1 for n, i in enumerate(order)}
+        polys = [json.loads(t) for _, t in g]
+        for k in known:
+            if (ref, k["name"]) not in rows:
+                continue
+            ins = [i for i, pl in enumerate(polys) if inside(pl, k["lon"], k["lat"])]
+            best = max(ins, key=lambda i: (g[i][0], -i))
+            pct = round(max(100.0 * sum(1 for x in g if x[0] < g[i][0]) / len(g) for i in ins), 1)
+            want = rows[(ref, k["name"])]["score_combined_pct_best"]
+            assert abs(pct - want) < 0.05, f"percentile mismatch for {ref} / {k['name']}: {pct} vs {want} in known_analogs.json"
+            out.setdefault(ref, {})[k["name"]] = dict(rank=pos[best], n=len(g), pct=pct)
+    return out
+
+
 def app_cant_reproduce(diviner, mars):
     """Run the app's own cant_reproduce() (and EARTH_LIMITS) from app/streamlit_app.py so the web text can never drift from it.
     Only those two definitions are extracted (no Streamlit code is executed)."""
@@ -147,6 +189,7 @@ def main():
     cell = {(r["reference"], r["site"]): r for r in summ}
     matrix = dict(dims=mdims, targets=targets, regions=regions,
                   v={d: [[float(cell[(t, s)][f"score_{d}"]) if (t, s) in cell else None for t in targets] for s in regions] for d in mdims})
+    (DATA / "known_ranks.json").write_text(json.dumps(known_ranks(json.loads((PROC / "known_analogs.json").read_text(encoding="utf-8"))), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     (DATA / "matrix.json").write_text(json.dumps(matrix, separators=(",", ":")))
     (OUT / "figures").mkdir(parents=True, exist_ok=True)
     for f in sorted((ROOT / "figures").glob("fig*.png")):

@@ -47,3 +47,21 @@ def test_reproduce_text_matches_the_app():
             assert "Diviner" in items[0] and "Water ice thermally stable" in items[1] and items[2].startswith("Surface peaks reach"), k
         if k.startswith("mars_"):
             assert "Mars Climate Database" in items[0] and items[1].startswith("Air pressure"), k
+
+
+def test_blind_rediscovery_ranks_match_the_readme():
+    """Ranks computed in export_data.py (from windows.csv) must equal the ranks printed in README.md and the deck."""
+    import json, re
+    out = ROOT / "web" / "public" / "data" / "known_ranks.json"
+    if not out.exists():
+        import pytest; pytest.skip("run python -I web/tools/export_data.py first")
+    ranks = json.loads(out.read_text(encoding="utf-8"))
+    hiw = {ref: [v for k, v in d.items() if "Hiwahine" in k][0] for ref, d in ranks.items()}
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    expect = {"moon_malapert": r"#1 of 10,424", "moon_nobile_rim1": r"#(\d+) Nobile Rim 1", "moon_de_gerlache_rim": r"#(\d+) de Gerlache",
+              "moon_connecting_ridge": r"#(\d+) Connecting Ridge", "moon_leibnitz_beta": r"Leibnitz Beta, #(\d+)", "moon_haworth": r"Haworth, #(\d+)"}
+    for ref, pat in expect.items():
+        m = re.search(pat, readme); assert m, f"README no longer states a rank for {ref}"
+        stated = int(m.group(1)) if m.groups() else 1
+        assert hiw[ref]["rank"] == stated, f"{ref}: computed #{hiw[ref]['rank']} vs README #{stated}"
+        assert hiw[ref]["n"] == 10424 or f"{hiw[ref]['n']:,}" in readme

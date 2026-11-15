@@ -1,3 +1,4 @@
+import { BASE } from './base';
 import { esc, cap, nf, coord } from './format';
 import { icon } from './icons';
 import { ramp } from './score';
@@ -72,14 +73,14 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
 
     <section class="d-sec"><div class="d-h"><h3>Field safety</h3><span class="muted tiny">NASA EONET</span></div><div id="eonet" class="eonet" aria-live="polite"><span class="muted">Checking NASA EONET…</span></div></section>
 
-    ${(ex.twin || ex.astro || ex.rover || brief) ? `<section class="d-sec"><div class="d-h"><h3>Field extras</h3></div>
+    ${(ex.twin || ex.astro || ex.rover || brief) ? `<section class="d-sec kit-sec"><details class="kit"><summary><span class="k-t"><h3>Field kit</h3><span class="muted tiny">${[ex.twin && 'twin light', ex.astro && 'astronaut view', ex.rover && 'rover traverse', brief && 'brief and calendar'].filter(Boolean).join(' · ')}</span></span></summary><div class="kit-in">
       ${ex.twin ? `<details class="xtra"><summary>Twin-light timelapse</summary><div class="xbody"><p class="d-cap">Sun 2° above the horizon, azimuth stepping 5°: shadows on ${esc(t.name)} and its best Earth window.</p>
-        ${ex.video ? `<video controls preload="none" poster="./extras/${ex.twin}" src="./extras/${ex.video}" aria-label="Twin-light timelapse for ${esc(t.name)}"></video>` : `<img src="./extras/${ex.twin}" alt="Twin-light poster" loading="lazy">`}</div></details>` : ''}
-      ${ex.astro ? `<details class="xtra"><summary>What the astronaut sees</summary><div class="xbody"><img src="./extras/${ex.astro}" alt="Eye-level view, ${esc(t.name)} and its best Earth window" loading="lazy"><p class="d-cap">Eye level (1.7 m), terrain up to 15 km away, each body's curvature.</p></div></details>` : ''}
-      ${ex.rover ? `<details class="xtra"><summary>Twin rover traverse</summary><div class="xbody"><img src="./extras/${ex.rover}" alt="Least-cost route on ${esc(t.name)} and its Earth analog" loading="lazy">
+        ${ex.video ? `<video controls preload="none" poster="${BASE}extras/${ex.twin}" src="${BASE}extras/${ex.video}" aria-label="Twin-light timelapse for ${esc(t.name)}"></video>` : `<img src="${BASE}extras/${ex.twin}" alt="Twin-light poster" loading="lazy">`}</div></details>` : ''}
+      ${ex.astro ? `<details class="xtra"><summary>What the astronaut sees</summary><div class="xbody"><img src="${BASE}extras/${ex.astro}" alt="Eye-level view, ${esc(t.name)} and its best Earth window" loading="lazy"><p class="d-cap">Eye level (1.7 m), terrain up to 15 km away, each body's curvature.</p></div></details>` : ''}
+      ${ex.rover ? `<details class="xtra"><summary>Twin rover traverse</summary><div class="xbody"><img src="${BASE}extras/${ex.rover}" alt="Least-cost route on ${esc(t.name)} and its Earth analog" loading="lazy">
         ${roverT ? roverTable(roverT, t.name, m) : ''}</div></details>` : ''}
-      ${brief ? `<div class="dl-row"><span class="muted">Field brief · ${esc(r.name)}</span><span>${[['brief', 'Brief'], ['calendar', 'Calendar .ics'], ['csv', 'Low-Sun CSV']].filter(x => brief[x[0] as 'brief']).map(x => `<a class="link" download href="./extras/briefs/${brief[x[0] as 'brief']}">${x[1]}</a>`).join('')}</span></div>` : ''}
-    </section>` : ''}
+      ${brief ? `<div class="dl-row"><span class="muted">Field brief · ${esc(r.name)}</span><span>${[['brief', 'Brief'], ['calendar', 'Calendar .ics'], ['csv', 'Low-Sun CSV']].filter(x => brief[x[0] as 'brief']).map(x => `<a class="link" download href="${BASE}extras/briefs/${brief[x[0] as 'brief']}">${x[1]}</a>`).join('')}</span></div>` : ''}
+    </div></details></section>` : ''}
 
     <section class="d-sec links"><a class="link" target="_blank" rel="noopener" href="https://www.google.com/maps/@${lat},${lon},12z">Google Maps</a>
       <a class="link" target="_blank" rel="noopener" href="https://worldview.earthdata.nasa.gov/?v=${lon - 0.2},${lat - 0.2},${lon + 0.2},${lat + 0.2}">NASA Worldview</a></section></div>`;
@@ -92,8 +93,8 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
     let src: 'low' | 'real' = 'low', mode: 'swipe' | 'blink' = 'swipe', showB = true;
     const setX = (x: number) => { x = Math.max(0, Math.min(100, x)); cmp.style.setProperty('--x', `${x}%`); h.setAttribute('aria-valuenow', String(Math.round(x))); };
     const paint = () => {
-      const refSrc = src === 'low' ? `./thumbs/ref/${t.id}.jpg` : `./thumbs/ref_real/${t.id}.jpg`;
-      const winOk = src === 'low' ? hasLow : hasReal, winSrc = src === 'low' ? `./thumbs/win/${wid}.jpg` : `./thumbs/real/${wid}.jpg`;
+      const refSrc = src === 'low' ? `${BASE}thumbs/ref/${t.id}.jpg` : `${BASE}thumbs/ref_real/${t.id}.jpg`;
+      const winOk = src === 'low' ? hasLow : hasReal, winSrc = src === 'low' ? `${BASE}thumbs/win/${wid}.jpg` : `${BASE}thumbs/real/${wid}.jpg`;
       a.src = refSrc; b.src = winOk ? winSrc : ''; b.hidden = !winOk; cmp.classList.toggle('single', !winOk);
       miss.hidden = winOk; miss.textContent = winOk ? '' : `No ${src === 'low' ? 'low-Sun preview' : 'NASA imagery'} was rendered for this window. The top windows of each region have one.`;
       cap2.innerHTML = src === 'low'

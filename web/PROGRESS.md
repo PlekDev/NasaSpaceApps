@@ -25,8 +25,16 @@ and PNGs downscaled, link the mp4/ics/csv from the repo files copied to public/e
   When a thermal dimension lands in `pen/features.py` DIMENSIONS and `windows.csv`, the export, sliders, bars and heatmap pick it up as a third dimension
   (not exercised with real data yet: check the left panel height and the heatmap "All" panel).
 
+## Round 2 (done)
+1. Blind rediscovery ranks computed in `export_data.py` (stdlib, no pandas) from windows.csv: position of the best window containing the site in the descending score_combined order (stable, ties keep file order = pandas rank "first"), with the percentile recomputed by the script's formula and asserted equal to known_analogs.json. Reproduces the README exactly: Malapert #1, Nobile Rim 1 #9, de Gerlache #19, Connecting Ridge #23, Leibnitz Beta #115, Haworth #483, of 10,424 (Mars: Jezero #4,798, Deuteronilus #5,215, Arcadia #7,706). `web/tests/test_export.py` parses README.md and fails on any mismatch. Shown on Validation (callout + sortable table with a Rank column).
+2. GitHub Pages: `BASE_PATH` env (default "/"; "/NasaSpaceApps/" for Pages) drives Vite `base`; every asset/data/font/thumb URL goes through `src/base.ts` / `%BASE_URL%`. Production build served under /NasaSpaceApps/ (`tools/serve_dist.py`, gzip) passes the browser tests with no failed same-origin request. `pages.yml` runs export, tests and the build with `BASE_PATH=/<repo>/`; still not enabled.
+3. Browser tests: Chromium and Firefox pass all 19 checks (and axe clean, 8 views x 3 sizes x 2 themes). WebKit cannot run on this Fedora host: Playwright's WebKit build needs system libraries (`sudo python -m playwright install-deps webkit`); `BROWSER=webkit` is supported by the scripts. `make web-e2e` runs the Pages-path build, e2e on the three engines (webkit reported as failed if libs are missing), axe and LCP.
+4. Field extras are inside a collapsed "Field kit" section after Field safety; the core (score, compare, differences, Earth can't reproduce, field safety) is unchanged and uncrowded.
+5. `npm run dev:lan` (vite --host).
+Also: new `psr` block of far_horizons.json (permanent-shadow check, PR from main) is shown on Validation; main's `earth_lst_windows.csv` (thermal data) is not used yet (not a scored dimension).
+
 ## Performance (production build, throttled "Fast 4G": 1.6 Mbit/s, 150 ms RTT, cache off)
-LCP 1.78 s on the intro (budget 2.5 s). First load 515 KB transferred (budget 1.5 MB): JS 303 KB gz (main chunk 22 KB + MapLibre chunk 288 KB, loaded after first paint),
+LCP 1.75 s on the intro (gzip, served under /NasaSpaceApps/) (budget 2.5 s). First load 515 KB transferred (budget 1.5 MB): JS 303 KB gz (main chunk 22 KB + MapLibre chunk 288 KB, loaded after first paint),
 CSS 18 KB, fonts 68 KB, first target core data 105 KB gz (window ids and scaled differences load only when a window is opened), thumbs 19 KB.
 
 ## Known issues / not done

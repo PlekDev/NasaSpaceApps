@@ -1,5 +1,5 @@
 PY ?= python
-.PHONY: web web-dev web-test setup data pipeline validate figures extras far imagery eonet lst-submit lst all app test
+.PHONY: web web-dev web-test web-e2e setup data pipeline validate figures extras far imagery eonet lst-submit lst all app test
 setup:     ; $(PY) -m pip install -r requirements.txt
 data:      ; $(PY) scripts/download_data.py
 pipeline:  ; $(PY) scripts/run_pipeline.py
@@ -17,3 +17,4 @@ test:      ; $(PY) -m pytest -q
 web:       ; $(PY) -I web/tools/export_data.py && cd web && npm ci && npm run build
 web-dev:   ; $(PY) -I web/tools/export_data.py && cd web && npm install && npm run dev
 web-test:  ; $(PY) -m pytest -q web/tests && cd web && npm test
+web-e2e:   ; cd web && npm ci && BASE_PATH=/NasaSpaceApps/ npm run build && ($(PY) tools/serve_dist.py /NasaSpaceApps 8099 & echo $$! > /tmp/pen-serve.pid; sleep 1; for b in chromium firefox webkit; do BROWSER=$$b BASE=http://127.0.0.1:8099/NasaSpaceApps $(PY) tests/e2e.py || true; done; BASE=http://127.0.0.1:8099/NasaSpaceApps $(PY) tools/axe_run.py; $(PY) tools/perf.py http://127.0.0.1:8099/NasaSpaceApps/; kill `cat /tmp/pen-serve.pid`)
