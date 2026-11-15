@@ -80,7 +80,8 @@ def test_known_ranks_are_current(export, manifest):
 def _code_text(p):
     """Source without comment lines (headers may describe a claim; code may not contain it)."""
     s = re.sub(r"/\*.*?\*/", "", p.read_text(encoding="utf-8"), flags=re.S)
-    return "\n".join(l for l in s.splitlines() if not l.lstrip().startswith("//"))
+    lines = (l for l in s.splitlines() if not l.lstrip().startswith("//"))
+    return "\n".join(re.sub(r"(?<=[\s;,)}\]])//.*$", "", l) for l in lines)      # trailing comments too (not "https://")
 
 
 def test_no_headline_number_is_typed_into_the_web():
