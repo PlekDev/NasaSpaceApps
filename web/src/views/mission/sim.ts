@@ -13,7 +13,8 @@
  * grid frame with its `up_az` (web/tools/exports/README.md).
  */
 import { BASE } from '../../base.ts';
-import { castShadow as coreCastShadow } from '../../sim/shadows.ts';
+import { castShadow as coreCastShadow, shadowFraction as coreShadowFraction } from '../../sim/shadows.ts';
+import { solarPosition as coreSolarPosition, sunFromHourAngle as coreSunFromHourAngle, localSolarHours as coreLocalSolarHours } from '../../sim/sun.ts';
 import type { Manifest } from '../../types.ts';
 
 export const DEG = Math.PI / 180;
@@ -228,6 +229,19 @@ export interface CostLayers {
   cols: number;
 }
 
+/** Shadow fraction with the Sun at 2 deg over 8 azimuths (core), cached per grid: the shadow term of the route cost. */
+const fracCache = new WeakMap<Grid, Float32Array>();
+function shadowFraction2(grid: Grid): Float32Array {
+  let f = fracCache.get(grid);
+  if (!f) { f = coreShadowFraction({ n: grid.rows, dx: grid.dx, z: grid.z }, 2); fracCache.set(grid, f); }
+  return f;
+}
+
+/** Route cost as documented (scripts/extras/rover_twin.py, docs/notes/sim.md, the technical note):
+ *  1 + (slope / 10 deg)^2 + 3 x shadow fraction (Sun at 2 deg, 8 directions); slope > 20 deg costs 1e6 (crossed only
+ *  when no route avoids it, as in Python).
+ *  `shadow` (the cast shadow at the current Sun) is kept in the layers for telemetry, not used in the cost, so the
+ *  route does not change with the Sun and rehearsal fidelity compares the same drive at different Suns. */
 export function costLayers(
   grid: Grid,
   shadow?: Uint8Array,
@@ -238,16 +252,18 @@ export function costLayers(
   const n = rows * cols;
   const slope = slopeOut ?? slopeDeg(grid);
   const sh = shadow ?? new Uint8Array(n);
+  const frac = grid.rows === grid.cols ? shadowFraction2(grid) : new Float32Array(n);
   const cost = new Float32Array(n);
   const impassable = new Uint8Array(n);
   for (let i = 0; i < n; i++) {
     const sl = slope[i];
     if (sl > slopeMaxDeg) {
-      cost[i] = Infinity;
+      // as rover_twin.py: very costly but finite, so when no route avoids steep ground (Malapert, Nobile Rim 1) the
+      // planner crosses as little of it as possible and the max slope shows it, instead of stopping after a few cells
+      cost[i] = 1e6;
       impassable[i] = 1;
     } else {
-      const sRatio = sl / slopeMaxDeg;
-      cost[i] = 1 + 4 * sRatio * sRatio + 1.5 * sh[i];
+      cost[i] = 1 + (sl / 10) ** 2 + 3 * frac[i];
     }
   }
   return { cost, slope, shadow: sh, impassable, rows, cols };
@@ -650,51 +666,17 @@ export function azDiff(a: number, b: number): number {
   return d;
 }
 
-/** upAzDeg: the window's `up_az`, so gridAzDeg is in that window's frame (0 = geographic north). */
+/** Earth Sun from the validated core (NOAA, within 0.1 deg of scripts/extras/common.py; web/tests/sim_sun.test.mjs).
+ *  upAzDeg: the window's `up_az`, so gridAzDeg is in that window's frame (0 = geographic north). */
 export function solarPosition(latDeg: number, lonDeg: number, when: Date | number, upAzDeg = 0): SunAngles {
-  const ms = typeof when === 'number' ? when : when.getTime();
-  const jd = ms / 86_400_000 + 2440587.5;
-  const n = jd - 2451545.0;
-
-  const L = (((280.46 + 0.9856474 * n) % 360) + 360) % 360;
-  const g = ((((357.528 + 0.9856003 * n) % 360) + 360) % 360) * DEG;
-  const lambda = (L + 1.915 * Math.sin(g) + 0.02 * Math.sin(2 * g)) * DEG;
-  const eps = (23.439 - 0.0000004 * n) * DEG;
-  const decl = Math.asin(Math.sin(eps) * Math.sin(lambda));
-
-  const y = Math.tan(eps / 2) ** 2;
-  const Lr = L * DEG;
-  const e = 0.016708634;
-  const eqTimeMin =
-    4 *
-    RAD *
-    (y * Math.sin(2 * Lr) -
-      2 * e * Math.sin(g) +
-      4 * e * y * Math.sin(g) * Math.cos(2 * Lr) -
-      0.5 * y * y * Math.sin(4 * Lr) -
-      1.25 * e * e * Math.sin(2 * g));
-
-  const dayFracMin = ((((ms % 86_400_000) + 86_400_000) % 86_400_000) / 60_000);
-  const trueSolarMin = (((dayFracMin + eqTimeMin + 4 * lonDeg) % 1440) + 1440) % 1440;
-  const haDeg = trueSolarMin / 4 - 180;
-  const ha = haDeg * DEG;
-
-  const phi = latDeg * DEG;
-  const sinEl = Math.sin(phi) * Math.sin(decl) + Math.cos(phi) * Math.cos(decl) * Math.cos(ha);
-  const el = Math.asin(Math.max(-1, Math.min(1, sinEl)));
-  const yAz = -Math.sin(ha) * Math.cos(decl);
-  const xAz = Math.sin(decl) - Math.sin(phi) * sinEl;
-  const az = (((Math.atan2(yAz, xAz) * RAD) % 360) + 360) % 360;
-
-  return {
-    elevDeg: el * RAD,
-    azDeg: az,
-    gridAzDeg: toGridAz(az, upAzDeg),
-    declDeg: decl * RAD,
-    hourAngleDeg: haDeg,
-  };
+  const t = new Date(typeof when === 'number' ? when : when.getTime());
+  const s = coreSolarPosition(latDeg, lonDeg, t);
+  const haDeg = (coreLocalSolarHours(t, lonDeg) - 12) * 15;
+  return { elevDeg: s.elev, azDeg: s.az, gridAzDeg: toGridAz(s.az, upAzDeg), hourAngleDeg: haDeg };
 }
 
+/** Sun of the Moon or Mars from the local hour angle and the subsolar latitude (core formula; the azimuth needs the
+ *  1/cos(latitude) factor, which matters most near the lunar pole). elevOverrideDeg only replaces the elevation. */
 export function sunFromHourAngle(
   latDeg: number,
   hourAngleDeg: number,
@@ -702,19 +684,11 @@ export function sunFromHourAngle(
   elevOverrideDeg?: number,
   upAzDeg = 0,
 ): SunAngles {
-  const phi = latDeg * DEG;
-  const decl = declDeg * DEG;
-  const ha = hourAngleDeg * DEG;
-  const sinEl = Math.sin(phi) * Math.sin(decl) + Math.cos(phi) * Math.cos(decl) * Math.cos(ha);
-  const computedEl = Math.asin(Math.max(-1, Math.min(1, sinEl))) * RAD;
-  const yAz = -Math.sin(ha) * Math.cos(decl);
-  const xAz = Math.sin(decl) - Math.sin(phi) * sinEl;
-  const az = (((Math.atan2(yAz, xAz) * RAD) % 360) + 360) % 360;
-  const elevDeg = elevOverrideDeg !== undefined ? elevOverrideDeg : computedEl;
+  const s = coreSunFromHourAngle(latDeg, hourAngleDeg, declDeg);
   return {
-    elevDeg,
-    azDeg: az,
-    gridAzDeg: toGridAz(az, upAzDeg),
+    elevDeg: elevOverrideDeg !== undefined ? elevOverrideDeg : s.elev,
+    azDeg: s.az,
+    gridAzDeg: toGridAz(s.az, upAzDeg),
     declDeg,
     hourAngleDeg,
   };
