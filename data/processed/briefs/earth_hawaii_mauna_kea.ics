@@ -1,0 +1,398 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Pollones en Fuga//P.E.N.//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:P.E.N. lunar-pole light · Mauna Kea / Mauna Loa saddle
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261210T030700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261210T030700Z
+DTEND:20261210T034000Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 243°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261210T165100Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261210T165100Z
+DTEND:20261210T172400Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→117°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261211T030700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261211T030700Z
+DTEND:20261211T034100Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261211T165100Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261211T165100Z
+DTEND:20261211T172400Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261212T030800Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261212T030800Z
+DTEND:20261212T034100Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261212T165200Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261212T165200Z
+DTEND:20261212T172500Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261213T030800Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261213T030800Z
+DTEND:20261213T034100Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261213T165200Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261213T165200Z
+DTEND:20261213T172600Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261214T030800Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261214T030800Z
+DTEND:20261214T034200Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261214T165300Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261214T165300Z
+DTEND:20261214T172600Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261215T030900Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261215T030900Z
+DTEND:20261215T034200Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261215T165400Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261215T165400Z
+DTEND:20261215T172700Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261216T030900Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261216T030900Z
+DTEND:20261216T034200Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261216T165400Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261216T165400Z
+DTEND:20261216T172700Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261217T031000Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261217T031000Z
+DTEND:20261217T034300Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261217T165500Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261217T165500Z
+DTEND:20261217T172800Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261218T031000Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261218T031000Z
+DTEND:20261218T034300Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261218T165500Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261218T165500Z
+DTEND:20261218T172900Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261219T031000Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261219T031000Z
+DTEND:20261219T034400Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261219T165600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261219T165600Z
+DTEND:20261219T172900Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261220T031100Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261220T031100Z
+DTEND:20261220T034400Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261220T165600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261220T165600Z
+DTEND:20261220T173000Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261221T031100Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261221T031100Z
+DTEND:20261221T034500Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261221T165700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261221T165700Z
+DTEND:20261221T173000Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261222T031200Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261222T031200Z
+DTEND:20261222T034500Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261222T165700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261222T165700Z
+DTEND:20261222T173100Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261223T031200Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261223T031200Z
+DTEND:20261223T034600Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 242°→245°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_hawaii_mauna_kea-20261223T165800Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20261223T165800Z
+DTEND:20261223T173100Z
+SUMMARY:Lunar-pole light window · Mauna Kea / Mauna Loa saddle
+LOCATION:19.8110, -155.5443
+GEO:19.81100;-155.54434
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 115°→118°)
+ : the light of the lunar south pole. Analog of: Shackleton Connecting Ridg
+ e\, Nobile Rim 1\, de Gerlache Rim\, Malapert Massif\, Haworth\, Leibnitz 
+ Beta Plateau. Test rover vision\, EVA lighting and shadow navigation. Brie
+ f: data/processed/briefs/earth_hawaii_mauna_kea.md
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,398 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Pollones en Fuga//P.E.N.//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:P.E.N. lunar-pole light · Yungay
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270612T112300Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270612T112300Z
+DTEND:20270612T115800Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270612T211600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270612T211600Z
+DTEND:20270612T215100Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270613T112300Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270613T112300Z
+DTEND:20270613T115800Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270613T211600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270613T211600Z
+DTEND:20270613T215100Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270614T112400Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270614T112400Z
+DTEND:20270614T115800Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270614T211600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270614T211600Z
+DTEND:20270614T215100Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270615T112400Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270615T112400Z
+DTEND:20270615T115900Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270615T211700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270615T211700Z
+DTEND:20270615T215100Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270616T112400Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270616T112400Z
+DTEND:20270616T115900Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270616T211700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270616T211700Z
+DTEND:20270616T215200Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270617T112400Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270617T112400Z
+DTEND:20270617T115900Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270617T211700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270617T211700Z
+DTEND:20270617T215200Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270618T112500Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270618T112500Z
+DTEND:20270618T120000Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270618T211700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270618T211700Z
+DTEND:20270618T215200Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270619T112500Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270619T112500Z
+DTEND:20270619T120000Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270619T211700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270619T211700Z
+DTEND:20270619T215200Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270620T112500Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270620T112500Z
+DTEND:20270620T120000Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270620T211700Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270620T211700Z
+DTEND:20270620T215200Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270621T112500Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270621T112500Z
+DTEND:20270621T120000Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270621T211800Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270621T211800Z
+DTEND:20270621T215300Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270622T112600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270622T112600Z
+DTEND:20270622T120100Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270622T211800Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270622T211800Z
+DTEND:20270622T215300Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270623T112600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270623T112600Z
+DTEND:20270623T120100Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270623T211800Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270623T211800Z
+DTEND:20270623T215300Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270624T112600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270624T112600Z
+DTEND:20270624T120100Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270624T211800Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270624T211800Z
+DTEND:20270624T215300Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270625T112600Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270625T112600Z
+DTEND:20270625T120100Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (morning\, azimuth 64°→60°): 
+ the light of the lunar south pole. Analog of: Malapert Massif\, Nobile Rim
+  1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, EV
+ A lighting and shadow navigation. Brief: data/processed/briefs/earth_ataca
+ ma_yungay.md
+END:VEVENT
+BEGIN:VEVENT
+UID:pen-earth_atacama_yungay-20270625T211900Z@pollones-en-fuga
+DTSTAMP:20261114T232229Z
+DTSTART:20270625T211900Z
+DTEND:20270625T215400Z
+SUMMARY:Lunar-pole light window · Yungay
+LOCATION:-24.9476, -69.1720
+GEO:-24.94759;-69.17201
+DESCRIPTION:Sun 0–7° above the horizon (evening\, azimuth 300°→296°)
+ : the light of the lunar south pole. Analog of: Malapert Massif\, Nobile R
+ im 1\, Shackleton Connecting Ridge\, de Gerlache Rim. Test rover vision\, 
+ EVA lighting and shadow navigation. Brief: data/processed/briefs/earth_ata
+ cama_yungay.md
+END:VEVENT
+END:VCALENDAR
