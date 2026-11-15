@@ -73,3 +73,21 @@ test('blindProof(): the intro and Validation headline match the exported ranks a
 test('pyFixed(): scores round half to even like the Python tables (98.5 -> 98)', () => {
   assert.equal(pyFixed(98.5), '98'); assert.equal(pyFixed(97.5), '98'); assert.equal(pyFixed(90.9), '91');
 });
+
+test('monotonePath() builds smooth SVG spline paths without overshooting flat segments', async () => {
+  const { monotonePath } = await import('../src/views/time.ts');
+  assert.equal(monotonePath([]), '');
+  assert.equal(monotonePath([[10, 20]]), 'M10.0,20.0');
+  const flat = monotonePath([[0, 100], [50, 100], [100, 50], [150, 100]]);
+  assert.match(flat, /^M0\.0,100\.0C16\.7,100\.0 33\.3,100\.0 50\.0,100\.0/);
+  assert.ok(!flat.includes('NaN'));
+});
+
+test('manifest briefs include campaign window metadata when field briefs exist', () => {
+  const mk = m.briefs.earth_hawaii_mauna_kea;
+  if (mk) {
+    assert.ok(mk.block && mk.block.includes('2026'), 'Mauna Kea campaign block dates exported');
+    assert.ok(typeof mk.min_day === 'number' && mk.min_day > 0, 'Mauna Kea min/day exported');
+    assert.ok(Array.isArray(mk.serves) && mk.serves.length >= 6, 'Mauna Kea served lunar targets exported');
+  }
+});
