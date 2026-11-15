@@ -30,13 +30,12 @@ export function parseRoute(raw: string | null): [number, number][] {
   return (pairs as unknown[]).filter((p): p is [number, number] => Array.isArray(p) && p.length >= 2 && p.slice(0, 2).every(v => typeof v === 'number' && Number.isFinite(v))).map(p => [p[0], p[1]]);
 }
 
-/** Bootstrap interval of the combined score, if the statistics export has one for this window. Expected shape (stats/bootstrap.json):
- * { "<target id>": { "<region id>_<i>_<j>": { "lo": 89.1, "hi": 92.7 } } }, optionally nested under "targets". Anything else is ignored. */
+/** 95 % bootstrap interval of the combined score, if the statistics export (stats/bootstrap.json, web/tools/exports/stats.py) lists this window:
+ * { "<target id>": [{ "window_id": "<region id>_<i>_<j>", "score": 90.9, "ci95": [76.2, 91.5], … }], "_stub": false }. Stub files are ignored. */
 function scoreInterval(boot: Rec | null, target: string, wid: string): [number, number] | null {
-  if (!boot || boot._stub) return null;
-  const e = (boot.targets ?? boot)?.[target]?.[wid];
-  const lo = e?.lo ?? e?.ci_lo ?? e?.[0], hi = e?.hi ?? e?.ci_hi ?? e?.[1];
-  return typeof lo === 'number' && typeof hi === 'number' ? [lo, hi] : null;
+  if (!boot || boot._stub || !Array.isArray(boot[target])) return null;
+  const ci = (boot[target] as Rec[]).find(w => w.window_id === wid)?.ci95;
+  return Array.isArray(ci) && typeof ci[0] === 'number' && typeof ci[1] === 'number' ? [ci[0], ci[1]] : null;
 }
 
 export async function render(el: HTMLElement, m: Manifest, params?: Record<string, string>) {
@@ -79,7 +78,7 @@ export async function render(el: HTMLElement, m: Manifest, params?: Record<strin
     <h1>${esc(t.name)} <span>↔</span> ${esc(r.name)}</h1>
     <p class="dossier-sub tnum">${esc(t.label.split('·').pop()!.trim())} · Earth window ${coord(lat, lon)}${where ? ` · ${esc(where)}` : ''} · ${m.window_km} km × ${m.window_km} km at 30 m</p></header>
 
-  <section class="dossier-sec dossier-top"><div class="dossier-score"><b class="tnum">${pyFixed(score)}</b><span>/ 100 combined${ci ? `<br><i class="tnum">95 % interval ${pyFixed(ci[0])}–${pyFixed(ci[1])}</i>` : ''}</span></div>
+  <section class="dossier-sec dossier-top"><div class="dossier-score"><b class="tnum">${pyFixed(score)}</b><span>/ 100 combined${ci ? `<br><i class="tnum">95 % bootstrap interval ${pyFixed(ci[0])}–${pyFixed(ci[1])}</i>` : ''}</span></div>
     <dl class="dossier-facts"><div><dt>Rank</dt><dd class="tnum">#${nf(rank)} of ${nf(n)}</dd></div><div><dt>Share</dt><dd class="tnum">${topShare(rank, n)}</dd></div>
       ${dims.map(d => `<div><dt>${esc(cap(d))}</dt><dd class="tnum">${pyFixed((core[`score_${d}`] as number[])[k] / sc.score)}</dd></div>`).join('')}</dl></section>
 
