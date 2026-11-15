@@ -19,6 +19,8 @@
   --warn: #d9a548; --ok: #5db38b;
   --shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 8px 32px rgba(0, 0, 0, .32);
   --halo: rgba(255, 255, 255, .85);
+  /* chart series: Okabe-Ito based, colour-blind safe; lib/chart.ts reads these */
+  --series-1: #3987e5; --series-2: #e69f00; --series-3: #009e73; --series-4: #cc79a7; --series-5: #d55e00; --series-6: #56b4e9; --series-7: #f0e442;
 }
 [data-theme="light"] {
   color-scheme: light;
@@ -30,5 +32,7 @@
   --warn: #8a5a00; --ok: #1f7a4f;
   --shadow: 0 1px 0 rgba(255, 255, 255, .6) inset, 0 8px 28px rgba(20, 30, 50, .14);
   --halo: rgba(255, 255, 255, .9);
+  --series-1: #1a62c4; --series-2: #b36b00; --series-3: #00755a; --series-4: #a8457f; --series-5: #c24e00; --series-6: #2b83bd; --series-7: #8a7500;
 }
+:root { --ramp-0: #1c3d6e; --ramp-1: #2a78d6; --ramp-2: #6da7ec; --ramp-3: #ffd166; }   /* score ramp: data encoding, identical in both themes */
 @media (prefers-reduced-motion: reduce) { :root { --dur: 0ms; } * { animation: none !important; transition: none !important; } }
