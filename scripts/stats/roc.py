@@ -71,26 +71,27 @@ def main():
         is_pos = np.zeros(len(g), bool)
         for ix in sites.values():
             is_pos[ix] = True
-        rec = {}
+        rec = {"auc_by_score": {}, "auc_ci95_by_score": {}}
+        state = rng.bit_generator.state                       # same bootstrap draws for every score (paired CIs)
         for s, col in SCORES.items():
             sc = g[col].to_numpy()
             pos, neg = sc[is_pos], sc[~is_pos]
             a = auc(pos, np.sort(neg))
+            rng.bit_generator.state = state
+            bs = bootstrap_auc([sc[ix] for ix in sites.values()], neg, rng)
+            ci = [round(float(np.percentile(bs, 2.5)), 4), round(float(np.percentile(bs, 97.5)), 4)]
+            rec["auc_by_score"][s] = round(a, 4)
+            rec["auc_ci95_by_score"][s] = ci
             if s == "combined":
                 fpr, tpr = roc_curve(pos, neg)
-                bs = bootstrap_auc([sc[ix] for ix in sites.values()], neg, rng)
-                rec.update(fpr=np.round(fpr, 4).tolist(), tpr=np.round(tpr, 4).tolist(), auc=round(a, 4),
-                           auc_ci95=[round(float(np.percentile(bs, 2.5)), 4), round(float(np.percentile(bs, 97.5)), 4)],
+                rec.update(fpr=np.round(fpr, 4).tolist(), tpr=np.round(tpr, 4).tolist(), auc=round(a, 4), auc_ci95=ci,
                            n_pos=int(is_pos.sum()), n_neg=int((~is_pos).sum()), n_sites=len(sites), sites=list(sites))
-                rec["auc_by_score"] = {}
-            rec["auc_by_score"][s] = round(a, 4)
         if rec["n_sites"] < 10:
             rec["warning"] = (f"only {rec['n_sites']} known sites ({rec['n_pos']} overlapping windows): "
                               "the AUC is descriptive and its CI is wide")
         out[ref] = rec
-        print(f"{ref:24s} AUC {rec['auc']:.3f} [{rec['auc_ci95'][0]:.3f}, {rec['auc_ci95'][1]:.3f}]  "
-              f"terrain {rec['auc_by_score']['terrain']:.3f}  illum {rec['auc_by_score']['illum']:.3f}  "
-              f"n_pos {rec['n_pos']} ({rec['n_sites']} sites)  n_neg {rec['n_neg']}")
+        print(f"{ref:24s} " + "  ".join(f"{s} {rec['auc_by_score'][s]:.3f} {rec['auc_ci95_by_score'][s]}" for s in SCORES)
+              + f"  n_pos {rec['n_pos']} ({rec['n_sites']} sites)")
     print("→", write("roc", out))
 
 
