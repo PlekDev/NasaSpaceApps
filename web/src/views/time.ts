@@ -89,7 +89,6 @@ export async function renderTime(el: HTMLElement, m: Manifest) {
   let focusId: string = series[0]?.id ?? '';
   let viewMode: 'curve' | 'heatmap' = 'curve';
   let hmSort: 'mean' | 'peak' | 'lat' = 'mean';
-  let activeMonth: number | null = null;
 
   const max = Math.max(...series.flatMap(s => s.v), 1);
   const narrow = el.clientWidth < 700;
@@ -138,7 +137,7 @@ export async function renderTime(el: HTMLElement, m: Manifest) {
           </div>
 
           <figure class="chart" id="time-chart-fig">
-            <figcaption class="sr-only"><h3>Hours per day with the Sun 0–7° above the horizon</h3></figcaption>
+            <figcaption class="sr-only">Monthly low-Sun hours per day (0–7° solar elevation) across the year for each Earth candidate region.</figcaption>
             <div class="chart-box">
               <svg id="tc" viewBox="0 0 ${W} ${H}" role="img" aria-label="Line chart of monthly low-Sun hours per day for each Earth region"></svg>
               <div class="tip" id="tt" hidden></div>
@@ -154,8 +153,8 @@ export async function renderTime(el: HTMLElement, m: Manifest) {
               </div>
               <span class="muted tiny">Click any region row to pin on the curve chart and inspect its profile.</span>
             </div>
-            <div class="hm-scroll" tabindex="0" role="region" aria-label="Monthly low-Sun hours heatmap">
-              <table class="hm time-hm" id="time-hm-tbl" role="grid" aria-label="Monthly low-Sun hours per day by Earth region"></table>
+            <div class="hm-scroll">
+              <table class="hm time-hm" id="time-hm-tbl"></table>
             </div>
           </div>
 
@@ -299,7 +298,7 @@ export async function renderTime(el: HTMLElement, m: Manifest) {
       if (hmSort === 'lat') return b.lat - a.lat;
       return b.mean - a.mean;
     });
-    hmTbl.innerHTML = `<thead>
+    hmTbl.innerHTML = `<caption class="sr-only">Monthly low-Sun hours per day by Earth region</caption><thead>
       <tr>
         <th class="corner" scope="col">Region</th>
         <th scope="col" class="tnum">Lat</th>
@@ -336,7 +335,6 @@ export async function renderTime(el: HTMLElement, m: Manifest) {
   }
 
   function showTooltip(i: number) {
-    activeMonth = i;
     const cx = svg.querySelector<SVGLineElement>('#cx');
     if (cx) {
       cx.removeAttribute('hidden');
@@ -432,7 +430,7 @@ export async function renderTime(el: HTMLElement, m: Manifest) {
       </g>`;
     }).join('');
 
-    svg.innerHTML = `${defs}${grid}${refMarks}${xs}<text x="${ml}" y="12" class="ax">hours/day</text>${rest}${areas}${on}<line id="cx" class="cx" y1="${mt}" y2="${H - mb}" hidden/><g id="active-pts"></g><rect id="hit" x="${ml}" y="${mt}" width="${W - ml - mr}" height="${H - mt - mb}" fill="transparent" tabindex="0" role="slider" aria-label="Scrub month from January to December" aria-valuemin="1" aria-valuemax="12" aria-valuenow="${(activeMonth ?? 2) + 1}" aria-valuetext="${MONTH_FULL[activeMonth ?? 2]}"/>`;
+    svg.innerHTML = `${defs}${grid}${refMarks}${xs}<text x="${ml}" y="12" class="ax">hours/day</text>${rest}${areas}${on}<line id="cx" class="cx" y1="${mt}" y2="${H - mb}" hidden/><g id="active-pts"></g><rect id="hit" x="${ml}" y="${mt}" width="${W - ml - mr}" height="${H - mt - mb}" fill="transparent"/>`;
 
     el.querySelectorAll<HTMLButtonElement>('.reg').forEach(b => {
       const id = b.dataset.id!;
@@ -450,25 +448,13 @@ export async function renderTime(el: HTMLElement, m: Manifest) {
       const r = svg.getBoundingClientRect();
       const px = ((e as PointerEvent).clientX - r.left) / r.width * W;
       const i = Math.max(0, Math.min(11, Math.round(((px - ml) / (W - ml - mr)) * 11)));
-      hit.setAttribute('aria-valuenow', String(i + 1));
-      hit.setAttribute('aria-valuetext', MONTH_FULL[i]);
       showTooltip(i);
     });
     hit.addEventListener('pointerleave', () => {
       cx.setAttribute('hidden', '');
       tt.hidden = true;
-      activeMonth = null;
       const activeLayer = svg.querySelector<SVGGElement>('#active-pts');
       if (activeLayer) activeLayer.innerHTML = '';
-    });
-    hit.addEventListener('keydown', e => {
-      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-      e.preventDefault();
-      const cur = activeMonth ?? 2;
-      const next = e.key === 'ArrowRight' ? Math.min(11, cur + 1) : Math.max(0, cur - 1);
-      hit.setAttribute('aria-valuenow', String(next + 1));
-      hit.setAttribute('aria-valuetext', MONTH_FULL[next]);
-      showTooltip(next);
     });
 
     renderFocus();
