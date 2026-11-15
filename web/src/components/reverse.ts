@@ -91,8 +91,11 @@ export function reverseSummary(rows: ReverseRow[], regionName: string): string {
     + (main && main.share >= 0.5 ? `Most of the remaining difference is ${main.label} (${Math.round(main.share * 100)} % of the squared distance).` : '');
 }
 
+let uid = 0;
+
 /** Render the reverse-search panel into el. Paul mounts it in Explore: renderReverse(el, `${region}_${i}_${j}`, data). */
 export function renderReverse(el: HTMLElement, windowId: string, data: ReverseData): void {
+  void import('./reverse.css');                              // loaded on first render only, so node --test can import this module
   const rows = reverseRank(windowId, data);
   const w = parseWindowId(windowId);
   const region = w ? data.manifest.regions.find(r => r.id === w.region) : undefined;
@@ -100,25 +103,25 @@ export function renderReverse(el: HTMLElement, windowId: string, data: ReverseDa
     el.innerHTML = `<p class="muted">No scores for this window.</p>`;
     return;
   }
-  const dims = Object.keys(data.manifest.dims);
+  const dims = Object.keys(data.manifest.dims), hid = `reverse-h-${++uid}`;
   const body = (b: string) => (b === 'moon' ? 'Moon' : cap(b));
-  const tr = rows.map(r => {
+  const tr = rows.map((r, n) => {
     const drv = r.drivers[0];
-    return `<tr>
-      <th scope="row">${esc(r.name)} <span class="muted">· ${esc(body(r.body))}</span></th>
+    return `<tr${n === 0 ? ' class="reverse-top"' : ''}>
+      <th scope="row">${esc(r.name)}<span class="reverse-body" data-body="${esc(r.body)}">${esc(body(r.body))}</span></th>
       <td class="tnum">${r.combined.toFixed(1)}</td>
       ${dims.map(dm => `<td class="tnum">${r.dims[dm].toFixed(1)}</td>`).join('')}
       <td class="tnum">#${nf(r.rank)} <span class="muted">top ${pctTxt(topPct(r))} %</span></td>
-      <td>${r.similar.length ? esc(r.similar.join(' · ')) : '—'}</td>
-      <td>${r.differs.length ? esc(r.differs.join(' · ')) : '—'}${drv ? ` <span class="muted">· largest gap: ${esc(drv.label)} ${Math.round(drv.share * 100)} %</span>` : ''}</td>
+      <td class="reverse-wrap">${r.similar.length ? esc(r.similar.join(' · ')) : '—'}</td>
+      <td class="reverse-wrap">${r.differs.length ? esc(r.differs.join(' · ')) : '—'}${drv ? `<span class="reverse-gap">largest gap: ${esc(drv.label)} ${Math.round(drv.share * 100)} %</span>` : ''}</td>
     </tr>`;
   }).join('');
   el.innerHTML = `
-    <section aria-labelledby="rv-h">
-      <h3 id="rv-h">What could you rehearse here?</h3>
-      <p>${esc(reverseSummary(rows, region.name))}</p>
+    <section class="reverse-panel" aria-labelledby="${hid}">
+      <h3 id="${hid}">What could you rehearse here?</h3>
+      <p class="reverse-lead">${esc(reverseSummary(rows, region.name))}</p>
       <div class="tbl"><table>
-        <caption>The ${rows.length} targets ranked by this window's score. Rank = position of this window among all ${nf(rows[0].n)} Earth windows for that target.</caption>
+        <caption>The ${rows.length} targets ranked by this window's score; the top % shows how this window ranks among all ${nf(rows[0].n)} Earth windows for each target (scores of different targets are not fully comparable).</caption>
         <thead><tr><th scope="col">Target</th><th scope="col">Score</th>${dims.map(dm => `<th scope="col">${esc(cap(dm))}</th>`).join('')}<th scope="col">Rank</th><th scope="col">Similar in</th><th scope="col">Differs in</th></tr></thead>
         <tbody>${tr}</tbody>
       </table></div>
