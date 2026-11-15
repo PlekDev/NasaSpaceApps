@@ -232,6 +232,15 @@ def main():
             f = PROC / "briefs" / (f"{r}.{ext}" if not ext.startswith("_") else f"{r}{ext}")
             if f.exists():
                 copy_atomic(f, OUT / "extras" / "briefs" / f.name); got[key] = f.name
+                if ext == "md":
+                    txt = f.read_text(encoding="utf-8")
+                    mb = re.search(r"Best 14-day campaign block:\s*\*\*(.+?)\*\*,\s*with\s*(\d+)\s*min/day", txt)
+                    if mb:
+                        got["block"], got["min_day"] = mb.group(1).strip(), int(mb.group(2))
+                    serves = [f"{m.group(1).strip()} {m.group(2).strip()}"
+                              for m in re.finditer(r"^\|\s*([^|\n]+?)\s*\|\s*(#\d+)\s+of\s+[\d,]+", txt, re.M)]
+                    if serves:
+                        got["serves"] = serves
         if got: briefs[r] = got
     # score matrix (fig2 as data): best window per Earth region x target, per dimension and combined
     summ = read_csv(PROC / "summary.csv")
