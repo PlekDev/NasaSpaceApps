@@ -3,6 +3,12 @@
 
 **Team:** Pollones en Fuga (Mexico) · **NASA Space Apps Challenge 2026 · Challenge:** *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars*
 
+**Try it:** [web app](https://plekdev.github.io/NasaSpaceApps/) (no install, works on a phone) · [method](docs/METHOD.md) · [field tools](docs/EXTRAS.md)
+
+> **Blind test.** Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar prospecting mission
+> in 2012, was never shown to P.E.N. It comes out **#1 of 10,424** Earth windows for Malapert Massif, in the top
+> 0.2 % for four of the six Moon Base sites and in the top 5 % for all six.
+
 P.E.N. finds the **exact field-test site on Earth** for the planned **lunar south-pole Moon Base** and for
 candidate **Mars landing areas**. It scores 6 km windows at 30 m resolution, **one dimension at a time**. Today
 those dimensions are terrain and **low-Sun illumination**, searched across **14 Earth regions** (~10,400 windows).
@@ -28,9 +34,9 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 |---|---|---|---|---|
 | Moon · Shackleton Connecting Ridge | Mauna Kea upper slopes, Hawaiʻi (19.811, −155.544) | 91 | 89 | 98 |
 | Moon · de Gerlache Rim | Mauna Kea, Hawaiʻi (19.865, −155.516) | 85 | 83 | 92 |
-| Moon · Nobile Rim 1 (Artemis candidate region) | Mauna Kea, Hawaiʻi (19.865, −155.516) | 81 | 78 | 95 |
+| Moon · Nobile Rim 1 (Artemis candidate region) | Mauna Kea, Hawaiʻi (19.865, −155.516) | 80 | 78 | 95 |
 | Moon · Malapert Massif (Artemis candidate region) | Mauna Kea, Hawaiʻi (19.784, −155.487) | 79 | 76 | 91 |
-| Moon · Haworth (Artemis candidate region) | Mauna Loa flank, Hawaiʻi (19.459, −155.516) | 89 | 91 | 87 |
+| Moon · Haworth (Artemis candidate region) | Mauna Loa flank, Hawaiʻi (19.459, −155.516) | 89 | 90 | 87 |
 | Moon · Leibnitz Beta Plateau (Artemis candidate region) | Mauna Loa flank, Hawaiʻi (19.296, −155.830) | 85 | 84 | 91 |
 | Mars · Arcadia Planitia | Hyperarid Atacama near Yungay, Chile (−24.893, −69.914) | 96 | 95 | 98 |
 | Mars · Jezero | Sierra Chichinautzin volcanic field, Mexico (19.323, −99.887) | 89 | 87 | 97 |
@@ -80,7 +86,7 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 
 ![Scores](figures/fig2_score_matrix.png)
 
-## Project status (Sat Nov 14, 15:30 local · freeze Sun 12:00 · submit Sun 18:00)
+## Project status (Sat Nov 14, 21:30 local · freeze Sun 12:00 · submit Sun 18:00)
 
 **Done**
 
@@ -104,31 +110,32 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 | Real NASA imagery for every analog card (Moon/Mars Trek WMTS, GIBS), aligned with the previews | `scripts/real_imagery.py` | Aaron · Paul |
 | Live field-safety check from NASA EONET, with an offline snapshot | `pen/eonet.py`, `scripts/eonet_snapshot.py` | Aaron |
 | Tests (17) and CI with an offline app smoke test | `tests/`, `.github/` | Aaron |
+| Static web app (globe, ranking, analog card, Analog in time, Validation, Method), phone layout, accessibility and no-WebGL fallback, ready for GitHub Pages | `web/` | Paul |
+| Field tools: twin-light timelapse, astronaut's-eye view, rover twin, field brief and `.ics` campaign calendar per region, shown in the web app's Field kit | `scripts/extras/`, [`docs/EXTRAS.md`](docs/EXTRAS.md) | Victor |
+| Earth land-surface temperature per window (NASA MODIS MOD11A2 from NASA Earthdata), 10,417 of 10,424 windows, shown on every analog card of the web app next to Diviner or the Mars Climate Database (context, not scored) | `scripts/earth_lst.py`, `scripts/earth_lst_earthaccess.py`, `data/processed/earth_lst_windows.csv` | D. Dona · Victor |
 
 **To do before the freeze** (each line is a GitHub issue, see [`docs/TEAM.md`](docs/TEAM.md))
 
 | What | Why it matters | Owner |
 |---|---|---|
-| Public deploy on Streamlit Community Cloud; check that EONET answers live there | The judges need a link that opens without installing anything | Aaron |
-| Deck (7 slides) and project page around the blind-rediscovery result | It's the demo the judges see | Angel |
-| Visual identity (wordmark), UI polish, phone check, visuals for the deck | First impression | Paul |
-| Earth surface temperature (MODIS/ECOSTRESS) so thermal becomes a **scored** dimension | Today Diviner is context only | D. Dona → Victor |
+| Turn on GitHub Pages for the web app (copy `web/pages.yml` to `.github/workflows/`, Settings → Pages → GitHub Actions, run it) and test the link in a private window and on a phone | The judges need a link that opens without installing anything | Aaron (repo admin) |
+| Deck (7 slides, our demo instead of the video) and project page around the blind-rediscovery result | It's the demo the judges see | Angel · Paul |
 | Fact-check every number in README, deck and page; tag `v1.0` | No wrong number in front of judges | Angel · Victor |
 
-**Stretch (only if time allows):** the remaining Artemis regions (Nobile Rim 2 has a 5 m DEM but lies at 84°S, outside
-the 85°S illumination map and DEM we validate against; de Gerlache Rim 2); EMIT mineralogy for the Mexican
-regions; a 30-second video.
+**Stretch (only if time allows):** EMIT mineralogy per window (in progress on `ddona/emit`); the remaining Artemis regions (Nobile Rim 2 has a 5 m DEM but lies at 84°S, outside
+the 85°S illumination map and DEM we validate against; de Gerlache Rim 2).
 
 ## Quick start
 
 ```bash
-git clone <this repo> && cd pen
+git clone https://github.com/PlekDev/NasaSpaceApps.git && cd NasaSpaceApps
 python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 streamlit run app/streamlit_app.py                   # uses the committed results in data/processed/
+make web-dev                                         # the web app (needs Node 20+), at http://localhost:5173
 ```
 
-Reproduce everything from raw data (~950 MB download, ~15 min compute):
+Reproduce everything from raw data (~950 MB download, ~25 min compute):
 
 ```bash
 make data        # python scripts/download_data.py
@@ -140,6 +147,7 @@ make far         # far-horizon light validation (~4 min, needs the 230 MB LOLA p
 make imagery     # real NASA imagery for the analog cards (Trek WMTS + GIBS, ~150 requests, no API key)
 make eonet       # refresh the offline EONET snapshot
 make test        # pytest
+make web-test    # web export and web unit tests
 ```
 
 Add an Earth region: copy a `candidate` block in [`config/sites.yaml`](config/sites.yaml) with its Copernicus tile,
@@ -279,6 +287,7 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 | [MRO CTX stereo DTMs](https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms) | **NASA** MRO / USGS | Mars reference terrain |
 | [LRO Diviner polar resource product](https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/) (Paige et al.) | **NASA** LRO / PDS | Moon temperature and ice stability (where Earth stops being an analog) |
 | [NASA POWER climatology API](https://power.larc.nasa.gov/docs/services/api/temporal/climatology/) | **NASA** LaRC | Earth skin temperature per region, compared with Diviner |
+| [MODIS Terra MOD11A2 v061](https://doi.org/10.5067/MODIS/MOD11A2.061) (NASA Earthdata) | **NASA** LP DAAC | Earth land-surface temperature per window, 2025 (context on the analog card) |
 | [Moon Trek / Mars Trek WMTS](https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon) (via api.nasa.gov) | **NASA** SSERVI / JPL | Real view of Moon (LRO NAC mosaic) and Mars (CTX mosaic) windows |
 | [GIBS](https://nasa-gibs.github.io/gibs-api-docs/) (via api.nasa.gov) | **NASA** ESDIS | Real view of Earth windows (Landsat WELD, HLS, MODIS) |
 | [EONET v3](https://eonet.gsfc.nasa.gov/docs/v3) (via api.nasa.gov) | **NASA** Earth Observatory | Live field-safety check (open natural events near the site) |
@@ -329,7 +338,8 @@ RADARSAT / Sentinel-1 radar (CSA / ESA).
 ## Use of AI
 
 In line with the Space Apps rules, we disclose that the team used an AI assistant (Claude, by Anthropic) to:
-gather background literature and dataset links, draft and refactor parts of the Python code, and draft documentation.
+gather background literature and dataset links, draft and refactor parts of the Python code, build parts of the web app's interface (`web/`, see
+[`web/README.md`](web/README.md)), and draft documentation.
 Every file with AI-assisted code says so in its header. The team decided the approach and the site choices, ran
 and checked all results, and owns every claim in this repository. No AI-generated images are used: every figure is
 plotted directly from the data by the scripts in `scripts/`.

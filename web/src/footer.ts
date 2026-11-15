@@ -1,6 +1,6 @@
 import type { Manifest } from './types';
 import { esc } from './format';
-const CREDITS = 'NASA LRO LOLA (GSFC PGDA), NASA LRO Diviner (PDS Geosciences), NASA Moon/Mars Trek WMTS, NASA GIBS, NASA EONET, NASA MRO CTX DTMs (USGS Astrogeology), ESA Copernicus DEM GLO-30, Natural Earth.';
+const CREDITS = 'NASA LRO LOLA (GSFC PGDA), NASA LRO Diviner (PDS Geosciences), NASA Moon/Mars Trek WMTS, NASA GIBS, NASA EONET, NASA POWER (MERRA-2), NASA MODIS MOD11A2 (LP DAAC), NASA MRO CTX DTMs (USGS Astrogeology), Mars Climate Database v6.2 (LMD/OU/IAA, ESA, CNES), ESA Copernicus DEM GLO-30, Natural Earth.';
 export function footerHTML(m: Manifest) {
   return `<footer class="foot"><span>Imagery NASA GIBS · data NASA, ESA · Built with AI assistance (see README → Use of AI)</span>
   <span class="tnum" title="git ${esc(m.git_commit)}">data ${esc(m.data_hash)}</span>

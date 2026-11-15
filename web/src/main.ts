@@ -48,7 +48,7 @@ async function boot() {
   const skip = q.get('intro') === '0' || seen || route() !== '';
   if (!skip) {
     introOn = true;
-    mountIntro(stage, t0, ex.view, () => { introOn = false; ex.show(true); ex.overview(true); });
+    mountIntro(stage, t0, ex.view, () => { introOn = false; ex.show(true); ex.overview(true); }, m);
   }
   apply();
   if (skip) ex.ready.then(() => ex.overview(false));
