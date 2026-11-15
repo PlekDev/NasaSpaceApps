@@ -222,6 +222,53 @@ be that of the forest canopy, not the ground.
   regions. A flat or gently rolling plain on Earth looks like Arcadia to this score; Arcadia rankings should not be read
   as evidence of a special analog.
 
+## 7 · Earth check of the shadow code with Landsat (`scripts/stats/landsat_shadow.py` → `landsat_shadow.json`)
+
+**What it validates, and what it does not.** It checks that our cast-shadow code (`pen.shadows.cast_shadow`), run on the
+Copernicus DEM with the real Sun geometry of a Landsat scene, reproduces the shadows in that scene. It does **not** test
+the grazing lunar-polar Sun. Landsat 8/9 pass in mid-morning (about 10:00–10:30 local time), so over Mauna Kea the Sun
+is high: in the 260 Landsat 8/9 Level-2 scenes with < 15 % cloud found over the summit, it is 40.5–68.2°. At 40.7° our
+model predicts shadow on 0.0065 % of the Mauna Kea tile (slopes there never face away from the Sun steeply enough), so
+there is nothing to compare; Mauna Kea is kept only as this negative control. The test is run instead on one of our
+own regions, Axel Heiberg Island (high Arctic), where a spring scene has the Sun at 14°.
+
+**Data (no credentials).** Landsat 8 Collection 2 Level-2 surface reflectance `LC08_L2SP_059002_20220402_02_T1`
+(2 Apr 2022, 20:05 UTC, scene cloud cover 0.08 %), read from Microsoft Planetary Computer with an anonymous token, and
+only the window over our tile. The Copernicus GLO-30 tile is the one of the main run.
+
+**Method.**
+- Sun position: NOAA solar-position equations. At the scene centre they give 14.11° / 207.45°, against 14.04° / 207.44°
+  in the MTL. The model uses the value at the tile centre, 14.21° / 210.99°: the scene spans about 15° of longitude
+  at 80° N, so the scene-centre azimuth is off by 3.6° here.
+- Grid: the DEM through `pen.grid.to_metric` (30 m, north-up); green, SWIR1, NIR and QA_PIXEL warped onto it.
+- Model shadow: `cast_shadow(z, 14.21°, 210.99°)`, unchanged.
+- Observed shadow: only snow-covered, clear pixels are evaluated (NDSI > 0.4; QA fill, cloud, cirrus and water
+  removed; 53.7 % of the tile). Dark rock and bare ground, which would look like shadow, are excluded. A pixel is in
+  shadow when its NIR surface reflectance is below a threshold.
+- Honest split: the threshold is tuned on the **west** half of the tile only (maximum Cohen's kappa; result 0.166) and
+  every metric is computed on the **east** half (675,911 pixels). Null: the same procedure with the Sun azimuth turned by
+  90°, 180° and 270°.
+
+**Results (east half).**
+
+| Sun azimuth used | IoU | Cohen's kappa | Agreement | Precision | Recall |
+|---|---|---|---|---|---|
+| real (210.99°) | **0.486** | **0.636** | 0.965 | 0.546 | 0.815 |
+| +90° | 0.106 | 0.100 | 0.836 | 0.186 | 0.198 |
+| +180° | 0.005 | −0.002 | 0.890 | 0.006 | 0.090 |
+| +270° | 0.164 | 0.244 | 0.879 | 0.171 | 0.798 |
+
+Sensitivity: the MTL scene-centre angles give IoU 0.483; Sun elevation −2° or +2° gives 0.474 and 0.467. The agreement
+peaks at the real geometry.
+
+**Interpretation.** The shadows our code predicts from the DEM match the shadows Landsat sees far better than the same
+code with a wrong Sun direction (kappa 0.64 against 0.24 at best), so the geometry of the cast-shadow model is right on a
+real Earth scene. The match is not pixel-perfect (IoU 0.49): the model calls 6.1 % of the evaluated pixels shadow and the
+image 4.1 %, with recall 0.81 and precision 0.55. Likely reasons, not separated here: skylight brightens shadowed snow,
+30 m cells mix lit and shadowed snow, and Landsat T1 geolocation is about 12 m. The per-window correlation of shadow
+fractions is high (Spearman 0.90 over 40 windows of 6 km) but is **not** evidence of geometry: it is also high with the
+wrong azimuths (0.74–0.91), because shadow fraction mostly follows relief. Use the pixel metrics.
+
 ## What the statistics do NOT support
 
 - **The 8 known sites as a group do not beat random points of our 14 regions.** Global null: p = 0.37 for the combined
@@ -239,6 +286,9 @@ be that of the forest canopy, not the ground.
   intervals: say "top window" with its bootstrap CI, never "the best place".
 - **The terrain score alone does not mean "lunar"**: rugged non-volcanic Alpine terrain reaches a terrain score of 80.4
   for Malapert (section 6); it is the illumination dimension that keeps it out of the top.
+- **The Landsat check is not a low-Sun lunar test**: it validates the shadow code at a 14° Sun on Arctic snow
+  (kappa 0.64 against 0.24 for the best wrong azimuth), not the 2–5° grazing Sun of the lunar pole, and it cannot be
+  run on Mauna Kea, where Landsat never sees the Sun below 40° (section 7).
 - **Arcadia rankings are not evidence of a special analog**: a farm plain in Iowa and prairie hills in Kansas score above
   the median of our regions for Arcadia (section 6).
 
