@@ -78,10 +78,18 @@ export function renderRehearsePanel(
     container.replaceChildren(
       h(
         'section',
-        { class: 'panel mission-rehearse-card', 'aria-label': 'Rehearse this traverse on Earth' },
-        h('div', { class: 'eyebrow' }, 'Earth field campaign scheduler · 365-day ephemeris scan'),
-        h('h2', { class: 'h2' }, 'Rehearse this traverse on Earth, on this date'),
-        h('p', { class: 'lede' }, 'No low-Sun windows found for this geometry.'),
+        { class: 'vsec mission-sec', id: 'mission-rehearse', 'aria-label': 'Rehearse this traverse on Earth' },
+        h(
+          'div',
+          { class: 'mission-sec-head' },
+          h('h2', null, 'Rehearse this traverse on Earth, on this date'),
+          h(
+            'p',
+            { class: 'mission-sec-lede' },
+            '365-day NOAA solar ephemeris scan (10-minute cadence, 0–7° elevation) at the selected Earth analog window.',
+          ),
+        ),
+        h('p', { class: 'lead mission-rehearse-headline' }, 'No low-Sun windows with compatible fidelity found for this geometry.'),
       ),
     );
     return;
@@ -107,6 +115,10 @@ export function renderRehearsePanel(
   const tProf = plan.targetLitProfile;
   const eProf = activeWin.earthLitProfile;
   const samples = Math.min(tProf.length, eProf.length);
+  let agreeCount = 0;
+  for (let i = 0; i < samples; i++) {
+    if (tProf[i] === eProf[i]) agreeCount++;
+  }
 
   // Build 365-day low-Sun azimuth reachability strip (72 bins of 5 deg)
   const reachableAz = earthLowSunDirections(earthWin.lat, earthWin.lon, plan.elevBandDeg[0], plan.elevBandDeg[1], earthWin.up_az ?? 0);
@@ -117,47 +129,37 @@ export function renderRehearsePanel(
   const section = h(
     'section',
     {
-      class: 'panel mission-rehearse-card',
+      class: 'vsec mission-sec',
       id: 'mission-rehearse',
       'aria-label': 'Rehearse this traverse on Earth, on this date',
     },
     h(
       'div',
-      { class: 'mission-section-head' },
+      { class: 'mission-sec-head' },
+      h('h2', null, 'Rehearse this traverse on Earth, on this date'),
       h(
-        'div',
-        null,
-        h(
-          'div',
-          { class: 'eyebrow' },
-          'Field rehearsal ephemeris · 365-day × 10-min NOAA solar search (0–7° elevation)',
-        ),
-        h('h2', { class: 'h2' }, 'Rehearse this traverse on Earth, on this date'),
-      ),
-      h(
-        'div',
-        { class: 'mission-rehearse-badges' },
-        h(
-          'span',
-          {
-            class: `mission-pill ${activeWin.exactAzimuthMatch ? 'mission-pill-emerald' : 'mission-pill-amber'}`,
-          },
-          activeWin.exactAzimuthMatch
-            ? `Azimuth within ±${plan.azToleranceDeg}° (Δaz ${activeWin.azErrorDeg.toFixed(1)}°)`
-            : `Closest low-Sun azimuth at lat ${earthWin.lat.toFixed(1)}° (Δaz ${activeWin.azErrorDeg.toFixed(1)}°)`,
-        ),
-        h(
-          'span',
-          { class: 'mission-pill mission-pill-gold' },
-          `Rehearsal fidelity: ${activeWin.fidelity.toFixed(1)} %`,
-        ),
+        'p',
+        { class: 'mission-sec-lede' },
+        `365-day NOAA solar ephemeris scan (10-minute cadence, 0–7° elevation) at ${earthWin.region} — ${activeWin.exactAzimuthMatch ? `azimuth within ±${plan.azToleranceDeg}° (Δaz ${activeWin.azErrorDeg.toFixed(1)}°)` : `closest low-Sun azimuth at ${earthWin.lat.toFixed(1)}° latitude (Δaz ${activeWin.azErrorDeg.toFixed(1)}°)`}.`,
       ),
     ),
 
-    // Star Feature Actionable Banner
+    // Star Feature Callout Banner
     h(
       'div',
-      { class: 'mission-rehearse-banner' },
+      { class: 'panel mission-rehearse-banner' },
+      h(
+        'div',
+        { class: 'mission-fidelity-score' },
+        h('b', { class: 'tnum' }, `${activeWin.fidelity.toFixed(1)}%`),
+        h(
+          'span',
+          null,
+          'rehearsal fidelity',
+          h('br'),
+          h('i', { class: 'tnum' }, `${agreeCount} / ${samples} waypoints`),
+        ),
+      ),
       h(
         'div',
         { class: 'mission-rehearse-statement' },
@@ -170,17 +172,17 @@ export function renderRehearsePanel(
           h('strong', null, earthWin.region),
           earthWin.place ? ` (${earthWin.place})` : '',
           ' on ',
-          h('strong', { class: 'num' }, activeWin.date),
+          h('strong', { class: 'tnum' }, activeWin.date),
           ', ',
-          h('strong', { class: 'num' }, fmtUtcRange(activeWin.startIso, activeWin.endIso)),
+          h('strong', { class: 'tnum' }, fmtUtcRange(activeWin.startIso, activeWin.endIso)),
           ` (local solar ${activeWin.localStart}–${activeWin.localEnd}, ${activeWin.durationMin} min) · fidelity `,
-          h('strong', { class: 'num mission-fidelity-highlight' }, `${activeWin.fidelity.toFixed(1)} %`),
+          h('strong', { class: 'tnum mission-fidelity-highlight' }, `${activeWin.fidelity.toFixed(1)} %`),
           '.',
         ),
         h(
           'p',
-          { class: 'mission-rehearse-sub' },
-          `Target Sun: elev ${plan.targetElevDeg.toFixed(1)}°, grid az ${plan.targetGridAzDeg.toFixed(0)}° (${(plan.targetLitShare * 100).toFixed(0)}% route lit)  ·  Earth Sun on ${activeWin.date}: elev ${activeWin.earthElevDeg.toFixed(1)}°, compass az ${activeWin.earthAzDeg.toFixed(0)}°, grid az ${activeWin.earthGridAzDeg.toFixed(0)}° (${(activeWin.earthLitShare * 100).toFixed(0)}% route lit).`,
+          { class: 'mission-rehearse-sub tnum' },
+          `Target Sun: elev ${plan.targetElevDeg.toFixed(1)}°, grid az ${plan.targetGridAzDeg.toFixed(0)}° (${(plan.targetLitShare * 100).toFixed(0)}% lit) · Earth Sun: elev ${activeWin.earthElevDeg.toFixed(1)}°, grid az ${activeWin.earthGridAzDeg.toFixed(0)}° (${(activeWin.earthLitShare * 100).toFixed(0)}% lit).`,
         ),
       ),
       h(
@@ -203,15 +205,6 @@ export function renderRehearsePanel(
           },
           'Open dossier →',
         ),
-        h(
-          'button',
-          {
-            type: 'button',
-            class: `btn ${opts.isEarthSyncedToWindow ? 'mission-btn-active' : ''}`,
-            onclick: () => opts.onSelectWindow(selectedIdx, true),
-          },
-          opts.isEarthSyncedToWindow ? '3D Earth synced to date' : 'Preview date in 3D',
-        ),
       ),
     ),
 
@@ -221,15 +214,15 @@ export function renderRehearsePanel(
       { class: 'mission-rehearse-strips' },
       h(
         'div',
-        { class: 'mission-strip-card' },
+        { class: 'panel mission-strip-card' },
         h(
           'div',
           { class: 'mission-strip-header' },
-          h('span', { class: 'mission-strip-title' }, '101-Sample Traverse Illumination Agreement (A → B)'),
+          h('span', { class: 'mission-strip-title' }, '101-Sample Illumination Agreement (A → B)'),
           h(
             'span',
-            { class: 'mission-strip-meta num' },
-            `${Math.round((activeWin.fidelity / 100) * samples)} / ${samples} waypoints match lit/shadow state`,
+            { class: 'mission-strip-meta tnum' },
+            `${agreeCount} / ${samples} waypoints match`,
           ),
         ),
         h(
@@ -244,7 +237,7 @@ export function renderRehearsePanel(
               { class: 'mission-fidelity-cells' },
               ...Array.from({ length: samples }, (_, i) =>
                 h('i', {
-                  class: tProf[i] ? 'fcell fcell-lit' : 'fcell fcell-shadow',
+                  class: `mission-fcell ${tProf[i] ? 'mission-fcell-lit' : 'mission-fcell-shadow'}`,
                   title: `Sample ${i}%: Target ${tProf[i] ? 'Lit' : 'Shadowed'}`,
                 }),
               ),
@@ -259,7 +252,7 @@ export function renderRehearsePanel(
               { class: 'mission-fidelity-cells' },
               ...Array.from({ length: samples }, (_, i) =>
                 h('i', {
-                  class: eProf[i] ? 'fcell fcell-lit' : 'fcell fcell-shadow',
+                  class: `mission-fcell ${eProf[i] ? 'mission-fcell-lit' : 'mission-fcell-shadow'}`,
                   title: `Sample ${i}%: Earth ${eProf[i] ? 'Lit' : 'Shadowed'}`,
                 }),
               ),
@@ -274,7 +267,7 @@ export function renderRehearsePanel(
               { class: 'mission-fidelity-cells' },
               ...Array.from({ length: samples }, (_, i) =>
                 h('i', {
-                  class: tProf[i] === eProf[i] ? 'fcell fcell-agree' : 'fcell fcell-mismatch',
+                  class: `mission-fcell ${tProf[i] === eProf[i] ? 'mission-fcell-agree' : 'mission-fcell-mismatch'}`,
                   title: `Sample ${i}%: ${tProf[i] === eProf[i] ? 'Identical illumination state' : 'Illumination mismatch'}`,
                 }),
               ),
@@ -285,19 +278,19 @@ export function renderRehearsePanel(
 
       h(
         'div',
-        { class: 'mission-strip-card' },
+        { class: 'panel mission-strip-card' },
         h(
           'div',
           { class: 'mission-strip-header' },
           h(
             'span',
             { class: 'mission-strip-title' },
-            `Annual Low-Sun Azimuth Envelope at ${earthWin.lat.toFixed(2)}° Lat`,
+            `Annual Low-Sun Azimuth Envelope (${earthWin.lat.toFixed(1)}° lat)`,
           ),
           h(
             'span',
-            { class: 'mission-strip-meta num' },
-            `${reachableAz.length * 5}° of horizon reachable at 0–7° Sun`,
+            { class: 'mission-strip-meta tnum' },
+            `${reachableAz.length * 5}° of horizon reachable`,
           ),
         ),
         h(
@@ -308,10 +301,10 @@ export function renderRehearsePanel(
             const isEarth = b === earthBin;
             const ok = reachSet.has(b);
             const cls = [
-              'az-bin',
-              ok ? 'az-bin-reachable' : 'az-bin-blocked',
-              isTarget ? 'az-bin-target' : '',
-              isEarth ? 'az-bin-earth' : '',
+              'mission-az-bin',
+              ok ? 'mission-az-bin-reachable' : 'mission-az-bin-blocked',
+              isTarget ? 'mission-az-bin-target' : '',
+              isEarth ? 'mission-az-bin-earth' : '',
             ]
               .filter(Boolean)
               .join(' ');
@@ -323,7 +316,7 @@ export function renderRehearsePanel(
         ),
         h(
           'div',
-          { class: 'mission-azimuth-ticks num' },
+          { class: 'mission-azimuth-ticks tnum' },
           h('span', null, '0° (N)'),
           h('span', null, '90° (E)'),
           h('span', null, '180° (S)'),
@@ -333,28 +326,35 @@ export function renderRehearsePanel(
       ),
     ),
 
-    // Top Candidate Rehearsal Windows Table
+    // Top Candidate Rehearsal Windows Table (6 clean columns matching Dossier style)
     h(
       'div',
-      { class: 'mission-table-wrap' },
+      {
+        class: 'tbl mission-table-wrap',
+        tabIndex: 0,
+        role: 'region',
+        'aria-label': 'Candidate Earth rehearsal windows across next 12 months',
+      },
       h(
         'table',
-        { class: 'mission-rehearse-table', 'aria-label': 'Candidate Earth rehearsal windows across next 12 months' },
+        { class: 'mission-rehearse-table' },
+        h(
+          'caption',
+          null,
+          `Top ${plan.windows.length} rehearsal windows in the next 12 months at ${earthWin.region} — click a row to preview in 3D`,
+        ),
         h(
           'thead',
           null,
           h(
             'tr',
             null,
-            h('th', { scope: 'col' }, 'Rank'),
-            h('th', { scope: 'col' }, 'Date (UTC)'),
-            h('th', { scope: 'col', class: 'num' }, 'UTC window'),
-            h('th', { scope: 'col', class: 'num' }, 'Local solar'),
-            h('th', { scope: 'col', class: 'num' }, 'Duration'),
-            h('th', { scope: 'col', class: 'num' }, 'Earth Sun (el / grid az)'),
-            h('th', { scope: 'col', class: 'num' }, 'Azimuth Δ'),
-            h('th', { scope: 'col', class: 'num' }, 'Route lit (T / E)'),
-            h('th', { scope: 'col', class: 'num' }, 'Fidelity'),
+            h('th', { scope: 'col' }, 'Window'),
+            h('th', { scope: 'col' }, 'UTC interval'),
+            h('th', { scope: 'col' }, 'Local solar'),
+            h('th', { scope: 'col' }, 'Earth Sun (az Δ)'),
+            h('th', { scope: 'col' }, 'Route lit (Target / Earth)'),
+            h('th', { scope: 'col' }, 'Fidelity'),
           ),
         ),
         h(
@@ -366,32 +366,41 @@ export function renderRehearsePanel(
               'tr',
               {
                 class: isSel ? 'mission-row-selected' : 'mission-row-clickable',
-                tabIndex: 0,
-                role: 'button',
-                'aria-pressed': isSel ? 'true' : 'false',
                 onclick: () => opts.onSelectWindow(idx, true),
-                onkeydown: (ev: KeyboardEvent) => {
-                  if (ev.key === 'Enter' || ev.key === ' ') {
-                    ev.preventDefault();
-                    opts.onSelectWindow(idx, true);
-                  }
-                },
               },
-              h('td', { class: 'num' }, `#${idx + 1}`),
-              h('td', { class: 'num mission-date-cell' }, w.date),
-              h('td', { class: 'num' }, fmtUtcRange(w.startIso, w.endIso)),
-              h('td', { class: 'num' }, `${w.localStart}–${w.localEnd}`),
-              h('td', { class: 'num' }, `${w.durationMin} min`),
-              h('td', { class: 'num' }, `${w.earthElevDeg.toFixed(1)}° / ${w.earthGridAzDeg.toFixed(0)}°`),
-              h('td', { class: 'num' }, `${w.azErrorDeg.toFixed(1)}°`),
+              h(
+                'th',
+                { scope: 'row', class: 'tnum mission-date-cell' },
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    class: 'link mission-row-btn tnum',
+                    'aria-pressed': isSel ? 'true' : 'false',
+                    'aria-label': `Preview ${w.date} ${fmtUtcRange(w.startIso, w.endIso)} in 3D (${w.fidelity.toFixed(1)}% fidelity)`,
+                    onclick: (ev: MouseEvent) => {
+                      ev.stopPropagation();
+                      opts.onSelectWindow(idx, true);
+                    },
+                  },
+                  `#${idx + 1} · ${w.date}`,
+                ),
+              ),
+              h('td', { class: 'tnum' }, fmtUtcRange(w.startIso, w.endIso)),
+              h('td', { class: 'tnum' }, `${w.localStart}–${w.localEnd} (${w.durationMin} m)`),
               h(
                 'td',
-                { class: 'num' },
+                { class: 'tnum' },
+                `${w.earthElevDeg.toFixed(1)}° · ${w.earthGridAzDeg.toFixed(0)}° (Δ ${w.azErrorDeg.toFixed(1)}°)`,
+              ),
+              h(
+                'td',
+                { class: 'tnum' },
                 `${(w.targetLitShare * 100).toFixed(0)}% / ${(w.earthLitShare * 100).toFixed(0)}%`,
               ),
               h(
                 'td',
-                { class: 'num mission-fidelity-cell' },
+                { class: 'tnum mission-fidelity-cell' },
                 h('span', { class: 'mission-fidelity-pill' }, `${w.fidelity.toFixed(1)} %`),
               ),
             );

@@ -63,119 +63,153 @@ export function renderTelemetryPanel(
 
   const rows: Array<{
     metric: string;
-    unit: string;
     targetVal: string;
     earthVal: string;
     deltaVal: string;
-    note: string;
   }> = [
     {
       metric: 'Least-cost traverse length',
-      unit: 'km',
       targetVal: `${input.targetTel.length_km.toFixed(2)} km`,
       earthVal: `${input.earthTel.length_km.toFixed(2)} km`,
-      deltaVal: `${(input.earthTel.length_km - input.targetTel.length_km >= 0 ? '+' : '') + (input.earthTel.length_km - input.targetTel.length_km).toFixed(2)} km`,
-      note: `${input.targetTel.waypoints} vs ${input.earthTel.waypoints} grid steps (30 m cells)`,
+      deltaVal: `${(input.earthTel.length_km - input.targetTel.length_km >= 0 ? '+' : '') + (input.earthTel.length_km - input.targetTel.length_km).toFixed(2)} km (${input.targetTel.waypoints} vs ${input.earthTel.waypoints} steps)`,
     },
     {
       metric: 'Cumulative climb / descent',
-      unit: 'm',
       targetVal: `+${Math.round(input.targetTel.climb_m)} / -${Math.round(input.targetTel.descent_m)} m`,
       earthVal: `+${Math.round(input.earthTel.climb_m)} / -${Math.round(input.earthTel.descent_m)} m`,
-      deltaVal: `Δclimb ${(input.earthTel.climb_m - input.targetTel.climb_m >= 0 ? '+' : '') + Math.round(input.earthTel.climb_m - input.targetTel.climb_m)} m`,
-      note: 'True unexaggerated vertical relief along route',
+      deltaVal: `Δclimb ${(input.earthTel.climb_m - input.targetTel.climb_m >= 0 ? '+' : '') + Math.round(input.earthTel.climb_m - input.targetTel.climb_m)} m (1× relief)`,
     },
     {
       metric: 'Mean / Max route slope',
-      unit: 'deg',
       targetVal: `${input.targetTel.mean_slope_deg.toFixed(1)}° / ${input.targetTel.max_slope_deg.toFixed(1)}°`,
       earthVal: `${input.earthTel.mean_slope_deg.toFixed(1)}° / ${input.earthTel.max_slope_deg.toFixed(1)}°`,
-      deltaVal: `Limit ${SLOPE_MAX_DEG}°`,
-      note: 'A* planner treats slope > 20° as impassable wall',
+      deltaVal: `A* wall at ${SLOPE_MAX_DEG}° grade`,
     },
     {
       metric: 'Window impassable area (> 20°)',
-      unit: '%',
       targetVal: `${(input.targetTel.share_window_impassable * 100).toFixed(1)} %`,
       earthVal: `${(input.earthTel.share_window_impassable * 100).toFixed(1)} %`,
-      deltaVal: `${((input.earthTel.share_window_impassable - input.targetTel.share_window_impassable) * 100 >= 0 ? '+' : '') + ((input.earthTel.share_window_impassable - input.targetTel.share_window_impassable) * 100).toFixed(1)} pp`,
-      note: 'Share of 6×6 km window exceeding 20° grade',
+      deltaVal: `${((input.earthTel.share_window_impassable - input.targetTel.share_window_impassable) * 100 >= 0 ? '+' : '') + ((input.earthTel.share_window_impassable - input.targetTel.share_window_impassable) * 100).toFixed(1)} pp across 6×6 km`,
     },
     {
       metric: 'Traverse lit share (current Sun)',
-      unit: '%',
       targetVal: `${(input.targetTel.litShareNow * 100).toFixed(1)} %`,
       earthVal: `${(input.earthTel.litShareNow * 100).toFixed(1)} %`,
-      deltaVal: `${instantFidelityPct} % match`,
-      note: `Window in shadow: ${tWinShadowPct}% (${input.targetBody}) vs ${eWinShadowPct}% (Earth)`,
+      deltaVal: `${instantFidelityPct}% match · window shadow ${tWinShadowPct}% / ${eWinShadowPct}%`,
     },
     {
       metric: 'Rover solar collector yield',
-      unit: '%',
       targetVal: `${(input.targetTel.solarEnergyRel * 100).toFixed(0)} %`,
       earthVal: `${(input.earthTel.solarEnergyRel * 100).toFixed(0)} %`,
-      deltaVal: `${((input.earthTel.solarEnergyRel - input.targetTel.solarEnergyRel) * 100 >= 0 ? '+' : '') + ((input.earthTel.solarEnergyRel - input.targetTel.solarEnergyRel) * 100).toFixed(0)} pp`,
-      note: 'Relative to flat unshadowed collector at current Sun elevation',
+      deltaVal: `${((input.earthTel.solarEnergyRel - input.targetTel.solarEnergyRel) * 100 >= 0 ? '+' : '') + ((input.earthTel.solarEnergyRel - input.targetTel.solarEnergyRel) * 100).toFixed(0)} pp vs flat unshadowed`,
     },
     {
       metric: 'Estimated drive duration',
-      unit: 'h',
       targetVal: `${input.targetTel.driveHours.toFixed(2)} h`,
       earthVal: `${input.earthTel.driveHours.toFixed(2)} h`,
-      deltaVal: `${(input.earthTel.driveHours - input.targetTel.driveHours >= 0 ? '+' : '') + (input.earthTel.driveHours - input.targetTel.driveHours).toFixed(2)} h`,
-      note: 'Nominal 0.50 m/s scaled by local grade resistance',
+      deltaVal: `${(input.earthTel.driveHours - input.targetTel.driveHours >= 0 ? '+' : '') + (input.earthTel.driveHours - input.targetTel.driveHours).toFixed(2)} h at 0.50 m/s`,
     },
   ];
 
-  const profileChart = buildProfileChart(input, tLitProf, eLitProf);
-
-  const card = h(
-    'section',
-    { class: 'panel mission-telemetry-card', 'aria-label': 'Side-by-side traverse telemetry' },
+  const statCards = h(
+    'div',
+    { class: 'mission-stat-cards' },
     h(
       'div',
-      { class: 'mission-section-head' },
+      { class: 'panel mission-stat-card' },
+      h('span', { class: 'label' }, 'Traverse length'),
+      h('b', { class: 'tnum mission-stat-val' }, `${input.targetTel.length_km.toFixed(2)} km`),
+      h('span', { class: 'mission-stat-sub tnum' }, `Earth twin ${input.earthTel.length_km.toFixed(2)} km`),
+    ),
+    h(
+      'div',
+      { class: 'panel mission-stat-card' },
+      h('span', { class: 'label' }, 'Climb / descent'),
       h(
-        'div',
-        null,
-        h('div', { class: 'eyebrow' }, 'Side-by-side traverse telemetry'),
-        h('h2', { class: 'h2' }, 'Route mechanics & illumination budget'),
+        'b',
+        { class: 'tnum mission-stat-val' },
+        `+${Math.round(input.targetTel.climb_m)} / -${Math.round(input.targetTel.descent_m)} m`,
       ),
       h(
-        'div',
-        { class: 'mission-telemetry-badges' },
-        h(
-          'span',
-          { class: 'mission-pill mission-pill-gold' },
-          `Instant light agreement: ${instantFidelityPct}%`,
-        ),
-        h(
-          'span',
-          { class: 'mission-pill' },
-          `Rover at ${Math.round(input.roverProgress * 100)}% of traverse`,
-        ),
+        'span',
+        { class: 'mission-stat-sub tnum' },
+        `Earth +${Math.round(input.earthTel.climb_m)} / -${Math.round(input.earthTel.descent_m)} m`,
       ),
     ),
+    h(
+      'div',
+      { class: 'panel mission-stat-card' },
+      h('span', { class: 'label' }, 'Mean / max slope'),
+      h(
+        'b',
+        { class: 'tnum mission-stat-val' },
+        `${input.targetTel.mean_slope_deg.toFixed(1)}° / ${input.targetTel.max_slope_deg.toFixed(1)}°`,
+      ),
+      h(
+        'span',
+        { class: 'mission-stat-sub tnum' },
+        `Earth ${input.earthTel.mean_slope_deg.toFixed(1)}° / ${input.earthTel.max_slope_deg.toFixed(1)}° (${SLOPE_MAX_DEG}° wall)`,
+      ),
+    ),
+    h(
+      'div',
+      { class: 'panel mission-stat-card' },
+      h('span', { class: 'label' }, 'Instant light match'),
+      h('b', { class: 'tnum mission-stat-val' }, `${instantFidelityPct}%`),
+      h(
+        'span',
+        { class: 'mission-stat-sub tnum' },
+        `${agreeCount}/${tLitProf.length} waypoints · rover ${Math.round(input.roverProgress * 100)}%`,
+      ),
+    ),
+  );
+
+  const profileChart = buildProfileChart(input, tLitProf, eLitProf);
+
+  const section = h(
+    'section',
+    { class: 'vsec mission-sec', 'aria-label': 'Traverse and telemetry' },
+    h(
+      'div',
+      { class: 'mission-sec-head' },
+      h('h2', null, 'Traverse and telemetry'),
+      h(
+        'p',
+        { class: 'mission-sec-lede' },
+        'Side-by-side A* route mechanics (30 m grid, > 20° slope wall) and 101-sample elevation and shadow profile.',
+      ),
+    ),
+
+    statCards,
 
     profileChart,
 
     h(
       'div',
-      { class: 'mission-table-wrap' },
+      {
+        class: 'tbl mission-table-wrap',
+        tabIndex: 0,
+        role: 'region',
+        'aria-label': 'Side-by-side traverse telemetry comparison',
+      },
       h(
         'table',
         { class: 'mission-telemetry-table' },
+        h(
+          'caption',
+          null,
+          `Route comparison between ${input.targetLabel} (${input.targetBody}) and ${input.earthLabel} along planned 30 m grid traverses`,
+        ),
         h(
           'thead',
           null,
           h(
             'tr',
             null,
-            h('th', { scope: 'col' }, 'Telemetry metric'),
-            h('th', { scope: 'col', class: 'num' }, `Target · ${input.targetLabel}`),
-            h('th', { scope: 'col', class: 'num' }, `Earth · ${input.earthLabel}`),
-            h('th', { scope: 'col', class: 'num' }, 'Comparison'),
-            h('th', { scope: 'col' }, 'Physical basis'),
+            h('th', { scope: 'col' }, 'Metric'),
+            h('th', { scope: 'col' }, `Target · ${input.targetLabel}`),
+            h('th', { scope: 'col' }, `Earth · ${input.earthLabel}`),
+            h('th', { scope: 'col' }, 'Delta / basis'),
           ),
         ),
         h(
@@ -186,10 +220,9 @@ export function renderTelemetryPanel(
               'tr',
               null,
               h('th', { scope: 'row' }, r.metric),
-              h('td', { class: 'num mission-val-target' }, r.targetVal),
-              h('td', { class: 'num mission-val-earth' }, r.earthVal),
-              h('td', { class: 'num mission-val-delta' }, r.deltaVal),
-              h('td', { class: 'mission-val-note' }, r.note),
+              h('td', { class: 'tnum mission-val-target' }, r.targetVal),
+              h('td', { class: 'tnum mission-val-earth' }, r.earthVal),
+              h('td', { class: 'tnum mission-val-delta' }, r.deltaVal),
             ),
           ),
         ),
@@ -197,7 +230,7 @@ export function renderTelemetryPanel(
     ),
   );
 
-  container.replaceChildren(card);
+  container.replaceChildren(section);
 }
 
 function buildProfileChart(
@@ -225,11 +258,11 @@ function buildProfileChart(
   const span = Math.max(20, maxRel - minRel);
 
   const W = 860;
-  const H = 185;
-  const padL = 54;
+  const H = 188;
+  const padL = 56;
   const padR = 20;
   const padT = 18;
-  const padB = 54;
+  const padB = 56;
   const plotW = W - padL - padR;
   const plotH = H - padT - padB;
 
@@ -239,6 +272,7 @@ function buildProfileChart(
   const svg = svgEl('svg', {
     viewBox: `0 0 ${W} ${H}`,
     class: 'mission-profile-svg',
+    role: 'img',
     'aria-label': '101-sample elevation and illumination profile along target and Earth routes',
   });
 
@@ -250,7 +284,7 @@ function buildProfileChart(
       y1: yZero,
       x2: W - padR,
       y2: yZero,
-      stroke: 'rgba(255,255,255,0.14)',
+      stroke: 'var(--line-strong)',
       'stroke-dasharray': '4 4',
     }),
   );
@@ -258,11 +292,11 @@ function buildProfileChart(
   // Y axis labels
   const topLabel = svgEl('text', {
     x: padL - 8,
-    y: padT + 8,
+    y: padT + 9,
     'text-anchor': 'end',
-    fill: '#9aa6bc',
-    'font-size': 10,
-    'font-family': 'JetBrains Mono, monospace',
+    fill: 'var(--text-2)',
+    'font-size': 11,
+    'font-family': 'var(--font-ui)',
   });
   topLabel.textContent = `${maxRel >= 0 ? '+' : ''}${Math.round(maxRel)} m`;
   svg.appendChild(topLabel);
@@ -271,14 +305,14 @@ function buildProfileChart(
     x: padL - 8,
     y: padT + plotH,
     'text-anchor': 'end',
-    fill: '#9aa6bc',
-    'font-size': 10,
-    'font-family': 'JetBrains Mono, monospace',
+    fill: 'var(--text-2)',
+    'font-size': 11,
+    'font-family': 'var(--font-ui)',
   });
   botLabel.textContent = `${minRel >= 0 ? '+' : ''}${Math.round(minRel)} m`;
   svg.appendChild(botLabel);
 
-  // Elevation polylines
+  // Elevation polylines (Okabe-Ito series tokens)
   const makePath = (arr: Float32Array) => {
     let d = '';
     for (let i = 0; i < samples; i++) {
@@ -291,17 +325,17 @@ function buildProfileChart(
     svgEl('path', {
       d: makePath(tRel),
       fill: 'none',
-      stroke: '#ffd166',
-      'stroke-width': 2.2,
+      stroke: 'var(--series-2)',
+      'stroke-width': 2.25,
     }),
   );
   svg.appendChild(
     svgEl('path', {
       d: makePath(eRel),
       fill: 'none',
-      stroke: '#38bdf8',
-      'stroke-width': 2.2,
-      'stroke-dasharray': '5 3',
+      stroke: 'var(--series-1)',
+      'stroke-width': 2.25,
+      'stroke-dasharray': '6 3',
     }),
   );
 
@@ -314,9 +348,9 @@ function buildProfileChart(
     x: padL - 8,
     y: stripY1 + 8,
     'text-anchor': 'end',
-    fill: '#9aa6bc',
-    'font-size': 9.5,
-    'font-family': 'JetBrains Mono, monospace',
+    fill: 'var(--text-2)',
+    'font-size': 10.5,
+    'font-family': 'var(--font-ui)',
   });
   lblT.textContent = 'Target';
   svg.appendChild(lblT);
@@ -325,9 +359,9 @@ function buildProfileChart(
     x: padL - 8,
     y: stripY2 + 8,
     'text-anchor': 'end',
-    fill: '#9aa6bc',
-    'font-size': 9.5,
-    'font-family': 'JetBrains Mono, monospace',
+    fill: 'var(--text-2)',
+    'font-size': 10.5,
+    'font-family': 'var(--font-ui)',
   });
   lblE.textContent = 'Earth';
   svg.appendChild(lblE);
@@ -340,7 +374,7 @@ function buildProfileChart(
         y: stripY1,
         width: cellW.toFixed(1),
         height: 9,
-        fill: tLitProf[i] ? '#ffd166' : '#2b4c7e',
+        fill: tLitProf[i] ? 'var(--ramp-3)' : 'var(--ramp-0)',
       }),
     );
     svg.appendChild(
@@ -349,7 +383,7 @@ function buildProfileChart(
         y: stripY2,
         width: cellW.toFixed(1),
         height: 9,
-        fill: eLitProf[i] ? '#ffd166' : '#2b4c7e',
+        fill: eLitProf[i] ? 'var(--ramp-3)' : 'var(--ramp-0)',
       }),
     );
   }
@@ -362,7 +396,7 @@ function buildProfileChart(
       y1: padT,
       x2: rx,
       y2: stripY2 + 10,
-      stroke: '#36d399',
+      stroke: 'var(--ok)',
       'stroke-width': 2,
     }),
   );
@@ -371,11 +405,11 @@ function buildProfileChart(
       cx: rx,
       cy: yOf(tRel[Math.min(samples - 1, Math.round(input.roverProgress * (samples - 1)))]),
       r: 4.5,
-      fill: '#36d399',
+      fill: 'var(--ok)',
     }),
   );
 
-  // Click / drag on SVG to scrub rover position
+  // Click on SVG to scrub rover position
   if (input.onScrubRover) {
     const scrubFromEvent = (ev: MouseEvent) => {
       const rect = svg.getBoundingClientRect();
@@ -389,15 +423,15 @@ function buildProfileChart(
 
   return h(
     'div',
-    { class: 'mission-profile-box' },
+    { class: 'panel mission-profile-box' },
     h(
       'div',
       { class: 'mission-profile-legend' },
-      h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-target-elev' }), `Target Δelev (m)`),
-      h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-earth-elev' }), `Earth Δelev (m)`),
-      h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-lit' }), 'Sunlit route cell'),
-      h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-shadow' }), 'Cast-shadow route cell'),
-      h('span', { class: 'mission-legend-hint' }, 'Click profile to move rover along traverse'),
+      h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-target-elev' }), 'Target Δelev (m)'),
+      h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-earth-elev' }), 'Earth Δelev (m)'),
+      h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-lit' }), 'Sunlit cell'),
+      h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-shadow' }), 'Cast shadow'),
+      h('span', { class: 'mission-legend-hint tnum' }, 'Click profile to move rover along traverse'),
     ),
     svg,
   );

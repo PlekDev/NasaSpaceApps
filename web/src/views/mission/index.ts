@@ -13,8 +13,10 @@ import { h } from './dom.ts';
 import type { Params } from '../../lib/routes.ts';
 import type { Manifest } from '../../types.ts';
 import {
-  renderControlsBar,
+  renderPrimaryControls,
+  renderSecondaryControls,
   type EarthSunMode,
+  type MissionControlsCallbacks,
   type MissionControlsState,
 } from './controls.ts';
 import { renderRehearsePanel } from './rehearse.ts';
@@ -47,7 +49,9 @@ function resolveTargetId(m: Manifest, raw?: string): string {
   if (!raw) return m.targets[0]?.id ?? 'moon_malapert';
   const exact = m.targets.find((t) => t.id === raw);
   if (exact) return exact.id;
-  const suffix = m.targets.find((t) => t.id.endsWith(`_${raw}`) || t.name.toLowerCase().includes(raw.toLowerCase()));
+  const suffix = m.targets.find(
+    (t) => t.id.endsWith(`_${raw}`) || t.name.toLowerCase().includes(raw.toLowerCase()),
+  );
   return suffix ? suffix.id : (m.targets[0]?.id ?? 'moon_malapert');
 }
 
@@ -102,26 +106,24 @@ export async function render(
   let selectedRehearsalIdx = 0;
 
   // DOM Containers
-  const heroBadgesSlot = h('div', { class: 'mission-hero-badges' });
-  const controlsSlot = h('div', { class: 'mission-controls-slot' });
+  const primaryControlsSlot = h('div', { class: 'mission-controls-slot' });
+  const secondaryControlsSlot = h('div', { class: 'mission-workbench-slot' });
 
   const targetTitleEl = h('h2', { class: 'mission-viewport-title' }, 'Loading target terrain…');
-  const targetSubEl = h('div', { class: 'mission-viewport-sub' }, '200×200 grid · 30 m/px (6×6 km)');
-  const targetMetaEl = h('div', { class: 'mission-viewport-meta num' });
+  const targetMetaEl = h('p', { class: 'mission-viewport-meta tnum' }, '200×200 grid · 30 m/px (6×6 km)');
   const targetCanvas = h('canvas', {
     class: 'mission-canvas',
     width: 640,
-    height: 410,
+    height: 430,
     'aria-label': 'Target planetary terrain 3D rehearsal viewport',
   }) as HTMLCanvasElement;
 
   const earthTitleEl = h('h2', { class: 'mission-viewport-title' }, 'Loading Earth analog window…');
-  const earthSubEl = h('div', { class: 'mission-viewport-sub' }, '200×200 grid · 30 m/px (6×6 km)');
-  const earthMetaEl = h('div', { class: 'mission-viewport-meta num' });
+  const earthMetaEl = h('p', { class: 'mission-viewport-meta tnum' }, '200×200 grid · 30 m/px (6×6 km)');
   const earthCanvas = h('canvas', {
     class: 'mission-canvas',
     width: 640,
-    height: 410,
+    height: 430,
     'aria-label': 'Earth analog terrain 3D rehearsal viewport',
   }) as HTMLCanvasElement;
 
@@ -130,31 +132,20 @@ export async function render(
 
   const page = h(
     'div',
-    { class: 'page mission-page' },
-    // Header
+    { class: 'page-in wide mission mission-page' },
     h(
       'header',
-      { class: 'mission-hero' },
+      { class: 'mission-header' },
+      h('h1', null, 'Mission rehearsal'),
       h(
-        'div',
-        null,
-        h(
-          'div',
-          { class: 'eyebrow' },
-          'Mission Rehearsal 3D · Validated Ray-Cast Illumination & Least-Cost Traverse',
-        ),
-        h('h1', { class: 'h1' }, 'Synchronized Twin Traverse & Field Campaign Scheduler'),
-        h(
-          'p',
-          { class: 'lede' },
-          'Plan a slope-constrained (< 20°) rover traverse on the Moon or Mars, inspect cast shadows from P.E.N.’s validated 30 m horizon model, and compute the exact UTC dates and times when the Sun on the Earth twin reproduces the traverse illumination.',
-        ),
+        'p',
+        { class: 'lead mission-lead' },
+        'Drive a least-cost rover traverse (< 20° grade) across a Moon or Mars site and its matched Earth twin under grazing low-angle sunlight — then compute the exact UTC dates when Earth’s sky reproduces that illumination.',
       ),
-      heroBadgesSlot,
     ),
 
-    // Controls
-    controlsSlot,
+    // Single-row primary controls above the synchronized 3D twin viewports
+    primaryControlsSlot,
 
     // Side-by-side 3D Viewports
     h(
@@ -163,11 +154,16 @@ export async function render(
       // Left: Planetary Target
       h(
         'article',
-        { class: 'mission-viewport-card' },
+        { class: 'panel mission-viewport-card' },
         h(
           'div',
           { class: 'mission-viewport-head' },
-          h('div', null, h('div', { class: 'eyebrow' }, 'Planetary Reference Window (6×6 km)'), targetTitleEl, targetSubEl),
+          h(
+            'div',
+            { class: 'mission-viewport-id' },
+            h('span', { class: 'label' }, 'Planetary Reference · 6×6 km'),
+            targetTitleEl,
+          ),
           targetMetaEl,
         ),
         h('div', { class: 'mission-canvas-wrap' }, targetCanvas),
@@ -177,24 +173,29 @@ export async function render(
           h(
             'div',
             { class: 'mission-legend-inline' },
-            h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-start' }), 'Start (A)'),
-            h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-end' }), 'End (B)'),
-            h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-lit' }), 'Lit traverse'),
-            h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-shadow' }), 'Shadowed traverse'),
-            h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-impassable' }), '> 20° impassable'),
+            h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-start' }), 'Start (A)'),
+            h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-end' }), 'End (B)'),
+            h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-lit' }), 'Lit'),
+            h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-shadow' }), 'Shadowed'),
+            h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-impassable' }), '> 20° wall'),
           ),
-          h('span', { class: 'num' }, 'Drag: orbit · Wheel: zoom · Shift+Click: set B'),
+          h('span', { class: 'mission-hint tnum' }, 'Drag to orbit · Wheel to zoom · Shift+Click to set B'),
         ),
       ),
 
       // Right: Earth Analog Window
       h(
         'article',
-        { class: 'mission-viewport-card' },
+        { class: 'panel mission-viewport-card' },
         h(
           'div',
           { class: 'mission-viewport-head' },
-          h('div', null, h('div', { class: 'eyebrow' }, 'Matched Earth Twin Window (6×6 km)'), earthTitleEl, earthSubEl),
+          h(
+            'div',
+            { class: 'mission-viewport-id' },
+            h('span', { class: 'label' }, 'Matched Earth Analog · 6×6 km'),
+            earthTitleEl,
+          ),
           earthMetaEl,
         ),
         h('div', { class: 'mission-canvas-wrap' }, earthCanvas),
@@ -204,15 +205,18 @@ export async function render(
           h(
             'div',
             { class: 'mission-legend-inline' },
-            h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-start' }), 'Start (A)'),
-            h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-end' }), 'End (B)'),
-            h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-lit' }), 'Lit traverse'),
-            h('span', { class: 'mission-legend-item' }, h('i', { class: 'swatch swatch-shadow' }), 'Shadowed traverse'),
+            h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-start' }), 'Start (A)'),
+            h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-end' }), 'End (B)'),
+            h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-lit' }), 'Lit'),
+            h('span', { class: 'mission-legend-item' }, h('i', { class: 'mission-swatch swatch-shadow' }), 'Shadowed'),
           ),
-          h('span', { class: 'num' }, 'Synchronized camera & vertical exaggeration'),
+          h('span', { class: 'mission-hint tnum' }, 'Synchronized camera & vertical scale'),
         ),
       ),
     ),
+
+    // Sun & traverse workbench controls cleanly seated below the 3D viewports
+    secondaryControlsSlot,
 
     // A2 Star Feature: "Rehearse this traverse on Earth, on this date"
     rehearseSlot,
@@ -235,10 +239,8 @@ export async function render(
       recomputeSimulation(true);
     },
   });
-  dualScene.setExaggeration(exag);
-  dualScene.setCameraMode(cameraMode);
 
-  // Initialize WebGL (falls back to 2D Canvas automatically if WebGL is unavailable)
+  // Initialize WebGL before applying initial 3D camera state (falls back cleanly to 2D Canvas)
   await dualScene.init();
   if (disposed) {
     dualScene.dispose();
@@ -246,6 +248,148 @@ export async function render(
   }
   if (!dualScene.hasWebGLSupport()) {
     cameraMode = 'topdown';
+  }
+  dualScene.setExaggeration(exag);
+  dualScene.setCameraMode(cameraMode);
+
+  function buildControlsState(): MissionControlsState {
+    const activeRehearsalWin = rehearsalPlan?.windows[selectedRehearsalIdx] ?? rehearsalPlan?.best;
+    return {
+      targetId,
+      windowRank,
+      windows: simMeta?.windows ?? [],
+      exag,
+      cameraMode,
+      pointerTool,
+      showSlopeMask,
+      sunElevDeg,
+      sunHourAngleDeg,
+      sunGridAzDeg: targetSun.gridAzDeg,
+      earthSunMode,
+      earthSunSummary: activeRehearsalWin ? `${activeRehearsalWin.date}` : '',
+      playingSun,
+      drivingRover,
+      roverProgress,
+      startFrac,
+      endFrac,
+    };
+  }
+
+  function renderControls(): void {
+    const st = buildControlsState();
+    renderPrimaryControls(primaryControlsSlot, m, st, controlsCallbacks);
+    renderSecondaryControls(secondaryControlsSlot, st, controlsCallbacks);
+  }
+
+  const controlsCallbacks: MissionControlsCallbacks = {
+    onSelectTarget: (newId) => {
+      void loadTargetAndWindow(newId, 1);
+    },
+    onSelectWindow: (newRank) => {
+      if (!simMeta) return;
+      windowRank = newRank;
+      earthWin = simMeta.windows[windowRank - 1] ?? simMeta.windows[0];
+      void loadSimGrid(earthWin, simMeta.n, simMeta.dx).then((g) => {
+        if (disposed) return;
+        earthGrid = g;
+        selectedRehearsalIdx = 0;
+        recomputeSimulation(true);
+      });
+    },
+    onChangeExag: (k) => {
+      exag = k;
+      dualScene.setExaggeration(exag);
+      renderControls();
+    },
+    onChangeCameraMode: (mode) => {
+      cameraMode = !dualScene.hasWebGLSupport() ? 'topdown' : mode;
+      dualScene.setCameraMode(cameraMode);
+      renderControls();
+    },
+    onResetCamera: () => {
+      dualScene.resetCamera();
+    },
+    onChangePointerTool: (tool) => {
+      pointerTool = tool;
+      dualScene.setPointerTool(tool);
+      renderControls();
+    },
+    onToggleSlopeMask: (show) => {
+      showSlopeMask = show;
+      dualScene.setShowSlopeMask(show);
+      renderControls();
+    },
+    onChangeSun: (newElev, newHa) => {
+      sunElevDeg = newElev;
+      sunHourAngleDeg = newHa;
+      recomputeSimulation(true);
+    },
+    onChangeEarthSunMode: (mode) => {
+      earthSunMode = mode;
+      recomputeSimulation(false);
+    },
+    onTogglePlaySun: () => {
+      playingSun = !playingSun;
+      syncAnimationLoop();
+      renderControls();
+    },
+    onToggleDriveRover: () => {
+      drivingRover = !drivingRover;
+      syncAnimationLoop();
+      renderControls();
+    },
+    onScrubRover: (prog) => {
+      roverProgress = prog;
+      dualScene.setRoverProgress(roverProgress);
+      renderControls();
+      renderTelemetryCurrent();
+    },
+    onSwapRoute: () => {
+      const tmp = startFrac;
+      startFrac = endFrac;
+      endFrac = tmp;
+      recomputeSimulation(true);
+    },
+  };
+
+  function renderTelemetryCurrent(): void {
+    if (
+      !simMeta ||
+      !targetGrid ||
+      !earthGrid ||
+      !earthWin ||
+      !targetLayers ||
+      !earthLayers ||
+      !targetTel ||
+      !earthTel
+    ) {
+      return;
+    }
+    const tInfo = m.targets.find((t) => t.id === targetId);
+    const targetShortName = tInfo?.name ?? simMeta.label;
+    renderTelemetryPanel(telemetrySlot, {
+      targetLabel: targetShortName,
+      targetBody: simMeta.body === 'mars' ? 'Mars' : 'Moon',
+      targetGrid,
+      targetLayers,
+      targetRoute,
+      targetTel,
+      targetSun,
+      earthLabel: earthWin.region,
+      earthPlace: earthWin.place,
+      earthGrid,
+      earthLayers,
+      earthRoute,
+      earthTel,
+      earthSun,
+      roverProgress,
+      onScrubRover: (prog) => {
+        roverProgress = prog;
+        dualScene.setRoverProgress(roverProgress);
+        renderControls();
+        renderTelemetryCurrent();
+      },
+    });
   }
 
   async function loadTargetAndWindow(newTargetId: string, desiredRank: number): Promise<void> {
@@ -345,7 +489,17 @@ export async function render(
   }
 
   function updateUI(): void {
-    if (!simMeta || !targetGrid || !earthGrid || !earthWin || !targetLayers || !earthLayers || !targetTel || !earthTel || !rehearsalPlan) {
+    if (
+      !simMeta ||
+      !targetGrid ||
+      !earthGrid ||
+      !earthWin ||
+      !targetLayers ||
+      !earthLayers ||
+      !targetTel ||
+      !earthTel ||
+      !rehearsalPlan
+    ) {
       return;
     }
 
@@ -353,149 +507,18 @@ export async function render(
     const targetShortName = tInfo?.name ?? simMeta.label;
     const activeRehearsalWin = rehearsalPlan.windows[selectedRehearsalIdx] ?? rehearsalPlan.best;
 
-    // Update Hero Badges
-    heroBadgesSlot.replaceChildren(
-      h(
-        'span',
-        { class: 'mission-pill mission-pill-gold' },
-        `Vert. exaggeration: ${exag.toFixed(1)}×`,
-      ),
-      h(
-        'span',
-        { class: 'mission-pill' },
-        dualScene.isWebGLActive() ? 'WebGL 3D Twin Engine' : '2D Hillshade Map Engine',
-      ),
-      h(
-        'span',
-        { class: 'mission-pill mission-pill-emerald' },
-        `Match score: ${earthWin.score.toFixed(1)}% (Terrain ${earthWin.terrain.toFixed(1)}% · Illum ${earthWin.illumination.toFixed(1)}%)`,
-      ),
-    );
-
-    // Update Viewport Headers
+    // Clean 1-line summary in viewport headers
     targetTitleEl.textContent = simMeta.label;
-    targetSubEl.textContent = `Center (${simMeta.center.lat.toFixed(2)}°, ${simMeta.center.lon.toFixed(2)}°) · Relief ${Math.round(targetGrid.min)} to ${Math.round(targetGrid.max)} m`;
-    targetMetaEl.replaceChildren(
-      h('span', null, `Sun elev ${targetSun.elevDeg.toFixed(1)}° · grid az ${Math.round(targetSun.gridAzDeg)}°`),
-      h(
-        'span',
-        null,
-        `Shadow ${(shadowFraction(targetLayers.shadow) * 100).toFixed(1)}% · Route ${targetTel.length_km.toFixed(2)} km`,
-      ),
-    );
+    targetMetaEl.textContent = `${simMeta.center.lat.toFixed(1)}°, ${simMeta.center.lon.toFixed(1)}° · Sun ${targetSun.elevDeg.toFixed(1)}° · ${(shadowFraction(targetLayers.shadow) * 100).toFixed(0)}% shadow · ${targetTel.length_km.toFixed(2)} km`;
 
-    earthTitleEl.textContent = `#${earthWin.rank} · ${earthWin.region}${earthWin.place ? ` — ${earthWin.place}` : ''}`;
-    earthSubEl.textContent = `Window (${earthWin.lat.toFixed(3)}°, ${earthWin.lon.toFixed(3)}°) · Relief ${Math.round(earthGrid.min)} to ${Math.round(earthGrid.max)} m`;
-    earthMetaEl.replaceChildren(
-      h(
-        'span',
-        null,
-        earthSunMode === 'rehearsal' && activeRehearsalWin
-          ? `${activeRehearsalWin.date} ${activeRehearsalWin.startIso.slice(11, 16)} UTC · elev ${earthSun.elevDeg.toFixed(1)}° · grid az ${Math.round(earthSun.gridAzDeg)}°`
-          : `Mirror Sun · elev ${earthSun.elevDeg.toFixed(1)}° · grid az ${Math.round(earthSun.gridAzDeg)}°`,
-      ),
-      h(
-        'span',
-        null,
-        `Shadow ${(shadowFraction(earthLayers.shadow) * 100).toFixed(1)}% · Route ${earthTel.length_km.toFixed(2)} km`,
-      ),
-    );
+    earthTitleEl.textContent = `#${earthWin.rank} · ${earthWin.region}${earthWin.place ? ` (${earthWin.place})` : ''}`;
+    earthMetaEl.textContent =
+      earthSunMode === 'rehearsal' && activeRehearsalWin
+        ? `${activeRehearsalWin.date} ${activeRehearsalWin.startIso.slice(11, 16)} UTC · Sun ${earthSun.elevDeg.toFixed(1)}° · ${(shadowFraction(earthLayers.shadow) * 100).toFixed(0)}% shadow · ${earthTel.length_km.toFixed(2)} km`
+        : `${earthWin.lat.toFixed(2)}°, ${earthWin.lon.toFixed(2)}° · Sun ${earthSun.elevDeg.toFixed(1)}° · ${(shadowFraction(earthLayers.shadow) * 100).toFixed(0)}% shadow · ${earthTel.length_km.toFixed(2)} km`;
 
-    // Render Controls Bar
-    const ctrlState: MissionControlsState = {
-      targetId,
-      windowRank,
-      windows: simMeta.windows,
-      exag,
-      cameraMode,
-      pointerTool,
-      showSlopeMask,
-      sunElevDeg,
-      sunHourAngleDeg,
-      sunGridAzDeg: targetSun.gridAzDeg,
-      earthSunMode,
-      earthSunSummary: activeRehearsalWin ? `${activeRehearsalWin.date}` : '',
-      playingSun,
-      drivingRover,
-      roverProgress,
-      startFrac,
-      endFrac,
-    };
-
-    renderControlsBar(controlsSlot, m, ctrlState, {
-      onSelectTarget: (newId) => {
-        void loadTargetAndWindow(newId, 1);
-      },
-      onSelectWindow: (newRank) => {
-        if (!simMeta) return;
-        windowRank = newRank;
-        earthWin = simMeta.windows[windowRank - 1] ?? simMeta.windows[0];
-        void loadSimGrid(earthWin, simMeta.n, simMeta.dx).then((g) => {
-          if (disposed) return;
-          earthGrid = g;
-          selectedRehearsalIdx = 0;
-          recomputeSimulation(true);
-        });
-      },
-      onChangeExag: (k) => {
-        exag = k;
-        dualScene.setExaggeration(exag);
-        updateUI();
-      },
-      onChangeCameraMode: (mode) => {
-        cameraMode = mode;
-        dualScene.setCameraMode(mode);
-        updateUI();
-      },
-      onResetCamera: () => {
-        dualScene.resetCamera();
-      },
-      onChangePointerTool: (tool) => {
-        pointerTool = tool;
-        dualScene.setPointerTool(tool);
-        updateUI();
-      },
-      onToggleSlopeMask: (show) => {
-        showSlopeMask = show;
-        dualScene.setShowSlopeMask(show);
-        updateUI();
-      },
-      onChangeSun: (newElev, newHa) => {
-        sunElevDeg = newElev;
-        sunHourAngleDeg = newHa;
-        recomputeSimulation(true);
-      },
-      onChangeEarthSunMode: (mode) => {
-        earthSunMode = mode;
-        recomputeSimulation(false);
-      },
-      onTogglePlaySun: () => {
-        playingSun = !playingSun;
-        syncAnimationLoop();
-        updateUI();
-      },
-      onToggleDriveRover: () => {
-        drivingRover = !drivingRover;
-        syncAnimationLoop();
-        updateUI();
-      },
-      onScrubRover: (prog) => {
-        roverProgress = prog;
-        dualScene.setRoverProgress(roverProgress);
-        updateUI();
-      },
-      onApplyPresetRoute: (s, e) => {
-        startFrac = s;
-        endFrac = e;
-        recomputeSimulation(true);
-      },
-      onSwapRoute: () => {
-        const tmp = startFrac;
-        startFrac = endFrac;
-        endFrac = tmp;
-        recomputeSimulation(true);
-      },
-    });
+    // Update Controls in place
+    renderControls();
 
     // Update 3D / 2D Scene Data
     dualScene.setData(
@@ -538,28 +561,7 @@ export async function render(
     });
 
     // Render Side-by-Side Telemetry Panel
-    renderTelemetryPanel(telemetrySlot, {
-      targetLabel: targetShortName,
-      targetBody: simMeta.body === 'mars' ? 'Mars' : 'Moon',
-      targetGrid,
-      targetLayers,
-      targetRoute,
-      targetTel,
-      targetSun,
-      earthLabel: earthWin.region,
-      earthPlace: earthWin.place,
-      earthGrid,
-      earthLayers,
-      earthRoute,
-      earthTel,
-      earthSun,
-      roverProgress,
-      onScrubRover: (prog) => {
-        roverProgress = prog;
-        dualScene.setRoverProgress(roverProgress);
-        updateUI();
-      },
-    });
+    renderTelemetryCurrent();
   }
 
   function syncAnimationLoop(): void {
@@ -573,7 +575,8 @@ export async function render(
       if (drivingRover && !playingSun) {
         roverProgress = (roverProgress + 0.015) % 1;
         dualScene.setRoverProgress(roverProgress);
-        updateUI();
+        renderControls();
+        renderTelemetryCurrent();
       } else if (playingSun) {
         if (drivingRover) {
           roverProgress = (roverProgress + 0.015) % 1;
