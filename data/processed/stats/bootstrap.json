@@ -1,0 +1,2396 @@
+{
+ "_stub": false,
+ "n_ref": {
+  "moon_connecting_ridge": 10,
+  "moon_nobile_rim1": 23,
+  "moon_de_gerlache_rim": 12,
+  "moon_malapert": 36,
+  "moon_haworth": 64,
+  "moon_leibnitz_beta": 11,
+  "mars_arcadia": 94,
+  "mars_jezero": 82,
+  "mars_deuteronilus": 165
+ },
+ "moon_connecting_ridge": [
+  {
+   "window_id": "earth_hawaii_mauna_kea_600_1500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 90.9,
+   "ci95": [
+    76.2,
+    91.5
+   ],
+   "rank_ci95": [
+    1,
+    176
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_500_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 90.3,
+   "ci95": [
+    73.0,
+    92.4
+   ],
+   "rank_ci95": [
+    1,
+    154
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_600_2000",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 89.3,
+   "ci95": [
+    76.6,
+    91.1
+   ],
+   "rank_ci95": [
+    1,
+    95
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2500_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 89.0,
+   "ci95": [
+    74.3,
+    89.3
+   ],
+   "rank_ci95": [
+    3,
+    135
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 88.9,
+   "ci95": [
+    74.6,
+    90.3
+   ],
+   "rank_ci95": [
+    2,
+    192
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_200",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 88.5,
+   "ci95": [
+    73.5,
+    88.5
+   ],
+   "rank_ci95": [
+    3,
+    238
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2600_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 88.4,
+   "ci95": [
+    74.7,
+    89.1
+   ],
+   "rank_ci95": [
+    4,
+    127
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.8,
+   "ci95": [
+    77.2,
+    90.6
+   ],
+   "rank_ci95": [
+    1,
+    64
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2300_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.5,
+   "ci95": [
+    72.7,
+    89.6
+   ],
+   "rank_ci95": [
+    2,
+    223
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2400_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.3,
+   "ci95": [
+    71.5,
+    89.7
+   ],
+   "rank_ci95": [
+    1,
+    319
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_500_1500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.2,
+   "ci95": [
+    69.1,
+    90.0
+   ],
+   "rank_ci95": [
+    2,
+    469
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_500_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.2,
+   "ci95": [
+    68.8,
+    90.6
+   ],
+   "rank_ci95": [
+    1,
+    473
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2200_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 86.4,
+   "ci95": [
+    75.7,
+    89.0
+   ],
+   "rank_ci95": [
+    6,
+    91
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2000_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 85.8,
+   "ci95": [
+    73.0,
+    89.9
+   ],
+   "rank_ci95": [
+    2,
+    174
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_600_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 85.4,
+   "ci95": [
+    66.9,
+    89.8
+   ],
+   "rank_ci95": [
+    2,
+    625
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_500_1400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 85.3,
+   "ci95": [
+    76.1,
+    90.7
+   ],
+   "rank_ci95": [
+    1,
+    132
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2200_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 85.3,
+   "ci95": [
+    71.7,
+    89.3
+   ],
+   "rank_ci95": [
+    4,
+    281
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2500_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 85.1,
+   "ci95": [
+    68.9,
+    88.9
+   ],
+   "rank_ci95": [
+    3,
+    544
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 84.5,
+   "ci95": [
+    71.4,
+    86.9
+   ],
+   "rank_ci95": [
+    9,
+    421
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 84.2,
+   "ci95": [
+    71.6,
+    86.6
+   ],
+   "rank_ci95": [
+    10,
+    477
+   ]
+  }
+ ],
+ "moon_nobile_rim1": [
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 80.5,
+   "ci95": [
+    64.8,
+    85.2
+   ],
+   "rank_ci95": [
+    1,
+    55
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1700",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 77.1,
+   "ci95": [
+    62.9,
+    82.7
+   ],
+   "rank_ci95": [
+    1,
+    96
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 75.4,
+   "ci95": [
+    65.5,
+    80.7
+   ],
+   "rank_ci95": [
+    3,
+    33
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 75.4,
+   "ci95": [
+    65.5,
+    81.5
+   ],
+   "rank_ci95": [
+    2,
+    61
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_500_1500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 75.0,
+   "ci95": [
+    63.3,
+    82.0
+   ],
+   "rank_ci95": [
+    2,
+    28
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1800",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 74.7,
+   "ci95": [
+    63.1,
+    80.9
+   ],
+   "rank_ci95": [
+    2,
+    72
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_600_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 74.4,
+   "ci95": [
+    63.4,
+    80.3
+   ],
+   "rank_ci95": [
+    4,
+    39
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 74.3,
+   "ci95": [
+    66.0,
+    79.9
+   ],
+   "rank_ci95": [
+    3,
+    98
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1700",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 73.7,
+   "ci95": [
+    66.5,
+    81.0
+   ],
+   "rank_ci95": [
+    3,
+    136
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_500_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 73.2,
+   "ci95": [
+    61.6,
+    81.8
+   ],
+   "rank_ci95": [
+    1,
+    38
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_600_1500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 72.9,
+   "ci95": [
+    61.6,
+    83.9
+   ],
+   "rank_ci95": [
+    1,
+    36
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_300_1700",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 72.8,
+   "ci95": [
+    61.7,
+    77.8
+   ],
+   "rank_ci95": [
+    1,
+    292
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_200",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 72.7,
+   "ci95": [
+    62.0,
+    82.5
+   ],
+   "rank_ci95": [
+    2,
+    33
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_300_1800",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 72.7,
+   "ci95": [
+    63.7,
+    78.2
+   ],
+   "rank_ci95": [
+    4,
+    162
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 72.2,
+   "ci95": [
+    63.5,
+    78.1
+   ],
+   "rank_ci95": [
+    10,
+    48
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1800",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 72.0,
+   "ci95": [
+    62.0,
+    78.0
+   ],
+   "rank_ci95": [
+    8,
+    45
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 70.8,
+   "ci95": [
+    60.7,
+    80.5
+   ],
+   "rank_ci95": [
+    6,
+    50
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_300_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 70.2,
+   "ci95": [
+    62.4,
+    77.3
+   ],
+   "rank_ci95": [
+    7,
+    123
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 69.7,
+   "ci95": [
+    59.9,
+    76.3
+   ],
+   "rank_ci95": [
+    7,
+    100
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1100_300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 69.2,
+   "ci95": [
+    61.4,
+    78.6
+   ],
+   "rank_ci95": [
+    12,
+    69
+   ]
+  }
+ ],
+ "moon_de_gerlache_rim": [
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 84.8,
+   "ci95": [
+    70.1,
+    91.3
+   ],
+   "rank_ci95": [
+    1,
+    36
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_200",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 83.5,
+   "ci95": [
+    69.4,
+    89.0
+   ],
+   "rank_ci95": [
+    1,
+    41
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 83.3,
+   "ci95": [
+    71.4,
+    90.9
+   ],
+   "rank_ci95": [
+    1,
+    23
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_600_1500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 82.8,
+   "ci95": [
+    68.9,
+    88.8
+   ],
+   "rank_ci95": [
+    1,
+    50
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_500_1500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 82.4,
+   "ci95": [
+    70.6,
+    89.3
+   ],
+   "rank_ci95": [
+    1,
+    33
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 82.2,
+   "ci95": [
+    72.8,
+    91.9
+   ],
+   "rank_ci95": [
+    1,
+    21
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_500_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 81.0,
+   "ci95": [
+    70.1,
+    87.4
+   ],
+   "rank_ci95": [
+    4,
+    46
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_600_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 80.5,
+   "ci95": [
+    71.7,
+    88.9
+   ],
+   "rank_ci95": [
+    3,
+    38
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 80.0,
+   "ci95": [
+    69.8,
+    88.3
+   ],
+   "rank_ci95": [
+    4,
+    28
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 79.9,
+   "ci95": [
+    72.3,
+    90.8
+   ],
+   "rank_ci95": [
+    2,
+    26
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_900_300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 79.8,
+   "ci95": [
+    66.2,
+    85.6
+   ],
+   "rank_ci95": [
+    3,
+    92
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 79.4,
+   "ci95": [
+    71.5,
+    88.2
+   ],
+   "rank_ci95": [
+    2,
+    62
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1700",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 79.2,
+   "ci95": [
+    67.3,
+    84.9
+   ],
+   "rank_ci95": [
+    1,
+    135
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_300_1800",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 78.4,
+   "ci95": [
+    68.9,
+    85.4
+   ],
+   "rank_ci95": [
+    2,
+    63
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1100_300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 78.2,
+   "ci95": [
+    68.3,
+    86.5
+   ],
+   "rank_ci95": [
+    7,
+    34
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_500_1400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 77.9,
+   "ci95": [
+    63.9,
+    84.4
+   ],
+   "rank_ci95": [
+    4,
+    219
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1800",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 77.9,
+   "ci95": [
+    68.6,
+    84.9
+   ],
+   "rank_ci95": [
+    3,
+    81
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_300_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 77.9,
+   "ci95": [
+    68.3,
+    85.9
+   ],
+   "rank_ci95": [
+    6,
+    45
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1800",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 77.8,
+   "ci95": [
+    70.8,
+    87.8
+   ],
+   "rank_ci95": [
+    3,
+    47
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2500_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 77.7,
+   "ci95": [
+    66.2,
+    83.9
+   ],
+   "rank_ci95": [
+    9,
+    98
+   ]
+  }
+ ],
+ "moon_malapert": [
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1700",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 79.3,
+   "ci95": [
+    60.3,
+    89.9
+   ],
+   "rank_ci95": [
+    1,
+    78
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_1800_2800",
+   "site": "earth_mx_serdan_oriental",
+   "score": 77.2,
+   "ci95": [
+    62.8,
+    78.5
+   ],
+   "rank_ci95": [
+    1,
+    52
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 72.1,
+   "ci95": [
+    55.3,
+    86.7
+   ],
+   "rank_ci95": [
+    1,
+    438
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 71.8,
+   "ci95": [
+    56.8,
+    81.8
+   ],
+   "rank_ci95": [
+    2,
+    275
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1800",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 71.3,
+   "ci95": [
+    56.0,
+    80.4
+   ],
+   "rank_ci95": [
+    3,
+    340
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_600_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 70.8,
+   "ci95": [
+    54.8,
+    82.9
+   ],
+   "rank_ci95": [
+    4,
+    485
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1800",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 70.8,
+   "ci95": [
+    54.5,
+    83.8
+   ],
+   "rank_ci95": [
+    3,
+    627
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 70.6,
+   "ci95": [
+    55.9,
+    79.6
+   ],
+   "rank_ci95": [
+    5,
+    341
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 70.6,
+   "ci95": [
+    55.3,
+    81.3
+   ],
+   "rank_ci95": [
+    5,
+    403
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_2800_2400",
+   "site": "earth_mx_serdan_oriental",
+   "score": 70.6,
+   "ci95": [
+    59.8,
+    71.7
+   ],
+   "rank_ci95": [
+    4,
+    120
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 70.4,
+   "ci95": [
+    54.9,
+    78.6
+   ],
+   "rank_ci95": [
+    4,
+    503
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_3400_2700",
+   "site": "earth_atacama_yungay",
+   "score": 70.4,
+   "ci95": [
+    58.5,
+    72.7
+   ],
+   "rank_ci95": [
+    5,
+    147
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1700",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 70.2,
+   "ci95": [
+    53.3,
+    85.9
+   ],
+   "rank_ci95": [
+    1,
+    803
+   ]
+  },
+  {
+   "window_id": "earth_cuatrocienegas_1500_3100",
+   "site": "earth_cuatrocienegas",
+   "score": 70.1,
+   "ci95": [
+    55.8,
+    71.4
+   ],
+   "rank_ci95": [
+    4,
+    300
+   ]
+  },
+  {
+   "window_id": "earth_axel_heiberg_3200_0",
+   "site": "earth_axel_heiberg",
+   "score": 69.4,
+   "ci95": [
+    48.9,
+    75.8
+   ],
+   "rank_ci95": [
+    1,
+    1311
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_400_1500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 69.3,
+   "ci95": [
+    54.6,
+    80.4
+   ],
+   "rank_ci95": [
+    3,
+    505
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_1400_3100",
+   "site": "earth_mx_serdan_oriental",
+   "score": 69.2,
+   "ci95": [
+    58.2,
+    71.5
+   ],
+   "rank_ci95": [
+    11,
+    129
+   ]
+  },
+  {
+   "window_id": "earth_cuatrocienegas_1500_3000",
+   "site": "earth_cuatrocienegas",
+   "score": 68.9,
+   "ci95": [
+    54.3,
+    69.8
+   ],
+   "rank_ci95": [
+    3,
+    465
+   ]
+  },
+  {
+   "window_id": "earth_cuatrocienegas_1500_2900",
+   "site": "earth_cuatrocienegas",
+   "score": 68.8,
+   "ci95": [
+    53.9,
+    70.1
+   ],
+   "rank_ci95": [
+    4,
+    454
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_2600_2700",
+   "site": "earth_atacama_yungay",
+   "score": 68.7,
+   "ci95": [
+    57.2,
+    73.2
+   ],
+   "rank_ci95": [
+    9,
+    197
+   ]
+  }
+ ],
+ "moon_haworth": [
+  {
+   "window_id": "earth_hawaii_mauna_kea_1900_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 89.4,
+   "ci95": [
+    85.9,
+    91.0
+   ],
+   "rank_ci95": [
+    1,
+    22
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1900_1700",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 89.2,
+   "ci95": [
+    85.4,
+    90.9
+   ],
+   "rank_ci95": [
+    1,
+    26
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1900_1000",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 88.7,
+   "ci95": [
+    85.3,
+    90.3
+   ],
+   "rank_ci95": [
+    1,
+    24
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2700_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 88.4,
+   "ci95": [
+    85.8,
+    89.4
+   ],
+   "rank_ci95": [
+    1,
+    28
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2600_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.9,
+   "ci95": [
+    84.5,
+    89.5
+   ],
+   "rank_ci95": [
+    3,
+    42
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1200_100",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.9,
+   "ci95": [
+    84.5,
+    89.3
+   ],
+   "rank_ci95": [
+    4,
+    35
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2000_1800",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.8,
+   "ci95": [
+    84.1,
+    89.1
+   ],
+   "rank_ci95": [
+    3,
+    44
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1900_1100",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.8,
+   "ci95": [
+    84.0,
+    89.3
+   ],
+   "rank_ci95": [
+    3,
+    45
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2100_1400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.7,
+   "ci95": [
+    84.4,
+    89.4
+   ],
+   "rank_ci95": [
+    2,
+    52
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1800_1100",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.7,
+   "ci95": [
+    83.3,
+    89.4
+   ],
+   "rank_ci95": [
+    1,
+    57
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1600_1300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.6,
+   "ci95": [
+    83.9,
+    89.2
+   ],
+   "rank_ci95": [
+    5,
+    44
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2400_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.4,
+   "ci95": [
+    83.9,
+    90.0
+   ],
+   "rank_ci95": [
+    1,
+    68
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2000_1700",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.3,
+   "ci95": [
+    83.9,
+    89.2
+   ],
+   "rank_ci95": [
+    2,
+    62
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2200_1300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.3,
+   "ci95": [
+    84.2,
+    88.7
+   ],
+   "rank_ci95": [
+    6,
+    39
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2700_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.1,
+   "ci95": [
+    83.2,
+    89.0
+   ],
+   "rank_ci95": [
+    6,
+    49
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2700_1400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.0,
+   "ci95": [
+    83.8,
+    88.4
+   ],
+   "rank_ci95": [
+    7,
+    50
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2400_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.0,
+   "ci95": [
+    83.1,
+    88.5
+   ],
+   "rank_ci95": [
+    7,
+    61
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1200_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 87.0,
+   "ci95": [
+    81.8,
+    90.0
+   ],
+   "rank_ci95": [
+    1,
+    66
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2800_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 86.9,
+   "ci95": [
+    82.9,
+    89.3
+   ],
+   "rank_ci95": [
+    3,
+    52
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2300_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 86.7,
+   "ci95": [
+    83.5,
+    88.6
+   ],
+   "rank_ci95": [
+    5,
+    73
+   ]
+  }
+ ],
+ "moon_leibnitz_beta": [
+  {
+   "window_id": "earth_hawaii_mauna_kea_2500_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 85.3,
+   "ci95": [
+    78.5,
+    87.9
+   ],
+   "rank_ci95": [
+    1,
+    47
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2400_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 85.2,
+   "ci95": [
+    78.7,
+    87.7
+   ],
+   "rank_ci95": [
+    1,
+    41
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_600_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 83.1,
+   "ci95": [
+    77.6,
+    91.3
+   ],
+   "rank_ci95": [
+    1,
+    96
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2000_1500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 83.1,
+   "ci95": [
+    75.5,
+    85.7
+   ],
+   "rank_ci95": [
+    4,
+    115
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2100_1400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 83.1,
+   "ci95": [
+    73.8,
+    86.5
+   ],
+   "rank_ci95": [
+    3,
+    159
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2300_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 82.9,
+   "ci95": [
+    76.4,
+    87.8
+   ],
+   "rank_ci95": [
+    4,
+    48
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2600_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 82.6,
+   "ci95": [
+    75.3,
+    86.7
+   ],
+   "rank_ci95": [
+    4,
+    47
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_500_1900",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 82.5,
+   "ci95": [
+    77.1,
+    91.9
+   ],
+   "rank_ci95": [
+    1,
+    90
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2300_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 82.5,
+   "ci95": [
+    76.3,
+    84.7
+   ],
+   "rank_ci95": [
+    6,
+    95
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1900_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 82.4,
+   "ci95": [
+    73.9,
+    86.6
+   ],
+   "rank_ci95": [
+    2,
+    103
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2000_1700",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 81.9,
+   "ci95": [
+    75.0,
+    84.5
+   ],
+   "rank_ci95": [
+    9,
+    82
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2200_500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 81.7,
+   "ci95": [
+    75.3,
+    88.6
+   ],
+   "rank_ci95": [
+    7,
+    41
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1700_1300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 81.4,
+   "ci95": [
+    72.3,
+    86.0
+   ],
+   "rank_ci95": [
+    3,
+    173
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2000_1600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 81.3,
+   "ci95": [
+    74.3,
+    83.5
+   ],
+   "rank_ci95": [
+    10,
+    107
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2700_1400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 80.8,
+   "ci95": [
+    73.7,
+    87.6
+   ],
+   "rank_ci95": [
+    13,
+    50
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2600_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 80.7,
+   "ci95": [
+    74.6,
+    87.9
+   ],
+   "rank_ci95": [
+    9,
+    89
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1900_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 80.7,
+   "ci95": [
+    73.8,
+    83.8
+   ],
+   "rank_ci95": [
+    2,
+    212
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1900_1700",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 80.6,
+   "ci95": [
+    72.0,
+    85.6
+   ],
+   "rank_ci95": [
+    9,
+    142
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2300_600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 80.6,
+   "ci95": [
+    71.5,
+    86.5
+   ],
+   "rank_ci95": [
+    3,
+    133
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2000_400",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 80.5,
+   "ci95": [
+    74.4,
+    90.2
+   ],
+   "rank_ci95": [
+    3,
+    60
+   ]
+  }
+ ],
+ "mars_arcadia": [
+  {
+   "window_id": "earth_atacama_yungay_3200_200",
+   "site": "earth_atacama_yungay",
+   "score": 96.0,
+   "ci95": [
+    83.3,
+    96.7
+   ],
+   "rank_ci95": [
+    1,
+    94
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_3200_100",
+   "site": "earth_atacama_yungay",
+   "score": 94.0,
+   "ci95": [
+    82.5,
+    94.7
+   ],
+   "rank_ci95": [
+    2,
+    114
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_2900_100",
+   "site": "earth_atacama_yungay",
+   "score": 93.4,
+   "ci95": [
+    81.4,
+    96.6
+   ],
+   "rank_ci95": [
+    1,
+    136
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_3400_0",
+   "site": "earth_mx_serdan_oriental",
+   "score": 92.9,
+   "ci95": [
+    82.7,
+    94.5
+   ],
+   "rank_ci95": [
+    2,
+    112
+   ]
+  },
+  {
+   "window_id": "earth_mx_valle_santiago_900_2400",
+   "site": "earth_mx_valle_santiago",
+   "score": 92.4,
+   "ci95": [
+    81.5,
+    95.4
+   ],
+   "rank_ci95": [
+    2,
+    141
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_1700_500",
+   "site": "earth_atacama_yungay",
+   "score": 92.3,
+   "ci95": [
+    80.9,
+    94.2
+   ],
+   "rank_ci95": [
+    1,
+    228
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_2900_200",
+   "site": "earth_atacama_yungay",
+   "score": 91.9,
+   "ci95": [
+    80.4,
+    92.7
+   ],
+   "rank_ci95": [
+    4,
+    243
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_400_400",
+   "site": "earth_atacama_yungay",
+   "score": 91.8,
+   "ci95": [
+    80.0,
+    93.8
+   ],
+   "rank_ci95": [
+    1,
+    224
+   ]
+  },
+  {
+   "window_id": "earth_mx_valle_santiago_100_2000",
+   "site": "earth_mx_valle_santiago",
+   "score": 91.2,
+   "ci95": [
+    79.9,
+    93.5
+   ],
+   "rank_ci95": [
+    2,
+    230
+   ]
+  },
+  {
+   "window_id": "earth_sfvf_1500_400",
+   "site": "earth_sfvf",
+   "score": 90.7,
+   "ci95": [
+    80.5,
+    94.7
+   ],
+   "rank_ci95": [
+    3,
+    168
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_1500_500",
+   "site": "earth_atacama_yungay",
+   "score": 90.6,
+   "ci95": [
+    80.2,
+    93.3
+   ],
+   "rank_ci95": [
+    6,
+    185
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_2700_600",
+   "site": "earth_mx_serdan_oriental",
+   "score": 90.6,
+   "ci95": [
+    80.2,
+    93.7
+   ],
+   "rank_ci95": [
+    2,
+    271
+   ]
+  },
+  {
+   "window_id": "earth_antarctica_university_valley_100_300",
+   "site": "earth_antarctica_university_valley",
+   "score": 90.5,
+   "ci95": [
+    78.6,
+    92.0
+   ],
+   "rank_ci95": [
+    5,
+    344
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_2400_700",
+   "site": "earth_mx_serdan_oriental",
+   "score": 90.4,
+   "ci95": [
+    79.1,
+    93.2
+   ],
+   "rank_ci95": [
+    4,
+    232
+   ]
+  },
+  {
+   "window_id": "earth_mx_valle_santiago_100_1500",
+   "site": "earth_mx_valle_santiago",
+   "score": 90.3,
+   "ci95": [
+    79.6,
+    93.7
+   ],
+   "rank_ci95": [
+    2,
+    276
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_2800_600",
+   "site": "earth_mx_serdan_oriental",
+   "score": 90.3,
+   "ci95": [
+    77.9,
+    94.5
+   ],
+   "rank_ci95": [
+    1,
+    377
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_300_3200",
+   "site": "earth_mx_chichinautzin",
+   "score": 90.0,
+   "ci95": [
+    79.6,
+    94.8
+   ],
+   "rank_ci95": [
+    3,
+    192
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_700_300",
+   "site": "earth_atacama_yungay",
+   "score": 90.0,
+   "ci95": [
+    79.1,
+    94.7
+   ],
+   "rank_ci95": [
+    2,
+    224
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_2600_700",
+   "site": "earth_mx_serdan_oriental",
+   "score": 89.9,
+   "ci95": [
+    79.9,
+    94.5
+   ],
+   "rank_ci95": [
+    3,
+    193
+   ]
+  },
+  {
+   "window_id": "earth_cuatrocienegas_3400_1500",
+   "site": "earth_cuatrocienegas",
+   "score": 89.9,
+   "ci95": [
+    79.2,
+    92.7
+   ],
+   "rank_ci95": [
+    5,
+    218
+   ]
+  }
+ ],
+ "mars_jezero": [
+  {
+   "window_id": "earth_mx_chichinautzin_2400_300",
+   "site": "earth_mx_chichinautzin",
+   "score": 88.6,
+   "ci95": [
+    83.0,
+    91.9
+   ],
+   "rank_ci95": [
+    1,
+    35
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_2400_400",
+   "site": "earth_mx_chichinautzin",
+   "score": 88.0,
+   "ci95": [
+    83.1,
+    90.1
+   ],
+   "rank_ci95": [
+    1,
+    29
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_800_2400",
+   "site": "earth_mx_serdan_oriental",
+   "score": 87.6,
+   "ci95": [
+    81.9,
+    90.7
+   ],
+   "rank_ci95": [
+    2,
+    64
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_700_2300",
+   "site": "earth_mx_serdan_oriental",
+   "score": 87.6,
+   "ci95": [
+    81.9,
+    92.3
+   ],
+   "rank_ci95": [
+    1,
+    63
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_2600_600",
+   "site": "earth_mx_chichinautzin",
+   "score": 87.5,
+   "ci95": [
+    80.8,
+    90.0
+   ],
+   "rank_ci95": [
+    1,
+    101
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_2500_600",
+   "site": "earth_mx_chichinautzin",
+   "score": 87.4,
+   "ci95": [
+    82.0,
+    90.3
+   ],
+   "rank_ci95": [
+    1,
+    61
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_2400_500",
+   "site": "earth_mx_chichinautzin",
+   "score": 87.3,
+   "ci95": [
+    82.6,
+    89.6
+   ],
+   "rank_ci95": [
+    3,
+    39
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_2800_800",
+   "site": "earth_mx_chichinautzin",
+   "score": 87.1,
+   "ci95": [
+    81.3,
+    90.0
+   ],
+   "rank_ci95": [
+    3,
+    75
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_1800_1300",
+   "site": "earth_mx_chichinautzin",
+   "score": 86.6,
+   "ci95": [
+    82.0,
+    89.1
+   ],
+   "rank_ci95": [
+    3,
+    66
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_300_1600",
+   "site": "earth_atacama_yungay",
+   "score": 86.6,
+   "ci95": [
+    80.3,
+    89.2
+   ],
+   "rank_ci95": [
+    1,
+    118
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_2900_2100",
+   "site": "earth_mx_serdan_oriental",
+   "score": 86.6,
+   "ci95": [
+    81.2,
+    88.6
+   ],
+   "rank_ci95": [
+    2,
+    98
+   ]
+  },
+  {
+   "window_id": "earth_mx_ceboruco_2400_1100",
+   "site": "earth_mx_ceboruco",
+   "score": 86.4,
+   "ci95": [
+    81.9,
+    88.9
+   ],
+   "rank_ci95": [
+    3,
+    60
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_2800_700",
+   "site": "earth_mx_chichinautzin",
+   "score": 86.3,
+   "ci95": [
+    80.4,
+    89.8
+   ],
+   "rank_ci95": [
+    4,
+    105
+   ]
+  },
+  {
+   "window_id": "earth_mx_ceboruco_1700_600",
+   "site": "earth_mx_ceboruco",
+   "score": 86.2,
+   "ci95": [
+    80.3,
+    89.1
+   ],
+   "rank_ci95": [
+    1,
+    142
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_2400_2600",
+   "site": "earth_mx_chichinautzin",
+   "score": 86.1,
+   "ci95": [
+    79.9,
+    88.4
+   ],
+   "rank_ci95": [
+    6,
+    133
+   ]
+  },
+  {
+   "window_id": "earth_sfvf_600_2500",
+   "site": "earth_sfvf",
+   "score": 86.1,
+   "ci95": [
+    81.7,
+    88.8
+   ],
+   "rank_ci95": [
+    3,
+    70
+   ]
+  },
+  {
+   "window_id": "earth_iceland_askja_700_400",
+   "site": "earth_iceland_askja",
+   "score": 86.0,
+   "ci95": [
+    82.5,
+    87.9
+   ],
+   "rank_ci95": [
+    1,
+    117
+   ]
+  },
+  {
+   "window_id": "earth_cuatrocienegas_2100_3100",
+   "site": "earth_cuatrocienegas",
+   "score": 86.0,
+   "ci95": [
+    80.5,
+    88.1
+   ],
+   "rank_ci95": [
+    2,
+    147
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_2700_3200",
+   "site": "earth_mx_chichinautzin",
+   "score": 85.8,
+   "ci95": [
+    78.9,
+    88.6
+   ],
+   "rank_ci95": [
+    2,
+    222
+   ]
+  },
+  {
+   "window_id": "earth_mx_chichinautzin_2300_100",
+   "site": "earth_mx_chichinautzin",
+   "score": 85.6,
+   "ci95": [
+    80.4,
+    89.7
+   ],
+   "rank_ci95": [
+    2,
+    120
+   ]
+  }
+ ],
+ "mars_deuteronilus": [
+  {
+   "window_id": "earth_atacama_yungay_2100_1600",
+   "site": "earth_atacama_yungay",
+   "score": 93.2,
+   "ci95": [
+    88.1,
+    95.1
+   ],
+   "rank_ci95": [
+    1,
+    49
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_3300_1200",
+   "site": "earth_atacama_yungay",
+   "score": 92.7,
+   "ci95": [
+    84.5,
+    93.5
+   ],
+   "rank_ci95": [
+    1,
+    180
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_2700_1800",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 92.6,
+   "ci95": [
+    87.6,
+    93.3
+   ],
+   "rank_ci95": [
+    1,
+    53
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_700_1100",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 92.4,
+   "ci95": [
+    85.8,
+    93.8
+   ],
+   "rank_ci95": [
+    1,
+    129
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_2300_500",
+   "site": "earth_atacama_yungay",
+   "score": 92.3,
+   "ci95": [
+    87.3,
+    93.7
+   ],
+   "rank_ci95": [
+    1,
+    86
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_3400_1200",
+   "site": "earth_atacama_yungay",
+   "score": 92.3,
+   "ci95": [
+    83.4,
+    94.4
+   ],
+   "rank_ci95": [
+    1,
+    245
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_2500",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 92.2,
+   "ci95": [
+    83.4,
+    93.8
+   ],
+   "rank_ci95": [
+    1,
+    255
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_2200_1600",
+   "site": "earth_atacama_yungay",
+   "score": 92.1,
+   "ci95": [
+    86.4,
+    93.5
+   ],
+   "rank_ci95": [
+    2,
+    89
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_2300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 92.0,
+   "ci95": [
+    83.8,
+    93.8
+   ],
+   "rank_ci95": [
+    1,
+    211
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_700_2300",
+   "site": "earth_atacama_yungay",
+   "score": 91.7,
+   "ci95": [
+    86.9,
+    95.2
+   ],
+   "rank_ci95": [
+    1,
+    83
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1000_2600",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 91.7,
+   "ci95": [
+    84.2,
+    92.2
+   ],
+   "rank_ci95": [
+    6,
+    192
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_1000_2100",
+   "site": "earth_mx_serdan_oriental",
+   "score": 91.5,
+   "ci95": [
+    82.9,
+    93.1
+   ],
+   "rank_ci95": [
+    3,
+    281
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1200_2300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 91.1,
+   "ci95": [
+    83.2,
+    92.4
+   ],
+   "rank_ci95": [
+    5,
+    255
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_3200_2400",
+   "site": "earth_atacama_yungay",
+   "score": 91.1,
+   "ci95": [
+    85.1,
+    92.4
+   ],
+   "rank_ci95": [
+    3,
+    144
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_900_2300",
+   "site": "earth_atacama_yungay",
+   "score": 91.0,
+   "ci95": [
+    86.7,
+    94.8
+   ],
+   "rank_ci95": [
+    2,
+    88
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_1000_2300",
+   "site": "earth_atacama_yungay",
+   "score": 91.0,
+   "ci95": [
+    82.2,
+    93.3
+   ],
+   "rank_ci95": [
+    2,
+    324
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_3200_1400",
+   "site": "earth_atacama_yungay",
+   "score": 90.9,
+   "ci95": [
+    86.5,
+    91.9
+   ],
+   "rank_ci95": [
+    6,
+    107
+   ]
+  },
+  {
+   "window_id": "earth_hawaii_mauna_kea_1100_2300",
+   "site": "earth_hawaii_mauna_kea",
+   "score": 90.9,
+   "ci95": [
+    82.5,
+    93.2
+   ],
+   "rank_ci95": [
+    3,
+    312
+   ]
+  },
+  {
+   "window_id": "earth_atacama_yungay_3400_1100",
+   "site": "earth_atacama_yungay",
+   "score": 90.8,
+   "ci95": [
+    86.0,
+    92.7
+   ],
+   "rank_ci95": [
+    3,
+    93
+   ]
+  },
+  {
+   "window_id": "earth_mx_serdan_oriental_1000_2000",
+   "site": "earth_mx_serdan_oriental",
+   "score": 90.3,
+   "ci95": [
+    85.9,
+    92.5
+   ],
+   "rank_ci95": [
+    4,
+    106
+   ]
+  }
+ ],
+ "_meta": {
+  "generated": "2026-11-15T17:04:32+00:00",
+  "seed": 20261115,
+  "params": {
+   "bootstrap": 1000,
+   "top": 20,
+   "window_km": 6,
+   "ci": "percentile 2.5-97.5",
+   "resampled": "reference windows of the target (IQR fixed to the main run)"
+  },
+  "git_commit": "f588ad6",
+  "inputs": {
+   "data/processed/windows.csv": "1a18d90688c35044",
+   "data/cache/stats/features_moon_connecting_ridge.csv": "53b61fb9a3ad56b2",
+   "data/cache/stats/features_moon_nobile_rim1.csv": "86efabc1d2686e56",
+   "data/cache/stats/features_moon_de_gerlache_rim.csv": "56793a476440dcb1",
+   "data/cache/stats/features_moon_malapert.csv": "17fd94ca9c333bea",
+   "data/cache/stats/features_moon_haworth.csv": "55c64d5a99901f12",
+   "data/cache/stats/features_moon_leibnitz_beta.csv": "aa2613ac5337e1be",
+   "data/cache/stats/features_mars_arcadia.csv": "6b30776473ba8f51",
+   "data/cache/stats/features_mars_jezero.csv": "18ec235f0707d75b",
+   "data/cache/stats/features_mars_deuteronilus.csv": "89dd0ec1af513d60"
+  }
+ }
+}

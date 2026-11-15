@@ -56,12 +56,16 @@ def stubs():
                    "observed": {"median_pct_illum": 50.0, "median_pct_terrain": 50.0, "median_pct_combined": 50.0},
                    "p_value": {"global": {"illum": 0.5, "terrain": 0.5, "combined": 0.5},
                                "region_matched": {"illum": 0.5, "terrain": 0.5, "combined": 0.5}},
-                   "pu_uhiwahine": {t: {"rank": 1, "of": 10424, "p_value_region_matched": 0.5,
+                   "headline": "placeholder headline (generated from the data by scripts/stats/null_test.py)",
+                   "headline_target": moon[0],
+                   "pu_uhiwahine": {t: {"rank": 1, "of": 10424, "p_value_region_matched": 0.5, "p_bonferroni": 1.0,
                                         "pct_all_windows": 99.9, "frac_region_above": 0.0} for t in moon},
                    "null_hist": {"global": {"bins": [0, 25, 50, 75, 100], "counts": [0, 1, 1, 0]},
                                  "region_matched": {"bins": [0, 25, 50, 75, 100], "counts": [0, 1, 1, 0]}}}
 
     out["roc"] = {**base(), **{t: {"fpr": [0.0, 0.5, 1.0], "tpr": [0.0, 0.5, 1.0], "auc": 0.5, "auc_ci95": [0.4, 0.6],
+                                   "auc_by_score": {k: 0.5 for k in ("combined", "terrain", "illum")},
+                                   "auc_ci95_by_score": {k: [0.4, 0.6] for k in ("combined", "terrain", "illum")},
                                    "n_pos": 0, "n_neg": 0, "n_sites": 0} for t in T}}
 
     out["bootstrap"] = {**base(), "n_ref": {t: 0 for t in T},
