@@ -90,3 +90,45 @@ def test_mars_climate_database_tables_are_parsed():
     assert t[1].tolist() == [180.0, 260.0, 180.0] and p[0, 1] == 710.0
     core = t[:-1, :-1]                                                          # what the script keeps (no Ls 360, no hour 24)
     assert core.min() == 180.0 and core.max() == 270.0 and core.mean() == 225.0
+
+
+# ----------------------------------------------------------------------------- proof 2: light agreement helpers
+def _light():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("light_agreement", ROOT / "scripts" / "stats" / "light_agreement.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)            # importing it needs no raw data: the light model is loaded inside main()
+    return mod
+
+
+def test_bland_altman_bias_and_limits():
+    la = _light()
+    nasa = np.linspace(0.1, 0.9, 101)
+    r = la.bland_altman(nasa - 0.02, nasa)                  # a model that is uniformly 2 points darker
+    assert r["bias"] == -0.02 and r["sd"] == 0.0
+    assert r["loa_low"] == r["loa_high"] == -0.02 and r["n"] == 101
+    d = np.array([-0.03, -0.01, 0.01, 0.03])                # mean 0, sample sd = sqrt(20/3)/100
+    r = la.bland_altman(0.5 + d, np.full(4, 0.5))
+    sd = float(np.std(d, ddof=1))
+    assert abs(r["bias"]) < 1e-9 and r["sd"] == round(sd, 4)
+    assert r["loa_high"] == round(1.96 * sd, 4) and r["loa_low"] == round(-1.96 * sd, 4)
+    assert r["share_within_loa"] == 1.0
+
+
+def test_density_counts_every_point_once():
+    la = _light()
+    model, nasa = np.array([0.0, 0.01, 0.5, 1.0, 1.0]), np.array([0.0, 0.01, 0.5, 1.0, 0.0])
+    d = la.density(model, nasa, bins=10)
+    assert sum(c for _, _, c in d["cells"]) == 5 and d["max_count"] == 2
+    assert [0, 0, 2] in d["cells"]                          # the two points near the origin share a cell
+    assert [9, 9, 1] in d["cells"] and [9, 0, 1] in d["cells"]   # the value 1.0 falls in the last bin, not outside
+
+
+def test_subsample_is_reproducible_and_grid_thinning():
+    la = _light()
+    a, b = la.subsample(5000, 100), la.subsample(5000, 100)
+    assert (a == b).all() and len(set(a.tolist())) == 100 and (np.diff(a) > 0).all()
+    assert la.subsample(7, 100).tolist() == list(range(7))  # fewer points than the cap: keep them all
+    t, step = la.thin_grid(np.zeros((113, 90)), max_side=64)
+    assert step == 2 and t.shape == (57, 45)
+    assert la.to_list(np.array([[1.23456, np.nan]])) == [[1.235, None]]

@@ -10,7 +10,7 @@ fails = []
 def check(name, cond, extra=""):
     print(("PASS " if cond else "FAIL ") + name + (f"  {extra}" if extra and not cond else "")); cond or fails.append(name)
 
-ROUTES = {"": ".intro", "explore": ".col-r", "proof": ".page-in", "mission": ".view-wip", "when": ".page-in", "limits": ".view-wip", "method": ".prose", "dossier": ".view-wip", "tour": ".view-wip"}
+ROUTES = {"": ".intro", "explore": ".col-r", "proof": ".page-in", "mission": ".view-wip", "when": ".page-in", "limits": "#page h1", "method": "#page h1", "dossier": ".view-wip", "tour": ".view-wip"}
 with sync_playwright() as p:
     b = launch(p, BROWSER); errs = []
     ctx = b.new_context(viewport={"width": 1024, "height": 768}); pg = ctx.new_page()
@@ -32,13 +32,14 @@ with sync_playwright() as p:
     check("six primary items on one line at 1024 px, Tour clear of them, no Dossier", geo["n"] == 6 and geo["tops"] == 1 and geo["right"] < geo["tourLeft"] and geo["barH"] <= 53 and not geo["dossier"], str(geo))
     check("nav labels", geo["labels"] == ["Explore", "Proof", "Mission", "When", "Limits", "Method"], str(geo["labels"]))
     # keyboard: Tab reaches the nav links and Enter follows one
-    pg.focus('#nav a[data-r="limits"]'); pg.keyboard.press("Enter"); pg.wait_for_selector(".view-wip"); check("keyboard follows a nav link", pg.evaluate("location.hash") == "#/limits")
+    pg.focus('#nav a[data-r="limits"]'); pg.keyboard.press("Enter"); pg.wait_for_selector("#page h1")
+    check("keyboard follows a nav link", pg.evaluate("location.hash") == "#/limits")
     # lib/chart.ts and lifecycle in the browser (throwaway chart, not a view).
     # Vite's dev server may re-optimise echarts on first import and reload the page once: warm up, then run.
     for _ in range(3):
         try: pg.evaluate("import('/src/lib/chart.ts').then(() => 1)"); break
         except Exception: pg.wait_for_timeout(4000)
-    pg.wait_for_timeout(2500); pg.goto(f"{BASE}/#/limits"); pg.wait_for_selector(".view-wip")
+    pg.wait_for_timeout(2500); pg.goto(f"{BASE}/#/limits"); pg.wait_for_selector("#page h1")
     r = pg.evaluate("""async () => {
       const { mountChart } = await import('/src/lib/chart.ts'); const { beginScope, currentScope } = await import('/src/lib/lifecycle.ts');
       const host = document.createElement('div'); host.style.cssText = 'width:400px;height:240px;position:fixed;left:0;top:60px;z-index:99'; document.body.appendChild(host);
@@ -58,7 +59,7 @@ with sync_playwright() as p:
     check("chart: summary is required", r["threw"])
     check("chart: scope disposal (route change) removes the chart", r["disposed"])
     ctx.close()
-    ctx = b.new_context(viewport={"width": 800, "height": 600}, reduced_motion="reduce"); pg = ctx.new_page(); pg.goto(f"{BASE}/#/limits"); pg.wait_for_selector(".view-wip")
+    ctx = b.new_context(viewport={"width": 800, "height": 600}, reduced_motion="reduce"); pg = ctx.new_page(); pg.goto(f"{BASE}/#/limits"); pg.wait_for_selector("#page h1")
     anim = pg.evaluate("""async () => { const { mountChart } = await import('/src/lib/chart.ts'); const host = document.createElement('div'); host.style.cssText='width:300px;height:200px'; document.body.appendChild(host);
       const h = mountChart(host, { xAxis: { type: 'category', data: ['a'] }, yAxis: {}, series: [{ type: 'bar', data: [1] }] }, { summary: 's' }); const a = h.instance.getOption().animation; h.dispose(); return a; }""")
     check("chart: prefers-reduced-motion turns animation off", anim is False, str(anim))

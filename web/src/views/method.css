@@ -1,0 +1,27 @@
+/* Method view (owner: D. Lizárraga). Every class is prefixed .method-; colours come from tokens.css. */
+.method section { margin-top: var(--s-6); }
+.method-lede { font-size: 17px; line-height: 1.5; color: var(--text-2); max-width: 70ch; }
+
+.method-flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s-4) var(--s-5); counter-reset: none; }
+.method-step { position: relative; padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--raise); }
+.method-step::after { content: "→"; position: absolute; right: calc(-1 * var(--s-5) + 4px); top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 16px; }
+.method-step:last-child::after { content: none; }
+.method-n { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-text); font-size: 12px; font-weight: 600; margin-bottom: var(--s-2); }
+.method-step b { display: block; font-size: 15px; color: var(--text-1); }
+.method-step p { margin: var(--s-1) 0; font-size: 14px; line-height: 1.4; color: var(--text-2); }
+.method-step small { font-size: 12px; line-height: 1.35; color: var(--text-3); }
+
+.method-formulas { display: grid; gap: var(--s-4); }
+.method-formulas figure { margin: 0; padding: var(--s-4) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--raise); }
+.method-math { overflow-x: auto; padding: var(--s-2) 0 var(--s-3); color: var(--text-1); font-size: 19px; }
+.method-math math { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", serif; }
+.method-formulas figcaption { font-size: 14px; line-height: 1.5; color: var(--text-2); max-width: 78ch; }
+.method-formulas figcaption b { color: var(--text-1); }
+
+.method-data th a { color: var(--accent-text); }
+.method-data th, .method-data td { white-space: normal; }
+.method-data thead th:not(:first-child), .method-data td { text-align: left; }
+.method-more { margin: var(--s-6) 0; }
+.method-more summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--accent-text); font-weight: 500; }
+
+@media (max-width: 620px) { .method-step::after { content: none; } .method-math { font-size: 16px; } }
