@@ -124,7 +124,7 @@
  ],
  "other": [
   {
-   "text": "Only 0.4 % of Mauna Kea scores as high as NASA's exact test site for Malapert Massif (p = 0.004; p = 0.025 after correcting for 6 lunar targets)",
+   "text": "Only 0.4 % of Mauna Kea scores as high as NASA's exact test site for Malapert Massif: p = 0.004 (0.025 corrected for 6 lunar targets; 0.15 corrected for all 36 site–target tests)",
    "where": "slide 1, slide 4",
    "source": "data/processed/stats/null.json: headline, pu_uhiwahine.moon_malapert"
   },
@@ -177,6 +177,11 @@
    "text": "26,450 one-degree tiles in the public Copernicus GLO-30 bucket",
    "where": "slide 7",
    "source": "tileList.txt of s3://copernicus-dem-30m, counted 2026-11-15"
+  },
+  {
+   "text": "open analog catalog: 10,424 windows × 9 targets (CSV, GeoJSON, top windows with bootstrap intervals)",
+   "where": "slide 7, project page",
+   "source": "data/release/README.md"
   }
  ],
  "pending": [
