@@ -112,7 +112,7 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 | Tests (17) and CI with an offline app smoke test | `tests/`, `.github/` | Aaron |
 | Static web app (globe, ranking, analog card, Analog in time, Validation, Method), phone layout, accessibility and no-WebGL fallback, ready for GitHub Pages | `web/` | Paul |
 | Field tools: twin-light timelapse, astronaut's-eye view, rover twin, field brief and `.ics` campaign calendar per region, shown in the web app's Field kit | `scripts/extras/`, [`docs/EXTRAS.md`](docs/EXTRAS.md) | Victor |
-| Earth land-surface temperature per window (NASA MODIS MOD11A2 via AppEEARS), all 10,424 windows | `scripts/earth_lst.py`, `data/processed/earth_lst_windows.csv` | D. Dona |
+| Earth land-surface temperature per window (NASA MODIS MOD11A2 from NASA Earthdata), 10,417 of 10,424 windows, shown on every analog card of the web app next to Diviner or the Mars Climate Database (context, not scored) | `scripts/earth_lst.py`, `scripts/earth_lst_earthaccess.py`, `data/processed/earth_lst_windows.csv` | D. Dona · Victor |
 
 **To do before the freeze** (each line is a GitHub issue, see [`docs/TEAM.md`](docs/TEAM.md))
 
@@ -120,7 +120,6 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 |---|---|---|
 | Turn on GitHub Pages for the web app (copy `web/pages.yml` to `.github/workflows/`, Settings → Pages → GitHub Actions, run it) and test the link in a private window and on a phone | The judges need a link that opens without installing anything | Aaron (repo admin) |
 | Deck (7 slides, our demo instead of the video) and project page around the blind-rediscovery result | It's the demo the judges see | Angel · Paul |
-| Use the Earth surface temperature: scored for the Mars sites (against the Mars Climate Database) or shown as a context layer; the Moon is 95–132 K colder than any Earth region, so a lunar thermal score would be 0 everywhere | Data is ready, not used yet | Victor · D. Dona |
 | Fact-check every number in README, deck and page; tag `v1.0` | No wrong number in front of judges | Angel · Victor |
 
 **Stretch (only if time allows):** EMIT mineralogy per window (in progress on `ddona/emit`); the remaining Artemis regions (Nobile Rim 2 has a 5 m DEM but lies at 84°S, outside
@@ -288,6 +287,7 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 | [MRO CTX stereo DTMs](https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms) | **NASA** MRO / USGS | Mars reference terrain |
 | [LRO Diviner polar resource product](https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/) (Paige et al.) | **NASA** LRO / PDS | Moon temperature and ice stability (where Earth stops being an analog) |
 | [NASA POWER climatology API](https://power.larc.nasa.gov/docs/services/api/temporal/climatology/) | **NASA** LaRC | Earth skin temperature per region, compared with Diviner |
+| [MODIS Terra MOD11A2 v061](https://doi.org/10.5067/MODIS/MOD11A2.061) (NASA Earthdata) | **NASA** LP DAAC | Earth land-surface temperature per window, 2025 (context on the analog card) |
 | [Moon Trek / Mars Trek WMTS](https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon) (via api.nasa.gov) | **NASA** SSERVI / JPL | Real view of Moon (LRO NAC mosaic) and Mars (CTX mosaic) windows |
 | [GIBS](https://nasa-gibs.github.io/gibs-api-docs/) (via api.nasa.gov) | **NASA** ESDIS | Real view of Earth windows (Landsat WELD, HLS, MODIS) |
 | [EONET v3](https://eonet.gsfc.nasa.gov/docs/v3) (via api.nasa.gov) | **NASA** Earth Observatory | Live field-safety check (open natural events near the site) |

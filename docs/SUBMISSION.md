@@ -80,7 +80,7 @@ lunar-pole light, so field teams know the best weeks to test.
 - MRO CTX stereo DTMs (USGS Astrogeology analysis-ready data)
 - LRO Diviner polar resource product (NASA PDS Geosciences, Paige et al.)
 - NASA POWER climatology API (NASA LaRC, MERRA-2): Earth skin temperature for the Diviner comparison
-- *(add MODIS/ECOSTRESS or EMIT only if they make it into the final run)*
+- MODIS Terra MOD11A2 v061 land-surface temperature (NASA LP DAAC, via NASA Earthdata), 2025: per Earth window, shown on every analog card next to Diviner or the Mars Climate Database
 
 **Moon & Mars data paragraph (Diego Lizárraga, ~200 words; numbers from `data/processed/`):**
 Every reference site in P.E.N. comes from NASA missions archived in the Planetary Data System (PDS). For the Moon

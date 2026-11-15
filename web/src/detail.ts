@@ -32,8 +32,8 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
     const R = Math.min(4, Math.max(2, Math.ceil(Math.max(...dv.map(x => Math.abs(x.v))))));
     const similar = dv.filter(x => Math.abs(x.v) <= THR_SIMILAR).map(x => m.feature_labels[x.f]);
     const differs = dv.filter(x => Math.abs(x.v) >= THR_DIFF).map(x => `${m.feature_labels[x.f]} (${x.v > 0 ? 'higher' : 'lower'} on Earth)`);
-    const [repro, credits, rover] = await Promise.all([getJSON<Record<string, string[]>>('reproduce'), getJSON<Record<string, string>>('credits'),
-      getJSON<Record<string, Rover>>('rover_twin').catch(() => ({} as Record<string, Rover>))]);
+    const [repro, credits, rover, thermal] = await Promise.all([getJSON<Record<string, string[]>>('reproduce'), getJSON<Record<string, string>>('credits'),
+      getJSON<Record<string, Rover>>('rover_twin').catch(() => ({} as Record<string, Rover>)), thermalRef(t.id, t.body)]);
     if (S.selected !== k) return; // closed or changed while loading
     const hasLow = preview(m.previews.low, wid), hasReal = preview(m.previews.real, wid);
     const refCredit = credits[`ref__${t.id}`] ?? 'NASA imagery', winCredit = credits[wid] ?? 'NASA imagery';
@@ -70,6 +70,8 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
 
     <section class="d-sec"><div class="d-h"><h3>Earth can't reproduce</h3></div>
       <ul class="stats">${(repro[t.id] ?? []).map(s => `<li>${bold(s)}</li>`).join('')}</ul></section>
+
+    ${temperatureHTML(d as unknown as Record<string, (number | null)[]>, k, thermal)}
 
     <section class="d-sec"><div class="d-h"><h3>Field safety</h3><span class="muted tiny">NASA EONET</span></div><div id="eonet" class="eonet" aria-live="polite"><span class="muted">Checking NASA EONET…</span></div></section>
 
@@ -126,3 +128,34 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
   addEventListener('keydown', e => { if (e.key === 'Escape' && !el.hidden && !(e.target as HTMLElement)?.closest?.('.pop')) store.set({ selected: null }); });
   void $$;
 }
+
+// ---- surface temperature: this Earth window (MODIS) against the target (Diviner or Mars Climate Database); context, not scored
+type Thermal = { mean: number; lo: number; hi: number; what: string } | null;
+async function thermalRef(id: string, body: string): Promise<Thermal> {
+  try {
+    if (body === 'moon') {
+      const v = (await getJSON<{ sites: Record<string, Record<string, number>> }>('diviner')).sites[id];
+      return v ? { mean: v.temp_avg_mean_K, lo: v.temp_avg_min_K, hi: v.temp_max_max_K, what: 'LRO Diviner, measured: annual mean 2 cm below the surface, coldest mean to hottest surface maximum' } : null;
+    }
+    if (body === 'mars') {
+      const v = (await getJSON<{ sites: Record<string, Record<string, number>> }>('mars_context')).sites[id];
+      return v ? { mean: v.tsurf_mean_K, lo: v.tsurf_min_K, hi: v.tsurf_max_K, what: 'Mars Climate Database v6.2, modelled surface temperature' } : null;
+    }
+  } catch { /* optional context */ }
+  return null;
+}
+function temperatureHTML(d: Record<string, (number | null)[]>, k: number, ref: Thermal): string {
+  const mean = d.lst_mean?.[k], lo = d.lst_min?.[k], hi = d.lst_max?.[k];
+  if (mean == null || lo == null || hi == null) return '';
+  const e = { mean: mean / 10, lo: lo / 10, hi: hi / 10 };
+  const K0 = 0, K1 = 360, x = (v: number) => `${Math.max(0, Math.min(100, ((v - K0) / (K1 - K0)) * 100)).toFixed(1)}%`;
+  const bar = (cls: string, lab: string, t: { mean: number; lo: number; hi: number }) =>
+    `<div class="trow"><span class="tl">${lab}</span><span class="tplot"><span class="tbar ${cls}" style="left:${x(t.lo)};width:calc(${x(t.hi)} - ${x(t.lo)})"></span><span class="tdot ${cls}" style="left:${x(t.mean)}"></span></span><b class="tv tnum">${Math.round(t.mean)} K</b></div>`;
+  const gap = ref ? Math.round(e.mean - ref.mean) : 0;
+  return `<section class="d-sec"><div class="d-h"><h3>Surface temperature</h3><span class="muted tiny">NASA MODIS</span></div>
+    <div class="temp" role="img" aria-label="Annual temperature: this Earth window mean ${Math.round(e.mean)} K, range ${Math.round(e.lo)} to ${Math.round(e.hi)} K${ref ? `; target mean ${Math.round(ref.mean)} K, range ${Math.round(ref.lo)} to ${Math.round(ref.hi)} K` : ''}">
+      ${bar('t-earth', 'This window', e)}${ref ? bar('t-ref', 'Target', ref) : ''}
+      <div class="tticks tnum">${[0, 100, 200, 300].map(v => `<span style="left:${x(v)}">${v} K</span>`).join('')}</div></div>
+    <p class="d-note">Earth: MODIS MOD11A2 clear-sky land-surface temperature, 2025: mean of day and night, from the 5th percentile of nights to the 95th of days (${Math.round(e.mean - 273.15)} °C on average).${ref ? ` Target: ${esc(ref.what)}. On average this window is <b>${Math.abs(gap)} K ${gap >= 0 ? 'warmer' : 'colder'}</b>.` : ''} Context only, not scored: the two quantities are not measured the same way.</p></section>`;
+}
+

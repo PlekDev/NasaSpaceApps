@@ -185,6 +185,12 @@ def main():
     ridx = {s: n for n, s in enumerate(regions)}
 
     DATA.mkdir(parents=True, exist_ok=True)
+    # Earth land-surface temperature per window (MODIS MOD11A2 from NASA Earthdata, scripts/earth_lst.py; docs/METHOD.md): context in the card, not scored
+    lst = {}
+    if (PROC / "earth_lst_windows.csv").exists():
+        for r in read_csv(PROC / "earth_lst_windows.csv"):
+            if r["lst_mean_K"] not in ("", "nan"):
+                lst[(r["site"], int(r["i"]), int(r["j"]))] = tuple(round(float(r[k]) * 10) for k in ("lst_mean_K", "lst_min_K", "lst_max_K"))
     cant = app_cant_reproduce(read_json(PROC / "diviner.json"), read_json(PROC / "mars_context.json") if (PROC / "mars_context.json").exists() else {})
     write_json(DATA / "reproduce.json", {t: cant(t, sites[t]["body"]) for t in targets})
     copy_atomic(PROC / "thumbs" / "real_credits.json", DATA / "credits.json")
@@ -251,6 +257,10 @@ def main():
         det = dict(i=[int(r["i"]) for r in rs], j=[int(r["j"]) for r in rs])
         for f in feats:
             det[f"d_{f}"] = q(f"d_{f}", 1000)
+        if lst:
+            got = [lst.get((r["site"], int(r["i"]), int(r["j"]))) for r in rs]
+            for n, key in enumerate(("lst_mean", "lst_min", "lst_max")):  # kelvin x 10, null where MODIS had too few clear composites
+                det[key] = [g[n] if g else None for g in got]
         write_json(DATA / f"{t}.detail.json", det)
         write_json(DATA / f"{t}.json", cols)
 
