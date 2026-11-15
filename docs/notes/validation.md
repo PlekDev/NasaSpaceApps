@@ -168,8 +168,54 @@ points; the asymmetry shows in which direction the window already differs from t
 d_k² / Σ_j d_j². Example: for Malapert's #1 window (Mauna Kea), roughness is 74 % of D² (d = −0.53, smoother than the
 lunar target); removing it would raise the score by 8.7 points.
 
-## 6 · Control regions (`controls.py`)
-*Pending.*
+## 6 · Control regions (`scripts/stats/controls.py` → `data/processed/controls/controls.json`)
+
+Three Copernicus GLO-30 tiles with no lunar or Mars analog use found in our search, scored with the pipeline's own
+functions imported from `pen/` (same 30 m grid, water mask, 6 km windows with a 3 km step) and the **same IQR and
+reference vectors as the main run**. The controls are not added to the pool, `config/sites.yaml` is not touched and the
+official ranking (10,424 windows) does not change. "Rank if inserted" = 1 + number of official windows with a strictly
+higher score.
+
+| Control | Tile | Type | Why |
+|---|---|---|---|
+| Central Iowa, USA | N42 W094 | agricultural plain | flat cultivated plain; tests the flat-plains degeneracy for Arcadia |
+| Flint Hills, Kansas, USA | N38 W097 | rolling prairie hills | ordinary gentle hills, no volcanism or craters |
+| Grisons, Swiss Alps | N46 E009 | rugged non-volcanic high mountains | "does P.E.N. only detect rugged terrain, or terrain that resembles the Moon?" |
+
+The Alpine tile contains glaciers; their smooth ice surface in the DSM can lower roughness, and their fraction of the tile
+was **not measured**. An Amazon tile was considered and rejected: Copernicus is a surface model, so the roughness would
+be that of the forest canopy, not the ground.
+
+**Best-window rank if inserted among the 10,424 (combined score), and P50 of the control vs the 14 regions pooled:**
+
+| Target | Regions P50 / max | Iowa P50 / best rank | Flint Hills P50 / best rank | Alps P50 / best rank |
+|---|---|---|---|---|
+| Connecting Ridge | 45.0 / 90.9 | 25.1 / #5,271 | 31.4 / #4,525 | 32.1 / #2,201 |
+| Nobile Rim 1 | 36.7 / 80.5 | 20.2 / #5,932 | 24.9 / #5,443 | 36.9 / #135 |
+| de Gerlache Rim | 40.0 / 84.8 | 22.3 / #6,101 | 27.6 / #5,360 | 33.8 / #766 |
+| Malapert Massif | 35.4 / 79.3 | 17.7 / #5,456 | 22.1 / #5,712 | 41.6 / #82 |
+| Haworth | 46.2 / 89.4 | 27.5 / #5,468 | 34.6 / #3,788 | 27.3 / #4,824 |
+| Leibnitz Beta | 43.7 / 85.3 | 26.8 / #4,453 | 33.5 / #3,454 | 28.7 / #3,219 |
+| Arcadia Planitia | 44.0 / 96.0 | 53.4 / #423 | 59.5 / #108 | 12.6 / #9,196 |
+| Jezero | 52.7 / 88.6 | 29.5 / #5,203 | 37.7 / #2,373 | 24.2 / #7,158 |
+| Deuteronilus | 52.0 / 93.2 | 36.3 / #3,755 | 46.2 / #1,501 | 20.9 / #8,682 |
+
+`controls.json` also gives P90 and max per control, per dimension (terrain, illumination) and for each of the 14 regions.
+
+**Interpretation (reported as it is).**
+- **Moon, plain and hills:** Iowa and the Flint Hills fall below all 14 regions at P90 for every lunar target, and their
+  best windows would rank #3,454 or lower. Ordinary flat or rolling terrain does not look like the lunar targets.
+- **Moon, Alps:** rugged mountains do score high for some lunar targets: for Malapert the best Alpine window would rank
+  #82 and the Alpine P50 (41.6) is above the pooled P50 of our regions (35.4); its P90 ranks 9th of the 14 regions.
+  But it does not reach the top: Mauna Kea's NASA test site is #1 and the Alpine best is far below the top 10 for every
+  target. The split by dimension shows why: the Alpine terrain score for Malapert reaches 80.4, but its illumination score
+  only 59.9 (Mauna Kea's top-10 windows for Malapert score 90.7–98.0 in illumination). **P.E.N. partly detects ruggedness (the terrain
+  dimension cannot tell the Alps from the Moon), and the low-Sun illumination dimension is what separates lunar-like
+  terrain from ordinary high mountains.** This is consistent with the ROC result (section 2).
+- **Mars, flat-plains degeneracy confirmed:** for Arcadia Planitia, the Flint Hills (best #108, P50 59.5) and Iowa
+  (best #423, P50 53.4) score **above** the pooled P50 of our regions (44.0) and their P90 rank 6th and 7th of the 14
+  regions. A flat or gently rolling plain on Earth looks like Arcadia to this score; Arcadia rankings should not be read
+  as evidence of a special analog.
 
 ## What the statistics do NOT support
 
@@ -184,7 +230,11 @@ lunar target); removing it would raise the score by 8.7 points.
   high (the "flat-plains degeneracy" in the README); its AUC is below 0.5.
 - **The exact #1 window is not stable**: under resampling of the reference windows its rank CI reaches tens to ~180, and
   the top-10 windows barely overlap between 3, 6 and 12 km (Jaccard ≤ 0.19). Claims should be about top regions and
-  intervals, not "the single best place on Earth".
+  intervals: say "top window" with its bootstrap CI, never "the best place".
+- **The terrain score alone does not mean "lunar"**: rugged non-volcanic Alpine terrain reaches a terrain score of 80.4
+  for Malapert (section 6); it is the illumination dimension that keeps it out of the top.
+- **Arcadia rankings are not evidence of a special analog**: a farm plain in Iowa and prairie hills in Kansas score above
+  the median of our regions for Arcadia (section 6).
 
 ## Prior work
 *Pending.*
