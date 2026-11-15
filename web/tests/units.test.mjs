@@ -40,3 +40,19 @@ test('reproduce.json matches the app text for the first lunar target', () => {
   const rep = read('reproduce.json'), t = m.targets.find(x => x.body === 'moon');
   assert.match(rep[t.id][0], /^\*\*\d+\.\d%\*\* of the site has an annual mean temperature below Earth's record low \(184 K\)/);
 });
+
+import { fieldKitHTML } from '../src/kit.ts';
+const regions = [{ id: 'earth_hawaii_mauna_kea', name: 'Mauna Kea / Mauna Loa saddle' }];
+const base = { targetName: 'Target', regionName: 'Region', rover: undefined, regions };
+test('Field kit renders nothing at all when no extras or briefs exist (no empty heading or toggle)', () => {
+  assert.equal(fieldKitHTML({ ...base, ex: undefined, brief: undefined }), '');
+  assert.equal(fieldKitHTML({ ...base, ex: {}, brief: undefined }), '');
+  assert.equal(fieldKitHTML({ ...base, ex: {}, brief: {} }), '');
+});
+test('Field kit: a brief alone is enough; twin, astronaut and rover appear only when present', () => {
+  const onlyBrief = fieldKitHTML({ ...base, ex: {}, brief: { brief: 'r.md', calendar: 'r.ics' } });
+  assert.match(onlyBrief, /Field kit/); assert.match(onlyBrief, /Calendar \.ics/); assert.ok(!onlyBrief.includes('Twin-light') && !onlyBrief.includes('astronaut'));
+  const full = fieldKitHTML({ ...base, ex: { twin: 't.jpg', video: 't.mp4', astro: 'a.jpg', rover: 'r.jpg' }, brief: undefined });
+  assert.match(full, /Twin-light timelapse/); assert.match(full, /What the astronaut sees/); assert.match(full, /Twin rover traverse/); assert.match(full, /extras\/t\.mp4/);
+  assert.ok(full.includes('<details class="kit">'));
+});

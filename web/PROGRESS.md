@@ -33,6 +33,12 @@ and PNGs downscaled, link the mp4/ics/csv from the repo files copied to public/e
 5. `npm run dev:lan` (vite --host).
 Also: new `psr` block of far_horizons.json (permanent-shadow check, PR from main) is shown on Validation; main's `earth_lst_windows.csv` (thermal data) is not used yet (not a scored dimension).
 
+## PR review fixes (done)
+- Export is encoding-proof: every text read/write names `encoding="utf-8"`, JSON is written with `ensure_ascii=False` (UTF-8 file), generated files are written atomically (temp file in the same folder, `os.replace`), `newline="\n"` so bytes are identical on Windows. `web/tests/test_encoding.py` (AST guard over web/tools and web/tests), `test_export.py` runs the export in a scratch copy under a single-byte locale (`LC_ALL=<latin-1>`, `PYTHONCOERCECLOCALE=0`, `python -X utf8=0 -I`) and compares bytes with the UTF-8 run.
+- Developer scripts are cross-platform (`tools/_common.py`: pathlib, tempfile, Playwright's own Chromium unless `CHROME` is set). npm scripts have no shell syntax; `npm run build:pages -- NasaSpaceApps` replaces `BASE_PATH=... cmd`.
+- `pillow>=10` added to requirements.txt. README has a Windows section and says `make web-e2e` is Linux/macOS only.
+- Field kit renders nothing when there are no extras/briefs (`src/kit.ts`, Node test, e2e with a manifest stripped of extras, and a scratch export without figures/extras).
+
 ## Performance (production build, throttled "Fast 4G": 1.6 Mbit/s, 150 ms RTT, cache off)
 LCP 1.75 s on the intro (gzip, served under /NasaSpaceApps/) (budget 2.5 s). First load 515 KB transferred (budget 1.5 MB): JS 303 KB gz (main chunk 22 KB + MapLibre chunk 288 KB, loaded after first paint),
 CSS 18 KB, fonts 68 KB, first target core data 105 KB gz (window ids and scaled differences load only when a window is opened), thumbs 19 KB.

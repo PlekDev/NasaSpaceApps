@@ -4,12 +4,12 @@ import { icon } from './icons';
 import { ramp } from './score';
 import { getJSON, loadDetail } from './data';
 import { fieldEvents } from './eonet';
+import { fieldKitHTML, type Rover } from './kit';
 import { $, $$, html, isPhone } from './ui';
 import type { Manifest } from './types';
 import type { Scored } from './model';
 import type { Store } from './store';
 
-interface Rover { earth_site: string; target: Record<string, number>; earth: Record<string, number> }
 const bold = (s: string) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 const THR_SIMILAR = 0.5, THR_DIFF = 1.5; // same thresholds as pen.scoring.explain()
 
@@ -73,14 +73,7 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
 
     <section class="d-sec"><div class="d-h"><h3>Field safety</h3><span class="muted tiny">NASA EONET</span></div><div id="eonet" class="eonet" aria-live="polite"><span class="muted">Checking NASA EONET…</span></div></section>
 
-    ${(ex.twin || ex.astro || ex.rover || brief) ? `<section class="d-sec kit-sec"><details class="kit"><summary><span class="k-t"><h3>Field kit</h3><span class="muted tiny">${[ex.twin && 'twin light', ex.astro && 'astronaut view', ex.rover && 'rover traverse', brief && 'brief and calendar'].filter(Boolean).join(' · ')}</span></span></summary><div class="kit-in">
-      ${ex.twin ? `<details class="xtra"><summary>Twin-light timelapse</summary><div class="xbody"><p class="d-cap">Sun 2° above the horizon, azimuth stepping 5°: shadows on ${esc(t.name)} and its best Earth window.</p>
-        ${ex.video ? `<video controls preload="none" poster="${BASE}extras/${ex.twin}" src="${BASE}extras/${ex.video}" aria-label="Twin-light timelapse for ${esc(t.name)}"></video>` : `<img src="${BASE}extras/${ex.twin}" alt="Twin-light poster" loading="lazy">`}</div></details>` : ''}
-      ${ex.astro ? `<details class="xtra"><summary>What the astronaut sees</summary><div class="xbody"><img src="${BASE}extras/${ex.astro}" alt="Eye-level view, ${esc(t.name)} and its best Earth window" loading="lazy"><p class="d-cap">Eye level (1.7 m), terrain up to 15 km away, each body's curvature.</p></div></details>` : ''}
-      ${ex.rover ? `<details class="xtra"><summary>Twin rover traverse</summary><div class="xbody"><img src="${BASE}extras/${ex.rover}" alt="Least-cost route on ${esc(t.name)} and its Earth analog" loading="lazy">
-        ${roverT ? roverTable(roverT, t.name, m) : ''}</div></details>` : ''}
-      ${brief ? `<div class="dl-row"><span class="muted">Field brief · ${esc(r.name)}</span><span>${[['brief', 'Brief'], ['calendar', 'Calendar .ics'], ['csv', 'Low-Sun CSV']].filter(x => brief[x[0] as 'brief']).map(x => `<a class="link" download href="${BASE}extras/briefs/${brief[x[0] as 'brief']}">${x[1]}</a>`).join('')}</span></div>` : ''}
-    </div></details></section>` : ''}
+    ${fieldKitHTML({ ex, brief, targetName: t.name, regionName: r.name, rover: roverT, regions: m.regions })}
 
     <section class="d-sec links"><a class="link" target="_blank" rel="noopener" href="https://www.google.com/maps/@${lat},${lon},12z">Google Maps</a>
       <a class="link" target="_blank" rel="noopener" href="https://worldview.earthdata.nasa.gov/?v=${lon - 0.2},${lat - 0.2},${lon + 0.2},${lat + 0.2}">NASA Worldview</a></section></div>`;
@@ -132,11 +125,4 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
   el.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); store.set({ selected: null }); } });
   addEventListener('keydown', e => { if (e.key === 'Escape' && !el.hidden && !(e.target as HTMLElement)?.closest?.('.pop')) store.set({ selected: null }); });
   void $$;
-}
-
-function roverTable(r: Rover, name: string, m: Manifest) {
-  const site = m.regions.find(x => x.id === r.earth_site)?.name ?? '';
-  const row = (l: string, f: (o: Record<string, number>) => string) => `<tr><th scope="row">${l}</th><td class="tnum">${f(r.target)}</td><td class="tnum">${f(r.earth)}</td></tr>`;
-  return `<table class="rt"><thead><tr><th></th><th>${esc(name)}</th><th>${esc(site)}</th></tr></thead><tbody>
-    ${row('Length', o => `${o.length_km} km`)}${row('Climb', o => `${o.climb_m} m`)}${row('Max slope', o => `${o.max_slope_deg}°`)}${row('In shadow', o => `${Math.round(o.share_in_shadow * 100)}%`)}</tbody></table>`;
 }
