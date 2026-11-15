@@ -69,15 +69,16 @@ publication, listed in the `note` field of the script; Pinacate comes from a sec
 ### Earth temperature layer
 
 `scripts/earth_lst.py` adds land-surface temperature (LST) for every Earth window, from MODIS Terra **MOD11A2 v061**
-(8-day composites, 1 km, DOI 10.5067/MODIS/MOD11A2.061) requested through NASA AppEEARS as GeoTIFF in EPSG:4326
-(one area task per 1°×1° region of `config/sites.yaml`, year 2025, 46 composites). Credentials come from
-`EARTHDATA_USERNAME` / `EARTHDATA_PASSWORD` or `~/.netrc` and are never committed. Run `make lst-submit`, wait for the tasks
-(`python scripts/earth_lst.py status`), then `make lst`. Output: `data/processed/earth_lst_windows.csv`, keyed by
-`(site, i, j)` as in `windows.csv`; per-region GeoTIFFs stay in `data/cache/lst/`.
+(8-day composites, 1 km, DOI 10.5067/MODIS/MOD11A2.061), year 2025 (46 composites), one 1°×1° region of
+`config/sites.yaml` at a time. **The committed `data/processed/earth_lst_windows.csv` was produced from the `earthaccess`
+route** (`scripts/earth_lst_earthaccess.py`: NASA Earthdata granules, converted with GDAL's HDF4 driver from conda-forge to
+per-date GeoTIFFs in EPSG:4326), because the NASA AppEEARS queue (`submit` / `status` / `download` in `scripts/earth_lst.py`)
+stayed pending for hours. Both routes feed the same `compute` step. Credentials come from `EARTHDATA_USERNAME` /
+`EARTHDATA_PASSWORD` or `~/.netrc` and are never committed. `make lst` runs `download` + `compute` (AppEEARS route);
+the CSV is keyed by `(site, i, j)` as in `windows.csv`, and per-region GeoTIFFs stay in `data/cache/lst/` (not committed).
 
-- **Fallback source.** If the AppEEARS queue is slow, `scripts/earth_lst_earthaccess.py` downloads the same MOD11A2.061
-  granules through `earthaccess` and converts them (GDAL with the HDF4 driver, conda-forge) to the same per-date GeoTIFFs
-  in EPSG:4326, so `compute` is unchanged. For the 14 regions this is about 3.4 GB (shared tiles counted once).
+- **Download size.** About 3.4 GB of MODIS granules for the 14 regions (shared tiles counted once; the script keeps one copy
+  per region, ~5.4 GB on disk, deletable after conversion).
 - **Quality control.** A composite is used when the mandatory QA flag (bits 0-1) is `00` (good), or `01` (other quality)
   *and* the LST error flag (bits 6-7) is `00` or `01` (error ≤ 2 K). Cloud and not-produced pixels are rejected. Scale factor
   0.02, fill value 0, valid range 150-400 K.
@@ -85,11 +86,13 @@ publication, listed in the `note` field of the script; Pinacate comes from a sec
   clouds make falsely cold); `lst_max_K` = 95th percentile of the valid day composites; `lst_mean_K` = mean of all valid
   day and night composites; `lst_range_K` = `lst_max_K` − `lst_min_K`. A pixel needs ≥ 12 valid composites per variable.
 - **Per window.** Mean over the window's pixels that are valid for all three statistics. A window with < 50 % valid pixels
-  gets NaN (no filling or interpolation). `n_pixels_valid` / `n_pixels` count window pixels; `n_valid` is the mean number of
-  valid day + night composites per pixel (maximum 92).
-- **Gaps.** Cloudy composites are lost, so the layer is a clear-sky statistic and its minimum is biased warm. In the polar
-  regions (Svalbard, Axel Heiberg, University Valley) the polar night leaves few valid day composites and ice causes false
-  cloud flags: look at `n_valid` and `n_pixels_valid` before trusting those windows.
+  gets NaN (no filling or interpolation). `n_pixels_valid` / `n_pixels` count window pixels; `n_valid_day` and `n_valid_night` are the
+  mean number of valid daytime and night-time composites per pixel (maximum 46 each, one per 8-day composite of 2025).
+- **Gaps.** Cloudy composites are lost, so the layer is a clear-sky statistic and its minimum is biased warm. LST is thermal
+  infrared, so it does not need sunlight: the polar night does **not** empty the day layer (about 43-45 of 46 day and night
+  composites are valid even at Svalbard and University Valley). The risk there is the opposite: over snow and ice some clouds
+  go undetected and give falsely **cold** values, so in Haughton, Svalbard, Axel Heiberg and University Valley the layer
+  may be biased cold and should be read with caution. The percentile statistics reduce, but do not remove, this effect.
 - **Caveats.** An 8-day composite averages the extremes down, a 1 km pixel is coarse against 30 m terrain, and a 6 km window
   holds only ~36 pixels.
 
@@ -100,7 +103,8 @@ skin temperatures per region. They complement each other and neither replaces th
 (`data/processed/diviner.json`: `temp_avg_mean_K`, `temp_max_mean_K`). They are not the same quantity: Diviner `temp_avg` is
 the average temperature at 2 cm below the surface, while LST is the skin temperature of the surface under clear sky.
 
-**Scaling note.** Lunar polar `temp_avg` is ~120-130 K, far from any Earth LST (~250-300 K). With IQR scaling over Earth
+**Scaling note.** Lunar polar `temp_avg` is ~122-144 K at the Moon Base sites, far from the coldest Earth region
+(University Valley, median `lst_mean_K` 241.5 K). With IQR scaling over Earth
 windows the thermal distance of every window is huge and the thermal score tends to 0. How to scale it is left to the
 scoring owner; this layer does not change `pen/`.
 
