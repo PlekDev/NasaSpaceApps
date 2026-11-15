@@ -132,3 +132,50 @@ def test_subsample_is_reproducible_and_grid_thinning():
     t, step = la.thin_grid(np.zeros((113, 90)), max_side=64)
     assert step == 2 and t.shape == (57, 45)
     assert la.to_list(np.array([[1.23456, np.nan]])) == [[1.235, None]]
+
+
+# ----------------------------------------------------------------------------- web exports must equal data/processed
+# CI runs the exporters before pytest; locally these tests skip until `python -I web/tools/exports/<name>.py` has run.
+import json as _json
+
+import pytest
+
+WEB_DATA = ROOT / "web" / "public" / "data"
+PROC = ROOT / "data" / "processed"
+
+
+@pytest.mark.skipif(not (WEB_DATA / "light" / "summary.json").exists(), reason="light export not generated")
+def test_light_export_is_a_copy_of_processed():
+    summary = _json.loads((PROC / "stats" / "light_summary.json").read_text(encoding="utf-8"))
+    assert (WEB_DATA / "light" / "summary.json").read_bytes() == (PROC / "stats" / "light_summary.json").read_bytes()
+    for sid in summary["sites"]:
+        assert (WEB_DATA / "light" / f"{sid}.json").read_bytes() == (PROC / "stats" / f"light_{sid}.json").read_bytes(), sid
+    far = _json.loads((PROC / "far_horizons.json").read_text(encoding="utf-8"))["sites"]
+    for sid, v in summary["sites"].items():   # proof 2 shows the same headline numbers as the far-horizon validation
+        assert v["matches_far_horizons_json"] and v["rho_far"] == far[sid]["V3_far_curved"]["spearman_rho"], sid
+
+
+@pytest.mark.skipif(not (WEB_DATA / "limits" / "scale.json").exists(), reason="limits export not generated")
+def test_limits_export_matches_processed():
+    import pandas as pd
+    div = _json.loads((PROC / "diviner.json").read_text(encoding="utf-8"))["sites"]
+    mars = _json.loads((PROC / "mars_context.json").read_text(encoding="utf-8"))["sites"]
+    scale = _json.loads((WEB_DATA / "limits" / "scale.json").read_text(encoding="utf-8"))
+    for t in scale["targets"]:                # one kelvin scale: measured Moon, modelled Mars, never mixed up
+        if t["body"] == "moon":
+            assert t["measured"] and t["mean_K"] == div[t["id"]]["temp_avg_mean_K"] and t["max_K"] == div[t["id"]]["temp_max_max_K"]
+        else:
+            assert not t["measured"] and t["mean_K"] == mars[t["id"]]["tsurf_mean_K"]
+    w = pd.read_csv(PROC / "windows.csv", usecols=["reference", "site", "i", "j", "score_combined", "score_terrain", "score_illumination"])
+    for t in scale["targets"]:
+        d = _json.loads((WEB_DATA / "limits" / f"{t['id']}.json").read_text(encoding="utf-8"))
+        g = w[w.reference == t["id"]]
+        best = g.sort_values("score_combined", ascending=False, kind="stable").groupby("site", sort=False).head(1)
+        assert [r["site"] for r in d["fidelity"]] == best.site.head(len(d["fidelity"])).tolist(), t["id"]
+        for r in d["fidelity"]:               # every verdict follows the exported rule from the exported score
+            row = g[(g.site == r["site"]) & (g.i == r["i"]) & (g.j == r["j"])].iloc[0]
+            assert r["score_combined"] == row.score_combined
+            for dim in d["dims"]:
+                s = row[f"score_{dim}"]
+                assert r[dim]["score"] == s and r[dim]["level"] == ("yes" if s >= 80 else "partial" if s >= 60 else "no")
+            assert r["gravity"]["level"] == "no" and r["atmosphere"]["level"] == "no"

@@ -13,7 +13,7 @@ interface RegionRow { id: string; name: string; lst: { mean_K: number | null; mi
   power: { mean_K: number; min_K: number; max_K: number }; emit: (Record<string, number | null> & { n_windows: number }) | null }
 interface Scale { earth_record_low_K: number; rules: Record<string, string>; targets: ScaleTarget[]; regions: RegionRow[]; sources: Record<string, string> }
 interface Cell { level: Lvl; score?: number; gap_K?: number | null; earth_mean_K?: number; earth_source?: string; note?: string; clays?: number | null; carbonates?: number | null }
-interface FRow { site: string; name: string; lat: number; lon: number; score_combined: number; thermal: Cell; minerals: Cell; gravity: Cell; atmosphere: Cell; [dim: string]: unknown }
+interface FRow { site: string; name: string; i: number; j: number; lat: number; lon: number; score_combined: number; thermal: Cell; minerals: Cell; gravity: Cell; atmosphere: Cell; [dim: string]: unknown }
 interface Limits {
   target: string; body: string; name: string; dims: string[]; fidelity: FRow[];
   thermal: { target: Thermal | null; earth_record_low_K: number; coldest_earth_region: { id: string; name: string; mean_K: number }; gap_to_coldest_earth_K: number | null };
@@ -77,7 +77,8 @@ function matrixHTML(d: Limits, s: Scale) {
     const dims = d.dims.map(k => { const c = r[k] as Cell; return `<td>${chip(c.level, c.score != null ? pyFixed(c.score, 0) : '')}</td>`; }).join('');
     const th = r.thermal, mi = r.minerals;
     const miText = mi.level === 'na' ? '' : `clays ${pct(mi.clays ?? 0, 1)}, carbonates ${pct(mi.carbonates ?? 0, 1)}`;
-    return `<tr><th scope="row">${esc(r.name)}<small class="tnum">score ${pyFixed(r.score_combined, 0)}</small></th>${dims}
+    const dossier = `#/dossier?target=${encodeURIComponent(d.target)}&window=${encodeURIComponent(`${r.site}_${r.i}_${r.j}`)}`;
+    return `<tr><th scope="row"><a class="limits-site" href="${dossier}" title="Open the mission dossier for this pair">${esc(r.name)}</a><small class="tnum">score ${pyFixed(r.score_combined, 0)} · <a href="${dossier}">dossier</a></small></th>${dims}
       <td>${chip(th.level, th.gap_K != null ? `${k0(Math.abs(th.gap_K))} K ${th.gap_K >= 0 ? 'warmer' : 'colder'}` : '')}</td>
       <td>${chip(mi.level, miText)}</td><td>${chip(r.gravity.level, '')}</td><td>${chip(r.atmosphere.level, '')}</td></tr>`;
   }).join('');

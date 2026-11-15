@@ -1,11 +1,18 @@
 /** "Method": the pipeline as a flow, the two formulas that matter, the data with exact product names, and the full
- *  docs/METHOD.md under "Read more". Formulas are MathML (rendered by the browser, read by screen readers).
+ *  docs/METHOD.md under "Read more". Formulas are typeset with KaTeX (lazy-loaded, HTML + MathML output); the plain
+ *  MathML below is shown first and stays if KaTeX cannot load.
  *  AI-assisted (Claude, Anthropic); reviewed by the team. */
 import './method.css';
 import { md } from '../markdown';
 import { getText } from '../data';
 import { esc } from '../format';
+import { renderMath } from '../lib/katex';
 import type { Manifest } from '../types';
+
+const TEX = {
+  shadow: String.raw`g_i = z_i + i\,\Delta x\,\tan\theta \qquad \max_{j<i}\, g_j > g_i \;\Rightarrow\; \text{shadow}`,
+  score: String.raw`d_k = \frac{x_k - r_k}{\mathrm{IQR}_k} \qquad D = \sqrt{\frac{\sum_k w_k\, d_k^2}{\sum_k w_k}} \qquad S = 100\, e^{-D}`,
+};
 
 const STEPS: [string, string, string][] = [
   ['Terrain models', 'Moon: LOLA. Mars: CTX. Earth: Copernicus.', 'Each body keeps its own shape and radius.'],
@@ -14,7 +21,7 @@ const STEPS: [string, string, string][] = [
   ['Features per window', 'Relief, slope, roughness, shape, and shadow at two low Sun heights.', 'Terrain and light are kept as separate dimensions.'],
   ['Scaled distance', 'Each difference is divided by how much that feature varies on Earth.', 'Different units become comparable.'],
   ['Score', '100 means identical features; it falls off with distance.', 'One score per dimension and one combined.'],
-  ['Validation', 'Against NASA’s illumination map, known analog sites and random chance.', 'See Proof.'],
+  ['Validation', 'Against NASA’s illumination map, known analog sites and random chance.', '<a href="#/proof">See the three proofs</a>.'],
 ];
 
 const DATA: [string, string, string, string][] = [
@@ -54,14 +61,21 @@ export async function renderMethod(el: HTMLElement, m?: Manifest) {
     <section aria-labelledby="method-h-flow"><h2 id="method-h-flow">How a score is made</h2><ol class="method-flow">${flow}</ol></section>
     <section aria-labelledby="method-h-f"><h2 id="method-h-f">The two formulas</h2>
       <div class="method-formulas">
-        <figure><div class="method-math">${SHADOW}</div><figcaption><b>Shadow of a low Sun.</b> With the Sun at height θ on the left of a row of heights <i>z</i> spaced Δx apart, one running maximum per row tells exactly which pixels are in shadow.</figcaption></figure>
-        <figure><div class="method-math">${SCORE}</div><figcaption><b>Similarity score.</b> <i>x</i> is the Earth window, <i>r</i> the target, and IQR the spread of that feature over all Earth windows. S = 100 means identical; S ≈ 37 means one spread apart on average.</figcaption></figure>
+        <figure><div class="method-math" data-tex="shadow">${SHADOW}</div><figcaption><b>Shadow of a low Sun.</b> With the Sun at height θ on the left of a row of heights <i>z</i> spaced Δx apart, one running maximum per row tells exactly which pixels are in shadow.</figcaption></figure>
+        <figure><div class="method-math" data-tex="score">${SCORE}</div><figcaption><b>Similarity score.</b> <i>x</i> is the Earth window, <i>r</i> the target, and IQR the spread of that feature over all Earth windows. S = 100 means identical; S ≈ 37 means one spread apart on average.</figcaption></figure>
       </div></section>
     <section aria-labelledby="method-h-d"><h2 id="method-h-d">Data, with exact product names</h2>
       <div class="tbl method-data"><table><thead><tr><th scope="col">Product</th><th scope="col">Agency</th><th scope="col">Used for</th></tr></thead><tbody>${rows}</tbody></table></div>
       <p class="note">NASA data are public domain. Copernicus DEM © DLR e.V. / Airbus, provided under the Copernicus programme by ESA. The Mars Climate Database is a model, not a measurement.</p></section>
     <details class="method-more"><summary>Read more: the full method, step by step</summary><div class="prose" id="method-full"><p class="muted">Loading…</p></div></details>
   </div>`;
+  // typeset the formulas; on any failure the MathML fallback already in the box stays
+  el.querySelectorAll<HTMLElement>('.method-math[data-tex]').forEach(box => {
+    const tex = TEX[box.dataset.tex as keyof typeof TEX];
+    if (!tex) return;
+    const out = document.createElement('div');
+    renderMath(out, tex, { display: true }).then(() => { box.replaceChildren(out); box.classList.add('is-katex'); }).catch(() => { /* keep MathML */ });
+  });
   const more = el.querySelector<HTMLDetailsElement>('.method-more')!;
   more.addEventListener('toggle', async () => {
     const box = more.querySelector<HTMLElement>('#method-full')!;

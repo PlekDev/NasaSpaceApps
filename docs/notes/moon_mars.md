@@ -59,5 +59,10 @@ Home shortcut for Paul: Jezero ↔ Sierra Chichinautzin, combined score 88.6 (te
 
 ## Method view
 
-`web/src/views/method.ts` shows the pipeline as seven steps, the shadow and score formulas in MathML (no extra
-dependency, read by screen readers), the data table with exact product names, and this document under "Read more".
+`web/src/views/method.ts` shows the pipeline as seven steps, the shadow and score formulas typeset with KaTeX (HTML
+plus MathML, so screen readers read them; plain MathML is shown if KaTeX cannot load), the data table with exact
+product names, and this document under "Read more".
+
+In the Limits view each Earth region of the fidelity matrix links to the mission dossier of that pair
+(`#/dossier?target=<target>&window=<region>_<i>_<j>`). `tests/test_moon_mars.py` checks that the exported `light/` and
+`limits/` files equal `data/processed/` and that every fidelity verdict follows the exported rule.
