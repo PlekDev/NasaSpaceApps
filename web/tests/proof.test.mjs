@@ -31,3 +31,20 @@ test('sentences come from the exported numbers', () => {
   assert.ok(stabilityTitle(st, moon.concat(mars)).includes(Math.min(...p1).toFixed(2)));
   assert.ok(puuSummary(n, name).startsWith('Share of the valid area of the Mauna Kea region'));
 });
+
+test('group test, controls and limits sentences use the exact exported values', async () => {
+  const { nullLine, controlsLines, notSupported } = await import('../src/views/proof.ts');
+  const n = read('stats/null.json');
+  if (isReal(n)) {
+    const s = nullLine(n, 8);
+    for (const p of [n.p_value.global.combined, n.p_value.region_matched.combined, n.p_value.global.illum]) assert.ok(s.includes(fmtP(p)), fmtP(p));
+  }
+  const c = read('stats/controls.json');
+  if (isReal(c)) {
+    const lines = controlsLines(c, c.regions, moon, name, mars.find(t => /arcadia/.test(t)));
+    const alps = c.regions.find(r => /alps/.test(r.id)), best = Math.min(...moon.map(t => c[t].controls[alps.id].best_rank_if_inserted));
+    assert.ok(lines.some(l => l.includes(`#${best.toLocaleString('en-US')}`)));
+  }
+  const stub = { null: { _stub: true }, roc: { _stub: true }, bootstrap: { _stub: true }, stability: { _stub: true }, tornado: { _stub: true }, decomp: { _stub: true }, controls: { _stub: true } };
+  assert.deepEqual(notSupported(stub, moon, mars, name, 8), [], 'stub files contribute no sentence');
+});

@@ -103,6 +103,34 @@ export function controlsLines(c: Record<string, CtrlTarget>, regions: CtrlRegion
   return out;
 }
 
+/** 1B: the group test, with the exact p-values of null.json. */
+export function nullLine(n: NullStats, nSites: number): string {
+  const p = n.p_value;
+  return `As a group, the ${nSites} NASA analog sites are not significantly better than random points of our regions: median percentile `
+    + `${f1(n.observed.median_pct_combined)}, p = ${fmtP(p.global.combined)} (global) and ${fmtP(p.region_matched.combined)} (region-matched); `
+    + `illumination alone p = ${fmtP(p.global.illum)} (global) and ${fmtP(p.region_matched.illum)} (region-matched).`;
+}
+
+/** The limits, generated from the stats files that are real (a stub contributes nothing). */
+export function notSupported(S: Stats, moon: string[], mars: string[], name: (id: string) => string, nSites: number): string[] {
+  const out: string[] = [];
+  if (isReal(S.null)) {
+    const ok = Object.entries(S.null.pu_uhiwahine).filter(([, v]) => v.p_bonferroni < 0.05).map(([t]) => name(t));
+    out.push(`The ${nSites} known sites as a group do not beat random points of our 14 regions (combined p = ${fmtP(S.null.p_value.global.combined)} global, `
+      + `${fmtP(S.null.p_value.region_matched.combined)} region-matched; illumination p = ${fmtP(S.null.p_value.global.illum)} global). `
+      + `${ok.length ? `Only ${ok.join(' and ')} survives` : 'No lunar target survives'} the Bonferroni correction for the Pu'u Hiwahine test.`);
+  }
+  if (isReal(S.roc)) out.push(`For Mars the score does not separate the known analog sites (AUC ${range(mars.map(t => S.roc[t].auc), f2)}): those sites were chosen for chemistry, climate or ice rather than terrain, and Arcadia is a flat plain (flat-plains degeneracy).`);
+  if (isReal(S.bootstrap)) { const hi = Math.max(...[...moon, ...mars].map(t => (S.bootstrap[t] as BootRow[])[0].rank_ci95[1])); out.push(`The exact #1 window is not guaranteed: under bootstrap resampling of the reference its rank CI reaches up to #${hi}. Say "top window" with its CI, never "the best place".`); }
+  if (isReal(S.stability)) { const j = [...moon, ...mars].map(t => S.stability[t].jaccard_top10_3_6 as number); out.push(`The exact top-10 windows change with window size (Jaccard overlap 3 km vs 6 km ≤ ${f2(Math.max(...j))}); claims should be about regions, not single windows.`); }
+  if (isReal(S.controls)) {
+    const c = S.controls as unknown as Record<string, CtrlTarget> & { regions: CtrlRegion[] }, alps = c.regions.find(r => /alps/.test(r.id));
+    const mal = moon.find(t => /malapert/.test(t));
+    if (alps && mal && c[mal]?.controls[alps.id]) out.push(`A high terrain score alone does not mean "lunar": the Alps reach a terrain score of ${f1(c[mal].controls[alps.id].terrain.max)} for ${name(mal)}; illumination is what keeps them out of the top.`);
+  }
+  return out;
+}
+
 /* ---------- view ---------- */
 const FILES = ['null', 'roc', 'bootstrap', 'stability', 'tornado', 'decomp', 'controls'] as const;
 const pending = (what: string) => `<p class="proof-pending">${esc(what)}: results pending.</p>`;
@@ -122,6 +150,8 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
   const arcadia = mars.find(t => /arcadia/.test(t));
   const flabel = (k: string) => m.feature_labels[k] ?? k;
   const title3 = okStab ? stabilityTitle(S.stability, all) : 'Robustness';
+  const nSites = okNull ? ((S.null._meta?.params as Record<string, unknown> | undefined)?.n_sites as number ?? 0) : 0;
+  const nTests = okNull ? ((S.null._meta?.params as Record<string, unknown> | undefined)?.n_tests as number ?? 0) : 0;
   const pickDefault = okNull && S.null.headline_target ? S.null.headline_target : moon[0];
 
   el.innerHTML = `<div class="page-in wide proof">
@@ -138,6 +168,9 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
       <h3>Pu'u Hiwahine, NASA's 2012 lunar-polar field-test site, per lunar target</h3>
       ${okNull ? `<div class="proof-chart proof-h-sm" id="proof-1a"></div><div class="tbl" id="proof-1a-tbl"></div>
         <p class="note">Rank: position of the site's best 6 km window among all ${nf(Object.values(S.null.pu_uhiwahine)[0]?.of ?? 0)} Earth windows for that target. Share of Mauna Kea: share of the valid area of the Mauna Kea region (150 m lattice) whose best window scores as high or higher; this is the region-matched p. Bonferroni: p × ${Object.keys(S.null.pu_uhiwahine).length} lunar targets, capped at 1.</p>` : pending('Blind test')}
+      <h3>As a group, are the NASA analog sites special?</h3>
+      ${okNull ? `<p class="prose-p">${esc(nullLine(S.null, nSites))}</p><div class="proof-chart proof-h-md" id="proof-1b"></div>
+        <p class="note">Global null: ${esc(S.null.questions.global)} Region-matched null: ${esc(S.null.questions.region_matched)} ${nf(S.null.n_perm)} random sets each (seed ${S.null.seed}); p = (1 + #null ≥ observed) / (N + 1).</p>` : pending('Null test')}
       <h3>What separates NASA's analog sites from the rest?</h3>
       ${okRoc ? `<p class="prose-p">${esc(aucLine(S.roc, moon, mars))}</p><div class="proof-chart proof-h-lg" id="proof-1c"></div>
         <p class="note">AUC = probability that a window containing a known analog site scores higher than a random other window (0.5 = no separation). Whiskers: 95 % CI, cluster bootstrap over sites (${nf(Number((S.roc._meta?.params as Record<string, unknown> | undefined)?.bootstrap ?? 0))} replicates). Only ${S.roc[moon[0]].n_sites} lunar and ${S.roc[mars[0]].n_sites} Mars sites, so this is descriptive.</p>` : pending('ROC')}
@@ -149,6 +182,14 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
           <ul class="proof-lines">${CR.map(r => `<li><b>${esc(r.label)}</b>, Copernicus GLO-30 tile ${esc(r.tile.replace(/_00/g, '').replace('_', ' '))}. ${esc(r.why)}</li>`).join('')}</ul>
           <p class="note">An Amazon rainforest tile was considered and rejected: the Copernicus DEM is a surface model, so its roughness would be that of the forest canopy, not the ground.</p>
         </details>` : pending('Controls')}
+      <details class="proof-more"><summary>Read more: method and tables of the blind test</summary>
+        ${okNull ? `<p class="prose-p">The statistic is the one of the known-analog test: each known site → the 6 km windows that contain it → best percentile of their score among all windows of the target → median over the ${nTests} (site, target) tests. The null replaces each site by a random point of the valid area (inside at least one window), drawn on a ${esc(String((S.null._meta?.params as Record<string, unknown> | undefined)?.lattice_m ?? ''))} m lattice.</p>
+        <div class="tbl"><table><caption>Null distributions of the median percentile</caption><thead><tr><th scope="col">Score</th><th scope="col">Observed</th><th scope="col">Global: mean [P5–P95]</th><th scope="col">p global</th><th scope="col">Region-matched: mean [P5–P95]</th><th scope="col">p region</th></tr></thead>
+        <tbody>${SCORES.map(k => { const g = S.null.null_summary.global[k], r = S.null.null_summary.region_matched[k]; return `<tr><th scope="row">${SCORE_LABEL[k]}</th><td class="tnum">${f1(S.null.observed[`median_pct_${k}`])}</td><td class="tnum">${f1(g.mean)} [${f1(g.p05)}–${f1(g.p95)}]</td><td class="tnum">${fmtP(S.null.p_value.global[k])}</td><td class="tnum">${f1(r.mean)} [${f1(r.p05)}–${f1(r.p95)}]</td><td class="tnum">${fmtP(S.null.p_value.region_matched[k])}</td></tr>`; }).join('')}</tbody></table></div>` : ''}
+        ${okRoc ? `<h3>ROC curves, combined score</h3><div class="proof-chart proof-h-md" id="proof-roc"></div>` : ''}
+        <h3>Every known analog site and target</h3><div class="tbl scroll" id="proof-ka"></div>
+        ${okCtrl ? `<h3>Control tiles: rank of their best window if inserted among the official windows</h3><div class="tbl" id="proof-ctrl"></div>` : ''}
+      </details>
     </section>
 
     <section class="vsec proof-sec" id="proof-2" aria-labelledby="proof-2-h">
@@ -170,6 +211,29 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
         <p class="note">Change of the combined score of the target's top window when one feature moves by −1 or +1 IQR (all else fixed). Large drops on both sides mean the window already matches that feature.</p>` : pending('Tornado')}
       ${okDec ? `<h3>What the distance is made of, top 20 windows</h3><div class="proof-chart proof-h-md" id="proof-3d2"></div>
         <p class="note">Share of each feature in the squared distance d²/Σd² of the combined score: a large share is where the Earth window still differs from the target.</p>` : ''}
+      <h3>Window size: 3, 6 and 12 km</h3>
+      ${okStab ? `<div class="tbl" id="proof-3c"></div>
+        <p class="note">Kendall τ-b between the regional rankings (best window per region, ${S.stability[all[0]].n_regions} regions) at two window sizes; 1 = same order. Jaccard: overlap of the footprints of the top-10 windows (area of intersection / union); 0 = no overlap. At 12 km the lunar reference rests on very few reference windows, so the 12 km columns are the weakest.</p>` : pending('Window size')}
+      <details class="proof-more"><summary>Read more: method of the robustness tests</summary>
+        <ul class="proof-lines">
+          ${okBoot ? `<li>Bootstrap: ${nf(Number((S.bootstrap._meta?.params as Record<string, unknown> | undefined)?.bootstrap ?? 0))} replicates; reference windows per target: ${all.map(t => `${esc(name(t))} ${S.bootstrap.n_ref[t]}`).join(', ')}. The IQR is fixed to the main run.</li>` : ''}
+          ${okStab ? `<li>Weights: ${esc(String((S.stability._meta?.params as Record<string, unknown> | undefined)?.weights ?? ''))}; with two dimensions only the ratio matters. These replace the Dirichlet weights of the original plan so the test covers exactly the weightings a user can choose.</li>` : ''}
+          ${okTor ? `<li>Tornado: deterministic; ±1 IQR on one feature of the top window, all else fixed.</li>` : ''}
+          <li>All statistics use seed ${esc(String((S.null as Meta)?._meta?.seed ?? ''))} and record their date, parameters and input hashes in <code>data/processed/stats/</code>.</li>
+        </ul>
+        <h3>Windows of the top 10 kept when illumination is re-weighted</h3><div class="tbl" id="proof-sens"></div>
+      </details>
+    </section>
+
+    <section class="vsec proof-sec" id="proof-limits" aria-labelledby="proof-limits-h">
+      <h2 id="proof-limits-h">What the statistics do NOT support</h2>
+      <ul class="proof-lines">${notSupported(S, moon, mars, name, nSites).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+    </section>
+
+    <section class="vsec proof-sec" id="proof-all" aria-labelledby="proof-all-h">
+      <h2 id="proof-all-h">Appendix · All scores</h2>
+      <p class="prose-p">The top-window score in every Earth region against every target, from the exported data.</p>
+      <div id="proof-hm"></div>
     </section>
   </div>`;
 
@@ -348,5 +412,62 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
       ],
     }, { summary: `Share of random slider weightings in which each target's equal-weight #1 window stays #1 and stays in the top 10: `
       + all.map(t => `${name(t)} ${Math.round(100 * (S.stability[t].p_top1[S.stability[t].top1_equal_weights] ?? 0))} % and ${Math.round(100 * (S.stability[t].p_top10[S.stability[t].top1_equal_weights] ?? 0))} %`).join('; ') + '.' });
+  }
+
+  // ---- 1B · null histograms
+  if (okNull) {
+    const H = S.null.null_hist, bins = H.global.bins, mids = bins.slice(0, -1).map((b, i) => (b + bins[i + 1]) / 2);
+    const share = (c: number[]) => { const t = c.reduce((a, b) => a + b, 0); return c.map(x => x / t); };
+    const obs = S.null.observed.median_pct_combined;
+    mountChart(el.querySelector('#proof-1b')!, {
+      legend: { top: 0 }, grid: { left: 8, right: 16, top: 32, bottom: 40, containLabel: true },
+      xAxis: { type: 'value', min: 0, max: 100, name: 'median percentile of the known sites (combined)', nameLocation: 'middle', nameGap: 26 },
+      yAxis: { type: 'value', axisLabel: { formatter: (v: number) => `${Math.round(v * 100)} %` } },
+      tooltip: { trigger: 'axis', valueFormatter: (v: number) => `${(v * 100).toFixed(1)} %` },
+      series: [
+        { name: 'global null', type: 'line', step: 'middle', symbol: 'none', areaStyle: { opacity: 0.25 }, data: mids.map((x, i) => [x, share(H.global.counts)[i]]) },
+        { name: 'region-matched null', type: 'line', step: 'middle', symbol: 'none', lineStyle: { type: 'dashed' }, data: mids.map((x, i) => [x, share(H.region_matched.counts)[i]]),
+          markLine: { silent: true, symbol: 'none', lineStyle: { type: 'solid', width: 2 }, label: { formatter: `observed ${f1(obs)}` }, data: [{ xAxis: obs }] } },
+      ],
+    }, { summary: `Distribution of the median percentile of ${nSites} random sites under the global null (mean ${f1(S.null.null_summary.global.combined.mean)}) and the region-matched null (mean ${f1(S.null.null_summary.region_matched.combined.mean)}), against the observed ${f1(obs)}. ${nullLine(S.null, nSites)}` });
+  }
+
+  // ---- Read more · ROC curves
+  if (okRoc) {
+    mountChart(el.querySelector('#proof-roc')!, {
+      legend: { top: 0, type: 'scroll' }, grid: { left: 8, right: 16, top: 36, bottom: 40, containLabel: true },
+      xAxis: { type: 'value', min: 0, max: 1, name: 'false-positive rate', nameLocation: 'middle', nameGap: 26 },
+      yAxis: { type: 'value', min: 0, max: 1, name: 'true-positive rate' },
+      tooltip: { trigger: 'item', formatter: (p: { seriesName: string }) => `${esc(p.seriesName)}: AUC ${f2(S.roc[all.find(t => name(t) === p.seriesName) ?? all[0]].auc)}` },
+      series: [...all.map((t, i) => ({ name: name(t), type: 'line', symbol: 'none', lineStyle: { type: mars.includes(t) ? 'dashed' : 'solid', width: 1.5 }, data: S.roc[t].fpr.map((x, k) => [x, S.roc[t].tpr[k]]), z: i })),
+        { name: 'no separation', type: 'line', symbol: 'none', lineStyle: { type: 'dotted', width: 1 }, data: [[0, 0], [1, 1]] }],
+    }, { summary: `ROC curves of the combined score per target (Mars dashed). AUC: ${all.map(t => `${name(t)} ${f2(S.roc[t].auc)}`).join(', ')}.` });
+  }
+
+  // ---- Read more · known analog table, controls table, sensitivity table
+  Promise.all([getJSON<{ rows: Record<string, number | string>[] }>('known_analogs'), getJSON<Record<string, Record<string, { rank: number; n: number }>>>('known_ranks'),
+    getJSON<{ illumination_weight: number[]; top10_overlap_vs_equal: Record<string, number[]> }>('sensitivity'), getJSON<unknown>('matrix')]).then(([ka, kr, sens, mx]) => {
+    const rows = ka.rows.slice().sort((a, b) => String(a.reference).localeCompare(String(b.reference)) || Number(b.score_combined_pct_best) - Number(a.score_combined_pct_best));
+    el.querySelector('#proof-ka')!.innerHTML = `<table><caption>Known analog sites: percentile of the best window containing the site among all Earth windows of the target (50 = random)</caption>
+      <thead><tr><th scope="col">Target</th><th scope="col">Known site</th><th scope="col">Rank of best</th><th scope="col">Combined</th><th scope="col">Terrain</th><th scope="col">Illumination</th></tr></thead>
+      <tbody>${rows.map(r => { const k = kr[String(r.reference)]?.[String(r.site)]; return `<tr><th scope="row">${esc(name(String(r.reference)))}</th><td>${esc(String(r.site))}</td><td class="tnum">${k ? `#${nf(k.rank)}` : '—'}</td>${['score_combined_pct_best', 'score_terrain_pct_best', 'score_illumination_pct_best'].map(c => `<td class="tnum">${f1(Number(r[c]))}</td>`).join('')}</tr>`; }).join('')}</tbody></table>`;
+    const W = sens.illumination_weight;
+    el.querySelector('#proof-sens')!.innerHTML = `<table><caption>Top-10 windows kept vs equal weights, by illumination weight (terrain fixed at 1)</caption><thead><tr><th scope="col">Target</th>${W.map(w => `<th scope="col">×${w}</th>`).join('')}</tr></thead>
+      <tbody>${Object.entries(sens.top10_overlap_vs_equal).map(([t, a]) => `<tr><th scope="row">${esc(name(t))}</th>${a.map(v => `<td class="tnum">${v}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+    import('./heatmap').then(({ mountHeatmap }) => mountHeatmap(el.querySelector('#proof-hm')!, m, mx as never));
+  }).catch(() => { /* optional tables: the rest of the view stays */ });
+  if (okCtrl) {
+    el.querySelector('#proof-ctrl')!.innerHTML = `<table><caption>Best control window: rank if inserted among the ${nf(CT[all[0]].controls[CR[0].id].of)} official windows (the official ranking does not change)</caption>
+      <thead><tr><th scope="col">Target</th>${CR.map(r => `<th scope="col">${esc(ctrlName(r))}</th>`).join('')}</tr></thead>
+      <tbody>${all.map(t => `<tr><th scope="row">${esc(name(t))}</th>${CR.map(r => `<td class="tnum">#${nf(CT[t].controls[r.id].best_rank_if_inserted)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  }
+
+  // ---- 3C · window size, Kendall tau and Jaccard (heat table on theme tokens)
+  if (okStab) {
+    const cols = ['kendall_tau_3_6', 'kendall_tau_6_12', 'kendall_tau_3_12', 'jaccard_top10_3_6', 'jaccard_top10_6_12', 'jaccard_top10_3_12'];
+    const head = (c: string) => `${c.startsWith('kendall') ? 'τ' : 'Jaccard'} ${c.split('_').slice(-2).join('–')} km`;
+    el.querySelector('#proof-3c')!.innerHTML = `<table class="proof-heat"><caption>Agreement between window sizes per target</caption>
+      <thead><tr><th scope="col">Target</th>${cols.map(c => `<th scope="col">${head(c)}</th>`).join('')}</tr></thead>
+      <tbody>${all.map(t => `<tr><th scope="row">${esc(name(t))}</th>${cols.map(c => { const v = Number(S.stability[t][c]); return `<td class="tnum" style="--v:${Math.max(0, Math.min(1, v)).toFixed(2)}">${f2(v)}</td>`; }).join('')}</tr>`).join('')}</tbody></table>`;
   }
 }
