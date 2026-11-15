@@ -56,6 +56,11 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def sha_input(path):
+    """Input hash with line endings normalised (CRLF -> LF), so a Windows checkout gives the same hash."""
+    return hashlib.sha256(Path(path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 def stable_rank(x):
     order = np.argsort(-np.asarray(x), kind="stable")
     r = np.empty(len(order), dtype=np.int64)
@@ -171,7 +176,7 @@ def readme(base, top, targets, regions, rows, cfg, hashes, out_sizes):
           "| Bootstrap CI, AUC | computed by `scripts/stats/` from the files above | as the code |", "",
           "The catalog is derived data: credit each provider above when you use it. Code: MIT (`LICENSE`).", "",
           "## Reproducibility", "", "No random draws; rerunning `python scripts/release_catalog.py` on the same inputs gives the same bytes. "
-          "SHA-256 of the inputs:", "", "| Input | SHA-256 |", "|---|---|"]
+          "SHA-256 of the inputs (line endings normalised to LF):", "", "| Input | SHA-256 |", "|---|---|"]
     L += [f"| `{k}` | `{v}` |" for k, v in hashes.items()]
     L += ["", f"Combined input hash: `{hashlib.sha256(''.join(hashes.values()).encode()).hexdigest()}`", ""]
     return "\n".join(L)
@@ -213,7 +218,7 @@ def main():
     full = OUT_FULL / "pen_analog_catalog_full.geojson"
     geojson(full, lambda k: True)
     (OUT_FULL / "SHA256SUMS").write_text(f"{sha(full)}  {full.name}\n", encoding="utf-8", newline="\n")
-    hashes = {str(p.relative_to(ROOT)): sha(p) for p in INPUTS}
+    hashes = {p.relative_to(ROOT).as_posix(): sha_input(p) for p in INPUTS}
     sizes = {f: human((OUT / f).stat().st_size) for f in ("pen_analog_catalog.csv", "pen_analog_catalog.geojson", "pen_top_windows.csv")}
     (OUT / "README.md").write_text(readme(base, top, targets, regions, dictionary(targets, emit_cols, cfg), cfg, hashes, sizes), encoding="utf-8", newline="\n")
     files = ["README.md", "pen_analog_catalog.csv", "pen_analog_catalog.geojson", "pen_top_windows.csv"]
