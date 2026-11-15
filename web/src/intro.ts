@@ -77,5 +77,5 @@ export function mountHome(root: HTMLElement, o: { m: Manifest; view: View; targe
     }
   }).catch(() => land());
 
-  return { finish() { if (done) return; done = true; document.removeEventListener('keydown', onKey); cancelAnimationFrame(raf); clearTimeout(flyTimer); clearTimeout(landTimer); el.classList.add('leaving'); delete document.documentElement.dataset.intro; delete document.documentElement.dataset.homeLanded; setTimeout(() => el.remove(), 260); } };
+  return { finish() { if (done) return; done = true; document.removeEventListener('keydown', onKey); cancelAnimationFrame(raf); clearTimeout(flyTimer); clearTimeout(landTimer); if (!dead) view.jumpTo({ padding: { top: 0, left: 0, right: 0, bottom: 0 } });   /* give Explore its camera back without Home's left padding */ el.classList.add('leaving'); delete document.documentElement.dataset.intro; delete document.documentElement.dataset.homeLanded; setTimeout(() => el.remove(), 260); } };
 }

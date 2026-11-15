@@ -67,11 +67,16 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   const homeOn = () => document.documentElement.dataset.intro !== undefined;
   const snaps = () => [isPhone() ? 24 + bestEl.offsetHeight + 4 : 168, Math.round(innerHeight * .55), innerHeight - 64];
   let snap = 0;
+  /** Camera padding for Explore: the phone sheet at the bottom; none on desktop (the two panels are about as wide). */
+  let lastPad = '';
+  const camPad = (h = snaps()[snap]) => isPhone() ? { top: 52, bottom: Math.min(h, innerHeight * .6), left: 0, right: 0 } : { top: 0, bottom: 0, left: 0, right: 0 };
   const applySnap = (h: number, i = snap) => {
     if (i > 0 && snap === 0) dock.scrollTop = 0;
     snap = i; dock.style.setProperty('--sheet-h', `${h}px`); dock.dataset.snap = ['peek', 'half', 'full'][i]; grab.setAttribute('aria-expanded', String(i > 0));
     if (homeOn()) return;                                    // Home (intro.ts) owns the camera while it is shown
-    if (isPhone()) view.setPadding({ top: 52, bottom: Math.min(h, innerHeight * .6), left: 0, right: 0 }); else view.setPadding({ top: 0, bottom: 0, left: 0, right: 0 });
+    const pad = camPad(h), key = JSON.stringify(pad);
+    if (key === lastPad) return;                             // an unchanged padding must not cancel a camera flight in progress
+    lastPad = key; view.setPadding(pad);
   };
   const setSnap = (i: number) => applySnap(snaps()[i], i);
   grab.addEventListener('click', () => setSnap((snap + 1) % 3));
@@ -174,10 +179,20 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     if (homeOn()) return;
     const ks = scored.shown.slice(0, 400);
     const med = (a: number[]) => a.slice().sort((x, y) => x - y)[Math.floor(a.length / 2)];
-    const c: [number, number] = ks.length ? [med(ks.map(k => scored.lon[k])), med(ks.map(k => scored.lat[k]))] : [0, 20];
+    let c: [number, number] = ks.length ? [med(ks.map(k => scored.lon[k])), med(ks.map(k => scored.lat[k]))] : [0, 20];
+    // halfway between the best match and the bulk of the matches, so the #1 window is never on the limb of the globe
+    if (ks.length) {
+      const b = ks[0], dLon = ((c[0] - scored.lon[b] + 540) % 360) - 180;
+      c = [((scored.lon[b] + dLon / 2 + 540) % 360) - 180, (scored.lat[b] + c[1]) / 2];
+    }
     const availH = innerHeight - 52 - (isPhone() ? Math.min(snaps()[snap], innerHeight * .6) : 0);
     const D = isPhone() ? Math.min(innerWidth * .94, availH * .94) : availH * 1.12;
-    if (animate) view.fly(c[0], c[1], zoomForGlobe(D)); else view.jumpTo({ center: c, zoom: zoomForGlobe(D) });
+    // explicit padding: the camera may still carry Home's (left 34 %) when the user arrives from Home
+    // after the map style has loaded: a camera move made before the globe projection is applied is lost
+    void view.loaded.then(() => {
+      if (animate) view.fly(c[0], c[1], zoomForGlobe(D), camPad()); else view.jumpTo({ center: c, zoom: zoomForGlobe(D), padding: camPad() });
+      lastPad = JSON.stringify(camPad());
+    });
   }
 
   // ---------- deep link: #/explore?target=..&region=..  (Home shortcuts): switch target, then fly to the region's best window
