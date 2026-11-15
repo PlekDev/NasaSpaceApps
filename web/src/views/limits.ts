@@ -5,6 +5,7 @@ import './limits.css';
 import { esc, pyFixed } from '../format';
 import { getJSON } from '../data';
 import type { Manifest } from '../types';
+import { headlineTarget } from '../lib/headline';
 
 type Lvl = 'yes' | 'partial' | 'no' | 'na';
 interface Thermal { source: string; measured: boolean; mean_K: number; min_K: number; max_K: number; note: string }
@@ -103,7 +104,8 @@ export async function render(el: HTMLElement, m: Manifest) {
   const scale = await getJSON<Scale>('limits/scale');
   const ids = scale.targets.map(t => t.id);
   const q = new URLSearchParams(location.hash.split('?')[1] ?? '');
-  let sel = ids.includes(q.get('target') ?? '') ? q.get('target')! : ids[0];
+  const hl = await headlineTarget(m);                       // the blind-test headline target, as Home and Explore
+  let sel = ids.includes(q.get('target') ?? '') ? q.get('target')! : (hl && ids.includes(hl) ? hl : ids[0]);
   const name = (id: string) => m.targets.find(t => t.id === id)?.name ?? scale.targets.find(t => t.id === id)?.name ?? id;
   const opt = (body: string, label: string) => `<optgroup label="${label}">${scale.targets.filter(t => t.body === body).map(t => `<option value="${t.id}">${esc(name(t.id))}</option>`).join('')}</optgroup>`;
   el.innerHTML = `<div class="page-in limits">

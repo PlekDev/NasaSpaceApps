@@ -12,6 +12,7 @@ import { esc, cap, nf, coord, pyFixed } from '../format';
 import { getJSON, loadTarget, loadDetail } from '../data';
 import { fieldEvents } from '../eonet';
 import type { Manifest } from '../types';
+import { headlineTarget } from '../lib/headline';
 
 type Rec = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 const THR_SIMILAR = 0.5, THR_DIFF = 1.5; // same thresholds as pen.scoring.explain()
@@ -40,7 +41,8 @@ function scoreInterval(boot: Rec | null, target: string, wid: string): [number, 
 
 export async function render(el: HTMLElement, m: Manifest, params?: Record<string, string>) {
   const q = query(params);
-  const t = m.targets.find(x => x.id === q.get('target')) ?? m.targets.find(x => x.body === 'moon') ?? m.targets[0];
+  const hl = q.get('target') ? null : await headlineTarget(m);   // no ?target=: the blind-test headline target
+  const t = m.targets.find(x => x.id === q.get('target')) ?? m.targets.find(x => x.id === hl) ?? m.targets.find(x => x.body === 'moon') ?? m.targets[0];
   const [core, det, repro, credits, rover, kr, boot] = await Promise.all([loadTarget(t.id), loadDetail(t.id), getJSON<Record<string, string[]>>('reproduce'),
     optional<Record<string, string>>('credits'), optional<Rec>('rover_twin'), optional<Rec>('known_ranks'), optional<Rec>('stats/bootstrap')]);
   const sc = m.scale, n = core.n, ii = det.i as number[], jj = det.j as number[];

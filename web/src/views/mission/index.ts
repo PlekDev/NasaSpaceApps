@@ -44,6 +44,7 @@ import {
   type SunAngles,
 } from './sim.ts';
 import { renderTelemetryPanel } from './telemetry.ts';
+import { headlineTarget } from '../../lib/headline.ts';
 
 function resolveTargetId(m: Manifest, raw?: string): string {
   if (!raw) return m.targets[0]?.id ?? 'moon_malapert';
@@ -63,7 +64,8 @@ export async function render(
   let disposed = false;
 
   // Initial state from URL parameters
-  let targetId = resolveTargetId(m, params.target);
+  // without ?target= open on the blind-test headline target (Malapert), as Home and Explore do
+  let targetId = params.target ? resolveTargetId(m, params.target) : ((await headlineTarget(m)) ?? resolveTargetId(m));
   let windowRank = Math.max(1, Math.min(5, Number(params.rank || params.window) || 1));
   let exag = Math.max(1, Math.min(5, Number(params.exag) || 2.5));
   let cameraMode: CameraMode =
