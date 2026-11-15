@@ -7,10 +7,13 @@ Reads only data/processed/ (and config/sites.yaml for labels and sources, read-o
   stats/bootstrap.json, roc.json    bootstrap CI of the top windows, AUC (for the usage notes)
 Writes data/release/:
   pen_analog_catalog.csv            one row per Earth window (10,424), wide: scores and rank per target, features, LST, EMIT
-  pen_analog_catalog.geojson        the same rows as polygons (WGS84 lon/lat)
+  pen_analog_catalog.geojson        the windows as polygons (WGS84 lon/lat) with id, region, combined__* and rank__* (light;
+                                    join the CSV by window_id for the other columns)
   pen_top_windows.csv               the top 20 windows per target with their 95 % bootstrap CI of score and rank
   README.md                         column dictionary with units, sources and licences, usage notes, input hashes
   SHA256SUMS                        checksums of the released files
+and, outside the repository (git-ignored), data/release_full/ with the full GeoJSON (every column) and its SHA256SUMS,
+for the Zenodo deposit.
 Deterministic: no random draws, fixed row and column order, no timestamps, so a rerun on the same inputs gives the same bytes.
 Run: python scripts/release_catalog.py
 """
@@ -25,6 +28,7 @@ from pen.features import DIMENSIONS
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data" / "release"
+OUT_FULL = ROOT / "data" / "release_full"          # git-ignored; uploaded to Zenodo, not committed
 INPUTS = [PROCESSED / "windows.csv", PROCESSED / "earth_lst_windows.csv", PROCESSED / "earth_emit_windows.csv",
           PROCESSED / "stats" / "bootstrap.json", PROCESSED / "stats" / "roc.json", ROOT / "config" / "sites.yaml"]
 KEYS = [k for ks in DIMENSIONS.values() for k in ks]
@@ -132,9 +136,15 @@ def readme(base, top, targets, regions, rows, cfg, hashes, out_sizes):
          "Method: `docs/METHOD.md`. Code: `scripts/release_catalog.py`.", "",
          "## Files", "", "| File | Size | Content |", "|---|---|---|",
          f"| `pen_analog_catalog.csv` | {out_sizes['pen_analog_catalog.csv']} | one row per window (wide table, columns below) |",
-         f"| `pen_analog_catalog.geojson` | {out_sizes['pen_analog_catalog.geojson']} | the same rows as WGS84 polygons (RFC 7946 GeoJSON) |",
+         f"| `pen_analog_catalog.geojson` | {out_sizes['pen_analog_catalog.geojson']} | the windows as WGS84 polygons (RFC 7946 GeoJSON) with `window_id`, `region`, `combined__*` and `rank__*`; join the CSV by `window_id` for every other column |",
          f"| `pen_top_windows.csv` | {out_sizes['pen_top_windows.csv']} | top {len(top) // len(targets)} windows per target with the 95 % bootstrap CI of score and rank |",
          "| `SHA256SUMS` | | checksums of the files above (`shasum -a 256 -c SHA256SUMS`) |", "",
+         "A GeoJSON with every column on the polygons (`pen_analog_catalog_full.geojson`) is generated in `data/release_full/` "
+         "(not in the repository, because of its size) and is published with the Zenodo deposit of the release.", "",
+         "Join the polygons with all columns (Python, geopandas):", "", "```python",
+         "gdf = gpd.read_file(\"pen_analog_catalog.geojson\")",
+         "gdf = gdf.merge(pd.read_csv(\"pen_analog_catalog.csv\").drop(columns=[c for c in gdf.columns if c != \"window_id\"], errors=\"ignore\"), on=\"window_id\")",
+         "```", "",
          "## How to use it (read this first)", "",
          "- Say **\"top window\" with its confidence interval, never \"the best place\"**. Under bootstrap resampling of the "
          f"reference terrain the rank of a target's #1 window can move as far as #{rank_hi} (`pen_top_windows.csv`).",
@@ -189,15 +199,20 @@ def main():
         if isinstance(v, (float, np.floating)):
             return None if np.isnan(v) else float(f"{v:.6g}")
         return v.item() if isinstance(v, np.generic) else v
-    feats = []
-    for rec in base.to_dict("records"):
-        ring = json.loads(rec.pop("polygon"))
-        ring = [[round(x, 5), round(y, 5)] for x, y in ring]
-        ring = ring + [ring[0]] if ring[0] != ring[-1] else ring
-        feats.append({"type": "Feature", "id": rec["window_id"], "geometry": {"type": "Polygon", "coordinates": [ring]},
-                      "properties": {k: clean(v) for k, v in rec.items()}})
-    (OUT / "pen_analog_catalog.geojson").write_text(json.dumps({"type": "FeatureCollection", "features": feats},
-                                                               ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    def geojson(path, keep):
+        feats = []
+        for rec in base.to_dict("records"):
+            ring = json.loads(rec.pop("polygon"))
+            ring = [[round(x, 5), round(y, 5)] for x, y in ring]
+            ring = ring + [ring[0]] if ring[0] != ring[-1] else ring
+            feats.append({"type": "Feature", "id": rec["window_id"], "geometry": {"type": "Polygon", "coordinates": [ring]},
+                          "properties": {k: clean(v) for k, v in rec.items() if keep(k)}})
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"type": "FeatureCollection", "features": feats}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    geojson(OUT / "pen_analog_catalog.geojson", lambda k: k in ("window_id", "region") or k.startswith(("combined__", "rank__")))
+    full = OUT_FULL / "pen_analog_catalog_full.geojson"
+    geojson(full, lambda k: True)
+    (OUT_FULL / "SHA256SUMS").write_text(f"{sha(full)}  {full.name}\n", encoding="utf-8")
     hashes = {str(p.relative_to(ROOT)): sha(p) for p in INPUTS}
     sizes = {f: human((OUT / f).stat().st_size) for f in ("pen_analog_catalog.csv", "pen_analog_catalog.geojson", "pen_top_windows.csv")}
     (OUT / "README.md").write_text(readme(base, top, targets, regions, dictionary(targets, emit_cols, cfg), cfg, hashes, sizes), encoding="utf-8")
@@ -205,6 +220,7 @@ def main():
     (OUT / "SHA256SUMS").write_text("".join(f"{sha(OUT / f)}  {f}\n" for f in files), encoding="utf-8")
     for f in files + ["SHA256SUMS"]:
         print(f"  {f:30s} {human((OUT / f).stat().st_size):>9s}")
+    print(f"  (not committed) {full.relative_to(ROOT)}  {human(full.stat().st_size)}")
     print(f"{len(base):,} windows × {len(base.columns) - 1} columns, {len(targets)} targets, {len(regions)} regions → {OUT}")
 
 
