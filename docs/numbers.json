@@ -513,9 +513,9 @@
    "slide": [
     6
    ],
-   "text": "about 80 % for the Malapert traverse with the lunar Sun from the east (late March 2027, about half an hour after sunrise)",
-   "value": 80,
-   "source": "Mission view after the physics fixes (#39, #42), lunar Sun from the east (hour angle -90), computed in the browser from today; approximate, take the final value from the view after #42 merges. With the default hour angle (-35) Mauna Kea has no direction match.",
+   "text": "fidelity 80 % for the Malapert traverse with the lunar Sun from the east (29–30 March 2027, about half an hour after sunrise)",
+   "value": 80.2,
+   "source": "Mission view (main after #42), Malapert, default route, Sun 2.5° high, hour angle -90 (from the east): best window 2027-03-29 16:30–17:00 UTC, 81 of 101 route points match. Computed in the browser from today, so it can shift by a few days; no file in data/processed yet.",
    "pending": true
   }
  ]

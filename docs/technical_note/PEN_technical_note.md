@@ -5,7 +5,7 @@ NASA Space Apps Challenge 2026 · *Identify Earth Locations that Analog the Perm
 Code, data and web app: https://github.com/PlekDev/NasaSpaceApps · https://plekdev.github.io/NasaSpaceApps/
 
 <!-- DRAFT. Statistics are those in data/processed/stats and data/processed/controls on Sun 15 Nov; they are re-read
-     after the 19:00 number freeze. The rehearsal example is the Mission view after the physics fixes (#39, #42), Victor's values; re-read after #42 merges. -->
+     after the 19:00 number freeze. The rehearsal example is the Mission view after the physics fixes (#39, #42), Victor's values; read from the view after #42 merged. -->
 
 **Introduction.** NASA plans its Moon Base near the lunar south pole, where the Sun never rises more than about 7°
 above the horizon. Long terrain-cast shadows there control landing safety, rover vision, power and EVA planning.
@@ -72,9 +72,9 @@ up to 5.6–6.7 h/day in spring and autumn at Arctic and Antarctic sites. For a 
 lists the dates and times at which the Earth analog has the same Sun elevation and a compatible direction, with a
 rehearsal fidelity (share of 101 samples along the route with the same lit or shadowed state on both bodies). For
 the default Malapert traverse the lunar Sun comes from the north-northeast, a direction Mauna Kea's low Sun never
-reaches; the view says so and offers the closest dates (late June, at sunrise). With the lunar Sun from the east, the
-best Mauna Kea windows are in late March 2027, about half an hour after sunrise, with a rehearsal fidelity of about
-80 %. Saying when no Earth date matches is part of the answer: it tells a field team which lunar lighting a site
+reaches; the view says so and offers the closest dates (around 23 June 2027, at sunrise, 33° off in direction). With
+the lunar Sun from the east, the best Mauna Kea windows are on 29–30 March 2027, about half an hour after sunrise
+(06:08–06:38 local solar time), with a rehearsal fidelity of 80 %. Saying when no Earth date matches is part of the answer: it tells a field team which lunar lighting a site
 cannot rehearse.
 
 **Where the analogy breaks.** Per Diviner [3], in 88–100 % of each lunar site the annual mean temperature (2 cm below
