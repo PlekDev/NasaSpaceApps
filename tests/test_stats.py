@@ -161,3 +161,29 @@ def test_headline_carries_both_corrections():
     assert f"p = {fmt_p(b['p_value_region_matched'])}" in h
     assert f"{fmt_pc(b['p_bonferroni'])} corrected for {len(n['pu_uhiwahine'])} lunar targets" in h
     assert f"{fmt_pc(b['p_bonferroni_all_lunar_tests'])} corrected for all {k} site–target tests" in h
+
+
+def test_solar_position_known_cases():
+    import datetime as dt
+    from landsat_shadow import solar_position
+    # near the March equinox at solar noon on the equator the Sun is close to the zenith
+    e, _ = solar_position(0.0, 0.0, dt.datetime(2024, 3, 20, 12, 7, tzinfo=dt.timezone.utc))
+    assert e > 89.0
+    # 45 N, June solstice, 08:00 solar time: sin(e) = sin45 sin23.44 + cos45 cos23.44 cos60 -> e = 37.3 deg, Sun in the east
+    e, a = solar_position(45.0, 0.0, dt.datetime(2024, 6, 21, 8, 0, tzinfo=dt.timezone.utc))
+    assert abs(e - 37.3) < 0.7 and 80 < a < 100
+    # southern summer noon at 45 S: Sun due north
+    _, a = solar_position(-45.0, 0.0, dt.datetime(2024, 12, 21, 12, 2, tzinfo=dt.timezone.utc))
+    assert abs(a - 0) < 3 or abs(a - 360) < 3
+
+
+def test_landsat_confusion_and_threshold():
+    from landsat_shadow import confusion, tune_threshold
+    m = np.array([True, True, False, False]); o = np.array([True, False, False, False])
+    c = confusion(m, o)
+    assert c["iou"] == 0.5 and c["agreement"] == 0.75 and c["precision"] == 0.5 and c["recall"] == 1.0
+    rng = np.random.default_rng(0)
+    model = rng.random((50, 50)) < 0.2
+    nir = np.where(model, 0.05, 0.6) + rng.normal(0, 0.01, model.shape)
+    t = tune_threshold(nir, model, np.ones_like(model))
+    assert confusion(model.ravel(), (nir < t).ravel())["kappa"] > 0.99
