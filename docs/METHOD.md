@@ -75,6 +75,9 @@ publication, listed in the `note` field of the script; Pinacate comes from a sec
 (`python scripts/earth_lst.py status`), then `make lst`. Output: `data/processed/earth_lst_windows.csv`, keyed by
 `(site, i, j)` as in `windows.csv`; per-region GeoTIFFs stay in `data/cache/lst/`.
 
+- **Fallback source.** If the AppEEARS queue is slow, `scripts/earth_lst_earthaccess.py` downloads the same MOD11A2.061
+  granules through `earthaccess` and converts them (GDAL with the HDF4 driver, conda-forge) to the same per-date GeoTIFFs
+  in EPSG:4326, so `compute` is unchanged. For the 14 regions this is about 3.4 GB (shared tiles counted once).
 - **Quality control.** A composite is used when the mandatory QA flag (bits 0-1) is `00` (good), or `01` (other quality)
   *and* the LST error flag (bits 6-7) is `00` or `01` (error ≤ 2 K). Cloud and not-produced pixels are rejected. Scale factor
   0.02, fill value 0, valid range 150-400 K.
