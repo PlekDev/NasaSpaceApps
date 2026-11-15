@@ -1,0 +1,8 @@
+node_modules
+dist
+public/data
+public/thumbs
+public/extras
+public/figures
+web/.vite
+.vite

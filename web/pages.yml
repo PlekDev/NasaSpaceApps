@@ -1,0 +1,29 @@
+# Prepared, NOT enabled: copy to .github/workflows/pages.yml to publish web/ on GitHub Pages.
+name: Web (GitHub Pages)
+on:
+  workflow_dispatch:
+permissions: { contents: read, pages: write, id-token: write }
+concurrency: { group: pages, cancel-in-progress: true }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install -r requirements.txt
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: web/package-lock.json }
+      - run: python -I web/tools/export_data.py   # data/processed -> web/public/data (hash + commit in manifest)
+      - run: python -m pytest -q web/tests         # label and README-rank checks
+      - run: npm ci && npm test && npm run build:pages -- "/${{ github.event.repository.name }}/"   # /NasaSpaceApps/ for this repository
+        working-directory: web
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: web/dist }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: { name: github-pages, url: "${{ steps.d.outputs.page_url }}" }
+    steps:
+      - id: d
+        uses: actions/deploy-pages@v4

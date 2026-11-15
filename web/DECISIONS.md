@@ -1,0 +1,28 @@
+# web/ — decisions log
+
+Format: decision · options · why. Autonomous mode: decisions are made against DESIGN.md and the brief.
+
+1. **Top matches = best window per region, expandable.** Options: raw top-N windows (ten Mauna Kea rows), per-region. Per-region with window count; a click expands the region's ranked windows. (Owner decision.)
+2. **`web/public/data` is generated, git-ignored.** `make web` = export + build; manifest carries a hash of data/processed and the git commit, shown in the footer. (Owner decision.)
+3. **Light theme keeps the Blue Marble globe on a pale page.** (Owner decision.)
+4. **Engine: MapLibre GL JS globe, not deck.gl GlobeView.** Prototype (10 min, capped at 20): a bare deck.gl 9 GlobeView + TileLayer + ScatterplotLayer bundles to 274 KB gzipped; the whole P.E.N. app on MapLibre is 298 KB gzipped, so size is a wash. fps could not be compared: this machine has no GPU (software rendering). Chosen because MapLibre gives one WebGL context for intro and explore (seamless fly-in), native globe projection with sky/atmosphere, raster tiles with overzoom, GeoJSON sources, `queryRenderedFeatures` picking and DOM markers out of the box; with deck.gl I would write tile loading, picking and the 6 km square LOD myself.
+5. **Vanilla TypeScript, no framework.** The UI is a handful of panels with shared state; a framework would add bundle and a build step without removing code. A 40-line store + render functions is enough.
+6. **Hash routing** (`#/`, `#/time`, `#/validation`, `#/method`): static hosting on GitHub Pages without rewrites.
+7. **Attribution in the footer strip, not MapLibre's control**: one place for NASA/ESA credits, imagery attribution and the "Built with AI assistance" line; MapLibre's required attribution is rendered there too.
+8. **MapLibre in a lazy chunk.** The shell, intro text and manifest paint first (LCP 1.78 s throttled); the map chunk (288 KB gz) loads right after and queued camera/data calls are replayed. Option: single bundle (LCP 3.6 s measured).
+9. **Per-target data split core/detail.** Core (site, lon, lat, scores; 105 KB gz) for the map and lists; detail (window ids, scaled differences) fetched when a window opens. Option: one file (230 KB gz first load).
+10. **Text produced by the app's own code.** `export_data.py` extracts `cant_reproduce()` and `EARTH_LIMITS` from `app/streamlit_app.py` by AST and runs them on the committed JSON, so "Earth can't reproduce" (Diviner and Mars-climate rows) cannot drift from the app. Option: re-type the strings in TypeScript (rejected: drift risk).
+11. **Blind rediscovery from data, not typed ranks.** The app text hardcodes ranks ("#1 of 10,424", "#9", "#19", "#23"). known_analogs.json stores percentiles only, so the web shows "top x %" per target derived from the data. Option: copy the ranks (rejected: hand-typed numbers).
+12. **Sensitivity and Diviner sentences generated from data** (min/max, counts, target names) rather than copied.
+13. **Top-matches fade, not a hard clip.** The list scrolls inside its panel with proximity scroll-snap and a gradient fade at the edge that is shown only when more rows exist; the best match is always row 1.
+14. **Primary button colour.** `#3987e5` with white text is 3.6:1; buttons use `#2b72d0` (dark) / `#1a62c4` (light) for >= 4.5:1. The brand accent stays `#3987e5` for non-text chrome.
+15. **Score-matrix heatmap defaults to the Combined panel.** All three dimension panels side by side need ~2,200 px; "All" is one click away and scrolls horizontally with sticky region names.
+16. **No WebGL:** static NASA Blue Marble tile in the intro, a notice in place of the map, and rankings/filters/detail unchanged (tested).
+17. **Phone nav is a menu button** (4 views do not fit beside the wordmark and theme toggle at 390 px).
+18. **Short desktop screens (<= 860 px tall) compact the controls** so the best match stays in view at 1024x768.
+19. **Rank = stable-sort position of the best window.** The README's ranks (including Leibnitz #115 and Haworth #483) only reproduce with ties (scores are rounded to 0.1) broken by file order, i.e. pandas rank(method="first"); a strict "windows scoring higher" count gives 112 for Leibnitz. The headline four are identical either way. The percentile (strict less-than) is recomputed and asserted against known_analogs.json.
+20. **Field kit collapsed by default.** Twin light, astronaut view, rover traverse and the region brief are optional field tools; they sit in one collapsed section below Field safety so the analog card's core stays first.
+21. **WebKit.** Not runnable without installing OS libraries (needs sudo); not done on the user's machine without being asked. Scripts support it.
+22. **JSON is written with `ensure_ascii=False` into UTF-8 files**, everywhere (the alternative, escaping to ASCII, would also be safe but makes names like Hawai\u02bbi unreadable in the files and differs between the former and current outputs). Reads always name UTF-8 too.
+23. **Atomic writes for every generated file** (including copies and thumbnails), so an interrupted export leaves either the old file or the new one, never a truncated manifest.json.
+24. **Pages base given without slashes** (`build:pages -- NasaSpaceApps`): Git Bash on Windows rewrites arguments that start with `/`; vite.config normalises to `/NasaSpaceApps/`.
