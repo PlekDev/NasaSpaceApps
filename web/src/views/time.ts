@@ -69,7 +69,7 @@ export function monotonePath(pts: [number, number][]): string {
   return d;
 }
 
-export async function renderTime(el: HTMLElement, m: Manifest) {
+export async function renderTime(el: HTMLElement, m: Manifest, params: Record<string, string> = {}) {
   const res = await getJSON<{ low_sun_hours_by_month: Record<string, number[]> }>('results');
   const series: Series[] = Object.entries(res.low_sun_hours_by_month)
     .map(([id, v]) => {
@@ -84,9 +84,11 @@ export async function renderTime(el: HTMLElement, m: Manifest) {
     .filter((s): s is Series => s !== null)
     .sort((a, b) => b.mean - a.mean);
 
-  const pinned = new Set(series.slice(0, 4).map(s => s.id));
+  // opens on Mauna Kea (the best Earth region for the lunar sites), or on ?region=<id> from the hash; the other pins are the usual top of the list
+  const startId = series.find(s => s.id === params.region)?.id ?? series.find(s => /mauna kea/i.test(s.r.name))?.id ?? series[0]?.id ?? '';
+  const pinned = new Set([startId, ...series.map(s => s.id).filter(id => id !== startId)].slice(0, 4));
   let hover: string | null = null;
-  let focusId: string = series[0]?.id ?? '';
+  let focusId: string = startId;
   let viewMode: 'curve' | 'heatmap' = 'curve';
   let hmSort: 'mean' | 'peak' | 'lat' = 'mean';
   let activeMonth: number | null = null;
