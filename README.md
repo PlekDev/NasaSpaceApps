@@ -49,6 +49,10 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
   (Connecting Ridge), 0.99 (Nobile Rim 1), 0.97 (de Gerlache), 0.975 (Malapert), 0.99 (Haworth) and 0.98 (Leibnitz
   Beta), with a mean error of 2.0–3.2 percentage points of lit time. With the local DEM alone ρ is 0.46–0.88: the gap was distant mountains, and
   curvature by itself barely matters.
+- **Permanent shadow, a second check against NASA.** The same far-horizon run also says which points never see
+  any part of the Sun. Compared with NASA's permanently-shadowed-region map (LOLA LPSR), the two agree on
+  98.0–99.7 % of the points at every site. Permanent shadow is rare in these footprints (0.6–4.8 % of each), so the
+  stricter number is the overlap of the two shadow masks: intersection over union 0.53–0.82.
 - **Known-analog test:** 8 classic analog sites, 48 site × target tests. The median rank is the 84th percentile for
   illumination and the 61st for terrain (50 = random). El Pinacate, the Apollo training ground in Sonora, ranks in
   the top 3 % for four Moon Base sites and the top 8 % for all six. Sites chosen for other reasons rank lower, as they should: Meteor Crater
@@ -90,6 +94,7 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 | Known-analog test with 8 classic sites (Mauna Kea ISRU site #1 for Malapert, top 0.2 % for four of six Moon sites) | `scripts/validate_known_analogs.py` | D. Dona |
 | Sensitivity to weights and window size | `scripts/sensitivity.py`, fig5 | Victor |
 | LRO Diviner temperature and ice context for the Moon sites | `scripts/diviner_context.py`, fig6 | D. Lizárraga |
+| Permanent shadow from our light model vs NASA's LPSR map (agreement 98.0–99.7 %, IoU 0.53–0.82); tests for the Moon & Mars helpers | `scripts/validate_far_horizons.py`, `tests/test_moon_mars.py` | D. Lizárraga |
 | Diviner vs Earth analog regions (NASA POWER skin temperature) | `scripts/thermal_gap.py`, fig8 | D. Lizárraga |
 | Mars surface temperature and pressure per Mars site (Mars Climate Database), in fig8 and on the Mars analog cards | `scripts/mars_context.py` | D. Lizárraga |
 | Moon/Mars data paragraph for the project page; Mars DTMs checked against their headers (metres above the MOLA geoid, R = 3,396,190 m) | `docs/SUBMISSION.md` | D. Lizárraga |
@@ -221,7 +226,9 @@ the measured Diviner numbers of step 10.
   Sun is sampled at subsolar latitudes 1.54°·sin(2πk/24) and every 5° of subsolar longitude (1,728 positions) and
   treated as a 0.53° disk; the lit fraction is the mean visible share of the disk. We report ρ and mean absolute
   error against the LOLA average-illumination map for three variants: local DEM flat, local DEM curved, and 150 km
-  curved.
+  curved. For the full variant we also mark the points whose lit fraction is exactly zero and compare them with
+  NASA's permanently-shadowed-region mask (`LPSR_85S_060M`, nearest 60 m pixel): share of points that agree,
+  precision, recall and intersection over union (`psr` in `far_horizons.json`).
 - *Known analog sites:* for each classic site, take the windows that contain its coordinates and report the
   percentile of their best score among all 10,424 Earth windows (100 = best on Earth, 50 = random). No labels are
   ever used in scoring.
@@ -267,7 +274,7 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 | Data | Agency | Use |
 |---|---|---|
 | [LOLA 5 m south-pole DEMs](https://pgda.gsfc.nasa.gov/products/78) (Barker et al.) | **NASA** GSFC / LRO | Moon Base reference terrain |
-| [LOLA polar illumination](https://pgda.gsfc.nasa.gov/products/69) (Mazarico et al.) | **NASA** GSFC / LRO | Validation of the shadow model |
+| [LOLA polar illumination](https://pgda.gsfc.nasa.gov/products/69) (Mazarico et al.) | **NASA** GSFC / LRO | Validation of the shadow model (average illumination and permanent-shadow maps) |
 | [LOLA gridded polar DEM, 85°S, 40 m](https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/float_img/) | **NASA** LRO / PDS | Far-horizon validation (terrain up to 150 km) |
 | [MRO CTX stereo DTMs](https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms) | **NASA** MRO / USGS | Mars reference terrain |
 | [LRO Diviner polar resource product](https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/) (Paige et al.) | **NASA** LRO / PDS | Moon temperature and ice stability (where Earth stops being an analog) |
@@ -296,6 +303,9 @@ RADARSAT / Sentinel-1 radar (CSA / ESA).
   Beta (85.1–86.3°S) sit near the edge of the 85°S DEM: their rays toward lower latitudes stop after 21–39 km,
   41–66 km and 31–49 km, and 49 %, 63 % and 63 % of all their rays end before 150 km (Haworth: 50–91 km, 55 %;
   `ray_reach` in `far_horizons.json`). All of them still reach ρ ≥ 0.975.
+- Permanent shadow is matched only moderately (intersection over union 0.53–0.82; at Connecting Ridge we find 63 %
+  of NASA's shadowed points). We sample points every 240 m against a 60 m map and use 1,728 Sun positions where NASA
+  uses hourly steps over 18.6 years, so small or marginal shadows differ.
 - The full far-horizon model is slightly darker than NASA's map at all six sites (bias −0.7 to −2.5 percentage
   points of lit time). We have not isolated the cause; candidates are the different DEM resolution and our linear
   approximation of the partly hidden Sun disk.

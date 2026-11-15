@@ -58,7 +58,8 @@ references with the LOLA 85°S 40 m DEM, horizons traced up to 150 km in exact 3
 Sun positions (subsolar latitude ±1.54°, Sun as a 0.53° disk). Against the LOLA average-illumination map, ρ rises
 from 0.46–0.88 (local DEM) to 0.92–0.99 (150 km), and the mean error falls to 2.0–3.2 percentage points of lit time.
 Malapert, Nobile Rim 1 and Leibnitz Beta lie near the DEM edge, so their rays toward lower latitudes stop after
-21–39 km, 41–66 km and 31–49 km (`ray_reach` in `far_horizons.json`).
+21–39 km, 41–66 km and 31–49 km (`ray_reach` in `far_horizons.json`). The points that never see the Sun in this model agree
+with NASA's permanently-shadowed-region map on 98.0–99.7 % of the points (intersection over union 0.53–0.82).
 
 **Known-analog test.** `scripts/validate_known_analogs.py` takes 8 classic analog sites that fall inside our
 regions (Meteor Crater, SP Crater, Cinder Lake Crater Field, Pinacate Peaks, Haughton crater, Pu'u Hiwahine on
