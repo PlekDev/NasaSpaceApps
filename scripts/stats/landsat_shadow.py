@@ -135,9 +135,22 @@ def window_fractions(model, obs, mask, cols):
     return np.array(fm), np.array(fo)
 
 
-def evaluate(z, nir, mask, elev, az):
+def self_shadow(z, elev, az, dx=30.0):
+    """Baseline without cast shadows: a pixel is shadowed only if its own slope faces away from the Sun (n·s <= 0).
+    Grid is north-up (row index grows southward); az clockwise from north."""
+    zf = np.where(np.isfinite(z), z, np.nanmean(z))
+    dz_drow, dz_dcol = np.gradient(zf, dx)
+    dzdx, dzdy = dz_dcol, -dz_drow                      # east, north
+    e, a = math.radians(elev), math.radians(az)
+    sx, sy, sz = math.sin(a) * math.cos(e), math.cos(a) * math.cos(e), math.sin(e)
+    out = (-dzdx * sx - dzdy * sy + sz) <= 0             # normal (-dz/dx, -dz/dy, 1) dot sun
+    out[~np.isfinite(z)] = False
+    return out
+
+
+def evaluate(z, nir, mask, elev, az, model=None):
     """Tune on the west half, evaluate on the east half. Returns metrics and the threshold."""
-    model = cast_shadow(z, elev, az, 30.0)
+    model = cast_shadow(z, elev, az, 30.0) if model is None else model
     W = z.shape[1]
     west = np.zeros_like(mask); west[:, : W // 2] = True
     east = np.zeros_like(mask); east[:, W // 2:] = True
@@ -176,6 +189,14 @@ def main():
     sens = {"mtl_scene_centre_angles": evaluate(g.z, nir, mask, s["sun_elev_mtl"], s["sun_az_mtl"])[0],
             "elevation_minus_2": evaluate(g.z, nir, mask, e_t - 2, a_t)[0],
             "elevation_plus_2": evaluate(g.z, nir, mask, e_t + 2, a_t)[0]}
+    sweep = {f"{d:+d}": evaluate(g.z, nir, mask, e_t, (a_t + d) % 360)[0] for d in range(-30, 31, 5)}
+    best_off = max(sweep, key=lambda k: sweep[k]["kappa"])
+    fine = {f"{d:+d}": evaluate(g.z, nir, mask, e_t, (a_t + d) % 360)[0] for d in range(-10, 11)}
+    best_fine = max(fine, key=lambda k: fine[k]["kappa"])
+    print("  1° sweep kappa:", "  ".join(f"{k} {v['kappa']:.3f}" for k, v in fine.items()), "| max at", best_fine)
+    print("  azimuth sweep (offset: IoU / kappa):", "  ".join(f"{k} {v['iou']:.3f}/{v['kappa']:.3f}" for k, v in sweep.items()), "| max kappa at", best_off)
+    selfonly = evaluate(g.z, nir, mask, e_t, a_t, model=self_shadow(g.z, e_t, a_t))[0]
+    print(f"  self-shadow only     IoU {selfonly['iou']:.3f}  kappa {selfonly['kappa']:.3f}  precision {selfonly['precision']:.3f}  recall {selfonly['recall']:.3f}  model frac {selfonly['model_shadow_frac']:.4f}")
     for k, v in [("model", main_res)] + list(nulls.items()):
         print(f"  {k:20s} IoU {v['iou']:.3f}  kappa {v['kappa']:.3f}  agreement {v['agreement']:.3f}  window ρ {v['window_spearman']:.2f} ({v['windows']} windows)")
 
@@ -200,6 +221,11 @@ def main():
            "coverage": {"grid_shape": list(g.z.shape), "valid_frac": round(float(filled.mean()), 4), "evaluated_frac": round(float(mask.mean()), 4)},
            "model": r(main_res), "null": {k: r(v) for k, v in nulls.items()},
            "sensitivity": {k: r(v) for k, v in sens.items()},
+           "azimuth_sweep": {"offsets_deg": list(range(-30, 31, 5)), "centre_azimuth": round(a_t, 4), "max_kappa_offset_deg": int(best_off),
+                             "by_offset": {k: {m: round(v[m], 4) for m in ("iou", "kappa", "precision", "recall", "nir_threshold")} for k, v in sweep.items()},
+                             "fine_1deg": {"offsets_deg": list(range(-10, 11)), "max_kappa_offset_deg": int(best_fine),
+                                           "by_offset": {k: {m: round(v[m], 4) for m in ("iou", "kappa")} for k, v in fine.items()}}},
+           "self_shadow_only": r(selfonly),
            "control_mauna_kea": {"scene": CONTROL["scene"], "sun_used": {"elevation": round(em, 4), "azimuth": round(am, 4)},
                                  "sun_mtl": {"elevation": c["sun_elev_mtl"], "azimuth": round(c["sun_az_mtl"], 4)},
                                  "model_shadow_frac": round(mk_frac, 6)}}

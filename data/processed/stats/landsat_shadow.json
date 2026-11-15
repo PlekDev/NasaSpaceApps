@@ -1,7 +1,7 @@
 {
  "_stub": false,
  "_meta": {
-  "generated": "2026-11-15T19:28:36+00:00",
+  "generated": "2026-11-15T19:35:08+00:00",
   "seed": 20261115,
   "params": {
    "scene": "LC08_L2SP_059002_20220402_02_T1",
@@ -20,7 +20,7 @@
    "split": "threshold tuned on the west half (max kappa), metrics on the east half",
    "scope": "validates the cast-shadow code with a real scene's Sun geometry; not the lunar grazing-Sun regime"
   },
-  "git_commit": "cf97d4f",
+  "git_commit": "54bcfc8",
   "inputs": {
    "data/raw/Copernicus_DSM_COG_10_N79_00_W091_00_DEM.tif": "87d64a7bf02756b7"
   }
@@ -144,6 +144,243 @@
    "windows": 40,
    "window_spearman": 0.8949
   }
+ },
+ "azimuth_sweep": {
+  "offsets_deg": [
+   -30,
+   -25,
+   -20,
+   -15,
+   -10,
+   -5,
+   0,
+   5,
+   10,
+   15,
+   20,
+   25,
+   30
+  ],
+  "centre_azimuth": 210.9948,
+  "max_kappa_offset_deg": -5,
+  "by_offset": {
+   "-30": {
+    "iou": 0.3231,
+    "kappa": 0.4623,
+    "precision": 0.342,
+    "recall": 0.8544,
+    "nir_threshold": 0.1167
+   },
+   "-25": {
+    "iou": 0.3435,
+    "kappa": 0.4868,
+    "precision": 0.3643,
+    "recall": 0.8573,
+    "nir_threshold": 0.1167
+   },
+   "-20": {
+    "iou": 0.409,
+    "kappa": 0.5572,
+    "precision": 0.4469,
+    "recall": 0.828,
+    "nir_threshold": 0.1661
+   },
+   "-15": {
+    "iou": 0.4518,
+    "kappa": 0.6019,
+    "precision": 0.4906,
+    "recall": 0.8509,
+    "nir_threshold": 0.1661
+   },
+   "-10": {
+    "iou": 0.462,
+    "kappa": 0.6124,
+    "precision": 0.5086,
+    "recall": 0.8344,
+    "nir_threshold": 0.1661
+   },
+   "-5": {
+    "iou": 0.486,
+    "kappa": 0.6362,
+    "precision": 0.5374,
+    "recall": 0.8356,
+    "nir_threshold": 0.1661
+   },
+   "+0": {
+    "iou": 0.4855,
+    "kappa": 0.636,
+    "precision": 0.5458,
+    "recall": 0.8146,
+    "nir_threshold": 0.1661
+   },
+   "+5": {
+    "iou": 0.4535,
+    "kappa": 0.6026,
+    "precision": 0.5747,
+    "recall": 0.6826,
+    "nir_threshold": 0.2428
+   },
+   "+10": {
+    "iou": 0.3962,
+    "kappa": 0.5431,
+    "precision": 0.5256,
+    "recall": 0.6168,
+    "nir_threshold": 0.2428
+   },
+   "+15": {
+    "iou": 0.3448,
+    "kappa": 0.4852,
+    "precision": 0.4745,
+    "recall": 0.5579,
+    "nir_threshold": 0.2428
+   },
+   "+20": {
+    "iou": 0.3112,
+    "kappa": 0.4402,
+    "precision": 0.4919,
+    "recall": 0.4586,
+    "nir_threshold": 0.3333
+   },
+   "+25": {
+    "iou": 0.2655,
+    "kappa": 0.3808,
+    "precision": 0.4269,
+    "recall": 0.4126,
+    "nir_threshold": 0.3333
+   },
+   "+30": {
+    "iou": 0.2321,
+    "kappa": 0.3342,
+    "precision": 0.3756,
+    "recall": 0.378,
+    "nir_threshold": 0.3333
+   }
+  },
+  "fine_1deg": {
+   "offsets_deg": [
+    -10,
+    -9,
+    -8,
+    -7,
+    -6,
+    -5,
+    -4,
+    -3,
+    -2,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+   ],
+   "max_kappa_offset_deg": -2,
+   "by_offset": {
+    "-10": {
+     "iou": 0.462,
+     "kappa": 0.6124
+    },
+    "-9": {
+     "iou": 0.4693,
+     "kappa": 0.6198
+    },
+    "-8": {
+     "iou": 0.4905,
+     "kappa": 0.6403
+    },
+    "-7": {
+     "iou": 0.4742,
+     "kappa": 0.6247
+    },
+    "-6": {
+     "iou": 0.4907,
+     "kappa": 0.6406
+    },
+    "-5": {
+     "iou": 0.486,
+     "kappa": 0.6362
+    },
+    "-4": {
+     "iou": 0.5011,
+     "kappa": 0.6505
+    },
+    "-3": {
+     "iou": 0.4948,
+     "kappa": 0.6446
+    },
+    "-2": {
+     "iou": 0.5015,
+     "kappa": 0.6509
+    },
+    "-1": {
+     "iou": 0.4853,
+     "kappa": 0.6357
+    },
+    "+0": {
+     "iou": 0.4855,
+     "kappa": 0.636
+    },
+    "+1": {
+     "iou": 0.4765,
+     "kappa": 0.6274
+    },
+    "+2": {
+     "iou": 0.4896,
+     "kappa": 0.6376
+    },
+    "+3": {
+     "iou": 0.4741,
+     "kappa": 0.6228
+    },
+    "+4": {
+     "iou": 0.4567,
+     "kappa": 0.6057
+    },
+    "+5": {
+     "iou": 0.4535,
+     "kappa": 0.6026
+    },
+    "+6": {
+     "iou": 0.446,
+     "kappa": 0.5951
+    },
+    "+7": {
+     "iou": 0.4216,
+     "kappa": 0.57
+    },
+    "+8": {
+     "iou": 0.4088,
+     "kappa": 0.5565
+    },
+    "+9": {
+     "iou": 0.3976,
+     "kappa": 0.5444
+    },
+    "+10": {
+     "iou": 0.3962,
+     "kappa": 0.5431
+    }
+   }
+  }
+ },
+ "self_shadow_only": {
+  "n": 675911,
+  "agreement": 0.9615,
+  "iou": 0.3277,
+  "kappa": 0.4737,
+  "precision": 0.5281,
+  "recall": 0.4635,
+  "model_shadow_frac": 0.0356,
+  "observed_shadow_frac": 0.0405,
+  "nir_threshold": 0.1661,
+  "windows": 40,
+  "window_spearman": 0.8889
  },
  "control_mauna_kea": {
   "scene": "LC09_L2SP_062046_20221227_02_T1",

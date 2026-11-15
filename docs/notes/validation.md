@@ -258,12 +258,32 @@ only the window over our tile. The Copernicus GLO-30 tile is the one of the main
 | +180° | 0.005 | −0.002 | 0.890 | 0.006 | 0.090 |
 | +270° | 0.164 | 0.244 | 0.879 | 0.171 | 0.798 |
 
-Sensitivity: the MTL scene-centre angles give IoU 0.483; Sun elevation −2° or +2° gives 0.474 and 0.467. The agreement
-peaks at the real geometry.
+Sensitivity: the MTL scene-centre angles give IoU 0.483; Sun elevation −2° or +2° gives 0.474 and 0.467.
+
+**Azimuth sweep** around the tile-centre azimuth (210.99°), threshold re-tuned on the west half for every offset:
+
+| Offset | −30° | −25° | −20° | −15° | −10° | −5° | 0° | +5° | +10° | +15° | +20° | +25° | +30° |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| IoU | 0.323 | 0.343 | 0.409 | 0.452 | 0.462 | 0.486 | 0.486 | 0.454 | 0.396 | 0.345 | 0.311 | 0.266 | 0.232 |
+| kappa | 0.462 | 0.487 | 0.557 | 0.602 | 0.612 | 0.636 | 0.636 | 0.603 | 0.543 | 0.485 | 0.440 | 0.381 | 0.334 |
+
+The maximum is at −5° and 0° (equal to three decimals). A 1° sweep (in the JSON) shows a plateau from −6° to +2° with
+kappa 0.627–0.651 and its highest value at −2° (209.0°); the MTL scene-centre azimuth (207.4°) lies inside it. Steps of
+±0.01 in kappa between neighbouring degrees are at the level of the resampling noise (the shadow code rotates the DEM),
+so the data place the best azimuth within a few degrees of the real one, slightly to its negative side, and do not
+resolve it more finely.
+
+**Self-shadow-only baseline** (a pixel is shadowed only if its own slope faces away from the Sun; no cast shadows):
+IoU 0.328, kappa 0.474, precision 0.528, recall 0.463, against IoU 0.486, kappa 0.636, precision 0.546, recall 0.815 for
+the full model. Cast shadows add most of the recall: without them the model misses about half of the observed shadow.
+
+**Sentence for the web and deck:** "At 14° Sun elevation, closer to but not at the lunar polar regime, the shadow code
+matches a real Landsat scene (kappa 0.64, against 0.24 at the best of three azimuths off by 90°, 180° and 270°)".
 
 **Interpretation.** The shadows our code predicts from the DEM match the shadows Landsat sees far better than the same
-code with a wrong Sun direction (kappa 0.64 against 0.24 at best), so the geometry of the cast-shadow model is right on a
-real Earth scene. The match is not pixel-perfect (IoU 0.49): the model calls 6.1 % of the evaluated pixels shadow and the
+code with a wrong Sun direction (kappa 0.64 against 0.24 at best), the agreement falls off steadily as the azimuth moves
+away from the real one, and the cast shadows add clearly over self-shadow alone (kappa 0.64 against 0.47), so the
+geometry of the cast-shadow model is right on a real Earth scene. The match is not pixel-perfect (IoU 0.49): the model calls 6.1 % of the evaluated pixels shadow and the
 image 4.1 %, with recall 0.81 and precision 0.55. Likely reasons, not separated here: skylight brightens shadowed snow,
 30 m cells mix lit and shadowed snow, and Landsat T1 geolocation is about 12 m. The per-window correlation of shadow
 fractions is high (Spearman 0.90 over 40 windows of 6 km) but is **not** evidence of geometry: it is also high with the
