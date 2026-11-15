@@ -11,7 +11,7 @@ export const VIEWS: Partial<Record<RouteId, ViewModule>> = {
   dossier: lazyView(() => import('./views/dossier'), { title: 'Dossier' }),
   tour: lazyView(() => import('./views/tour'), { title: 'Tour' }),
   // existing views keep their own entry points; adapters resolve either render() or the legacy name
-  when: lazyView(() => import('./views/time'), { title: 'When', pick: m => (m.render as never) ?? ((el: HTMLElement, mf: never) => (m.renderTime as (e: HTMLElement, x: never) => void)(el, mf)) }),
+  when: lazyView(() => import('./views/time'), { title: 'When', pick: m => (m.render as never) ?? ((el: HTMLElement, mf: never, pr: never) => (m.renderTime as (e: HTMLElement, x: never, y: never) => void)(el, mf, pr)) }),
   method: lazyView(() => import('./views/method'), { title: 'Method', pick: m => (m.render as never) ?? ((el: HTMLElement) => (m.renderMethod as (e: HTMLElement) => void)(el)) }),
 };
 

@@ -5,6 +5,8 @@ import { ramp } from './score';
 import { getJSON, loadDetail } from './data';
 import { fieldEvents } from './eonet';
 import { fieldKitHTML, type Rover } from './kit';
+import { ciFor, decompFor, decompSummary } from './lib/stats';
+import { onCleanup } from './lib/lifecycle';
 import { $, $$, html, isPhone } from './ui';
 import type { Manifest } from './types';
 import type { Scored } from './model';
@@ -18,6 +20,7 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
   const el = html(`<aside class="panel detail" id="detail" role="complementary" aria-label="Analog card" hidden tabindex="-1"></aside>`);
   root.appendChild(el);
   let opener: HTMLElement | null = null, blink = 0;
+  let chartH: { dispose(): void } | null = null;
   const regionOf = (k: number) => m.regions[get().scored.site[k]];
   const where = (r: { place: string; cc: string }) => [r.place, r.cc].filter(Boolean).join(', ');
   const preview = (set: string[], id: string) => set.includes(id);
@@ -34,6 +37,9 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
     const differs = dv.filter(x => Math.abs(x.v) >= THR_DIFF).map(x => `${m.feature_labels[x.f]} (${x.v > 0 ? 'higher' : 'lower'} on Earth)`);
     const [repro, credits, rover, thermal] = await Promise.all([getJSON<Record<string, string[]>>('reproduce'), getJSON<Record<string, string>>('credits'),
       getJSON<Record<string, Rover>>('rover_twin').catch(() => ({} as Record<string, Rover>)), thermalRef(t.id, t.body)]);
+    const [boot, decomp] = await Promise.all([getJSON<Record<string, unknown>>('stats/bootstrap').catch(() => null), getJSON<Record<string, unknown>>('stats/decomp').catch(() => null)]);
+    if (import.meta.env?.DEV && ((boot as { _stub?: boolean } | null)?._stub || (decomp as { _stub?: boolean } | null)?._stub)) console.warn('[detail] stats are stubs: CI and decomposition stay hidden');
+    const ci = ciFor(boot, t.id, wid), drivers = decompFor(decomp, t.id, wid, m.feature_labels);
     if (S.selected !== k) return; // closed or changed while loading
     const hasLow = preview(m.previews.low, wid), hasReal = preview(m.previews.real, wid);
     const refCredit = credits[`ref__${t.id}`] ?? 'NASA imagery', winCredit = credits[wid] ?? 'NASA imagery';
@@ -46,6 +52,7 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
       <button class="icon-btn small" id="d-close" aria-label="Close analog card">${icon.close}</button></header>
     <div class="d-body">
     <section class="d-sec"><div class="d-score"><b class="tnum">${pyFixed(score)}</b><span>/ 100 combined</span></div>
+      ${ci ? ciHTML(ci, m.windows_per_target) : ''}
       <div class="dimbars">${dims.map((n, x) => `<div class="dimbar"><span>${cap(n)}</span><span class="track"><i style="width:${scored.dim[x][k]}%;background:${ramp(scored.dim[x][k], S.minScore)}"></i></span><b class="tnum">${pyFixed(scored.dim[x][k])}</b></div>`).join('')}</div></section>
 
     <section class="d-sec"><div class="d-h"><h3>Compare</h3>
@@ -66,7 +73,8 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
           return `<div class="drow"><span class="dl">${esc(m.feature_labels[x.f])}</span><span class="dplot" style="--R:${R}"><span class="dbar ${cls}" style="${x.v >= 0 ? `left:50%` : `right:50%`};width:${w}%"></span><b class="dv tnum">${x.v > 0 ? '+' : x.v < 0 ? '−' : ''}${Math.abs(x.v).toFixed(2)}</b></span></div>`; }).join('')}
         <div class="legend2"><span>Earth lower</span><span>Earth higher</span></div></div>
       <dl class="explain"><dt>Similar in</dt><dd>${similar.length ? esc(similar.join(' · ')) : '—'}</dd><dt>Differs in</dt><dd>${differs.length ? esc(differs.join(' · ')) : '— nothing beyond 1.5 IQR'}</dd></dl>
-      <p class="d-note">Scaled differences: (Earth − target) / IQR of all Earth windows. |d| ≤ 0.5 = similar, |d| ≥ 1.5 = different.</p></section>
+      <p class="d-note">Scaled differences: (Earth − target) / IQR of all Earth windows. |d| ≤ 0.5 = similar, |d| ≥ 1.5 = different.</p>
+      ${drivers ? `<div class="d-decomp"><h4>What drives the distance</h4><div class="d-decomp-chart" id="d-decomp" style="height:${60 + drivers.length * 24}px"></div><p class="d-note">Share of each feature in the squared distance to ${esc(t.name)}.</p></div>` : ''}</section>
 
     <section class="d-sec"><div class="d-h"><h3>Earth can't reproduce</h3></div>
       <ul class="stats">${(repro[t.id] ?? []).map(s => `<li>${bold(s)}</li>`).join('')}</ul></section>
@@ -76,6 +84,8 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
 
     <section class="d-sec"><div class="d-h"><h3>Field safety</h3><span class="muted tiny">NASA EONET</span></div><div id="eonet" class="eonet" aria-live="polite"><span class="muted">Checking NASA EONET…</span></div></section>
 
+    <section class="d-sec d-rev-sec"><details class="d-rev" id="d-rev"><summary><span class="k-t"><h3>Other targets this window serves</h3><span class="muted tiny">Reverse search across all ${m.targets.length} targets</span></span></summary><div class="d-rev-body" id="d-rev-body"></div></details></section>
+
     ${fieldKitHTML({ ex, brief, targetName: t.name, regionName: r.name, rover: roverT, regions: m.regions })}
 
     <section class="d-sec links"><a class="link" target="_blank" rel="noopener" href="https://www.google.com/maps/@${lat},${lon},12z">Google Maps</a>
@@ -83,6 +93,31 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
     el.hidden = false; root.classList.add('has-detail'); opener = document.activeElement as HTMLElement;
     $('#d-title', el).focus({ preventScroll: true });
     $('#d-close', el).addEventListener('click', () => store.set({ selected: null }));
+
+    // ----- decomposition chart (lib/chart.ts is loaded only now, so ECharts never enters the first-load bundle)
+    chartH?.dispose(); chartH = null;
+    if (drivers) {
+      const host = $('#d-decomp', el), summary = decompSummary(drivers, t.name), rows = drivers.slice().reverse();
+      void import('./lib/chart').then(({ mountChart }) => {
+        if (S.selected !== k || !host.isConnected) return;
+        chartH = mountChart(host, {
+          grid: { left: 124, right: 44, top: 4, bottom: 4 }, tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v: number) => `${pyFixed(v * 100)} %` },
+          xAxis: { type: 'value', max: 1, show: false }, yAxis: { type: 'category', data: rows.map(x => x.label), axisTick: { show: false }, axisLine: { show: false }, axisLabel: { width: 112, overflow: 'break' } },
+          series: [{ type: 'bar', data: rows.map(x => x.share), barWidth: 12, itemStyle: { borderRadius: [0, 3, 3, 0] }, label: { show: true, position: 'right', formatter: (q: { value: number }) => `${pyFixed(q.value * 100)} %`, color: 'inherit' } }],
+        }, { summary, label: 'Share of each feature in the distance to the target', managed: false });
+      });
+    }
+    // ----- reverse search: loaded on first open (it needs every target's scores)
+    const rev = $<HTMLDetailsElement>('#d-rev', el);
+    rev.addEventListener('toggle', async () => {
+      const body = $('#d-rev-body', el); if (!rev.open || body.dataset.done) return; body.dataset.done = '1';
+      body.innerHTML = '<p class="muted">Loading all targets…</p>';
+      try {
+        const [{ loadReverseData, renderReverse }, { loadTarget }] = await Promise.all([import('./components/reverse'), import('./data')]);
+        const data = await loadReverseData(m, loadTarget, loadDetail);
+        if (S.selected === k) renderReverse(body, wid, data);
+      } catch (e) { console.error(e); body.dataset.done = ''; body.innerHTML = '<p class="muted">Could not load the reverse search.</p>'; }
+    });
 
     // ----- compare
     const cmp = $('#cmp', el), a = $<HTMLImageElement>('#cmp-a', el), b = $<HTMLImageElement>('#cmp-b', el), h = $('#cmp-h', el), miss = $('#cmp-miss', el), cap2 = $('#cmp-cap', el);
@@ -122,7 +157,7 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
         <ul>${events.slice(0, 4).map(e => `<li><b>${esc(e.title)}</b> <span class="muted tnum">(${esc(e.category)}, ${esc(e.date)}, ~${e.distance_km} km away)</span></li>`).join('')}</ul>`;
     });
   }
-  function close() { stopB(); el.hidden = true; root.classList.remove('has-detail'); opener?.isConnected && opener.focus({ preventScroll: true }); }
+  function close() { chartH?.dispose(); chartH = null; stopB(); el.hidden = true; root.classList.remove('has-detail'); opener?.isConnected && opener.focus({ preventScroll: true }); }
   const stopB = () => { clearInterval(blink); blink = 0; };
   store.subscribe(ch => { if (ch.includes('selected')) { stopB(); S.selected == null ? close() : open(S.selected); } });
   el.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); store.set({ selected: null }); } });
@@ -176,4 +211,13 @@ function mineralsHTML(d: Record<string, (number | null)[]>, k: number, body: str
   return `<section class="d-sec"><div class="d-h"><h3>Surface minerals</h3><span class="muted tiny">NASA EMIT</span></div>
     <div class="dimbars">${rows.map(([lab, , x]) => `<div class="dimbar"><span>${lab}</span><span class="track"><i style="width:${Math.min(100, x * 100)}%;background:var(--text-3)"></i></span><b class="tnum">${pct(x)}</b></div>`).join('')}</div>
     <p class="d-note">EMIT-10 weighted shares of the ${pct(cov / 1000)} of this window EMIT observed (2023–2025, cloud ≤ 20 %); not abundances. No detection: ${pct(none)}. Iron oxides are a lower bound. ${why}${here}</p></section>`;
+}
+
+/** 95 % interval of the score: a quiet strip plus plain text. Equal weights (the run the interval was computed for). */
+function ciHTML(ci: { score: number; lo: number; hi: number; rankLo: number; rankHi: number; resamples: number | null }, n: number) {
+  const f = (x: number) => pyFixed(x, 1);
+  return `<div class="d-ci" role="group" aria-label="95 % confidence interval of the score">
+    <div class="d-ci-strip" aria-hidden="true"><i style="left:${ci.lo}%;width:${Math.max(ci.hi - ci.lo, 0.8)}%"></i><b style="left:${ci.score}%"></b></div>
+    <p class="d-ci-t tnum"><b>95 % CI ${f(ci.lo)}–${f(ci.hi)}</b> · could rank #${nf(ci.rankLo)} to #${nf(ci.rankHi)} of ${nf(n)}</p>
+    <p class="d-note">Bootstrap of the target's reference windows${ci.resamples ? ` (${nf(ci.resamples)} resamples)` : ''}, equal weights.</p></div>`;
 }

@@ -14,6 +14,8 @@
        summary   REQUIRED plain-text description of what the chart shows (its message and key numbers). It is rendered as
                  visually hidden text and linked with aria-describedby, so screen-reader users get the same conclusion.
        renderer  'canvas' (default) or 'svg'.   label  optional aria-label of the chart region.
+       managed   default true: disposed when the router leaves the page. Pass false for charts owned by a panel that lives outside
+                 the router's pages (e.g. the Explore analog card): dispose them yourself.
      renderSVG(option, { width, height, vars? }) -> string     server-side SVG (no DOM): tests, print, dossier export
      buildTheme(vars) -> theme object (pure); readVars() reads the CSS variables of :root
 
@@ -79,11 +81,11 @@ export function buildTheme(v: Vars = FALLBACK) {
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const withMotion = (o: ChartOption): ChartOption => ({ ...(o as object), animation: !reduced() && (o as { animation?: boolean }).animation !== false });
 
-export interface MountOptions { summary: string; renderer?: 'canvas' | 'svg'; label?: string }
+export interface MountOptions { summary: string; renderer?: 'canvas' | 'svg'; label?: string; managed?: boolean }
 export interface ChartHandle { update(option: ChartOption, opts?: { replace?: boolean; summary?: string }): void; resize(): void; dispose(): void; readonly instance: ChartInstance | null }
 
 let uid = 0;
-export function mountChart(el: HTMLElement, option: ChartOption, { summary, renderer = 'canvas', label }: MountOptions): ChartHandle {
+export function mountChart(el: HTMLElement, option: ChartOption, { summary, renderer = 'canvas', label, managed = true }: MountOptions): ChartHandle {
   if (!summary || !summary.trim()) throw new Error('mountChart: `summary` (a plain-text description of the chart) is required');
   const id = `chart-sum-${++uid}`;
   el.classList.add('chart-host'); el.textContent = '';
@@ -109,7 +111,7 @@ export function mountChart(el: HTMLElement, option: ChartOption, { summary, rend
     dispose() { if (dead) return; dead = true; cancelAnimationFrame(raf); ro?.disconnect(); mo.disconnect(); inst?.dispose(); inst = null; el.classList.remove('chart-host'); el.textContent = ''; },
     get instance() { return inst; },
   };
-  onCleanup(handle.dispose);
+  if (managed) onCleanup(handle.dispose);
   return handle;
 }
 
