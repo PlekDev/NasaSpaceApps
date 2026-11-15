@@ -109,6 +109,62 @@ the average temperature at 2 cm below the surface, while LST is the skin tempera
 windows the thermal distance of every window is huge and the thermal score tends to 0. How to scale it is left to the
 scoring owner; this layer does not change `pen/`.
 
+### Earth mineralogy (EMIT, context only)
+
+`scripts/earth_emit.py` adds surface mineralogy for every Earth window from NASA EMIT **EMITL2BMIN V002** (L2B Estimated
+Mineral Identification and Band Depth and Uncertainty, 60 m, DOI 10.5067/EMIT/EMITL2BMIN.002). **It is context only and is
+not part of any score.** Clays, carbonates and sulfates on Earth mark where the analogy with the Moon breaks (they are almost
+absent there) and are a point of resemblance with Jezero; the basalt minerals that make Earth most lunar (olivine, pyroxene,
+plagioclase) are **not** among the EMIT-10, so EMIT cannot measure resemblance to the Moon.
+
+- **Coverage.** EMIT observes between 52°N and 52°S: Haughton, Axel Heiberg, Svalbard, University Valley and Askja have no
+  data (`coverage_frac = 0`, fractions NaN). The nine other regions are processed.
+- **Granules.** Every V002 granule from 2024-2025 with CMR cloud cover ≤ 20 % whose footprint touches the region's 1°×1°
+  tile. If the mean `coverage_frac` of the region's windows stays below 80 %, 2023 granules with the same filter are added.
+  The dates used per window are in `granule_dates`. The cloud filter is not relaxed where few granules pass it, so some
+  regions stay partly covered (see `coverage_frac`).
+- **Combining granules.** All granules are put on one ~60 m geographic grid per region. Each granule contributes at most
+  one observation per cell (its ortho pixels in that cell are averaged first), so every granule counts equally; the window
+  fractions are taken over all valid observations of all its cells.
+- **Georeference.** Each granule is orthorectified with its own geometry lookup table (GLT) and geotransform. Check against
+  Copernicus GLO-30 on a Cuatro Ciénegas granule: elevation correlation 0.9995 and best shift 0 pixels.
+- **Quality filter.** Tetracorder already discards matches that fail its own requirements on fit, depth, brightness and
+  continuum (EMIT L2B ATBD, JPL D-104479, section 4.2.1). On top of that we keep a detection only if its band depth exceeds
+  **2 × its band-depth uncertainty** (2σ). This threshold is our choice; no minimum fit score is applied.
+- **EMIT-10 weights.** Mineral IDs are joined by `index` to the official `mineral_grouping_matrix_20230503.csv`
+  (emit-sds-l2b, commit fba6018); the join was checked against the table embedded in the V002 granules (same record and
+  group for IDs 1-294). Each `frac_<mineral>` is a **weighted share**: the mean, over valid observations, of the matrix
+  weight of the detected library entry (Group 1 and Group 2 combined, taking the larger weight when both name the same
+  mineral). Aggregates (`frac_clays` = kaolinite, montmorillonite, illite+muscovite, chlorite, vermiculite;
+  `frac_carbonates` = calcite, dolomite; `frac_iron_oxides` = goethite, hematite; `frac_sulfates` = gypsum) are sums of
+  members capped at 1. **They are not abundances.**
+- **Unknown weights.** A matrix value of −1 means "unknown but non-zero": it is left out of the weighted share and reported
+  as presence in `frac_present_unweighted_<aggregate>`.
+- **IDs without official weights.** V002 adds 18 IDs (295-312: nano and mixed hematite/goethite, jarosites, bloedite) that
+  have no row in any official grouping matrix (checked in the `main`, `develop` and `agg` branches of emit-sds-l2b and in
+  nasa/EMIT-Data-Resources). They enter no EMIT-10 aggregate and are reported as `frac_unmapped_g1` / `frac_unmapped_g2`
+  (by spectral group). Because most are iron oxides, **`frac_iron_oxides` is a lower bound** and should not be compared
+  between regions without looking at `frac_unmapped_g1`.
+- **Other columns.** `frac_no_detection` = valid observations with no detection that passes the filter in either group;
+  `n_obs_valid` = valid observations (a cell seen by two granules counts twice); `n_pixels_valid` = cells with at least
+  one valid observation; `coverage_frac` = their share of the window; `n_granules` = granules that observed the window.
+- **NASA caveat.** The EMIT L2B mineral classification is described by NASA as an initial offering: the categorization is
+  likely to evolve and separating similar minerals (e.g. fine-grained goethite and hematite) is active research.
+- **Finding: Atacama (Yungay).** EMIT-10 shows mostly clays (kaolinite, illite+muscovite, montmorillonite) and hematite,
+  and gypsum ≈ 0 (region median `frac_clays` 0.545, `frac_sulfates` 0, P95 0.019). The most detected library entries over
+  the tile (2024-2025 granules, detections passing the 2σ filter) are nano-hematite and hematite/goethite mixtures in
+  Group 1 and kaolinite+muscovite, Na-montmorillonite, muscovite and kaolinite/smectite mixtures in Group 2; no sulfate or
+  other evaporite entry is among the ten most detected in either group, over the tile or in the three windows around
+  Yungay. The official grouping matrix has no anhydrite, bassanita, halite or nitrate entries, so no
+  `frac_detected_no_emit10` column was needed. The literature reports anhydrite, gypsum, halite, nitratite, calcite and
+  phyllosilicates in Yungay soil, with sulfur at 0.2 wt% in the top 0-2 cm and 14.4 wt% at 2-3 cm (Sutter et al. 2005,
+  Lunar and Planetary Science XXXVI, NTRS 20050175994). Two limitations explain the difference: EMIT sees only the
+  surface, and anhydrite and nitrates are not in EMIT-10. **Do not use `frac_sulfates` as an evaporite indicator beyond
+  gypsum.**
+- **Validation (Cuatro Ciénegas gypsum).** Inside the Ramsar site 734 box (26°45′-27°00′N, 101°48′49″-102°17′53″W,
+  intersected with the tile, i.e. west of 102°W), `frac_sulfates` P95 is 0.219 against 0.0003 outside; all 20 of the 20 windows
+  with most sulfates fall inside the box.
+
 ### Limitations
 
 - **Local horizons in scoring.** Scoring uses the site DEM only, on both bodies. The far-horizon test shows that
