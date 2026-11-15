@@ -27,8 +27,9 @@ narrower at high latitude (Svalbard 94 windows, Serdán-Oriental 1,182).
 | Tiles to read | 26,450 one-degree tiles | `tileList.txt` of the public bucket `s3://copernicus-dem-30m`, counted on 15 Nov 2026 |
 | Windows | about 20 million | 26,450 × 745 (the mean of our 14 tiles) |
 
-The estimate is per land cell, not per tile, because most of the 26,450 tiles are partly ocean. It leaves out download
-and reprojection. The 20 million windows is an order of magnitude, not a count: our 14 tiles are not a random sample
+We use the per-cell estimate (230 core-hours, the one in `benchmark_tile.json`). Multiplying 26,450 tiles × 52 s gives
+about 380 core-hours instead: that overstates the work, because tiles at high latitude are narrower and many tiles are
+partly ocean, so they hold fewer land cells. Both leave out download and reprojection. The 20 million windows is an order of magnitude, not a count: our 14 tiles are not a random sample
 of the land surface.
 
 ## Why it scales

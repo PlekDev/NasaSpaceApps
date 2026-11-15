@@ -1,204 +1,522 @@
 {
- "_note": "Numbers as written in the deck and on the project page. `numbers` is checked by tests/test_factcheck_numbers.py: each text must contain the value of its key, recomputed from data/processed. `other` lists numbers with no key in that test yet, with their source file; `pending` is filled after the 19:00 freeze.",
+ "_note": "Numbers used in the deck and on the project page. Generated from data/processed; entries with pending=true have their value from data/processed but no rule yet in tests/test_factcheck_numbers.py. Do not edit values by hand.",
+ "generated": "2026-11-15",
  "numbers": [
   {
-   "key": "blind.rank_of_n",
-   "text": "#1 of 10,424 Earth windows",
-   "where": "slide 1, slide 4, project page summary"
+   "id": "blind_rank",
+   "slide": [
+    1,
+    4
+   ],
+   "text": "#1 of 10,424",
+   "value": [
+    1,
+    10424
+   ],
+   "source": "known_analogs.json + windows.csv (rank of the window containing Pu'u Hiwahine, Malapert)"
   },
   {
-   "key": "light.rho_far",
-   "text": "ρ 0.92–0.99 vs NASA LOLA",
-   "where": "slide 1, slide 4, project page summary"
-  },
-  {
-   "key": "search.targets",
-   "text": "9 targets",
-   "where": "slide 3"
-  },
-  {
-   "key": "search.moon_targets",
-   "text": "6 Moon",
-   "where": "slide 3"
-  },
-  {
-   "key": "search.mars_targets",
-   "text": "3 Mars",
-   "where": "slide 3"
-  },
-  {
-   "key": "search.regions",
-   "text": "14 Earth regions",
-   "where": "slide 3, slide 7"
-  },
-  {
-   "key": "search.windows",
-   "text": "10,424 windows of 6 km",
-   "where": "slide 3"
-  },
-  {
-   "key": "blind.top02_count",
+   "id": "blind_top02",
+   "slide": [
+    1,
+    4
+   ],
    "text": "top 0.2 % for 4 of 6 Moon Base sites",
-   "where": "slide 4"
+   "value": 4,
+   "source": "same"
   },
   {
-   "key": "blind.top5_count",
+   "id": "blind_top5",
+   "slide": [
+    1,
+    4
+   ],
    "text": "top 5 % for all 6",
-   "where": "slide 4"
+   "value": 6,
+   "source": "same"
   },
   {
-   "key": "known.median_pct_illumination",
-   "text": "known analog sites at the 84th percentile in illumination",
-   "where": "slide 4"
+   "id": "blind_ranks",
+   "slide": [
+    4
+   ],
+   "text": "rank per Moon Base site",
+   "value": {
+    "moon_malapert": 1,
+    "moon_nobile_rim1": 9,
+    "moon_de_gerlache_rim": 19,
+    "moon_connecting_ridge": 23,
+    "moon_leibnitz_beta": 115,
+    "moon_haworth": 483
+   },
+   "source": "same"
   },
   {
-   "key": "known.n_tests",
-   "text": "48 site × target tests",
-   "where": "slide 4"
+   "id": "windows",
+   "slide": [
+    1,
+    3
+   ],
+   "text": "10,424 Earth windows",
+   "value": 10424,
+   "source": "windows.csv (6 km)"
   },
   {
-   "key": "light.mae_pp",
-   "text": "mean error 2.0–3.2 percentage points of lit time",
-   "where": "slide 4"
+   "id": "regions",
+   "slide": [
+    3,
+    7
+   ],
+   "text": "14 Earth regions",
+   "value": 14,
+   "source": "results.json low_sun_hours_by_month keys"
   },
   {
-   "key": "light.rho_local",
-   "text": "ρ 0.46–0.88 with local terrain only",
-   "where": "slide 4"
+   "id": "targets",
+   "slide": [
+    3
+   ],
+   "text": "9 targets (6 Moon, 3 Mars)",
+   "value": [
+    6,
+    3
+   ],
+   "source": "windows.csv references"
   },
   {
-   "key": "light.sites",
-   "text": "all 6 Moon Base sites",
-   "where": "slide 4"
+   "id": "rho_far",
+   "slide": [
+    1,
+    4
+   ],
+   "text": "ρ = 0.92–0.99",
+   "value": [
+    0.92,
+    0.987,
+    0.969,
+    0.975,
+    0.987,
+    0.983
+   ],
+   "source": "far_horizons.json V3_far_curved.spearman_rho"
   },
   {
-   "key": "psr.agreement_pct",
+   "id": "rho_local",
+   "slide": [
+    4
+   ],
+   "text": "ρ 0.46–0.88 with the local DEM only",
+   "value": [
+    0.881,
+    0.737,
+    0.701,
+    0.552,
+    0.464,
+    0.594
+   ],
+   "source": "far_horizons.json V1_local_flat.spearman_rho"
+  },
+  {
+   "id": "mae",
+   "slide": [
+    4
+   ],
+   "text": "2.0–3.2 percentage points of lit time",
+   "value": [
+    0.032,
+    0.02,
+    0.027,
+    0.023,
+    0.023,
+    0.023
+   ],
+   "source": "far_horizons.json V3_far_curved.mean_abs_error"
+  },
+  {
+   "id": "psr_agreement",
+   "slide": [
+    4
+   ],
    "text": "98.0–99.7 % agreement with NASA's permanent-shadow map",
-   "where": "project page"
+   "value": [
+    0.98,
+    0.996,
+    0.997,
+    0.996,
+    0.994,
+    0.997
+   ],
+   "source": "far_horizons.json psr.agreement"
   },
   {
-   "key": "psr.iou",
+   "id": "psr_iou",
+   "slide": [
+    4
+   ],
    "text": "IoU 0.53–0.82",
-   "where": "project page"
+   "value": [
+    0.595,
+    0.722,
+    0.744,
+    0.531,
+    0.767,
+    0.824
+   ],
+   "source": "far_horizons.json psr.iou"
   },
   {
-   "key": "stability.top10_kept",
-   "text": "re-weighting illumination 0.5–2× keeps 5–10 of the top 10",
-   "where": "slide 4, technical note"
+   "id": "known_illum_pct",
+   "slide": [
+    4
+   ],
+   "text": "84th percentile in illumination (48 tests)",
+   "value": 84.35,
+   "source": "known_analogs.json summary"
   },
   {
-   "key": "thermal.moon_gap_K",
-   "text": "still 95–132 K warmer",
-   "where": "slide 5"
+   "id": "known_terrain_pct",
+   "slide": [
+    4
+   ],
+   "text": "61st percentile in terrain",
+   "value": 61.15,
+   "source": "known_analogs.json summary"
   },
   {
-   "key": "thermal.coldest_earth_K",
-   "text": "University Valley averages 239 K",
-   "where": "slide 5"
+   "id": "best_scores",
+   "slide": [
+    2,
+    6
+   ],
+   "text": "best combined score per target",
+   "value": {
+    "moon_connecting_ridge": "91",
+    "moon_nobile_rim1": "80",
+    "moon_de_gerlache_rim": "85",
+    "moon_malapert": "79",
+    "moon_haworth": "89",
+    "moon_leibnitz_beta": "85",
+    "mars_arcadia": "96",
+    "mars_jezero": "89",
+    "mars_deuteronilus": "93"
+   },
+   "source": "windows.csv score_combined (6 km), Python rounding"
   },
   {
-   "key": "thermal.mars_gap_K",
-   "text": "Mars: 15–38 K colder than University Valley (modelled)",
-   "where": "slide 5"
+   "id": "best_region",
+   "slide": [
+    2,
+    6,
+    7
+   ],
+   "text": "best Earth region per target",
+   "value": {
+    "moon_connecting_ridge": "earth_hawaii_mauna_kea",
+    "moon_nobile_rim1": "earth_hawaii_mauna_kea",
+    "moon_de_gerlache_rim": "earth_hawaii_mauna_kea",
+    "moon_malapert": "earth_hawaii_mauna_kea",
+    "moon_haworth": "earth_hawaii_mauna_kea",
+    "moon_leibnitz_beta": "earth_hawaii_mauna_kea",
+    "mars_arcadia": "earth_atacama_yungay",
+    "mars_jezero": "earth_mx_chichinautzin",
+    "mars_deuteronilus": "earth_atacama_yungay"
+   },
+   "source": "windows.csv"
   },
   {
-   "key": "best.moon_malapert.score",
-   "text": "Malapert Massif ↔ Mauna Kea, 79/100",
-   "where": "slide 6"
+   "id": "colder_than_record",
+   "slide": [
+    5
+   ],
+   "text": "88–100 % of each lunar site colder than Earth's record low",
+   "value": [
+    0.998,
+    0.99,
+    1.0,
+    0.879,
+    1.0,
+    1.0
+   ],
+   "source": "diviner.json share_colder_than_earth_record"
   },
   {
-   "key": "best.mars_jezero.score",
-   "text": "Jezero ↔ Sierra Chichinautzin volcanic field, 89/100",
-   "where": "slide 7"
+   "id": "ice_within_1m",
+   "slide": [
+    5
+   ],
+   "text": "ice stable within 1 m in 22–64 %",
+   "value": [
+    0.348,
+    0.348,
+    0.396,
+    0.22,
+    0.636,
+    0.459
+   ],
+   "source": "diviner.json share_ice_stable_within_1m"
   },
   {
-   "key": "best.mars_jezero.region",
-   "text": "Jezero's best match is the Sierra Chichinautzin volcanic field",
-   "where": "slide 7"
+   "id": "thermal_gap_moon",
+   "slide": [
+    5,
+    7
+   ],
+   "text": "95–132 K warmer",
+   "value": {
+    "moon_connecting_ridge": 116.3,
+    "moon_nobile_rim1": 108.4,
+    "moon_de_gerlache_rim": 116.0,
+    "moon_malapert": 95.3,
+    "moon_haworth": 132.0,
+    "moon_leibnitz_beta": 121.5
+   },
+   "source": "thermal_gap.json summary.gap_to_coldest_earth_mean_K"
   },
   {
-   "key": "lst.windows_with_data",
-   "text": "MODIS land-surface temperature for 10,417 of 10,424 windows",
-   "where": "project page"
-  }
- ],
- "other": [
-  {
-   "text": "Only 0.4 % of Mauna Kea scores as high as NASA's exact test site for Malapert Massif: p = 0.004 (0.025 corrected for 6 lunar targets; 0.15 corrected for all 36 site–target tests)",
-   "where": "slide 1, slide 4",
-   "source": "data/processed/stats/null.json: headline, pu_uhiwahine.moon_malapert"
+   "id": "coldest_earth",
+   "slide": [
+    5
+   ],
+   "text": "239 K (University Valley)",
+   "value": 238.8,
+   "source": "thermal_gap.json summary.coldest_earth_mean_K"
   },
   {
-   "text": "as a group, the 8 known sites are not significantly better than random points of our regions (p = 0.37 combined, 0.065 illumination)",
-   "where": "slide 4 speaker notes, project page",
-   "source": "data/processed/stats/null.json: p_value.global"
+   "id": "moon_mean_K",
+   "slide": [
+    5
+   ],
+   "text": "107–144 K",
+   "value": [
+    106.8,
+    143.5
+   ],
+   "source": "thermal_gap.json summary.moon_mean_K"
   },
   {
-   "text": "Malapert score 79, 95 % bootstrap interval 60–90",
-   "where": "slide 4",
-   "source": "data/processed/stats/bootstrap.json: moon_malapert[0].ci95"
+   "id": "moon_peak_K",
+   "slide": [
+    5
+   ],
+   "text": "306–342 K surface peaks",
+   "value": [
+    305.9,
+    342.1
+   ],
+   "source": "thermal_gap.json summary.moon_peak_K"
   },
   {
-   "text": "top window stays #1 in 81 % of random weightings for Malapert, 100 % for Connecting Ridge",
-   "where": "slide 4",
-   "source": "data/processed/stats/stability.json: p_top1"
+   "id": "mars_mean_K",
+   "slide": [
+    5
+   ],
+   "text": "200–224 K",
+   "value": [
+    200.4,
+    223.8
+   ],
+   "source": "thermal_gap.json summary.mars_mean_K"
   },
   {
-   "text": "model slightly darker than NASA: bias −0.7 to −2.5 percentage points",
-   "where": "project page",
-   "source": "data/processed/stats/light_summary.json: overall.bias"
+   "id": "mars_gap",
+   "slide": [
+    5
+   ],
+   "text": "15–38 K colder than University Valley",
+   "value": {
+    "mars_arcadia": 35.4,
+    "mars_jezero": 15.0,
+    "mars_deuteronilus": 38.4
+   },
+   "source": "thermal_gap.json summary.mars_gap_to_coldest_earth_mean_K"
   },
   {
-   "text": "in 88–100 % of each lunar site the annual mean temperature (2 cm below the surface) is colder than Earth's record low",
-   "where": "slide 5",
-   "source": "data/processed/diviner.json: share_colder_than_earth_record"
-  },
-  {
-   "text": "Moon Base sites average 107–144 K",
-   "where": "slide 5",
-   "source": "data/processed/thermal_gap.json: summary.moon_mean_K"
-  },
-  {
+   "id": "pinacate_top3",
+   "slide": [
+    7
+   ],
    "text": "El Pinacate: top 3 % for 4 Moon Base sites",
-   "where": "slide 7",
-   "source": "data/processed/known_analogs.json + windows.csv (known_ranks)"
+   "value": 4,
+   "source": "known_analogs.json + windows.csv"
   },
   {
-   "text": "about 1 h/day of 0–7° Sun at Mauna Kea; up to 5.6–6.7 h/day in spring and autumn at polar sites",
-   "where": "slide 6",
-   "source": "data/processed/results.json: low_sun_hours_by_month"
+   "id": "pinacate_top8",
+   "slide": [
+    7
+   ],
+   "text": "El Pinacate: top 8 % for all 6",
+   "value": 6,
+   "source": "same"
   },
   {
+   "id": "lowsun_mauna_kea",
+   "slide": [
+    6
+   ],
+   "text": "about 1 h/day of 0–7° Sun at Mauna Kea",
+   "value": [
+    0.9933333333333333,
+    1.1000000000000003
+   ],
+   "source": "results.json low_sun_hours_by_month.earth_hawaii_mauna_kea"
+  },
+  {
+   "id": "lowsun_polar",
+   "slide": [
+    6
+   ],
+   "text": "5.6–6.7 h/day at polar sites around the equinoxes",
+   "value": [
+    5.625806451612903,
+    6.736666666666666,
+    6.736666666666666,
+    6.150000000000001
+   ],
+   "source": "results.json low_sun_hours_by_month (best month of the four polar regions)"
+  },
+  {
+   "id": "rover_malapert",
+   "slide": [
+    6
+   ],
    "text": "12.9 km traverse on Malapert, 8.6 km twin on Mauna Kea",
-   "where": "slide 6 (fallback)",
-   "source": "data/processed/briefs/rover_twin.json: moon_malapert"
+   "value": [
+    12.93,
+    8.63
+   ],
+   "source": "briefs/rover_twin.json moon_malapert"
   },
   {
-   "text": "26,450 one-degree tiles in the public Copernicus GLO-30 bucket",
-   "where": "slide 7",
-   "source": "tileList.txt of s3://copernicus-dem-30m, counted 2026-11-15"
+   "id": "tile_seconds",
+   "slide": [
+    7
+   ],
+   "text": "52 s per one-degree tile on one core",
+   "value": 51.86,
+   "source": "benchmark_tile.json median_seconds.total_without_reproject"
   },
   {
-   "text": "open analog catalog: 10,424 windows × 9 targets (CSV, GeoJSON, top windows with bootstrap intervals)",
-   "where": "slide 7, project page",
-   "source": "data/release/README.md"
-  }
- ],
- "pending": [
-  {
-   "text": "seconds per tile, core-hours for all land, hours on 64 cores",
-   "where": "slide 7",
-   "source": "data/processed/benchmark_tile.json (keys scale.* of tests/test_factcheck_numbers.py), once it is on main"
+   "id": "scale_core_hours",
+   "slide": [
+    7
+   ],
+   "text": "about 230 core-hours for all land",
+   "value": 230,
+   "source": "benchmark_tile.json all_land_estimate.core_hours",
+   "pending": true
   },
   {
+   "id": "scale_hours_64",
+   "slide": [
+    7
+   ],
+   "text": "under 4 hours on 64 cores (3.6 h)",
+   "value": 3.6,
+   "source": "benchmark_tile.json all_land_estimate.hours_on_64_cores",
+   "pending": true
+  },
+  {
+   "id": "null_p_malapert",
+   "slide": [
+    1,
+    4
+   ],
+   "text": "p = 0.004 (0.025 corrected for 6 lunar targets)",
+   "value": [
+    0.0041,
+    0.0246,
+    0.1476
+   ],
+   "source": "stats/null.json pu_uhiwahine.moon_malapert: p_value_region_matched, p_bonferroni, p_bonferroni_all_lunar_tests",
+   "pending": true
+  },
+  {
+   "id": "null_frac_mauna_kea",
+   "slide": [
+    1,
+    4
+   ],
+   "text": "only 0.4 % of Mauna Kea scores as high",
+   "value": 0.0041,
+   "source": "stats/null.json pu_uhiwahine.moon_malapert.p_value_region_matched (the share in the generated headline)",
+   "pending": true
+  },
+  {
+   "id": "null_p_group",
+   "slide": [
+    4
+   ],
+   "text": "as a group, p = 0.37 combined, 0.065 illumination",
+   "value": [
+    0.36746,
+    0.06489
+   ],
+   "source": "stats/null.json p_value.global",
+   "pending": true
+  },
+  {
+   "id": "score_ci_malapert",
+   "slide": [
+    4
+   ],
+   "text": "Malapert score 79, 95 % bootstrap interval 60–90",
+   "value": [
+    79.3,
+    60.3,
+    89.9
+   ],
+   "source": "stats/bootstrap.json moon_malapert[0]",
+   "pending": true
+  },
+  {
+   "id": "stability_top1",
+   "slide": [
+    4
+   ],
+   "text": "stays #1 in 81 % of random weightings for Malapert, 100 % for Connecting Ridge",
+   "value": {
+    "moon_malapert": 0.812,
+    "moon_connecting_ridge": 1.0
+   },
+   "source": "stats/stability.json p_top1",
+   "pending": true
+  },
+  {
+   "id": "auc_mars",
+   "slide": [
+    4
+   ],
+   "text": "for Mars the score does not separate the known sites (AUC 0.33–0.50)",
+   "value": [
+    0.3328,
+    0.5016,
+    0.4445
+   ],
+   "source": "stats/roc.json <mars target>.auc",
+   "pending": true
+  },
+  {
+   "id": "light_bias",
+   "slide": [
+    4
+   ],
+   "text": "bias −0.7 to −2.5 percentage points (model slightly darker than NASA)",
+   "value": [
+    -0.0248,
+    -0.007
+   ],
+   "source": "stats/light_summary.json overall.bias",
+   "pending": true
+  },
+  {
+   "id": "rehearsal_fidelity",
+   "slide": [
+    6
+   ],
    "text": "date, time and rehearsal fidelity of the example traverse",
-   "where": "slide 6",
-   "source": "Mission view (web/src/sim/rehearse.ts)"
-  },
-  {
-   "text": "Zenodo DOI",
-   "where": "slide 7, project page",
-   "source": "release v1.0"
+   "value": null,
+   "source": "Mission view (web/src/sim/rehearse.ts): not on main yet",
+   "pending": true
   }
  ]
 }
