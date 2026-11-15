@@ -26,6 +26,8 @@ export class MapView {
   map: maplibregl.Map;
   private scored: Scored | null = null; private min = 60; private km = 6; private fallback = false; private errs = 0;
   private ready: Promise<void>; private raf = 0;
+  /** resolves when the style (and so the globe projection) is in place, without waiting for imagery tiles */
+  readonly styled: Promise<void>;
   onPick: (k: number) => void = () => {}; onHover: (k: number | null, x: number, y: number) => void = () => {};
 
   constructor(container: HTMLElement, center: [number, number], zoom: number, private theme: () => string) {
@@ -39,6 +41,7 @@ export class MapView {
     this.map.touchZoomRotate.disableRotation();
     this.ready = new Promise(res => this.map.on('load', () => { this.init(); res(); }));
     this.map.on('style.load', () => this.sky());
+    this.styled = new Promise(res => this.map.once('style.load', () => res()));
     this.map.on('error', e => {
       if ((e as unknown as { sourceId?: string }).sourceId === 'gibs' && ++this.errs >= 4 && !this.fallback) this.addFallback();
     });
@@ -141,7 +144,7 @@ export class MapView {
 /** No-WebGL stand-in: same surface as MapView, does nothing. Lets rankings, lists and filters keep working. */
 const noop: any = new Proxy(function () {}, { get: () => noop, apply: () => noop }); // eslint-disable-line @typescript-eslint/no-explicit-any
 export class NullView {
-  dead = true; map: maplibregl.Map = noop;
+  dead = true; map: maplibregl.Map = noop; styled: Promise<void> = Promise.resolve();
   onPick: MapView['onPick'] = () => {}; onHover: MapView['onHover'] = () => {};
   async setScored(..._a: unknown[]) {} mark(..._a: unknown[]) {} fly(..._a: unknown[]) {} setPadding(..._a: unknown[]) {} jumpTo(..._a: unknown[]) {} easeTo(..._a: unknown[]) {}
   getCenter(): [number, number] { return [0, 0]; } getZoom() { return 1; } resize() {} setPin(..._a: unknown[]) {}
