@@ -1,0 +1,113 @@
+{
+ "sites": {
+  "moon_connecting_ridge": {
+   "label": "Moon · Shackleton Connecting Ridge (LOLA Site01)",
+   "n_points": 3025,
+   "rho_local": 0.881,
+   "rho_far": 0.92,
+   "mae_far": 0.032,
+   "bias": -0.007,
+   "loa_low": -0.1082,
+   "loa_high": 0.0943,
+   "psr_iou": 0.595,
+   "matches_far_horizons_json": true
+  },
+  "moon_nobile_rim1": {
+   "label": "Moon · Nobile Rim 1 (LOLA Site06, Artemis candidate region)",
+   "n_points": 5041,
+   "rho_local": 0.737,
+   "rho_far": 0.987,
+   "mae_far": 0.02,
+   "bias": -0.0178,
+   "loa_low": -0.0567,
+   "loa_high": 0.021,
+   "psr_iou": 0.722,
+   "matches_far_horizons_json": true
+  },
+  "moon_de_gerlache_rim": {
+   "label": "Moon · de Gerlache Rim (LOLA Site11)",
+   "n_points": 3025,
+   "rho_local": 0.701,
+   "rho_far": 0.969,
+   "mae_far": 0.027,
+   "bias": -0.0248,
+   "loa_low": -0.0738,
+   "loa_high": 0.0241,
+   "psr_iou": 0.744,
+   "matches_far_horizons_json": true
+  },
+  "moon_malapert": {
+   "label": "Moon · Malapert Massif (LOLA Site23)",
+   "n_points": 5776,
+   "rho_local": 0.552,
+   "rho_far": 0.975,
+   "mae_far": 0.023,
+   "bias": -0.0209,
+   "loa_low": -0.0686,
+   "loa_high": 0.0267,
+   "psr_iou": 0.531,
+   "matches_far_horizons_json": true
+  },
+  "moon_haworth": {
+   "label": "Moon · Haworth (LOLA Haworth, Artemis candidate region)",
+   "n_points": 12544,
+   "rho_local": 0.464,
+   "rho_far": 0.987,
+   "mae_far": 0.023,
+   "bias": -0.0218,
+   "loa_low": -0.0618,
+   "loa_high": 0.0181,
+   "psr_iou": 0.767,
+   "matches_far_horizons_json": true
+  },
+  "moon_leibnitz_beta": {
+   "label": "Moon · Leibnitz Beta Plateau (LOLA Site20, Artemis candidate region)",
+   "n_points": 3025,
+   "rho_local": 0.594,
+   "rho_far": 0.983,
+   "mae_far": 0.023,
+   "bias": -0.0194,
+   "loa_low": -0.0671,
+   "loa_high": 0.0283,
+   "psr_iou": 0.824,
+   "matches_far_horizons_json": true
+  }
+ },
+ "overall": {
+  "n_sites": 6,
+  "rho_far": [
+   0.92,
+   0.987
+  ],
+  "bias": [
+   -0.0248,
+   -0.007
+  ],
+  "loa_widest": [
+   -0.1082,
+   0.0943
+  ],
+  "mae_far": [
+   0.02,
+   0.032
+  ],
+  "all_match_far_horizons_json": true
+ },
+ "model_settings": {
+  "spacing_m": 240.0,
+  "border_m": 1500.0,
+  "n_azimuths": 72,
+  "max_distance_m": 150000.0,
+  "sun_disk_deg": 0.533,
+  "subsolar_lat_amplitude_deg": 1.54,
+  "dem": "LOLA LDEM_85S_40M (PDS)"
+ },
+ "settings": {
+  "seed": 20261115,
+  "density_bins": 40,
+  "bland_altman_points": 1200,
+  "map_max_side": 64,
+  "units": "fraction of time lit (0-1); bias and limits of agreement are model minus NASA"
+ },
+ "source": "our far-horizon light model (scripts/validate_far_horizons.py) vs NASA LOLA average illumination AVGVISIB_85S_060M_201608 and permanent-shadow mask LPSR_85S_060M_201608 (Mazarico et al.)"
+}
