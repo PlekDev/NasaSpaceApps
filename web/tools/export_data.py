@@ -1,7 +1,12 @@
 """Export compact, UI-ready data for the static web app (web/public/data).
 
-Read-only on config/ and data/processed/. Run with:  python -I web/tools/export_data.py
+Read-only on config/ and data/processed/. Run with:  python -I web/tools/export_data.py  (or: make web-data)
 Nothing is typed by hand: targets, regions, dimensions and every number come from the repo files.
+
+After the core export, every web/tools/exports/<name>.py (alphabetical, files starting with "_" skipped) runs as its own
+process. Each one reads data/processed/, writes only web/public/data/<name>/ through write_json / copy_atomic /
+write_index below, and ends with write_index(name, files). The manifest lists what each exporter produced
+(manifest["exports"][name] = its index.json), so a view can check that its data exists. Contract: web/tools/exports/README.md.
 AI-assisted (Claude Code); reviewed by the author."""
 import ast, csv, hashlib, json, os, re, shutil, subprocess, sys, tempfile
 from pathlib import Path
@@ -35,6 +40,32 @@ def write_text(path, text):
 
 def write_json(path, obj):
     write_text(path, json.dumps(obj, ensure_ascii=False, separators=(",", ":")))
+
+
+def write_index(name, files, extra=None):
+    """web/public/data/<name>/index.json = {"files": [...], "generated": <hash of data/processed>, ...}: every exporter ends with this."""
+    idx = dict(files=sorted(files), generated=source_stamp()[0], **(extra or {}))
+    write_json(DATA / name / "index.json", idx)
+    return idx
+
+
+def run_exporters():
+    """Run each web/tools/exports/*.py (alphabetical, '_*' skipped) in its own isolated process; any failure fails the export."""
+    out = {}
+    for script in sorted((Path(__file__).resolve().parent / "exports").glob("*.py")):
+        if script.name.startswith("_"):
+            continue
+        name = script.stem
+        r = subprocess.run([sys.executable, "-I", str(script)], cwd=ROOT, capture_output=True, encoding="utf-8", errors="replace")
+        if r.returncode:
+            sys.stderr.write(r.stdout + r.stderr)
+            raise SystemExit(f"exporter {script.name} failed (exit {r.returncode})")
+        idx = DATA / name / "index.json"
+        if not idx.exists():
+            raise SystemExit(f"exporter {script.name} wrote no {idx.relative_to(ROOT)}: end it with write_index()")
+        out[name] = read_json(idx)
+        print(f"  exporter {name}: {len(out[name]['files'])} files" + (" (stub)" if out[name].get("_stub") else ""))
+    return out
 
 
 def read_json(path):
@@ -302,8 +333,9 @@ def main():
         p = PROC / f"{name}.json"
         if p.exists():
             copy_atomic(p, DATA / f"{name}.json")
-    write_json(DATA / "manifest.json", manifest)
     print(f"exported {len(targets)} targets, {len(regions)} regions, {len(present)} dimensions")
+    manifest["exports"] = run_exporters()
+    write_json(DATA / "manifest.json", manifest)
 
 
 if __name__ == "__main__":

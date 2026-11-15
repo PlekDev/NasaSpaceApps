@@ -20,3 +20,4 @@ Thumbs.db
 .netrc
 .streamlit/secrets.toml
 data/release_full/
+timings.tsv
