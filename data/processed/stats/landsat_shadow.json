@@ -1,0 +1,397 @@
+{
+ "_stub": false,
+ "_meta": {
+  "generated": "2026-11-15T19:35:08+00:00",
+  "seed": 20261115,
+  "params": {
+   "scene": "LC08_L2SP_059002_20220402_02_T1",
+   "region": "earth_axel_heiberg",
+   "product": "Landsat Collection 2 Level-2 surface reflectance (Planetary Computer)",
+   "snow_ndsi_min": 0.4,
+   "qa_excluded_bits": [
+    0,
+    1,
+    2,
+    3,
+    7
+   ],
+   "window_px": 200,
+   "step_px": 100,
+   "split": "threshold tuned on the west half (max kappa), metrics on the east half",
+   "scope": "validates the cast-shadow code with a real scene's Sun geometry; not the lunar grazing-Sun regime"
+  },
+  "git_commit": "54bcfc8",
+  "inputs": {
+   "data/raw/Copernicus_DSM_COG_10_N79_00_W091_00_DEM.tif": "87d64a7bf02756b7"
+  }
+ },
+ "scene": {
+  "id": "LC08_L2SP_059002_20220402_02_T1",
+  "datetime_utc": "2022-04-02T20:05:46.865016+00:00",
+  "cloud_cover": 0.08,
+  "sun_mtl_scene_centre": {
+   "elevation": 14.03991859,
+   "azimuth": 207.4367
+  },
+  "sun_noaa_scene_centre": {
+   "elevation": 14.1096,
+   "azimuth": 207.451
+  },
+  "sun_used_tile_centre": {
+   "elevation": 14.2066,
+   "azimuth": 210.9948
+  }
+ },
+ "coverage": {
+  "grid_shape": [
+   3724,
+   711
+  ],
+  "valid_frac": 0.9373,
+  "evaluated_frac": 0.537
+ },
+ "model": {
+  "n": 675911,
+  "agreement": 0.965,
+  "iou": 0.4855,
+  "kappa": 0.636,
+  "precision": 0.5458,
+  "recall": 0.8146,
+  "model_shadow_frac": 0.0605,
+  "observed_shadow_frac": 0.0405,
+  "nir_threshold": 0.1661,
+  "windows": 40,
+  "window_spearman": 0.8958
+ },
+ "null": {
+  "azimuth_plus_90": {
+   "n": 675911,
+   "agreement": 0.8358,
+   "iou": 0.1058,
+   "kappa": 0.1001,
+   "precision": 0.1855,
+   "recall": 0.1976,
+   "model_shadow_frac": 0.1047,
+   "observed_shadow_frac": 0.0983,
+   "nir_threshold": 0.4733,
+   "windows": 40,
+   "window_spearman": 0.8176
+  },
+  "azimuth_plus_180": {
+   "n": 675911,
+   "agreement": 0.8899,
+   "iou": 0.0052,
+   "kappa": -0.0017,
+   "precision": 0.0055,
+   "recall": 0.0902,
+   "model_shadow_frac": 0.1049,
+   "observed_shadow_frac": 0.0064,
+   "nir_threshold": -0.0612,
+   "windows": 40,
+   "window_spearman": 0.7385
+  },
+  "azimuth_plus_270": {
+   "n": 675911,
+   "agreement": 0.8785,
+   "iou": 0.1637,
+   "kappa": 0.2443,
+   "precision": 0.1708,
+   "recall": 0.7975,
+   "model_shadow_frac": 0.1392,
+   "observed_shadow_frac": 0.0298,
+   "nir_threshold": 0.0877,
+   "windows": 40,
+   "window_spearman": 0.9135
+  }
+ },
+ "sensitivity": {
+  "mtl_scene_centre_angles": {
+   "n": 675911,
+   "agreement": 0.9638,
+   "iou": 0.4831,
+   "kappa": 0.6333,
+   "precision": 0.5342,
+   "recall": 0.8348,
+   "model_shadow_frac": 0.0634,
+   "observed_shadow_frac": 0.0405,
+   "nir_threshold": 0.1661,
+   "windows": 40,
+   "window_spearman": 0.8966
+  },
+  "elevation_minus_2": {
+   "n": 675911,
+   "agreement": 0.955,
+   "iou": 0.4741,
+   "kappa": 0.6203,
+   "precision": 0.5307,
+   "recall": 0.8163,
+   "model_shadow_frac": 0.0764,
+   "observed_shadow_frac": 0.0497,
+   "nir_threshold": 0.2428,
+   "windows": 40,
+   "window_spearman": 0.9277
+  },
+  "elevation_plus_2": {
+   "n": 675911,
+   "agreement": 0.9675,
+   "iou": 0.4667,
+   "kappa": 0.6195,
+   "precision": 0.5822,
+   "recall": 0.7017,
+   "model_shadow_frac": 0.0489,
+   "observed_shadow_frac": 0.0405,
+   "nir_threshold": 0.1661,
+   "windows": 40,
+   "window_spearman": 0.8949
+  }
+ },
+ "azimuth_sweep": {
+  "offsets_deg": [
+   -30,
+   -25,
+   -20,
+   -15,
+   -10,
+   -5,
+   0,
+   5,
+   10,
+   15,
+   20,
+   25,
+   30
+  ],
+  "centre_azimuth": 210.9948,
+  "max_kappa_offset_deg": -5,
+  "by_offset": {
+   "-30": {
+    "iou": 0.3231,
+    "kappa": 0.4623,
+    "precision": 0.342,
+    "recall": 0.8544,
+    "nir_threshold": 0.1167
+   },
+   "-25": {
+    "iou": 0.3435,
+    "kappa": 0.4868,
+    "precision": 0.3643,
+    "recall": 0.8573,
+    "nir_threshold": 0.1167
+   },
+   "-20": {
+    "iou": 0.409,
+    "kappa": 0.5572,
+    "precision": 0.4469,
+    "recall": 0.828,
+    "nir_threshold": 0.1661
+   },
+   "-15": {
+    "iou": 0.4518,
+    "kappa": 0.6019,
+    "precision": 0.4906,
+    "recall": 0.8509,
+    "nir_threshold": 0.1661
+   },
+   "-10": {
+    "iou": 0.462,
+    "kappa": 0.6124,
+    "precision": 0.5086,
+    "recall": 0.8344,
+    "nir_threshold": 0.1661
+   },
+   "-5": {
+    "iou": 0.486,
+    "kappa": 0.6362,
+    "precision": 0.5374,
+    "recall": 0.8356,
+    "nir_threshold": 0.1661
+   },
+   "+0": {
+    "iou": 0.4855,
+    "kappa": 0.636,
+    "precision": 0.5458,
+    "recall": 0.8146,
+    "nir_threshold": 0.1661
+   },
+   "+5": {
+    "iou": 0.4535,
+    "kappa": 0.6026,
+    "precision": 0.5747,
+    "recall": 0.6826,
+    "nir_threshold": 0.2428
+   },
+   "+10": {
+    "iou": 0.3962,
+    "kappa": 0.5431,
+    "precision": 0.5256,
+    "recall": 0.6168,
+    "nir_threshold": 0.2428
+   },
+   "+15": {
+    "iou": 0.3448,
+    "kappa": 0.4852,
+    "precision": 0.4745,
+    "recall": 0.5579,
+    "nir_threshold": 0.2428
+   },
+   "+20": {
+    "iou": 0.3112,
+    "kappa": 0.4402,
+    "precision": 0.4919,
+    "recall": 0.4586,
+    "nir_threshold": 0.3333
+   },
+   "+25": {
+    "iou": 0.2655,
+    "kappa": 0.3808,
+    "precision": 0.4269,
+    "recall": 0.4126,
+    "nir_threshold": 0.3333
+   },
+   "+30": {
+    "iou": 0.2321,
+    "kappa": 0.3342,
+    "precision": 0.3756,
+    "recall": 0.378,
+    "nir_threshold": 0.3333
+   }
+  },
+  "fine_1deg": {
+   "offsets_deg": [
+    -10,
+    -9,
+    -8,
+    -7,
+    -6,
+    -5,
+    -4,
+    -3,
+    -2,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+   ],
+   "max_kappa_offset_deg": -2,
+   "by_offset": {
+    "-10": {
+     "iou": 0.462,
+     "kappa": 0.6124
+    },
+    "-9": {
+     "iou": 0.4693,
+     "kappa": 0.6198
+    },
+    "-8": {
+     "iou": 0.4905,
+     "kappa": 0.6403
+    },
+    "-7": {
+     "iou": 0.4742,
+     "kappa": 0.6247
+    },
+    "-6": {
+     "iou": 0.4907,
+     "kappa": 0.6406
+    },
+    "-5": {
+     "iou": 0.486,
+     "kappa": 0.6362
+    },
+    "-4": {
+     "iou": 0.5011,
+     "kappa": 0.6505
+    },
+    "-3": {
+     "iou": 0.4948,
+     "kappa": 0.6446
+    },
+    "-2": {
+     "iou": 0.5015,
+     "kappa": 0.6509
+    },
+    "-1": {
+     "iou": 0.4853,
+     "kappa": 0.6357
+    },
+    "+0": {
+     "iou": 0.4855,
+     "kappa": 0.636
+    },
+    "+1": {
+     "iou": 0.4765,
+     "kappa": 0.6274
+    },
+    "+2": {
+     "iou": 0.4896,
+     "kappa": 0.6376
+    },
+    "+3": {
+     "iou": 0.4741,
+     "kappa": 0.6228
+    },
+    "+4": {
+     "iou": 0.4567,
+     "kappa": 0.6057
+    },
+    "+5": {
+     "iou": 0.4535,
+     "kappa": 0.6026
+    },
+    "+6": {
+     "iou": 0.446,
+     "kappa": 0.5951
+    },
+    "+7": {
+     "iou": 0.4216,
+     "kappa": 0.57
+    },
+    "+8": {
+     "iou": 0.4088,
+     "kappa": 0.5565
+    },
+    "+9": {
+     "iou": 0.3976,
+     "kappa": 0.5444
+    },
+    "+10": {
+     "iou": 0.3962,
+     "kappa": 0.5431
+    }
+   }
+  }
+ },
+ "self_shadow_only": {
+  "n": 675911,
+  "agreement": 0.9615,
+  "iou": 0.3277,
+  "kappa": 0.4737,
+  "precision": 0.5281,
+  "recall": 0.4635,
+  "model_shadow_frac": 0.0356,
+  "observed_shadow_frac": 0.0405,
+  "nir_threshold": 0.1661,
+  "windows": 40,
+  "window_spearman": 0.8889
+ },
+ "control_mauna_kea": {
+  "scene": "LC09_L2SP_062046_20221227_02_T1",
+  "sun_used": {
+   "elevation": 40.6564,
+   "azimuth": 149.006
+  },
+  "sun_mtl": {
+   "elevation": 40.54343313,
+   "azimuth": 150.4571
+  },
+  "model_shadow_frac": 6.5e-05
+ }
+}
