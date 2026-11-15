@@ -43,3 +43,30 @@ test('rehearsal dates are in the future and their Sun meets the rules in the Ear
     }
   }
 });
+
+test('Moon/Mars and Earth Sun positions equal the validated core at every hour angle and date', () => {
+  for (const lat of [meta.grid.lat, -89.4, 18.4, 39.1]) for (let H = -180; H < 180; H += 15) {
+    const s = M.sunFromHourAngle(lat, H, -1.5), c = core.sunFromHourAngle(lat, H, -1.5);
+    assert.ok(Math.abs(s.elevDeg - c.elev) < 1e-9 && core.azDiff(s.azDeg, c.az) < 1e-9, `lat ${lat} H ${H}: ${s.azDeg} vs ${c.az}`);
+  }
+  for (const t of ['2027-03-21T16:40:00Z', '2027-06-13T04:50:00Z', '2026-12-21T23:55:00Z']) {
+    const w = meta.windows[0], s = M.solarPosition(w.lat, w.lon, Date.parse(t), w.up_az), c = core.solarPosition(w.lat, w.lon, new Date(t));
+    assert.ok(Math.abs(s.elevDeg - c.elev) < 1e-9 && core.azDiff(s.azDeg, c.az) < 1e-9, t);
+    assert.ok(core.azDiff(s.gridAzDeg, core.toGridAz(c.az, w.up_az)) < 1e-9);
+  }
+});
+
+test('routes use the documented cost and reach the end point even where steep ground cannot be avoided', () => {
+  // Malapert: no route stays under 20 deg between the default corners; the planner must cross, not stop
+  const sun = M.sunFromHourAngle(meta.grid.lat, -35, -1.5, 2.5, meta.grid.up_az);
+  const { route, layers } = M.routeBetween(gm, M.castShadow(gm, 2.5, sun.gridAzDeg), [0.8, 0.18], [0.2, 0.82]);
+  assert.ok(route.length > 100, `route has ${route.length} cells`);
+  const [er, ec] = route[route.length - 1];
+  assert.ok(Math.hypot(er - 0.2 * 199, ec - 0.82 * 199) < 15, 'ends near the end point');
+  // the cost does not depend on the current Sun (shadow fraction at 2 deg, 8 directions), so the drive is the same at any Sun
+  const other = M.routeBetween(gm, M.castShadow(gm, 2.5, (sun.gridAzDeg + 180) % 360), [0.8, 0.18], [0.2, 0.82]).route;
+  assert.deepEqual(other, route);
+  const frac = core.shadowFraction(gc, 2);
+  const k = route[50][0] * 200 + route[50][1], s = layers.slope[k];
+  if (s <= 20) assert.ok(Math.abs(layers.cost[k] - (1 + (s / 10) ** 2 + 3 * frac[k])) < 1e-4);
+});
