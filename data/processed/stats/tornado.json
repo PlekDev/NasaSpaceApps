@@ -1,0 +1,604 @@
+{
+ "_stub": false,
+ "moon_connecting_ridge": [
+  {
+   "feature": "relief",
+   "low": -17.64,
+   "high": -27.42,
+   "removed": 2.62,
+   "low_top10_mean": -18.19,
+   "high_top10_mean": -24.12,
+   "removed_top10_mean": 0.68
+  },
+  {
+   "feature": "hypso",
+   "low": -25.65,
+   "high": -20.29,
+   "removed": 0.19,
+   "low_top10_mean": -23.43,
+   "high_top10_mean": -19.23,
+   "removed_top10_mean": -0.11
+  },
+  {
+   "feature": "rough",
+   "low": -20.87,
+   "high": -25.2,
+   "removed": -0.13,
+   "low_top10_mean": -18.64,
+   "high_top10_mean": -23.86,
+   "removed_top10_mean": 0.24
+  },
+  {
+   "feature": "slope_med",
+   "low": -20.9,
+   "high": -25.18,
+   "removed": -0.14,
+   "low_top10_mean": -23.15,
+   "high_top10_mean": -19.26,
+   "removed_top10_mean": 0.44
+  },
+  {
+   "feature": "shadow_e5",
+   "low": -22.75,
+   "high": -23.56,
+   "removed": -0.68,
+   "low_top10_mean": -21.93,
+   "high_top10_mean": -21.06,
+   "removed_top10_mean": -0.75
+  },
+  {
+   "feature": "slope_p90",
+   "low": -23.55,
+   "high": -22.76,
+   "removed": -0.68,
+   "low_top10_mean": -23.85,
+   "high_top10_mean": -18.47,
+   "removed_top10_mean": 0.52
+  },
+  {
+   "feature": "shadow_e2",
+   "low": -22.78,
+   "high": -23.52,
+   "removed": -0.68,
+   "low_top10_mean": -22.33,
+   "high_top10_mean": -20.57,
+   "removed_top10_mean": -0.59
+  }
+ ],
+ "moon_nobile_rim1": [
+  {
+   "feature": "rough",
+   "low": -0.93,
+   "high": -24.05,
+   "removed": 7.5,
+   "low_top10_mean": 2.65,
+   "high_top10_mean": -21.49,
+   "removed_top10_mean": 6.7
+  },
+  {
+   "feature": "slope_med",
+   "low": -19.33,
+   "high": -11.5,
+   "removed": -0.43,
+   "low_top10_mean": -18.39,
+   "high_top10_mean": -5.19,
+   "removed_top10_mean": 1.13
+  },
+  {
+   "feature": "slope_p90",
+   "low": -19.13,
+   "high": -11.79,
+   "removed": -0.54,
+   "low_top10_mean": -16.63,
+   "high_top10_mean": -8.57,
+   "removed_top10_mean": -0.71
+  },
+  {
+   "feature": "relief",
+   "low": -12.5,
+   "high": -18.63,
+   "removed": -0.8,
+   "low_top10_mean": -12.6,
+   "high_top10_mean": -13.27,
+   "removed_top10_mean": -1.47
+  },
+  {
+   "feature": "hypso",
+   "low": -17.87,
+   "high": -13.5,
+   "removed": -1.09,
+   "low_top10_mean": -12.73,
+   "high_top10_mean": -12.27,
+   "removed_top10_mean": -0.48
+  },
+  {
+   "feature": "shadow_e2",
+   "low": -17.21,
+   "high": -14.29,
+   "removed": -1.26,
+   "low_top10_mean": -13.92,
+   "high_top10_mean": -12.06,
+   "removed_top10_mean": -1.6
+  },
+  {
+   "feature": "shadow_e5",
+   "low": -15.5,
+   "high": -16.11,
+   "removed": -1.38,
+   "low_top10_mean": -12.89,
+   "high_top10_mean": -13.15,
+   "removed_top10_mean": -1.67
+  }
+ ],
+ "moon_de_gerlache_rim": [
+  {
+   "feature": "rough",
+   "low": -7.0,
+   "high": -25.69,
+   "removed": 6.41,
+   "low_top10_mean": -3.9,
+   "high_top10_mean": -24.33,
+   "removed_top10_mean": 6.35
+  },
+  {
+   "feature": "relief",
+   "low": -14.42,
+   "high": -21.97,
+   "removed": -0.04,
+   "low_top10_mean": -17.61,
+   "high_top10_mean": -15.65,
+   "removed_top10_mean": -0.9
+  },
+  {
+   "feature": "shadow_e5",
+   "low": -16.33,
+   "high": -20.57,
+   "removed": -0.78,
+   "low_top10_mean": -15.23,
+   "high_top10_mean": -18.21,
+   "removed_top10_mean": -1.11
+  },
+  {
+   "feature": "slope_med",
+   "low": -16.4,
+   "high": -20.51,
+   "removed": -0.8,
+   "low_top10_mean": -19.96,
+   "high_top10_mean": -12.46,
+   "removed_top10_mean": 0.22
+  },
+  {
+   "feature": "shadow_e2",
+   "low": -16.97,
+   "high": -20.04,
+   "removed": -0.94,
+   "low_top10_mean": -15.12,
+   "high_top10_mean": -18.27,
+   "removed_top10_mean": -1.06
+  },
+  {
+   "feature": "hypso",
+   "low": -17.32,
+   "high": -19.73,
+   "removed": -1.01,
+   "low_top10_mean": -16.18,
+   "high_top10_mean": -16.95,
+   "removed_top10_mean": -0.73
+  },
+  {
+   "feature": "slope_p90",
+   "low": -17.74,
+   "high": -19.35,
+   "removed": -1.07,
+   "low_top10_mean": -18.12,
+   "high_top10_mean": -15.22,
+   "removed_top10_mean": -1.0
+  }
+ ],
+ "moon_malapert": [
+  {
+   "feature": "rough",
+   "low": -23.81,
+   "high": 1.43,
+   "removed": 8.66,
+   "low_top10_mean": -19.64,
+   "high_top10_mean": 3.48,
+   "removed_top10_mean": 6.43
+  },
+  {
+   "feature": "slope_med",
+   "low": -19.57,
+   "high": -9.29,
+   "removed": 0.14,
+   "low_top10_mean": -16.16,
+   "high_top10_mean": -4.8,
+   "removed_top10_mean": 0.9
+  },
+  {
+   "feature": "hypso",
+   "low": -12.11,
+   "high": -17.68,
+   "removed": -0.99,
+   "low_top10_mean": -13.48,
+   "high_top10_mean": -9.1,
+   "removed_top10_mean": -0.92
+  },
+  {
+   "feature": "shadow_e2",
+   "low": -12.59,
+   "high": -17.31,
+   "removed": -1.13,
+   "low_top10_mean": -8.57,
+   "high_top10_mean": -14.09,
+   "removed_top10_mean": -1.0
+  },
+  {
+   "feature": "relief",
+   "low": -16.54,
+   "high": -13.54,
+   "removed": -1.33,
+   "low_top10_mean": -14.81,
+   "high_top10_mean": -7.61,
+   "removed_top10_mean": -0.74
+  },
+  {
+   "feature": "shadow_e5",
+   "low": -13.67,
+   "high": -16.42,
+   "removed": -1.35,
+   "low_top10_mean": -10.19,
+   "high_top10_mean": -12.88,
+   "removed_top10_mean": -1.47
+  },
+  {
+   "feature": "slope_p90",
+   "low": -14.99,
+   "high": -15.2,
+   "removed": -1.46,
+   "low_top10_mean": -10.96,
+   "high_top10_mean": -11.83,
+   "removed_top10_mean": -1.15
+  }
+ ],
+ "moon_haworth": [
+  {
+   "feature": "shadow_e2",
+   "low": -25.69,
+   "high": -17.3,
+   "removed": 1.12,
+   "low_top10_mean": -24.89,
+   "high_top10_mean": -16.18,
+   "removed_top10_mean": 1.27
+  },
+  {
+   "feature": "slope_p90",
+   "low": -25.16,
+   "high": -18.09,
+   "removed": 0.53,
+   "low_top10_mean": -24.21,
+   "high_top10_mean": -17.33,
+   "removed_top10_mean": 0.3
+  },
+  {
+   "feature": "rough",
+   "low": -18.86,
+   "high": -24.62,
+   "removed": 0.07,
+   "low_top10_mean": -17.59,
+   "high_top10_mean": -23.78,
+   "removed_top10_mean": 0.78
+  },
+  {
+   "feature": "hypso",
+   "low": -19.19,
+   "high": -24.37,
+   "removed": -0.1,
+   "low_top10_mean": -21.61,
+   "high_top10_mean": -20.15,
+   "removed_top10_mean": -0.12
+  },
+  {
+   "feature": "shadow_e5",
+   "low": -24.24,
+   "high": -19.35,
+   "removed": -0.18,
+   "low_top10_mean": -22.92,
+   "high_top10_mean": -19.02,
+   "removed_top10_mean": -0.44
+  },
+  {
+   "feature": "relief",
+   "low": -20.35,
+   "high": -23.43,
+   "removed": -0.56,
+   "low_top10_mean": -19.4,
+   "high_top10_mean": -22.59,
+   "removed_top10_mean": -0.55
+  },
+  {
+   "feature": "slope_med",
+   "low": -22.68,
+   "high": -21.2,
+   "removed": -0.74,
+   "low_top10_mean": -21.14,
+   "high_top10_mean": -20.96,
+   "removed_top10_mean": -0.73
+  }
+ ],
+ "moon_leibnitz_beta": [
+  {
+   "feature": "rough",
+   "low": -11.77,
+   "high": -24.16,
+   "removed": 2.02,
+   "low_top10_mean": -10.02,
+   "high_top10_mean": -22.69,
+   "removed_top10_mean": 2.42
+  },
+  {
+   "feature": "slope_p90",
+   "low": -23.93,
+   "high": -12.21,
+   "removed": 1.68,
+   "low_top10_mean": -21.86,
+   "high_top10_mean": -11.67,
+   "removed_top10_mean": 1.07
+  },
+  {
+   "feature": "relief",
+   "low": -15.45,
+   "high": -21.91,
+   "removed": -0.27,
+   "low_top10_mean": -14.28,
+   "high_top10_mean": -20.26,
+   "removed_top10_mean": -0.37
+  },
+  {
+   "feature": "shadow_e2",
+   "low": -21.7,
+   "high": -15.74,
+   "removed": -0.39,
+   "low_top10_mean": -19.78,
+   "high_top10_mean": -14.9,
+   "removed_top10_mean": -0.56
+  },
+  {
+   "feature": "slope_med",
+   "low": -21.01,
+   "high": -16.65,
+   "removed": -0.71,
+   "low_top10_mean": -20.1,
+   "high_top10_mean": -14.57,
+   "removed_top10_mean": -0.56
+  },
+  {
+   "feature": "hypso",
+   "low": -20.57,
+   "high": -17.18,
+   "removed": -0.86,
+   "low_top10_mean": -20.62,
+   "high_top10_mean": -13.75,
+   "removed_top10_mean": -0.15
+  },
+  {
+   "feature": "shadow_e5",
+   "low": -18.51,
+   "high": -19.38,
+   "removed": -1.06,
+   "low_top10_mean": -17.23,
+   "high_top10_mean": -17.82,
+   "removed_top10_mean": -1.07
+  }
+ ],
+ "mars_arcadia": [
+  {
+   "feature": "hypso",
+   "low": -25.28,
+   "high": -29.68,
+   "removed": 1.32,
+   "low_top10_mean": -23.34,
+   "high_top10_mean": -25.44,
+   "removed_top10_mean": 1.33
+  },
+  {
+   "feature": "slope_med",
+   "low": -26.64,
+   "high": -28.54,
+   "removed": -0.06,
+   "low_top10_mean": -25.21,
+   "high_top10_mean": -24.07,
+   "removed_top10_mean": -0.34
+  },
+  {
+   "feature": "relief",
+   "low": -26.73,
+   "high": -28.45,
+   "removed": -0.11,
+   "low_top10_mean": -25.28,
+   "high_top10_mean": -23.8,
+   "removed_top10_mean": 0.21
+  },
+  {
+   "feature": "shadow_e5",
+   "low": -26.84,
+   "high": -28.34,
+   "removed": -0.16,
+   "low_top10_mean": -24.54,
+   "high_top10_mean": -24.79,
+   "removed_top10_mean": -0.49
+  },
+  {
+   "feature": "slope_p90",
+   "low": -26.96,
+   "high": -28.23,
+   "removed": -0.2,
+   "low_top10_mean": -24.54,
+   "high_top10_mean": -24.76,
+   "removed_top10_mean": -0.4
+  },
+  {
+   "feature": "rough",
+   "low": -27.03,
+   "high": -28.18,
+   "removed": -0.22,
+   "low_top10_mean": -23.24,
+   "high_top10_mean": -25.9,
+   "removed_top10_mean": 0.05
+  },
+  {
+   "feature": "shadow_e2",
+   "low": -27.77,
+   "high": -27.44,
+   "removed": -0.31,
+   "low_top10_mean": -24.53,
+   "high_top10_mean": -24.63,
+   "removed_top10_mean": 0.03
+  }
+ ],
+ "mars_jezero": [
+  {
+   "feature": "hypso",
+   "low": -16.54,
+   "high": -25.15,
+   "removed": 1.01,
+   "low_top10_mean": -18.17,
+   "high_top10_mean": -22.19,
+   "removed_top10_mean": 0.12
+  },
+  {
+   "feature": "rough",
+   "low": -25.05,
+   "high": -16.7,
+   "removed": 0.89,
+   "low_top10_mean": -24.79,
+   "high_top10_mean": -14.69,
+   "removed_top10_mean": 1.76
+  },
+  {
+   "feature": "slope_med",
+   "low": -17.3,
+   "high": -24.65,
+   "removed": 0.48,
+   "low_top10_mean": -19.26,
+   "high_top10_mean": -21.41,
+   "removed_top10_mean": -0.48
+  },
+  {
+   "feature": "slope_p90",
+   "low": -17.61,
+   "high": -24.44,
+   "removed": 0.29,
+   "low_top10_mean": -16.94,
+   "high_top10_mean": -23.34,
+   "removed_top10_mean": 0.19
+  },
+  {
+   "feature": "shadow_e2",
+   "low": -22.29,
+   "high": -20.32,
+   "removed": -0.76,
+   "low_top10_mean": -20.99,
+   "high_top10_mean": -19.57,
+   "removed_top10_mean": -0.29
+  },
+  {
+   "feature": "shadow_e5",
+   "low": -20.9,
+   "high": -21.75,
+   "removed": -0.84,
+   "low_top10_mean": -21.11,
+   "high_top10_mean": -19.51,
+   "removed_top10_mean": -0.4
+  },
+  {
+   "feature": "relief",
+   "low": -21.15,
+   "high": -21.51,
+   "removed": -0.85,
+   "low_top10_mean": -19.01,
+   "high_top10_mean": -21.63,
+   "removed_top10_mean": -0.42
+  }
+ ],
+ "mars_deuteronilus": [
+  {
+   "feature": "rough",
+   "low": -21.96,
+   "high": -27.77,
+   "removed": 0.95,
+   "low_top10_mean": -23.19,
+   "high_top10_mean": -25.35,
+   "removed_top10_mean": 0.16
+  },
+  {
+   "feature": "hypso",
+   "low": -27.41,
+   "high": -22.44,
+   "removed": 0.52,
+   "low_top10_mean": -23.99,
+   "high_top10_mean": -24.52,
+   "removed_top10_mean": 0.19
+  },
+  {
+   "feature": "shadow_e5",
+   "low": -27.28,
+   "high": -22.6,
+   "removed": 0.39,
+   "low_top10_mean": -25.74,
+   "high_top10_mean": -22.82,
+   "removed_top10_mean": 0.06
+  },
+  {
+   "feature": "shadow_e2",
+   "low": -23.83,
+   "high": -26.27,
+   "removed": -0.29,
+   "low_top10_mean": -22.74,
+   "high_top10_mean": -25.71,
+   "removed_top10_mean": 0.38
+  },
+  {
+   "feature": "slope_med",
+   "low": -24.22,
+   "high": -25.92,
+   "removed": -0.41,
+   "low_top10_mean": -23.92,
+   "high_top10_mean": -24.8,
+   "removed_top10_mean": -0.42
+  },
+  {
+   "feature": "slope_p90",
+   "low": -24.43,
+   "high": -25.72,
+   "removed": -0.46,
+   "low_top10_mean": -25.04,
+   "high_top10_mean": -23.55,
+   "removed_top10_mean": -0.03
+  },
+  {
+   "feature": "relief",
+   "low": -25.13,
+   "high": -25.04,
+   "removed": -0.53,
+   "low_top10_mean": -24.07,
+   "high_top10_mean": -24.53,
+   "removed_top10_mean": -0.06
+  }
+ ],
+ "_meta": {
+  "generated": "2026-11-15T16:59:11+00:00",
+  "seed": 20261115,
+  "params": {
+   "step": "±1 IQR on one feature (d_k ± 1)",
+   "top_window": 1,
+   "top_mean": 10,
+   "window_km": 6,
+   "note": "deterministic, no random draws"
+  },
+  "git_commit": "f56955c",
+  "inputs": {
+   "data/processed/windows.csv": "1a18d90688c35044",
+   "data/processed/results.json": "b21b25f7a0810c90"
+  }
+ }
+}
