@@ -513,9 +513,9 @@
    "slide": [
     6
    ],
-   "text": "date, time and rehearsal fidelity of the example traverse",
-   "value": null,
-   "source": "Mission view (web/src/sim/rehearse.ts): not on main yet",
+   "text": "fidelity 33 % for the default Malapert traverse (best windows early March and early October)",
+   "value": 32.7,
+   "source": "Mission view, default Malapert traverse on earth_hawaii_mauna_kea_700_1700 (web/src/views/mission, web/src/sim/rehearse.ts); computed in the browser, no file in data/processed",
    "pending": true
   }
  ]
