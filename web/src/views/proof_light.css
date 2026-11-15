@@ -1,0 +1,44 @@
+/* Proof 2 component (owner: D. Lizárraga). Every class is prefixed .plight-; colours come from tokens.css. */
+.plight-claim { font-size: 17px; line-height: 1.5; color: var(--text-1); max-width: 72ch; margin: 0 0 var(--s-4); }
+.plight-grid { display: grid; grid-template-columns: minmax(300px, 1.25fr) minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-5); align-items: start; }
+.plight-fig, .plight-maps figure { margin: 0; }
+.plight-fig canvas, .plight-fig svg { display: block; width: 100%; max-width: 340px; height: auto; }
+.plight figcaption { margin-top: var(--s-2); font-size: 13px; line-height: 1.4; color: var(--text-2); }
+
+.plight-sites .label { margin: 0 0 var(--s-2); }
+.plight-key { display: inline-flex; align-items: center; gap: 5px; margin-left: var(--s-2); text-transform: none; letter-spacing: 0; }
+.plight-key i { width: 14px; height: 6px; border-radius: 3px; display: inline-block; }
+.plight-site { display: grid; grid-template-columns: minmax(0, 1fr) 64px 60px; gap: var(--s-3); align-items: center; width: 100%; min-height: 44px; padding: 4px var(--s-3);
+  border: 1px solid transparent; border-radius: var(--r-2); background: none; color: var(--text-2); font: inherit; text-align: left; cursor: pointer; }
+.plight-site:hover { background: var(--raise); }
+.plight-site.is-on { background: var(--accent-soft); border-color: var(--line-strong); color: var(--text-1); }
+.plight-site:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.plight-sname { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.plight-bars { display: grid; gap: 3px; }
+.plight-bars i { display: block; height: 6px; border-radius: 3px; }
+.plight-b-far { background: var(--accent); } .plight-b-local { background: var(--text-3); opacity: .7; }
+.plight-rho { text-align: right; line-height: 1.15; }
+.plight-rho b { display: block; font-size: 15px; color: var(--text-1); }
+.plight-rho small { font-size: 11px; color: var(--text-3); }
+
+.plight-frame { fill: none; stroke: var(--line-strong); }
+.plight-zero { stroke: var(--text-3); stroke-dasharray: 4 4; }
+.plight-pts circle { fill: var(--accent); opacity: .45; }
+line.plight-bias { stroke: var(--text-1); stroke-width: 1.5; }
+line.plight-loa { stroke: var(--warn); stroke-width: 1.2; stroke-dasharray: 6 4; }
+.plight-t { font: 11px var(--font-ui); fill: var(--text-3); }
+text.plight-bias { fill: var(--text-1); font-weight: 600; } text.plight-loa { fill: var(--warn); }
+
+.plight-maps { display: flex; flex-wrap: wrap; gap: var(--s-5); margin-top: var(--s-5); }
+.plight-maps canvas { display: block; width: 168px; height: auto; border-radius: var(--r-1); border: 1px solid var(--line); image-rendering: pixelated; }
+.plight-maps figcaption { max-width: 168px; }
+.plight-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s-3); margin-top: var(--s-5); }
+.plight-facts > div { padding: var(--s-3) var(--s-4); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--raise); }
+.plight-facts b { display: block; font-size: 17px; margin-top: 2px; color: var(--text-1); }
+.plight-facts small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.35; color: var(--text-2); }
+.plight-more { margin-top: var(--s-4); font-size: 14px; color: var(--text-2); max-width: 76ch; }
+.plight-more summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--accent-text); }
+.plight-more p { line-height: 1.5; }
+
+@media (max-width: 1000px) { .plight-grid { grid-template-columns: 1fr 1fr; } .plight-sites { grid-column: 1 / -1; } }
+@media (max-width: 620px) { .plight-grid { grid-template-columns: 1fr; } .plight-maps { gap: var(--s-4); } .plight-maps canvas, .plight-maps figcaption { width: 140px; max-width: 140px; } }
