@@ -702,3 +702,6 @@
     transition: none;
   }
 }
+
+/* data error (no made-up terrain): shown when the exported grids cannot be loaded */
+.mission-error { margin: 12px 0; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--danger, #e34948); color: var(--ink, inherit); }
