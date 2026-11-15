@@ -80,7 +80,7 @@ def pixel_stats(day, night, qc_day, qc_night, min_composites: int = MIN_COMPOSIT
     lst_mean = np.where(n_all >= min_composites, lst_mean, np.nan)
     return dict(lst_min_K=lst_min.astype(np.float32), lst_max_K=lst_max.astype(np.float32),
                 lst_mean_K=lst_mean.astype(np.float32), lst_range_K=(lst_max - lst_min).astype(np.float32),
-                n_valid=n_all.astype(np.float32))
+                n_valid_day=n_day.astype(np.float32), n_valid_night=n_night.astype(np.float32))
 
 
 def aggregate_windows(stats: dict, transform, windows, min_valid_fraction: float = MIN_VALID_FRACTION) -> pd.DataFrame:
@@ -97,7 +97,7 @@ def aggregate_windows(stats: dict, transform, windows, min_valid_fraction: float
         n_ok = int(ok.sum())
         rec = dict(key, n_pixels=n_px, n_pixels_valid=n_ok)
         good = n_px > 0 and n_ok / n_px >= min_valid_fraction
-        for name in ["lst_min_K", "lst_max_K", "lst_range_K", "lst_mean_K", "n_valid"]:
+        for name in ["lst_min_K", "lst_max_K", "lst_range_K", "lst_mean_K", "n_valid_day", "n_valid_night"]:
             rec[name] = round(float(stats[name][ok].mean()), 2) if good else np.nan
         rows.append(rec)
     return pd.DataFrame(rows)
@@ -254,7 +254,7 @@ def cmd_compute(args):
             continue
         st, ref, dates = loaded
         stats = pixel_stats(decode_lst(st["LST_Day_1km"]), decode_lst(st["LST_Night_1km"]), st["QC_Day"], st["QC_Night"])
-        names = ["lst_min_K", "lst_max_K", "lst_mean_K", "lst_range_K", "n_valid"]
+        names = ["lst_min_K", "lst_max_K", "lst_mean_K", "lst_range_K", "n_valid_day", "n_valid_night"]
         h, w = stats["lst_min_K"].shape
         with rasterio.open(LST_DIR / f"{sid}_lst.tif", "w", driver="GTiff", height=h, width=w, count=len(names),
                            dtype="float32", crs=ref["crs"], transform=ref["transform"], nodata=np.nan) as dst:
@@ -270,13 +270,14 @@ def cmd_compute(args):
     if not out_rows:
         sys.exit("nothing to compute: run submit / download first")
     df = pd.concat(out_rows, ignore_index=True)
-    cols = ["site", "i", "j", "lon", "lat", "lst_min_K", "lst_max_K", "lst_range_K", "lst_mean_K", "n_valid",
-            "n_pixels_valid", "n_pixels"]
+    cols = ["site", "i", "j", "lon", "lat", "lst_min_K", "lst_max_K", "lst_range_K", "lst_mean_K", "n_valid_day",
+            "n_valid_night", "n_pixels_valid", "n_pixels"]
     df[cols].to_csv(OUT_CSV, index=False)
     summary = df.groupby("site").agg(windows=("i", "size"), with_lst=("lst_range_K", lambda x: int(x.notna().sum())),
                                      min_of_lst_min_K=("lst_min_K", "min"), median_lst_min_K=("lst_min_K", "median"),
                                      median_lst_max_K=("lst_max_K", "median"), max_of_lst_max_K=("lst_max_K", "max"),
-                                     median_range_K=("lst_range_K", "median"), median_n_valid=("n_valid", "median")).round(1)
+                                     median_range_K=("lst_range_K", "median"), median_n_valid_day=("n_valid_day", "median"), median_n_valid_night=("n_valid_night", "median")).round(1)
+    summary.insert(2, "pct_windows_with_lst", (100 * summary["with_lst"] / summary["windows"]).round(1))
     pd.set_option("display.width", 220)
     print(summary.to_string())
     print(f"wrote {OUT_CSV}")

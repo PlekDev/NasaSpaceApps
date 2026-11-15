@@ -37,7 +37,7 @@ def test_pixel_stats_percentiles_and_thresholds():
     assert s["lst_range_K"][0, 0] == 30.0
     assert abs(s["lst_mean_K"][2, 2] - 285.0) < 1e-4
     assert np.isnan(s["lst_max_K"][1, 1]) and np.isnan(s["lst_range_K"][1, 1])  # 11 < 12 composites
-    assert s["n_valid"][2, 2] == 2 * T
+    assert s["n_valid_day"][2, 2] == T and s["n_valid_night"][2, 2] == T
 
 
 def test_pixel_stats_rejects_cloudy_qc():
@@ -60,7 +60,7 @@ def test_aggregate_windows_mean_and_validity_threshold():
     tr = Affine(0.01, 0, 0.0, 0, -0.01, 0.10)
     full = np.arange(100, dtype=np.float32).reshape(10, 10)
     stats = dict(lst_min_K=full.copy(), lst_max_K=full + 40, lst_mean_K=full + 20, lst_range_K=np.full((10, 10), 40, np.float32),
-                 n_valid=np.full((10, 10), 60, np.float32))
+                 n_valid_day=np.full((10, 10), 40, np.float32), n_valid_night=np.full((10, 10), 30, np.float32))
     stats["lst_min_K"][0:2, 0:2] = np.nan                       # kill 4 pixels in the top-left corner
     win_ok = box(0.04, 0.02, 0.08, 0.06)                        # 4x4 px, no invalid pixels
     win_half = box(0.0, 0.08, 0.04, 0.10)                       # 4x2 px, 4 of 8 invalid -> exactly 50 % -> kept
@@ -72,7 +72,7 @@ def test_aggregate_windows_mean_and_validity_threshold():
     expect_min = float(full[rows, cols].mean())
     assert r0["n_pixels"] == 16 and r0["n_pixels_valid"] == 16
     assert abs(r0["lst_min_K"] - round(expect_min, 2)) < 0.01
-    assert abs(r0["lst_range_K"] - 40.0) < 1e-6 and r0["n_valid"] == 60
+    assert abs(r0["lst_range_K"] - 40.0) < 1e-6 and r0["n_valid_day"] == 40 and r0["n_valid_night"] == 30
     assert r1["n_pixels_valid"] == 4 and np.isfinite(r1["lst_min_K"])
     assert r2["n_pixels_valid"] == 2 and np.isnan(r2["lst_min_K"]) and np.isnan(r2["lst_range_K"])
 
