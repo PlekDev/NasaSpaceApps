@@ -3,17 +3,11 @@
  *  Nothing here is typed by hand: rank/N from known_ranks.json, rho from far_horizons.json, p from stats/null.json.
  *  Stubbed stats (`_stub: true`) never become a number: p is null and the UI shows a calm "pending" state. */
 import type { Manifest } from '../types';
+import { pyFixed as fx } from '../format.ts';   // exact Python rounding (fixed in #30)
 
 type Rec = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 const SITE = /hiwahine/i, PINACATE = /pinacate/i;
 const nf = (n: number) => n.toLocaleString('en-US');
-/** Fixed decimals like Python's format(): the exact binary value decides, and only a true tie (e.g. 122.5) rounds to even. */
-function fx(x: number, d: number) {
-  const exact = x.toFixed(30), dot = exact.indexOf('.'), tail = exact.slice(dot + 1 + d);
-  if (/^50*$/.test(tail)) { const down = Math.trunc(Math.abs(x) * 10 ** d); const even = down % 2 === 0 ? down : down + 1; return ((x < 0 ? -even : even) / 10 ** d).toFixed(d); }
-  return x.toFixed(d);
-}
-
 export interface HomeFacts {
   target: { id: string; name: string };
   rank: number; n: number; rankText: string;                       // "#1", "10,424"
