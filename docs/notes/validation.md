@@ -243,4 +243,35 @@ be that of the forest canopy, not the ground.
   the median of our regions for Arcadia (section 6).
 
 ## Prior work
-*Pending.*
+
+**How we searched (15 Nov 2026).** General web search plus the primary sources it returned (papers, abstracts, NASA
+reports, project repositories). NASA ADS and Google Scholar were **not** queried directly (ADS needs an API token and
+Scholar blocks automated queries), so peer-reviewed work that is indexed only there may be missing. Queries covered:
+terrestrial analog site selection for the lunar south pole; DEM-based terrain similarity between Earth and the Moon or
+Mars; analog-site catalogues; lunar polar illumination models validated against LOLA; low-Sun lighting analogs.
+
+| Work | What it does | Like P.E.N. | Unlike P.E.N. |
+|---|---|---|---|
+| Mazarico et al. (2011), *Illumination conditions of the lunar polar regions using LOLA topography*, Icarus ([link](https://www.sciencedirect.com/science/article/abs/pii/S0019103510004203)); Gläser et al. (2014), *Illumination conditions at the lunar south pole using high resolution Digital Terrain Models from LOLA*, Icarus ([link](https://www.sciencedirect.com/science/article/abs/pii/S0019103514004278)) | Horizon / ray-tracing illumination of the lunar poles from LOLA DEMs; the basis of NASA's average-illumination maps | Shadow modelling from DEMs; we validate against this LOLA product | Moon only; site ranking for landing, not a search for Earth analogs |
+| Preston & Dartnell (2014), *Planetary habitability: lessons learned from terrestrial analogues*, Int. J. Astrobiology ([link](https://www.cambridge.org/core/journals/international-journal-of-astrobiology/article/planetary-habitability-lessons-learned-from-terrestrial-analogues/244C9EB88B74D6905133DD2228DD3112)) | Review of analogue sites and catalogues; notes there are no clearly defined criteria to evaluate them and calls for an open database | Motivates a quantitative, open ranking | Qualitative review; no terrain or light metric |
+| Foucher et al. (2021), *Definition and use of functional analogues in planetary exploration*, Planet. Space Sci. 197, 105162 ([doi](https://doi.org/10.1016/j.pss.2021.105162)) | Defines "functional analogues": judge a site by the properties that matter for a given use | Our per-dimension scores (terrain, illumination) are functional in this sense | Conceptual framework; no computation |
+| USGS, *Known Terrestrial Analog Sites for Planetary Science* ([doi](https://doi.org/10.5066/P9J72921)) | Point layer of known analog sites by process (craters, dunes, volcanoes…) | Open data on analog sites | A list, not a ranking; no terrain or light similarity |
+| PISCES / NASA–CSA Mauna Kea field tests (EPSC-DPS 2011 abstract 1301, [pdf](https://meetingorganizer.copernicus.org/EPSC-DPS2011/EPSC-DPS2011-1301.pdf)) | Chose Mauna Kea test sites on terrain suitability and logistics | The site our blind test recovers | Expert selection, not a computed ranking; illumination is not a stated criterion |
+| Artificial low-Sun lighting analogs: e.g. *Lunar Rover Cargo Transport: Mission Concept and Field Test* ([arXiv 2601.03371](https://arxiv.org/abs/2601.03371)); LunaLab facility, Scientific Data 2026 ([doi](https://doi.org/10.1038/s41597-026-06668-8)) | Reproduce polar lighting with spotlights or indoor lamps | Same goal: rehearse in long, low-Sun shadows | They build the light artificially; they do not search Earth for terrain that casts lunar-like shadows under the real Sun |
+| NASA Space Apps 2026 projects on the same challenge: *terrestrial-analog-finder* ([GitHub](https://github.com/shishir-kuet/terrestrial-analog-finder)), *Mirror Terrain* ([GitHub](https://github.com/talyamorgul/mirror-terrain)), *SolMate* ([PR](https://github.com/hellorifat/solmate/pull/1)) | Rank Earth DEM windows (Copernicus GLO-30) against LOLA / CTX / MOLA targets with relief, slope, roughness and hypsometry; Mirror Terrain and SolMate report AUC against known analogs and controls | Almost the same terrain pipeline, open DEMs and AUC-style validation | As of 15 Nov 2026: terrestrial-analog-finder states "Illumination is still not represented"; Mirror Terrain does not mention illumination; SolMate cites PGDA Sun-visibility data, but its scoring is described with terrain indicators only. None reports a light model validated against LOLA illumination maps or a permutation test of a blind site recovery. Not peer-reviewed (like P.E.N.) |
+| Sanganeria (2026), *Finding Earth's Best Testbeds for Moon and Mars Rovers: A Quantitative Terrain Comparison*, NHSJS ([link](https://nhsjs.com/2026/finding-earths-best-testbeds-for-moon-and-mars-rovers-a-quantitative-terrain-comparison/)) | Ranks Earth scenes by image-texture similarity to lunar and Martian images | Ranking of Earth testbeds | Image-based, no DEM and no illumination geometry; no validation against LOLA or known analogs |
+
+**What we can and cannot claim.**
+- **Not novel:** ranking Earth DEM windows by terrain similarity to the Moon or Mars. Several concurrent projects do
+  this with the same open data and nearly the same features, and they report AUC-style checks against known analogs.
+- **Defensible novelty sentence (for Angel):** *"In our search we found no other tool that scores Earth analog sites on
+  how their terrain casts shadows under a low Sun, checks that light model against NASA's LOLA illumination maps
+  (Spearman ρ 0.92–0.99), and tests a blind recovery of NASA's own lunar field-test site with a permutation null."*
+  Keep the hedge "in our search"; do not write "the first" or "unique". The ρ range comes from the light-model
+  validation (`docs/notes/moon_mars.md`, proof 2), not from this note.
+- **Do not claim** that P.E.N. outperforms the other projects: they use different targets, windows, controls and
+  validation sets, so their AUCs are not comparable with ours.
+
+**Expert review (D6, second part).** No expert quote is in the repository. A quote may only be used on the project
+page with the expert's written permission, their exact words, name and title.
+
