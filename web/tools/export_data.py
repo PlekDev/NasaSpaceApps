@@ -191,6 +191,14 @@ def main():
         for r in read_csv(PROC / "earth_lst_windows.csv"):
             if r["lst_mean_K"] not in ("", "nan"):
                 lst[(r["site"], int(r["i"]), int(r["j"]))] = tuple(round(float(r[k]) * 10) for k in ("lst_mean_K", "lst_min_K", "lst_max_K"))
+    # Earth surface mineralogy per window (NASA EMIT L2B V002, scripts/earth_emit.py): context in the card, not scored.
+    # Kept only where EMIT saw at least half the window; shares are EMIT-10 weighted shares (not abundances), x 1000.
+    EMIT_KEYS = ("coverage_frac", "frac_clays", "frac_carbonates", "frac_iron_oxides", "frac_sulfates", "frac_no_detection", "frac_unmapped_g1")
+    emit = {}
+    if (PROC / "earth_emit_windows.csv").exists():
+        for r in read_csv(PROC / "earth_emit_windows.csv"):
+            if r["coverage_frac"] not in ("", "nan") and float(r["coverage_frac"]) >= 0.5 and all(r[k] not in ("", "nan") for k in EMIT_KEYS):
+                emit[(r["site"], int(r["i"]), int(r["j"]))] = tuple(round(float(r[k]) * 1000) for k in EMIT_KEYS)
     cant = app_cant_reproduce(read_json(PROC / "diviner.json"), read_json(PROC / "mars_context.json") if (PROC / "mars_context.json").exists() else {})
     write_json(DATA / "reproduce.json", {t: cant(t, sites[t]["body"]) for t in targets})
     copy_atomic(PROC / "thumbs" / "real_credits.json", DATA / "credits.json")
@@ -260,6 +268,10 @@ def main():
         if lst:
             got = [lst.get((r["site"], int(r["i"]), int(r["j"]))) for r in rs]
             for n, key in enumerate(("lst_mean", "lst_min", "lst_max")):  # kelvin x 10, null where MODIS had too few clear composites
+                det[key] = [g[n] if g else None for g in got]
+        if emit:
+            got = [emit.get((r["site"], int(r["i"]), int(r["j"]))) for r in rs]
+            for n, key in enumerate(("emit_cov", "emit_clays", "emit_carbonates", "emit_iron_oxides", "emit_sulfates", "emit_none", "emit_unmapped")):
                 det[key] = [g[n] if g else None for g in got]
         write_json(DATA / f"{t}.detail.json", det)
         write_json(DATA / f"{t}.json", cols)

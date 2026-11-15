@@ -68,7 +68,7 @@ lunar-pole light, so field teams know the best weeks to test.
 5. *Tools:* Python (rasterio, NumPy, SciPy, pandas, Matplotlib), a static web app (TypeScript, Vite, MapLibre GL JS)
    on GitHub Pages, Streamlit + pydeck, GitHub; NASA APIs Trek WMTS, GIBS and EONET.
 6. *Limitations and next steps:* local horizons only, 30 m resolution, flat Mars plains, and Earth's limits
-   (gravity, vacuum, radiation). Next: thermal as a scored dimension (Diviner vs MODIS/ECOSTRESS), EMIT minerals,
+   (gravity, vacuum, radiation). Next: thermal as a scored dimension (Diviner vs MODIS/ECOSTRESS), a mineral dimension beyond EMIT-10,
    global search.
 
 **NASA data:**
@@ -81,6 +81,7 @@ lunar-pole light, so field teams know the best weeks to test.
 - LRO Diviner polar resource product (NASA PDS Geosciences, Paige et al.)
 - NASA POWER climatology API (NASA LaRC, MERRA-2): Earth skin temperature for the Diviner comparison
 - MODIS Terra MOD11A2 v061 land-surface temperature (NASA LP DAAC, via NASA Earthdata), 2025: per Earth window, shown on every analog card next to Diviner or the Mars Climate Database
+- EMIT L2B mineral identification V002 (NASA JPL, via NASA Earthdata), 2023–2025: EMIT-10 mineral shares per Earth window below 52°N, shown on the analog card
 
 **Moon & Mars data paragraph (Diego Lizárraga, ~200 words; numbers from `data/processed/`):**
 Every reference site in P.E.N. comes from NASA missions archived in the Planetary Data System (PDS). For the Moon
