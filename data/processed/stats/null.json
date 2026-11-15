@@ -1,7 +1,7 @@
 {
  "_stub": false,
  "_meta": {
-  "generated": "2026-11-15T16:54:56+00:00",
+  "generated": "2026-11-15T17:07:39+00:00",
   "seed": 20261115,
   "params": {
    "n_perm": 10000,
@@ -12,7 +12,7 @@
    "p_value": "(1 + #null>=observed) / (N + 1)",
    "statistic": "median over the (site, target) tests of the best-window percentile"
   },
-  "git_commit": "f56955c",
+  "git_commit": "912e059",
   "inputs": {
    "data/processed/windows.csv": "1a18d90688c35044",
    "data/processed/known_analogs.json": "38eb4de5ff84608f"
@@ -77,48 +77,56 @@
    }
   }
  },
+ "headline": "Only 0.4 % of Mauna Kea scores as high as NASA's exact test site for Malapert Massif (p = 0.004; p = 0.025 after correcting for 6 lunar targets)",
+ "headline_target": "moon_malapert",
  "pu_uhiwahine": {
   "moon_connecting_ridge": {
    "rank": 23,
    "of": 10424,
    "p_value_region_matched": 0.0571,
    "frac_region_above": 0.055,
-   "pct_all_windows": 99.8
+   "pct_all_windows": 99.8,
+   "p_bonferroni": 0.3426
   },
   "moon_nobile_rim1": {
    "rank": 9,
    "of": 10424,
    "p_value_region_matched": 0.0218,
    "frac_region_above": 0.0197,
-   "pct_all_windows": 99.9
+   "pct_all_windows": 99.9,
+   "p_bonferroni": 0.1308
   },
   "moon_de_gerlache_rim": {
    "rank": 19,
    "of": 10424,
    "p_value_region_matched": 0.0425,
    "frac_region_above": 0.0405,
-   "pct_all_windows": 99.8
+   "pct_all_windows": 99.8,
+   "p_bonferroni": 0.255
   },
   "moon_malapert": {
    "rank": 1,
    "of": 10424,
    "p_value_region_matched": 0.0041,
    "frac_region_above": 0.0,
-   "pct_all_windows": 100.0
+   "pct_all_windows": 100.0,
+   "p_bonferroni": 0.0246
   },
   "moon_haworth": {
    "rank": 483,
    "of": 10424,
    "p_value_region_matched": 0.5246,
    "frac_region_above": 0.5236,
-   "pct_all_windows": 95.3
+   "pct_all_windows": 95.3,
+   "p_bonferroni": 1.0
   },
   "moon_leibnitz_beta": {
    "rank": 115,
    "of": 10424,
    "p_value_region_matched": 0.2208,
    "frac_region_above": 0.2188,
-   "pct_all_windows": 98.9
+   "pct_all_windows": 98.9,
+   "p_bonferroni": 1.0
   }
  },
  "null_hist": {
