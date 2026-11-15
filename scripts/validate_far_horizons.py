@@ -37,6 +37,7 @@ R = RADIUS_M["moon"]
 cfg = load_config()
 LDEM = RAW / cfg["auxiliary"]["lola_ldem_85s_40m"]["file"]
 AVG = RAW / cfg["auxiliary"]["lola_avg_illumination_85s"]["file"]
+PSR = RAW / cfg["auxiliary"]["lola_permanent_shadow_85s"]["file"]
 N, SCALE, OFF = 7584, 40.0, 3791.5          # LINES, MAP_SCALE, LINE/SAMPLE_PROJECTION_OFFSET (LDEM_85S_40M_FLOAT.LBL)
 
 SPACING = 240.0          # target-point spacing (m); coarser than the main validation to keep the run ~10 min
@@ -149,6 +150,26 @@ def avgvisib_at(x, y):
     return map_coordinates(a, [rows - 0.5, cols - 0.5], order=1, mode="constant", cval=np.nan)
 
 
+def psr_at(x, y):
+    """NASA's permanently-shadowed-region mask (LPSR_85S_060M, Mazarico et al.) at map points: True = PSR.
+    The GeoTIFF stores +20000 (PSR) and -20000 (not PSR) with scale 2.5e-5; we take the nearest 60 m pixel."""
+    with rasterio.open(PSR) as src:
+        a = src.read(1)
+        cols, rows = ~src.transform * (x, y)
+    r = np.clip(np.floor(rows).astype(int), 0, a.shape[0] - 1); c = np.clip(np.floor(cols).astype(int), 0, a.shape[1] - 1)
+    return a[r, c] > 0
+
+
+def psr_agreement(lit, nasa_psr):
+    """Compare 'never lit in our model' (no part of the Sun disk visible at any sampled Sun position) with NASA's PSR mask."""
+    ours = lit <= 0.0
+    both, either = int((ours & nasa_psr).sum()), int((ours | nasa_psr).sum())
+    return dict(nasa_psr_share=round(float(nasa_psr.mean()), 3), model_psr_share=round(float(ours.mean()), 3),
+                agreement=round(float((ours == nasa_psr).mean()), 3),
+                precision=round(both / max(int(ours.sum()), 1), 3), recall=round(both / max(int(nasa_psr.sum()), 1), 3),
+                iou=round(both / max(either, 1), 3))
+
+
 def ray_reach(x0, y0):
     """How far the N_AZ horizon rays get before leaving the 85°S DEM (capped at MAX_D).
     Near 85°S the rays toward lower latitudes hit the edge of the DEM long before 150 km."""
@@ -198,6 +219,9 @@ if __name__ == "__main__":
             res[name] = dict(spearman_rho=round(rho, 3), mean_abs_error=round(mae, 3), bias=round(float(np.mean(lit - ref)), 3))
             if name == "V3_far_curved":
                 maps[sid] = (X.shape, ok, lit, ref)
+                if PSR.exists():
+                    res["psr"] = psr_agreement(lit, psr_at(x0, y0))
+                    print(f"{sid:24s} PSR {res['psr']}", flush=True)
             print(f"{sid:24s} {name:16s} ρ = {rho:.3f}   MAE = {mae:.3f}   ({time.time()-t0:.0f}s)", flush=True)
         out[sid] = dict(label=s["label"], n_points=int(ok.sum()), pipeline_rho=prev.get(sid, {}).get("spearman_rho"),
                         ray_reach=ray_reach(x0, y0), **res)

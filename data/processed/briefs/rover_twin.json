@@ -1,0 +1,263 @@
+{
+ "mars_arcadia": {
+  "earth_site": "earth_atacama_yungay",
+  "earth_window": [
+   -24.89321,
+   -69.91445
+  ],
+  "target": {
+   "length_km": 7.07,
+   "climb_m": 70,
+   "descent_m": 43,
+   "max_slope_deg": 3.2,
+   "mean_slope_deg": 1.3,
+   "share_in_shadow": 0.01,
+   "mean_shadow_fraction": 0.149,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.0
+  },
+  "earth": {
+   "length_km": 6.58,
+   "climb_m": 52,
+   "descent_m": 69,
+   "max_slope_deg": 3.9,
+   "mean_slope_deg": 1.5,
+   "share_in_shadow": 0.0,
+   "mean_shadow_fraction": 0.101,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.0
+  }
+ },
+ "mars_deuteronilus": {
+  "earth_site": "earth_atacama_yungay",
+  "earth_window": [
+   -24.59587,
+   -69.49877
+  ],
+  "target": {
+   "length_km": 6.46,
+   "climb_m": 45,
+   "descent_m": 186,
+   "max_slope_deg": 7.0,
+   "mean_slope_deg": 3.8,
+   "share_in_shadow": 0.284,
+   "mean_shadow_fraction": 0.471,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.05
+  },
+  "earth": {
+   "length_km": 7.06,
+   "climb_m": 233,
+   "descent_m": 140,
+   "max_slope_deg": 14.7,
+   "mean_slope_deg": 4.4,
+   "share_in_shadow": 0.301,
+   "mean_shadow_fraction": 0.489,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.01
+  }
+ },
+ "mars_jezero": {
+  "earth_site": "earth_mx_chichinautzin",
+  "earth_window": [
+   19.32278,
+   -99.88678
+  ],
+  "target": {
+   "length_km": 7.11,
+   "climb_m": 328,
+   "descent_m": 244,
+   "max_slope_deg": 19.6,
+   "mean_slope_deg": 5.5,
+   "share_in_shadow": 0.383,
+   "mean_shadow_fraction": 0.515,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.04
+  },
+  "earth": {
+   "length_km": 6.86,
+   "climb_m": 126,
+   "descent_m": 332,
+   "max_slope_deg": 16.3,
+   "mean_slope_deg": 4.5,
+   "share_in_shadow": 0.27,
+   "mean_shadow_fraction": 0.486,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.04
+  }
+ },
+ "moon_connecting_ridge": {
+  "earth_site": "earth_hawaii_mauna_kea",
+  "earth_window": [
+   19.811,
+   -155.54434
+  ],
+  "target": {
+   "length_km": 7.19,
+   "climb_m": 230,
+   "descent_m": 779,
+   "max_slope_deg": 17.5,
+   "mean_slope_deg": 8.3,
+   "share_in_shadow": 0.015,
+   "mean_shadow_fraction": 0.369,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.054
+  },
+  "earth": {
+   "length_km": 6.56,
+   "climb_m": 1041,
+   "descent_m": 8,
+   "max_slope_deg": 17.7,
+   "mean_slope_deg": 10.4,
+   "share_in_shadow": 0.47,
+   "mean_shadow_fraction": 0.574,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.062
+  }
+ },
+ "moon_de_gerlache_rim": {
+  "earth_site": "earth_hawaii_mauna_kea",
+  "earth_window": [
+   19.8652,
+   -155.51572
+  ],
+  "target": {
+   "length_km": 8.22,
+   "climb_m": 1375,
+   "descent_m": 155,
+   "max_slope_deg": 19.7,
+   "mean_slope_deg": 11.3,
+   "share_in_shadow": 0.265,
+   "mean_shadow_fraction": 0.436,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.312
+  },
+  "earth": {
+   "length_km": 6.92,
+   "climb_m": 358,
+   "descent_m": 408,
+   "max_slope_deg": 19.8,
+   "mean_slope_deg": 14.3,
+   "share_in_shadow": 0.262,
+   "mean_shadow_fraction": 0.521,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.184
+  }
+ },
+ "moon_haworth": {
+  "earth_site": "earth_hawaii_mauna_kea",
+  "earth_window": [
+   19.4587,
+   -155.51568
+  ],
+  "target": {
+   "length_km": 6.72,
+   "climb_m": 48,
+   "descent_m": 288,
+   "max_slope_deg": 7.8,
+   "mean_slope_deg": 3.8,
+   "share_in_shadow": 0.124,
+   "mean_shadow_fraction": 0.427,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.014
+  },
+  "earth": {
+   "length_km": 6.51,
+   "climb_m": 33,
+   "descent_m": 494,
+   "max_slope_deg": 14.8,
+   "mean_slope_deg": 7.7,
+   "share_in_shadow": 0.115,
+   "mean_shadow_fraction": 0.514,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.001
+  }
+ },
+ "moon_leibnitz_beta": {
+  "earth_site": "earth_hawaii_mauna_kea",
+  "earth_window": [
+   19.29579,
+   -155.82963
+  ],
+  "target": {
+   "length_km": 6.78,
+   "climb_m": 583,
+   "descent_m": 54,
+   "max_slope_deg": 15.7,
+   "mean_slope_deg": 6.1,
+   "share_in_shadow": 0.128,
+   "mean_shadow_fraction": 0.343,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.142
+  },
+  "earth": {
+   "length_km": 6.62,
+   "climb_m": 741,
+   "descent_m": 14,
+   "max_slope_deg": 12.9,
+   "mean_slope_deg": 8.9,
+   "share_in_shadow": 0.088,
+   "mean_shadow_fraction": 0.452,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.001
+  }
+ },
+ "moon_malapert": {
+  "earth_site": "earth_hawaii_mauna_kea",
+  "earth_window": [
+   19.7839,
+   -155.48708
+  ],
+  "target": {
+   "length_km": 12.93,
+   "climb_m": 1758,
+   "descent_m": 454,
+   "max_slope_deg": 26.4,
+   "mean_slope_deg": 14.1,
+   "share_in_shadow": 0.213,
+   "mean_shadow_fraction": 0.523,
+   "impassable_cells_crossed": true,
+   "share_window_impassable": 0.365
+  },
+  "earth": {
+   "length_km": 8.63,
+   "climb_m": 1427,
+   "descent_m": 107,
+   "max_slope_deg": 20.8,
+   "mean_slope_deg": 12.0,
+   "share_in_shadow": 0.28,
+   "mean_shadow_fraction": 0.522,
+   "impassable_cells_crossed": true,
+   "share_window_impassable": 0.232
+  }
+ },
+ "moon_nobile_rim1": {
+  "earth_site": "earth_hawaii_mauna_kea",
+  "earth_window": [
+   19.8652,
+   -155.51572
+  ],
+  "target": {
+   "length_km": 10.55,
+   "climb_m": 410,
+   "descent_m": 1006,
+   "max_slope_deg": 29.0,
+   "mean_slope_deg": 15.4,
+   "share_in_shadow": 0.523,
+   "mean_shadow_fraction": 0.563,
+   "impassable_cells_crossed": true,
+   "share_window_impassable": 0.38
+  },
+  "earth": {
+   "length_km": 6.92,
+   "climb_m": 358,
+   "descent_m": 408,
+   "max_slope_deg": 19.8,
+   "mean_slope_deg": 14.3,
+   "share_in_shadow": 0.262,
+   "mean_shadow_fraction": 0.521,
+   "impassable_cells_crossed": false,
+   "share_window_impassable": 0.184
+  }
+ }
+}

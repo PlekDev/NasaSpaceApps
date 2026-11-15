@@ -24,6 +24,14 @@
     "spearman_rho": 0.92,
     "mean_abs_error": 0.032,
     "bias": -0.007
+   },
+   "psr": {
+    "nasa_psr_share": 0.048,
+    "model_psr_share": 0.033,
+    "agreement": 0.98,
+    "precision": 0.91,
+    "recall": 0.632,
+    "iou": 0.595
    }
   },
   "moon_nobile_rim1": {
@@ -50,6 +58,14 @@
     "spearman_rho": 0.987,
     "mean_abs_error": 0.02,
     "bias": -0.018
+   },
+   "psr": {
+    "nasa_psr_share": 0.011,
+    "model_psr_share": 0.014,
+    "agreement": 0.996,
+    "precision": 0.743,
+    "recall": 0.963,
+    "iou": 0.722
    }
   },
   "moon_de_gerlache_rim": {
@@ -76,6 +92,14 @@
     "spearman_rho": 0.969,
     "mean_abs_error": 0.027,
     "bias": -0.025
+   },
+   "psr": {
+    "nasa_psr_share": 0.011,
+    "model_psr_share": 0.012,
+    "agreement": 0.997,
+    "precision": 0.806,
+    "recall": 0.906,
+    "iou": 0.744
    }
   },
   "moon_malapert": {
@@ -102,6 +126,14 @@
     "spearman_rho": 0.975,
     "mean_abs_error": 0.023,
     "bias": -0.021
+   },
+   "psr": {
+    "nasa_psr_share": 0.006,
+    "model_psr_share": 0.007,
+    "agreement": 0.996,
+    "precision": 0.65,
+    "recall": 0.743,
+    "iou": 0.531
    }
   },
   "moon_haworth": {
@@ -128,6 +160,14 @@
     "spearman_rho": 0.987,
     "mean_abs_error": 0.023,
     "bias": -0.022
+   },
+   "psr": {
+    "nasa_psr_share": 0.022,
+    "model_psr_share": 0.025,
+    "agreement": 0.994,
+    "precision": 0.821,
+    "recall": 0.92,
+    "iou": 0.767
    }
   },
   "moon_leibnitz_beta": {
@@ -154,6 +194,14 @@
     "spearman_rho": 0.983,
     "mean_abs_error": 0.023,
     "bias": -0.019
+   },
+   "psr": {
+    "nasa_psr_share": 0.015,
+    "model_psr_share": 0.016,
+    "agreement": 0.997,
+    "precision": 0.857,
+    "recall": 0.955,
+    "iou": 0.824
    }
   }
  },
