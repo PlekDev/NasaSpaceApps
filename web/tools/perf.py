@@ -1,10 +1,11 @@
 """LCP and transferred bytes on the production build, throttled like 'Fast 4G' (1.6 Mbit/s down, 150 ms RTT).  perf.py [url]"""
 import sys, json
 from playwright.sync_api import sync_playwright
+sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent)); from _common import launch_chromium, launch, shot_path, AXE_JS, OUT
 url = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:4173/?intro=0"
 HOST = url.split("/")[2]
 with sync_playwright() as p:
-    b = p.chromium.launch(executable_path="/usr/bin/chromium-browser", args=["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"])
+    b = launch_chromium(p)
     ctx = b.new_context(viewport={"width": 1440, "height": 900}); pg = ctx.new_page(); cdp = ctx.new_cdp_session(pg)
     cdp.send("Network.enable"); cdp.send("Network.emulateNetworkConditions", {"offline": False, "latency": 150, "downloadThroughput": 1.6e6 / 8 * 0.9, "uploadThroughput": 750e3 / 8})
     cdp.send("Network.setCacheDisabled", {"cacheDisabled": True})

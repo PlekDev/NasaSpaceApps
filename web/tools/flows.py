@@ -1,12 +1,13 @@
 """Interaction screenshots for the Explore view. usage: flows.py <tag> <WxH> <theme>"""
 import sys
 from playwright.sync_api import sync_playwright
+sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent)); from _common import launch_chromium, launch, shot_path, AXE_JS, OUT
 tag, size, theme = sys.argv[1], sys.argv[2], sys.argv[3]; w, h = map(int, size.split("x")); phone = w <= 820
 with sync_playwright() as p:
-    b = p.chromium.launch(executable_path="/usr/bin/chromium-browser", args=["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"])
+    b = launch_chromium(p)
     pg = b.new_context(viewport={"width": w, "height": h}, color_scheme=theme).new_page(); errs = []
     pg.on("console", lambda m: errs.append(m.text) if m.type == "error" else None); pg.on("pageerror", lambda e: errs.append(str(e)))
-    shot = lambda n: pg.screenshot(path=f"/tmp/pen-web/{tag}_{w}_{theme}_{n}.png")
+    shot = lambda n: pg.screenshot(path=shot_path(f"{tag}_{w}_{theme}_{n}.png"))
     pg.goto("http://localhost:5173/"); pg.wait_for_selector("#go"); pg.wait_for_timeout(5000); shot("0intro")
     pg.click("#go"); pg.wait_for_timeout(5000); shot("1explore")
     pg.click("#target-btn"); pg.wait_for_timeout(600); shot("2picker"); pg.keyboard.press("Escape")

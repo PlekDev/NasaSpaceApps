@@ -16,9 +16,8 @@ jobs:
         with: { node-version: 22, cache: npm, cache-dependency-path: web/package-lock.json }
       - run: python -I web/tools/export_data.py   # data/processed -> web/public/data (hash + commit in manifest)
       - run: python -m pytest -q web/tests         # label and README-rank checks
-      - run: npm ci && npm test && npm run build
+      - run: npm ci && npm test && npm run build:pages -- "/${{ github.event.repository.name }}/"   # /NasaSpaceApps/ for this repository
         working-directory: web
-        env: { BASE_PATH: "/${{ github.event.repository.name }}/" }   # /NasaSpaceApps/ for this repository
       - uses: actions/upload-pages-artifact@v3
         with: { path: web/dist }
   deploy:

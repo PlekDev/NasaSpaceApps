@@ -1,14 +1,15 @@
-"""Accessibility audit with axe-core. One-time: mkdir -p /tmp/axe && cd /tmp/axe && npm i axe-core.   BASE=<url> axe_run.py [WxH ...]   Exit 1 on any violation."""
+"""Accessibility audit with axe-core. One-time: install axe-core into <tmp>/axe (npm i axe-core there) or set AXE_JS=<path to axe.min.js>.   BASE=<url> axe_run.py [WxH ...]   Exit 1 on any violation."""
 import json, os, sys
 BASE = os.environ.get("BASE", "http://localhost:5173").rstrip("/")
 from playwright.sync_api import sync_playwright
+sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent)); from _common import launch_chromium, launch, shot_path, AXE_JS, OUT
 FAILS = 0
-AXE = open("/tmp/axe/node_modules/axe-core/axe.min.js").read()
+AXE = AXE_JS.read_text(encoding="utf-8")
 VIEWS = [("explore", "/?intro=0", None), ("intro", "/", None), ("detail", "/?intro=0", "detail"), ("picker", "/?intro=0", "picker"), ("regions", "/?intro=0", "regions"),
          ("time", "/#/time", None), ("validation", "/#/validation", None), ("method", "/#/method", None)]
 sizes = [(1440, 900), (390, 844), (1024, 768)] if len(sys.argv) < 2 else [tuple(map(int, a.split("x"))) for a in sys.argv[1:]]
 with sync_playwright() as p:
-    b = p.chromium.launch(executable_path="/usr/bin/chromium-browser", args=["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"])
+    b = launch_chromium(p)
     for w, h in sizes:
         for theme in ("dark", "light"):
             for name, path, act in VIEWS:

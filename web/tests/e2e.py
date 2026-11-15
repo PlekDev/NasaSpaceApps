@@ -1,17 +1,19 @@
 """Browser smoke test (Playwright). Run with a server up:
-   BASE=http://localhost:5173 python web/tests/e2e.py                     # Chromium (system binary)
+   BASE=http://localhost:5173 python web/tests/e2e.py                     # Chromium (set CHROME=<path> to use a system browser)
    BROWSER=firefox|webkit BASE=... python web/tests/e2e.py              # needs `playwright install firefox webkit`
    BASE=http://127.0.0.1:8099/NasaSpaceApps python web/tests/e2e.py     # production build under the GitHub Pages path (tools/serve_dist.py)"""
 import os, sys
+from pathlib import Path
 from playwright.sync_api import sync_playwright
-BASE = os.environ.get("BASE", "http://localhost:5173").rstrip("/"); CHROME = os.environ.get("CHROME", "/usr/bin/chromium-browser"); BROWSER = os.environ.get("BROWSER", "chromium")
-GL = ["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+from _common import launch
+BASE = os.environ.get("BASE", "http://localhost:5173").rstrip("/"); BROWSER = os.environ.get("BROWSER", "chromium")
 fails = []
 def check(name, cond, extra=""):
     print(("PASS " if cond else "FAIL ") + name + (f"  {extra}" if extra and not cond else "")); cond or fails.append(name)
 
 with sync_playwright() as p:
-    b = p.chromium.launch(executable_path=CHROME, args=GL) if BROWSER == "chromium" else getattr(p, BROWSER).launch()
+    b = launch(p, BROWSER)
     print(f"browser: {BROWSER} {b.version}  base: {BASE}")
     pg = b.new_context(viewport={"width": 1440, "height": 900}).new_page(); errs = []
     bad = []
@@ -37,6 +39,7 @@ with sync_playwright() as p:
     pg.locator(".match").first.click(); pg.wait_for_timeout(500); pg.locator(".win").first.focus(); pg.keyboard.press("Enter"); pg.wait_for_selector("#d-title", timeout=20000)
     check("keyboard opens the detail sheet", pg.locator("#detail:not([hidden])").count() == 1)
     check("detail has reproduce rows", pg.locator(".stats li").count() >= 4)
+    check("Field kit is present, collapsed by default", pg.locator("details.kit").count() == 1 and pg.locator("details.kit[open]").count() == 0)
     pg.keyboard.press("Escape"); pg.wait_for_timeout(500)
     check("Escape closes the detail sheet", pg.locator("#detail[hidden]").count() == 1)
     for route, sel in [("time", ".chart"), ("validation", "#hm .hm"), ("method", ".prose")]:
@@ -46,6 +49,17 @@ with sync_playwright() as p:
     check("no console errors", not [e for e in errs if "GL" not in e and "WebGL" not in e], str(errs[:3]))
     check("no failed same-origin requests (assets, data, fonts, thumbs resolve under the base path)", not bad, str(bad[:4]))
     pg.close()
+    # no extras and no briefs in the manifest: no Field kit section at all
+    ctx = b.new_context(viewport={"width": 1440, "height": 900}); pg = ctx.new_page()
+    def strip(route):
+        import json
+        m = route.fetch().json(); m["extras"] = {k: {} for k in m["extras"]}; m["briefs"] = {}
+        route.fulfill(status=200, content_type="application/json", body=json.dumps(m))
+    pg.route("**/data/manifest.json", strip)
+    pg.goto(BASE + "/?intro=0"); pg.wait_for_selector(".match"); pg.locator(".match").first.click(); pg.wait_for_timeout(400); pg.locator(".win").first.click(); pg.wait_for_selector("#d-title", timeout=20000); pg.wait_for_timeout(800)
+    check("no extras: no Field kit section, heading or toggle", pg.locator(".kit-sec, details.kit").count() == 0 and "Field kit" not in pg.inner_text("#detail"))
+    check("no extras: the core of the card is still there", pg.locator(".stats li").count() >= 4 and pg.locator("#cmp").count() == 1)
+    ctx.close()
     # no WebGL: static intro fallback and a working Explore without the map
     ctx = b.new_context(viewport={"width": 1440, "height": 900}); pg = ctx.new_page(); errs = []
     pg.add_init_script("HTMLCanvasElement.prototype.getContext = function(){ return null };")

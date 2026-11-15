@@ -65,3 +65,72 @@ def test_blind_rediscovery_ranks_match_the_readme():
         stated = int(m.group(1)) if m.groups() else 1
         assert hiw[ref]["rank"] == stated, f"{ref}: computed #{hiw[ref]['rank']} vs README #{stated}"
         assert hiw[ref]["n"] == 10424 or f"{hiw[ref]['n']:,}" in readme
+
+
+# ---- end-to-end export runs in a scratch copy of the repo inputs (never touches web/public) ----
+import json, shutil, subprocess, sys
+
+
+def _scratch_repo(tmp, with_extras):
+    """Copy only what export_data.py reads into tmp. figures/extras and data/processed/briefs are left out unless with_extras."""
+    for rel in ["config", "docs/METHOD.md", "app/streamlit_app.py", "scripts/validate_known_analogs.py", "pen/features.py", "pen/scoring.py", "README.md"]:
+        src, dst = ROOT / rel, tmp / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(src, dst) if src.is_dir() else shutil.copyfile(src, dst)
+    shutil.copytree(ROOT / "data" / "processed", tmp / "data" / "processed", ignore=None if with_extras else shutil.ignore_patterns("briefs"))
+    (tmp / "figures").mkdir()
+    for f in (ROOT / "figures").glob("fig*.png"):
+        shutil.copyfile(f, tmp / "figures" / f.name)
+    if with_extras:
+        shutil.copytree(ROOT / "figures" / "extras", tmp / "figures" / "extras")
+    (tmp / "web" / "tools").mkdir(parents=True)
+    shutil.copyfile(ROOT / "web" / "tools" / "export_data.py", tmp / "web" / "tools" / "export_data.py")
+    return tmp
+
+
+def _export(tmp, env_extra=None, flags=()):
+    import os
+    env = {k: v for k, v in os.environ.items() if k not in ("PYTHONUTF8", "PYTHONIOENCODING")}
+    env.update(env_extra or {})
+    r = subprocess.run([sys.executable, *flags, "-I", str(tmp / "web" / "tools" / "export_data.py")], capture_output=True, encoding="utf-8", errors="replace", env=env, cwd=tmp)
+    assert r.returncode == 0, r.stderr[-800:]
+    return tmp / "web" / "public" / "data"
+
+
+def test_export_without_extras_has_no_field_kit_inputs(tmp_path):
+    """No figures/extras and no briefs: the manifest lists no extras and no briefs, so the UI renders no Field kit section."""
+    data = _export(_scratch_repo(tmp_path, with_extras=False))
+    m = json.loads((data / "manifest.json").read_text(encoding="utf-8"))
+    assert m["targets"] and all(e == {} for e in m["extras"].values()), m["extras"]
+    assert m["briefs"] == {}
+    assert not (tmp_path / "web" / "public" / "extras").exists()
+    assert not (data / "rover_twin.json").exists()
+
+
+def _legacy_locale():
+    """A single-byte locale that cannot encode U+02BB, like Windows cp1252; None if this machine has none."""
+    out = subprocess.run(["locale", "-a"], capture_output=True, encoding="utf-8", errors="replace").stdout.split() if sys.platform != "win32" else []
+    for name in out:
+        if name.lower().endswith(("iso88591", "iso-8859-1")):
+            env = {"LC_ALL": name, "PYTHONCOERCECLOCALE": "0"}
+            enc = subprocess.run([sys.executable, "-X", "utf8=0", "-I", "-c", "import locale;print(locale.getpreferredencoding(False))"], capture_output=True, encoding="utf-8", env={**__import__("os").environ, **env}).stdout.strip().lower()
+            if enc.replace("-", "").replace("_", "") in ("iso88591", "latin1", "cp1252"):
+                return env
+    return None
+
+
+def test_export_is_identical_under_a_cp1252_like_locale(tmp_path):
+    """Simulated Windows default encoding: no UnicodeEncodeError on U+02BB (Hawai'i), no mojibake, bytes equal to the UTF-8 run."""
+    env = _legacy_locale()
+    if env is None:
+        import pytest; pytest.skip("no single-byte locale installed to simulate cp1252")
+    scratch = _scratch_repo(tmp_path, with_extras=False)
+    ref = _export(scratch)
+    want = {f.name: f.read_bytes() for f in ref.glob("*.json")}
+    for f in ref.glob("*.json"):
+        f.unlink()
+    got_dir = _export(scratch, env_extra=env, flags=("-X", "utf8=0"))
+    got = {f.name: f.read_bytes() for f in got_dir.glob("*.json")}
+    assert got == want
+    assert "ʻ" in got["manifest.json"].decode("utf-8")
+    assert not list(got_dir.glob("*.tmp")) and json.loads(got["manifest.json"].decode("utf-8"))

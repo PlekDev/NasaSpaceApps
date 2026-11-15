@@ -3,7 +3,7 @@
 Read-only on config/ and data/processed/. Run with:  python -I web/tools/export_data.py
 Nothing is typed by hand: targets, regions, dimensions and every number come from the repo files.
 AI-assisted (Claude Code); reviewed by the author."""
-import ast, csv, hashlib, json, re, shutil, subprocess, sys
+import ast, csv, hashlib, json, os, re, shutil, subprocess, sys, tempfile
 from pathlib import Path
 import yaml
 from PIL import Image
@@ -12,6 +12,42 @@ ROOT = Path(__file__).resolve().parents[2]
 PROC = ROOT / "data" / "processed"
 OUT = ROOT / "web" / "public"
 DATA = OUT / "data"
+
+
+# ---- file helpers: every text file is UTF-8 (never the platform default, which is cp1252 on Windows and ignores PYTHONUTF8
+# under `python -I`), JSON is written with ensure_ascii=False, and every generated file is written atomically (temp file in
+# the same folder, then os.replace) so a crash can never leave a truncated manifest.json behind.
+def _atomic(path, write):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=path.name + ".", suffix=".tmp")
+    os.close(fd)
+    try:
+        write(Path(tmp))
+        os.replace(tmp, path)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
+
+
+def write_text(path, text):
+    _atomic(path, lambda t: t.write_text(text, encoding="utf-8", newline="\n"))
+
+
+def write_json(path, obj):
+    write_text(path, json.dumps(obj, ensure_ascii=False, separators=(",", ":")))
+
+
+def read_json(path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def copy_atomic(src, dst):
+    _atomic(dst, lambda t: shutil.copyfile(src, t))
+
+
+def read_csv(path):
+    with open(path, encoding="utf-8", newline="") as f:
+        return list(csv.DictReader(f))
 
 
 def literal_assign(path, name):
@@ -56,8 +92,8 @@ def source_stamp():
     for p in sorted((PROC / "thumbs").glob("*.json")):
         h.update(p.name.encode()); h.update(p.read_bytes())
     try:
-        commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
-        dirty = bool(subprocess.run(["git", "status", "--porcelain", "data/processed"], cwd=ROOT, capture_output=True, text=True).stdout.strip())
+        commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, encoding="utf-8", errors="replace", check=True).stdout.strip()
+        dirty = bool(subprocess.run(["git", "status", "--porcelain", "data/processed"], cwd=ROOT, capture_output=True, encoding="utf-8", errors="replace").stdout.strip())
     except Exception:
         commit, dirty = "unknown", False
     return h.hexdigest()[:8], commit + ("+dirty" if dirty else "")
@@ -86,7 +122,7 @@ def known_ranks(known_json):
                 c = not c
         return c
     by_ref = {}
-    for r in csv.DictReader(open(PROC / "windows.csv", encoding="utf-8")):
+    for r in read_csv(PROC / "windows.csv"):
         by_ref.setdefault(r["reference"], []).append((float(r["score_combined"]), r["polygon"]))
     out, rows, known = {}, {(r["reference"], r["site"]): r for r in known_json["rows"]}, extract_known()
     for ref, g in by_ref.items():
@@ -120,10 +156,10 @@ def app_cant_reproduce(diviner, mars):
 def thumb(src, dst, px=192, quality=80):
     if not src.exists():
         return None
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    im = Image.open(src).convert("RGB")
+    with Image.open(src) as raw:
+        im = raw.convert("RGB")
     im.thumbnail((px, px))
-    im.save(dst, "JPEG", quality=quality, optimize=True, progressive=True)
+    _atomic(dst, lambda t: im.save(t, "JPEG", quality=quality, optimize=True, progressive=True))
     return dst.name
 
 
@@ -131,11 +167,11 @@ def main():
     cfg = yaml.safe_load((ROOT / "config" / "sites.yaml").read_text(encoding="utf-8"))
     dims = literal_assign(ROOT / "pen" / "features.py", "DIMENSIONS")
     labels = literal_assign(ROOT / "pen" / "scoring.py", "FEATURE_LABELS")
-    centers = json.loads((PROC / "results.json").read_text())["site_centers"]
-    credits = json.loads((PROC / "thumbs" / "real_credits.json").read_text())
+    centers = read_json(PROC / "results.json")["site_centers"]
+    credits = read_json(PROC / "thumbs" / "real_credits.json")
     win_km = cfg["main_window_km"]
 
-    rows = [r for r in csv.DictReader(open(PROC / "windows.csv", encoding="utf-8")) if float(r["window_km"]) == win_km]
+    rows = [r for r in read_csv(PROC / "windows.csv") if float(r["window_km"]) == win_km]
     present = [d for d in dims if f"score_{d}" in rows[0]]
     feats = [f for d in present for f in dims[d]]
     sites = cfg["sites"]
@@ -149,9 +185,9 @@ def main():
     ridx = {s: n for n, s in enumerate(regions)}
 
     DATA.mkdir(parents=True, exist_ok=True)
-    cant = app_cant_reproduce(json.loads((PROC / "diviner.json").read_text()), json.loads((PROC / "mars_context.json").read_text()) if (PROC / "mars_context.json").exists() else {})
-    (DATA / "reproduce.json").write_text(json.dumps({t: cant(t, sites[t]["body"]) for t in targets}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    shutil.copyfile(PROC / "thumbs" / "real_credits.json", DATA / "credits.json")
+    cant = app_cant_reproduce(read_json(PROC / "diviner.json"), read_json(PROC / "mars_context.json") if (PROC / "mars_context.json").exists() else {})
+    write_json(DATA / "reproduce.json", {t: cant(t, sites[t]["body"]) for t in targets})
+    copy_atomic(PROC / "thumbs" / "real_credits.json", DATA / "credits.json")
     # previews actually available (not every window has one): low-Sun render and real NASA imagery, 480 px JPEG
     previews = {"low": [], "real": []}
     for src in sorted((PROC / "thumbs").glob("*.png")):
@@ -173,7 +209,7 @@ def main():
             if (EX / name).exists():
                 e[key] = thumb(EX / name, OUT / "extras" / f"{key}_{t}.jpg", px, 80)
         if (EX / f"twin_light_{t}.mp4").exists():
-            (OUT / "extras").mkdir(parents=True, exist_ok=True); shutil.copyfile(EX / f"twin_light_{t}.mp4", OUT / "extras" / f"twin_{t}.mp4"); e["video"] = f"twin_{t}.mp4"
+            copy_atomic(EX / f"twin_light_{t}.mp4", OUT / "extras" / f"twin_{t}.mp4"); e["video"] = f"twin_{t}.mp4"
         extras[t] = e
     briefs = {}
     for r in regions:
@@ -181,22 +217,21 @@ def main():
         for ext, key in [("md", "brief"), ("ics", "calendar"), ("_lowsun_windows.csv", "csv")]:
             f = PROC / "briefs" / (f"{r}.{ext}" if not ext.startswith("_") else f"{r}{ext}")
             if f.exists():
-                (OUT / "extras" / "briefs").mkdir(parents=True, exist_ok=True); shutil.copyfile(f, OUT / "extras" / "briefs" / f.name); got[key] = f.name
+                copy_atomic(f, OUT / "extras" / "briefs" / f.name); got[key] = f.name
         if got: briefs[r] = got
     # score matrix (fig2 as data): best window per Earth region x target, per dimension and combined
-    summ = list(csv.DictReader(open(PROC / "summary.csv", encoding="utf-8")))
+    summ = read_csv(PROC / "summary.csv")
     mdims = [c[len("score_"):] for c in summ[0] if c.startswith("score_") and c != "score_combined"] + ["combined"]
     cell = {(r["reference"], r["site"]): r for r in summ}
     matrix = dict(dims=mdims, targets=targets, regions=regions,
                   v={d: [[float(cell[(t, s)][f"score_{d}"]) if (t, s) in cell else None for t in targets] for s in regions] for d in mdims})
-    (DATA / "known_ranks.json").write_text(json.dumps(known_ranks(json.loads((PROC / "known_analogs.json").read_text(encoding="utf-8"))), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    (DATA / "matrix.json").write_text(json.dumps(matrix, separators=(",", ":")))
-    (OUT / "figures").mkdir(parents=True, exist_ok=True)
+    write_json(DATA / "known_ranks.json", known_ranks(read_json(PROC / "known_analogs.json")))
+    write_json(DATA / "matrix.json", matrix)
     for f in sorted((ROOT / "figures").glob("fig*.png")):
-        shutil.copyfile(f, OUT / "figures" / f.name)
-    shutil.copyfile(ROOT / "docs" / "METHOD.md", DATA / "method.md")
+        copy_atomic(f, OUT / "figures" / f.name)
+    copy_atomic(ROOT / "docs" / "METHOD.md", DATA / "method.md")
     if (PROC / "briefs" / "rover_twin.json").exists():
-        shutil.copyfile(PROC / "briefs" / "rover_twin.json", DATA / "rover_twin.json")
+        copy_atomic(PROC / "briefs" / "rover_twin.json", DATA / "rover_twin.json")
     tman = []
     for t in targets:
         s = sites[t]
@@ -216,8 +251,8 @@ def main():
         det = dict(i=[int(r["i"]) for r in rs], j=[int(r["j"]) for r in rs])
         for f in feats:
             det[f"d_{f}"] = q(f"d_{f}", 1000)
-        (DATA / f"{t}.detail.json").write_text(json.dumps(det, separators=(",", ":")))
-        (DATA / f"{t}.json").write_text(json.dumps(cols, separators=(",", ":")))
+        write_json(DATA / f"{t}.detail.json", det)
+        write_json(DATA / f"{t}.json", cols)
 
     rman = []
     for s in regions:
@@ -235,8 +270,8 @@ def main():
                  "mars_context", "eonet_snapshot"]:
         p = PROC / f"{name}.json"
         if p.exists():
-            shutil.copyfile(p, DATA / f"{name}.json")
-    (DATA / "manifest.json").write_text(json.dumps(manifest, separators=(",", ":"), ensure_ascii=False))
+            copy_atomic(p, DATA / f"{name}.json")
+    write_json(DATA / "manifest.json", manifest)
     print(f"exported {len(targets)} targets, {len(regions)} regions, {len(present)} dimensions")
 
 
