@@ -113,7 +113,7 @@ AI-assisted file is marked in its header. No AI-generated images.
 1. **P.E.N.** (Planetary Environmental Navigator) — by **Pollones en Fuga**: 6 members, challenge title. Hook: without being told, P.E.N. picked the exact spot on Mauna Kea where NASA rehearsed a lunar-polar mission, #1 of 10,424 places
 2. **The problem** — the Moon Base goes where the Sun never climbs above 7°; existing analog searches ignore light
 3. **Our idea** — score Earth places by terrain *and* low-Sun light; explain where the analogy breaks
-4. **How it works** — common grid → shadow model → scores; validated against NASA: ρ = 0.92–0.99 at all six Moon Base sites (fig7)
+4. **How it works** — common grid → shadow model → scores; validated against NASA: ρ = 0.92–0.99 at all six Moon Base sites (fig7). Second check, only if it fits with both numbers: "Our model's never-lit points agree with NASA's permanently-shadowed-region map on 98.0–99.7 % of points (intersection over union 0.53–0.82)." Never quote the 98–99.7 % alone: permanent shadow covers only 0.6–4.8 % of each site, so that figure is high for almost any model
 5. **Results** — fig1 side by side + blind rediscovery (#1 of 10,424 for Malapert; top 0.2 % for four of the six Moon Base sites, top 5 % for all six) + top matches (Mauna Kea and Mauna Loa 79–91, Atacama 93–96, Chichinautzin 89; El Pinacate top 3 % for four sites, top 8 % for six)
 6. **Where Earth stops being an analog** — fig8 (Moon, Mars and Earth together: "Earth's coldest places come close to Mars, but not to the Moon Base") + fig6 (Diviner) + analog in time (fig3); app screenshot. Line for the slide: "Our Mars sites average 200–224 K, only 15–38 K colder than Antarctica's University Valley. The Moon Base sites are 95–132 K colder. What Earth cannot give Mars is the air: under 1 % of sea-level pressure." Say "modelled" for Mars (Mars Climate Database v6.2) and "measured" only for the Moon (LRO Diviner).
 7. **Impact & next steps** — field-test planning, Mexican analogs, thermal/mineral layers, global search
@@ -129,6 +129,11 @@ Moon Base sites, with a mean error of 2.0–3.2 percentage points of lit time.
 **"Why does the local model do worse?"**
 Distant mountains. Near the pole the Sun is hidden by terrain tens of kilometres away. Adding NASA's 85°S DEM up to
 150 km closes the gap; lunar curvature alone barely matters.
+
+**"Do you get the permanently shadowed regions right?"**
+Mostly. Our never-lit points agree with NASA's LPSR map on 98.0–99.7 % of points at every site, but permanent shadow
+is rare there (0.6–4.8 % of each footprint), so the honest number is the overlap of the two shadow masks:
+intersection over union 0.53–0.82. The headline validation remains ρ = 0.92–0.99 on the full illumination map.
 
 **"Any caveat?"**
 Three sites, Malapert, Nobile Rim 1 and Leibnitz Beta, sit near the edge of NASA's DEM, so some rays stop after
