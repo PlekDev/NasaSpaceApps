@@ -109,7 +109,7 @@ export function renderRehearsePanel(
   const samples = Math.min(tProf.length, eProf.length);
 
   // Build 365-day low-Sun azimuth reachability strip (72 bins of 5 deg)
-  const reachableAz = earthLowSunDirections(earthWin.lat, earthWin.lon, plan.elevBandDeg[0], plan.elevBandDeg[1]);
+  const reachableAz = earthLowSunDirections(earthWin.lat, earthWin.lon, plan.elevBandDeg[0], plan.elevBandDeg[1], earthWin.up_az ?? 0);
   const reachSet = new Set(reachableAz.map((a) => Math.floor(a / 5)));
   const targetBin = Math.floor((((plan.targetGridAzDeg % 360) + 360) % 360) / 5);
   const earthBin = Math.floor((((activeWin.earthGridAzDeg % 360) + 360) % 360) / 5);

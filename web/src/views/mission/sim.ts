@@ -7,13 +7,13 @@
  * traverse telemetry, NOAA solar ephemeris, and 365-day Earth rehearsal
  * window search + RFC 5545 .ics export).
  *
- * Loads binary 200x200 int16 grids from `${BASE}data/sim/<target>.json` when
- * available, and provides a deterministic terrain synthesis fallback from
- * `${BASE}data/<target>.json` so the Mission view works seamlessly even before
- * `data/sim/` is generated.
+ * Loads the real 200x200 int16 grids from `${BASE}data/sim/` (web/tools/exports/sim.py). If they are
+ * missing the view says so: it never shows made-up terrain. Cast shadows come from the validated core
+ * (web/src/sim/shadows.ts, bit-identical to pen/shadows.py); Sun azimuths are turned into each window's
+ * grid frame with its `up_az` (web/tools/exports/README.md).
  */
 import { BASE } from '../../base.ts';
-import { loadDetail, loadTarget } from '../../data.ts';
+import { castShadow as coreCastShadow } from '../../sim/shadows.ts';
 import type { Manifest } from '../../types.ts';
 
 export const DEG = Math.PI / 180;
@@ -24,6 +24,10 @@ export const SLOPE_MAX_DEG = 20;
 
 export interface GridEncoding {
   file: string;
+  /** geographic azimuth of the grid's up edge at the window centre (web/tools/exports/sim.py) */
+  up_az?: number;
+  lat?: number;
+  lon?: number;
   offset: number;
   scale: number;
   min: number;
@@ -101,74 +105,6 @@ export function exaggerated(grid: Grid, k = 1): Float32Array {
   return out;
 }
 
-/**
- * Deterministic fallback 200x200 terrain synthesizer used only when
- * `data/sim/<target>.bin` has not yet been exported to `web/public/data/sim/`.
- */
-function synthesizeGrid(seedStr: string, body: string, baseElev: number, relief: number, rows = 200, cols = 200, dx = 30): Grid {
-  let h = 2166136261 >>> 0;
-  for (let i = 0; i < seedStr.length; i++) {
-    h ^= seedStr.charCodeAt(i);
-    h = Math.imul(h, 16777619) >>> 0;
-  }
-  const rand = () => {
-    h ^= h << 13;
-    h ^= h >>> 17;
-    h ^= h << 5;
-    return (h >>> 0) / 4294967296;
-  };
-
-  const z = new Float32Array(rows * cols);
-  const p1 = rand() * Math.PI * 2;
-  const p2 = rand() * Math.PI * 2;
-  const p3 = rand() * Math.PI * 2;
-  const ridgeAngle = (0.35 + rand() * 0.9) * Math.PI;
-  const ca = Math.cos(ridgeAngle);
-  const sa = Math.sin(ridgeAngle);
-
-  // Generate 5 craters/basins/cones
-  const features = Array.from({ length: 5 }, () => ({
-    cr: 25 + rand() * (rows - 50),
-    cc: 25 + rand() * (cols - 50),
-    radius: 14 + rand() * 34,
-    depth: (body === 'moon' ? -1 : rand() > 0.35 ? -1 : 0.8) * (0.18 + rand() * 0.28) * relief,
-  }));
-
-  let lo = Infinity;
-  let hi = -Infinity;
-  for (let r = 0; r < rows; r++) {
-    const ny = r / rows - 0.5;
-    for (let c = 0; c < cols; c++) {
-      const nx = c / cols - 0.5;
-      const rx = nx * ca - ny * sa;
-      const ry = nx * sa + ny * ca;
-
-      // Broad massif / ridge + secondary undulations
-      let elev =
-        baseElev +
-        relief * 0.38 * Math.exp(-((ry * 2.6) ** 2)) * Math.cos(rx * 3.2 + p1) +
-        relief * 0.16 * Math.sin(nx * 6.5 + p2) * Math.cos(ny * 6.0 + p3) +
-        relief * 0.06 * Math.sin((nx + ny) * 14.0 + p1);
-
-      for (const f of features) {
-        const d = Math.hypot(r - f.cr, c - f.cc) / f.radius;
-        if (d < 1.35) {
-          if (d < 0.82) {
-            elev += f.depth * (1 - (d / 0.82) ** 2);
-          } else {
-            const rim = Math.exp(-(((d - 0.95) / 0.18) ** 2));
-            elev -= f.depth * 0.28 * rim;
-          }
-        }
-      }
-
-      z[r * cols + c] = elev;
-      if (elev < lo) lo = elev;
-      if (elev > hi) hi = elev;
-    }
-  }
-  return { z, rows, cols, dx, min: lo, max: hi };
-}
 
 const targetCache = new Map<string, Promise<SimTargetMeta>>();
 const gridCache = new Map<string, Promise<Grid>>();
@@ -183,81 +119,10 @@ export function loadSimTarget(target: string, manifest?: Manifest): Promise<SimT
           return (await r.json()) as SimTargetMeta;
         })
       : Promise.reject(new Error('sim export not in manifest'));
-    const p = tryRemote
-      .catch(async () => {
-        // Fallback synthesis from standard target + detail files
-        const [td, det] = await Promise.all([
-          loadTarget(target),
-          loadDetail(target).catch(() => ({ i: [] as number[], j: [] as number[] })),
-        ]);
-        const tInfo = manifest?.targets.find((t) => t.id === target);
-        const body = tInfo?.body ?? (target.startsWith('mars_') ? 'mars' : 'moon');
-        const label = tInfo ? `${tInfo.body === 'mars' ? 'Mars' : 'Moon'} · ${tInfo.name}` : target;
-        const [lon, lat] = tInfo?.center ?? [0, body === 'moon' ? -84.9 : 39.1];
-        const scaleScore = manifest?.scale?.score ?? 10;
-        const scaleLonLat = manifest?.scale?.lonlat ?? 100000;
-
-        // Top 5 distinct Earth regions
-        const indices = Array.from({ length: td.n }, (_, k) => k).sort(
-          (a, b) => (td.combined[b] ?? 0) - (td.combined[a] ?? 0),
-        );
-        const seenSites = new Set<number>();
-        const windows: SimWindow[] = [];
-        for (const idx of indices) {
-          const sIdx = td.site[idx];
-          if (seenSites.has(sIdx)) continue;
-          seenSites.add(sIdx);
-          const reg = manifest?.regions[sIdx];
-          const siteId = reg?.id ?? `earth_site_${sIdx}`;
-          const wi = det.i?.[idx] ?? 200 * windows.length;
-          const wj = det.j?.[idx] ?? 200 * windows.length;
-          const score = (td.combined[idx] ?? 850) / scaleScore;
-          const terrain =
-            ((td.score_terrain as number[] | undefined)?.[idx] ?? td.combined[idx] ?? 840) / scaleScore;
-          const illum =
-            ((td.score_illumination as number[] | undefined)?.[idx] ?? td.combined[idx] ?? 860) / scaleScore;
-          windows.push({
-            rank: windows.length + 1,
-            site: siteId,
-            region: reg?.name ?? siteId,
-            place: reg?.place ?? '',
-            i: wi,
-            j: wj,
-            lat: (td.lat[idx] ?? 0) / scaleLonLat,
-            lon: (td.lon[idx] ?? 0) / scaleLonLat,
-            score: Math.round(score * 10) / 10,
-            terrain: Math.round(terrain * 10) / 10,
-            illumination: Math.round(illum * 10) / 10,
-            file: `__synth__${target}__${siteId}_${wi}_${wj}`,
-            offset: 2100,
-            scale: 0.01,
-            nodata_filled: 0,
-            min: 1920,
-            max: 2340,
-          });
-          if (windows.length >= 5) break;
-        }
-
-        return {
-          target,
-          label,
-          body,
-          dx: 30,
-          n: 200,
-          center: { lat, lon, of: 'site' },
-          grid: {
-            file: `__synth__${target}`,
-            offset: body === 'moon' ? 1200 : -2800,
-            scale: 0.01,
-            i: 400,
-            j: 400,
-            nodata_filled: 0,
-            min: body === 'moon' ? 880 : -3020,
-            max: body === 'moon' ? 1560 : -2580,
-          },
-          windows,
-        } satisfies SimTargetMeta;
-      });
+    const p = tryRemote.catch((e: unknown) => {
+      // no made-up terrain: without the exported grids the view shows an error instead
+      throw new Error(`Terrain grids for ${target} are not available (${e instanceof Error ? e.message : String(e)}); run make web-data`);
+    });
     targetCache.set(target, p);
   }
   return targetCache.get(target)!;
@@ -265,110 +130,27 @@ export function loadSimTarget(target: string, manifest?: Manifest): Promise<SimT
 
 export function loadSimGrid(enc: GridEncoding, n = 200, dx = 30): Promise<Grid> {
   if (!gridCache.has(enc.file)) {
-    if (enc.file.startsWith('__synth__')) {
-      const isMoon = enc.file.includes('moon_');
-      const relief = Math.max(120, (enc.max ?? 2200) - (enc.min ?? 1800));
-      const base = 0.5 * ((enc.min ?? 1800) + (enc.max ?? 2200));
-      gridCache.set(
-        enc.file,
-        Promise.resolve(synthesizeGrid(enc.file, isMoon ? 'moon' : 'mars', base, relief, n, n, dx)),
-      );
-    } else {
-      gridCache.set(
-        enc.file,
-        fetch(`${BASE}data/sim/${enc.file}`)
-          .then((r) => {
-            if (!r.ok) throw new Error(`sim/${enc.file}: ${r.status}`);
-            return r.arrayBuffer();
-          })
-          .then((buf) => decodeGrid(buf, enc, n, n, dx))
-          .catch(() => {
-            const isMoon = enc.file.includes('moon_');
-            const relief = Math.max(140, (enc.max ?? 2200) - (enc.min ?? 1800));
-            const base = 0.5 * ((enc.min ?? 1800) + (enc.max ?? 2200));
-            return synthesizeGrid(enc.file, isMoon ? 'moon' : 'mars', base, relief, n, n, dx);
-          }),
-      );
-    }
+    gridCache.set(
+      enc.file,
+      fetch(`${BASE}data/sim/${enc.file}`)
+        .then((r) => {
+          if (!r.ok) throw new Error(`sim/${enc.file}: ${r.status}`);
+          return r.arrayBuffer();
+        })
+        .then((buf) => decodeGrid(buf, enc, n, n, dx)),
+    );
   }
   return gridCache.get(enc.file)!;
 }
 
-// ---- Cast Shadows, Slope & Hillshade (matching pipeline/illumination.py) ----
+// ---- Cast Shadows, Slope & Hillshade ----
 
+/** Cast shadows (1 = shadow) from the validated core: the same cells as pen/shadows.py.
+ *  sunAzDeg: direction the Sun comes FROM, degrees clockwise from the grid's up edge (see toGridAz). */
 export function castShadow(grid: Grid, sunElevDeg: number, sunAzDeg: number): Uint8Array {
-  const { z, rows: h, cols: w, dx } = grid;
-  const out = new Uint8Array(h * w);
-  if (sunElevDeg <= 0) {
-    out.fill(1);
-    return out;
-  }
-
-  const az = sunAzDeg * DEG;
-  const tanEl = Math.tan(sunElevDeg * DEG);
-  const dr = -Math.cos(az);
-  const dc = Math.sin(az);
-
-  let primaryRows: boolean;
-  let stepP: number;
-  let slopeS: number;
-  let stepDist: number;
-  if (Math.abs(dr) >= Math.abs(dc)) {
-    primaryRows = true;
-    stepP = dr < 0 ? -1 : 1;
-    slopeS = dc / Math.abs(dr);
-    stepDist = dx * Math.hypot(1, slopeS);
-  } else {
-    primaryRows = false;
-    stepP = dc < 0 ? -1 : 1;
-    slopeS = dr / Math.abs(dc);
-    stepDist = dx * Math.hypot(1, slopeS);
-  }
-  const dhPerStep = stepDist * tanEl;
-
-  const trace = (r0: number, c0: number) => {
-    let horizon = -1e30;
-    let r = r0;
-    let c = c0;
-    while (r >= 0 && r < h && c >= 0 && c < w) {
-      const ri = Math.trunc(r);
-      const ci = Math.trunc(c);
-      const idx = ri * w + ci;
-      const zv = z[idx];
-      if (zv < horizon) {
-        out[idx] = 1;
-      } else {
-        horizon = zv;
-      }
-      horizon -= dhPerStep;
-      if (primaryRows) {
-        r += stepP;
-        c += slopeS;
-      } else {
-        c += stepP;
-        r += slopeS;
-      }
-    }
-  };
-
-  if (primaryRows) {
-    const rStart = stepP > 0 ? 0 : h - 1;
-    for (let c = 0; c < w; c++) trace(rStart, c + 0.5);
-    if (slopeS > 0) {
-      for (let r = 0; r < h; r++) trace(r + 0.5, 0);
-    } else if (slopeS < 0) {
-      for (let r = 0; r < h; r++) trace(r + 0.5, w - 1e-6);
-    }
-  } else {
-    const cStart = stepP > 0 ? 0 : w - 1;
-    for (let r = 0; r < h; r++) trace(r + 0.5, cStart);
-    if (slopeS > 0) {
-      for (let c = 0; c < w; c++) trace(0, c + 0.5);
-    } else if (slopeS < 0) {
-      for (let c = 0; c < w; c++) trace(h - 1e-6, c + 0.5);
-    }
-  }
-  return out;
+  if (sunElevDeg <= 0) return new Uint8Array(grid.rows * grid.cols).fill(1);   // Sun below the horizon: all dark
+  if (grid.rows !== grid.cols) throw new Error('castShadow: square grids only');
+  return coreCastShadow({ n: grid.rows, dx: grid.dx, z: grid.z }, sunElevDeg, sunAzDeg);
 }
 
 export function shadowFraction(shadow: Uint8Array): number {
@@ -856,9 +638,11 @@ export interface SunAngles {
   hourAngleDeg?: number;
 }
 
-export function toGridAz(compassAzDeg: number, latDeg: number): number {
-  const raw = latDeg < 0 ? 180 - compassAzDeg : compassAzDeg;
-  return ((raw % 360) + 360) % 360;
+/** Geographic azimuth -> azimuth in a window's grid frame. upAzDeg = the window's `up_az` from sim/<target>.json
+ *  (geographic azimuth of the grid's up edge; up to ~6 deg off north near the lunar pole). The grids are north-up
+ *  azimuthal equidistant projections in both hemispheres, so nothing is mirrored. */
+export function toGridAz(compassAzDeg: number, upAzDeg = 0): number {
+  return (((compassAzDeg - upAzDeg) % 360) + 360) % 360;
 }
 
 export function azDiff(a: number, b: number): number {
@@ -866,7 +650,8 @@ export function azDiff(a: number, b: number): number {
   return d;
 }
 
-export function solarPosition(latDeg: number, lonDeg: number, when: Date | number): SunAngles {
+/** upAzDeg: the window's `up_az`, so gridAzDeg is in that window's frame (0 = geographic north). */
+export function solarPosition(latDeg: number, lonDeg: number, when: Date | number, upAzDeg = 0): SunAngles {
   const ms = typeof when === 'number' ? when : when.getTime();
   const jd = ms / 86_400_000 + 2440587.5;
   const n = jd - 2451545.0;
@@ -904,7 +689,7 @@ export function solarPosition(latDeg: number, lonDeg: number, when: Date | numbe
   return {
     elevDeg: el * RAD,
     azDeg: az,
-    gridAzDeg: toGridAz(az, latDeg),
+    gridAzDeg: toGridAz(az, upAzDeg),
     declDeg: decl * RAD,
     hourAngleDeg: haDeg,
   };
@@ -915,6 +700,7 @@ export function sunFromHourAngle(
   hourAngleDeg: number,
   declDeg = 0,
   elevOverrideDeg?: number,
+  upAzDeg = 0,
 ): SunAngles {
   const phi = latDeg * DEG;
   const decl = declDeg * DEG;
@@ -928,7 +714,7 @@ export function sunFromHourAngle(
   return {
     elevDeg,
     azDeg: az,
-    gridAzDeg: toGridAz(az, latDeg),
+    gridAzDeg: toGridAz(az, upAzDeg),
     declDeg,
     hourAngleDeg,
   };
@@ -938,14 +724,14 @@ export function sunDay(
   body: 'moon' | 'mars' | 'earth' | string,
   latDeg: number,
   steps = 36,
-  opts: { elevDeg?: number; declDeg?: number; dateMs?: number; lonDeg?: number } = {},
+  opts: { elevDeg?: number; declDeg?: number; dateMs?: number; lonDeg?: number; upAzDeg?: number } = {},
 ): SunAngles[] {
   const out: SunAngles[] = [];
   if (body === 'earth' && opts.dateMs !== undefined) {
     const lon = opts.lonDeg ?? 0;
     const startOfDay = Math.floor(opts.dateMs / 86_400_000) * 86_400_000;
     for (let k = 0; k < steps; k++) {
-      out.push(solarPosition(latDeg, lon, startOfDay + (k / steps) * 86_400_000));
+      out.push(solarPosition(latDeg, lon, startOfDay + (k / steps) * 86_400_000, opts.upAzDeg ?? 0));
     }
     return out;
   }
@@ -953,7 +739,7 @@ export function sunDay(
   const elevOverride = opts.elevDeg ?? (body === 'moon' ? 2.5 : undefined);
   for (let k = 0; k < steps; k++) {
     const ha = -180 + (k / steps) * 360;
-    out.push(sunFromHourAngle(latDeg, ha, decl, elevOverride));
+    out.push(sunFromHourAngle(latDeg, ha, decl, elevOverride, opts.upAzDeg ?? 0));
   }
   return out;
 }
@@ -1004,6 +790,9 @@ export interface RehearseOptions {
   earthRoute?: ReadonlyArray<readonly [number, number]>;
   earthLat: number;
   earthLon: number;
+  /** the Earth window's `up_az` (grid frame of earthGrid) */
+  earthUpAzDeg?: number;
+  /** start of the search; default now (a rehearsal date must be in the future) */
   fromDate?: Date | number;
   days?: number;
   stepMin?: number;
@@ -1028,7 +817,8 @@ export function rehearse(opts: RehearseOptions): RehearsalPlan {
     earthGrid,
     earthLat,
     earthLon,
-    fromDate = Date.UTC(2026, 0, 1),
+    earthUpAzDeg = 0,
+    fromDate = Date.now(),
     days = 365,
     stepMin = 10,
     elevMinDeg = 0,
@@ -1072,7 +862,7 @@ export function rehearse(opts: RehearseOptions): RehearsalPlan {
     let cur: RawRun | null = null;
     for (let s = 0; s <= totalSteps; s++) {
       const t = startDayMs + s * stepMs;
-      const sun = solarPosition(earthLat, earthLon, t);
+      const sun = solarPosition(earthLat, earthLon, t, earthUpAzDeg);
       const inElev = sun.elevDeg >= elevMinDeg && sun.elevDeg <= elevMaxDeg;
       const aErr = azDiff(sun.gridAzDeg, targetSun.gridAzDeg);
       const inAz = aErr <= tolDeg;
@@ -1174,13 +964,14 @@ export function earthLowSunDirections(
   earthLon = 0,
   elevMinDeg = 0,
   elevMaxDeg = 7,
-  year = 2026,
+  upAzDeg = 0,
+  fromMs = Date.now(),
 ): number[] {
   const bins = new Uint8Array(72);
-  const t0 = Date.UTC(year, 0, 1);
+  const t0 = fromMs;                                          // the next 365 days
   for (let d = 0; d < 365; d += 3) {
     for (let m = 0; m < 1440; m += 15) {
-      const sun = solarPosition(earthLat, earthLon, t0 + (d * 1440 + m) * 60_000);
+      const sun = solarPosition(earthLat, earthLon, t0 + (d * 1440 + m) * 60_000, upAzDeg);
       if (sun.elevDeg >= elevMinDeg && sun.elevDeg <= elevMaxDeg) {
         bins[Math.floor(sun.gridAzDeg / 5) % 72] = 1;
       }

@@ -249,6 +249,18 @@ export async function render(
   }
 
   async function loadTargetAndWindow(newTargetId: string, desiredRank: number): Promise<void> {
+    try {
+      await loadTargetAndWindowOrThrow(newTargetId, desiredRank);
+    } catch (e) {
+      if (disposed) return;
+      const box = document.createElement('p');
+      box.className = 'mission-error'; box.setAttribute('role', 'alert');
+      box.textContent = `Mission Rehearsal needs the exported terrain grids, and they could not be loaded: ${e instanceof Error ? e.message : String(e)}`;
+      page.prepend(box);
+    }
+  }
+
+  async function loadTargetAndWindowOrThrow(newTargetId: string, desiredRank: number): Promise<void> {
     targetId = newTargetId;
     simMeta = await loadSimTarget(targetId, m);
     if (disposed) return;
@@ -279,7 +291,8 @@ export async function render(
     if (!simMeta || !targetGrid || !earthGrid || !earthWin) return;
 
     const decl = simMeta.body === 'moon' ? -1.5 : 0;
-    targetSun = sunFromHourAngle(simMeta.center.lat, sunHourAngleDeg, decl, sunElevDeg);
+    // the window's own centre and grid orientation (near the pole the grid is turned up to ~6 deg from north)
+    targetSun = sunFromHourAngle(simMeta.grid.lat ?? simMeta.center.lat, sunHourAngleDeg, decl, sunElevDeg, simMeta.grid.up_az ?? 0);
 
     const tShadow = castShadow(targetGrid, targetSun.elevDeg, targetSun.gridAzDeg);
     const tPlanned = routeBetween(targetGrid, tShadow, startFrac, endFrac);
@@ -300,6 +313,7 @@ export async function render(
         earthRoute: eNominalPlanned.route,
         earthLat: earthWin.lat,
         earthLon: earthWin.lon,
+        earthUpAzDeg: earthWin.up_az ?? 0,
         elevMinDeg: 0,
         elevMaxDeg: 7,
         azTolDeg: 10,
@@ -312,7 +326,7 @@ export async function render(
 
     const activeRehearsalWin = rehearsalPlan.windows[selectedRehearsalIdx] ?? rehearsalPlan.best;
     if (earthSunMode === 'rehearsal' && activeRehearsalWin) {
-      earthSun = solarPosition(earthWin.lat, earthWin.lon, Date.parse(activeRehearsalWin.peakIso));
+      earthSun = solarPosition(earthWin.lat, earthWin.lon, Date.parse(activeRehearsalWin.peakIso), earthWin.up_az ?? 0);
     } else {
       earthSun = {
         elevDeg: targetSun.elevDeg,
