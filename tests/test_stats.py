@@ -23,9 +23,10 @@ def test_stub_has_final_shape():
         assert obj["_stub"] is True and "_meta" in obj, name
     n = s["null"]
     assert set(n["p_value"]) == {"global", "region_matched"} and set(n["questions"]) == set(n["p_value"])
-    assert set(n["pu_uhiwahine"]) == {t for t in targets if t.startswith("moon_")}
+    assert set(n["pu_uhiwahine"]) == {t for t in targets if t.startswith("moon_")} and "headline" in n
+    assert all("p_bonferroni" in v for v in n["pu_uhiwahine"].values())
     for t in targets:
-        assert {"fpr", "tpr", "auc", "auc_ci95", "n_pos", "n_neg"} <= set(s["roc"][t])
+        assert {"fpr", "tpr", "auc", "auc_ci95", "auc_by_score", "auc_ci95_by_score", "n_pos", "n_neg"} <= set(s["roc"][t])
         assert len(s["bootstrap"][t]) == 20 and {"window_id", "site", "score", "ci95"} <= set(s["bootstrap"][t][0])
         assert {"p_top1", "p_top10", "kendall_tau_3_6", "kendall_tau_6_12", "kendall_tau_3_12"} <= set(s["stability"][t])
         assert {r["feature"] for r in s["tornado"][t]} == set(ex.FEATURES)
@@ -126,3 +127,15 @@ def test_tornado_and_decomposition():
     assert rows["rough"]["removed"] > 0                       # removing the only differing feature makes it identical
     assert np.isclose(score_from_d(np.zeros((1, 7)))[0], 100)
     assert rows["relief"]["low"] == rows["relief"]["high"] < 0
+
+
+def test_real_results_keep_the_stub_shape():
+    """Every key of the stub must exist in the real result files that are already computed."""
+    import json
+    ex = _load(ROOT / "web" / "tools" / "exports" / "stats.py", "stats_export")
+    s = ex.stubs()
+    for name, src in ex.SRC.items():
+        if not src.exists():
+            continue
+        real = json.loads(src.read_text(encoding="utf-8"))
+        assert set(s[name]) - {"_stub"} <= set(real), (name, set(s[name]) - set(real))
