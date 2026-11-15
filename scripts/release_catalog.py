@@ -38,7 +38,7 @@ FEATURE_DOC = {  # unit, description (definitions in pen/features.py)
     "relief": ("log10(m)", "local relief: log10 of the P98 − P2 elevation range in the window"),
     "slope_med": ("degrees", "median slope"),
     "slope_p90": ("degrees", "90th-percentile slope"),
-    "rough": ("log10(m)", "150 m roughness: log10 of the RMS deviation from a 5×5-pixel (150 m) moving mean"),
+    "rough": ("log10(m)", "150 m roughness: log10(sqrt(mean roughness) + 0.001), where roughness is the squared deviation of each pixel from a 5×5-pixel (150 m) moving mean"),
     "hypso": ("0–1", "hypsometry: (mean − P2) / (P98 − P2) elevation"),
     "shadow_e2": ("0–1", "mean cast-shadow fraction at 2° Sun elevation over 8 azimuths"),
     "shadow_e5": ("0–1", "mean cast-shadow fraction at 5° Sun elevation over 8 azimuths"),
