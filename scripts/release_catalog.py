@@ -208,16 +208,16 @@ def main():
             feats.append({"type": "Feature", "id": rec["window_id"], "geometry": {"type": "Polygon", "coordinates": [ring]},
                           "properties": {k: clean(v) for k, v in rec.items() if keep(k)}})
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"type": "FeatureCollection", "features": feats}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        path.write_text(json.dumps({"type": "FeatureCollection", "features": feats}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     geojson(OUT / "pen_analog_catalog.geojson", lambda k: k in ("window_id", "region") or k.startswith(("combined__", "rank__")))
     full = OUT_FULL / "pen_analog_catalog_full.geojson"
     geojson(full, lambda k: True)
-    (OUT_FULL / "SHA256SUMS").write_text(f"{sha(full)}  {full.name}\n", encoding="utf-8")
+    (OUT_FULL / "SHA256SUMS").write_text(f"{sha(full)}  {full.name}\n", encoding="utf-8", newline="\n")
     hashes = {str(p.relative_to(ROOT)): sha(p) for p in INPUTS}
     sizes = {f: human((OUT / f).stat().st_size) for f in ("pen_analog_catalog.csv", "pen_analog_catalog.geojson", "pen_top_windows.csv")}
-    (OUT / "README.md").write_text(readme(base, top, targets, regions, dictionary(targets, emit_cols, cfg), cfg, hashes, sizes), encoding="utf-8")
+    (OUT / "README.md").write_text(readme(base, top, targets, regions, dictionary(targets, emit_cols, cfg), cfg, hashes, sizes), encoding="utf-8", newline="\n")
     files = ["README.md", "pen_analog_catalog.csv", "pen_analog_catalog.geojson", "pen_top_windows.csv"]
-    (OUT / "SHA256SUMS").write_text("".join(f"{sha(OUT / f)}  {f}\n" for f in files), encoding="utf-8")
+    (OUT / "SHA256SUMS").write_text("".join(f"{sha(OUT / f)}  {f}\n" for f in files), encoding="utf-8", newline="\n")
     for f in files + ["SHA256SUMS"]:
         print(f"  {f:30s} {human((OUT / f).stat().st_size):>9s}")
     print(f"  (not committed) {full.relative_to(ROOT)}  {human(full.stat().st_size)}")
