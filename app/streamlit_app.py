@@ -314,7 +314,7 @@ with tab_val:
     f7 = FIGURES / "fig7_far_horizons.png"
     if far and f7.exists():
         st.markdown("**Where the remaining gap comes from.** Away from the pole, the Sun is hidden by mountains tens of "
-                    "kilometres away. Re-computing the light with NASA's 40 m polar DEM out to 150 km, on the curved "
+                    "kilometres away. Re-computing the light with NASA's 40 m polar DEM up to 150 km away, on the curved "
                     "lunar surface and with real Sun positions, brings the agreement to:")
         rows = [dict(site=label(k).split("·")[1].split("(")[0].strip(),
                      **{"local DEM (ρ)": vv["V1_local_flat"]["spearman_rho"],

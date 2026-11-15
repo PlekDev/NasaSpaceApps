@@ -67,7 +67,7 @@ Station, Pu'u Hiwahine on Mauna Kea, Askja, Yungay and University Valley) and re
 ### Limitations
 
 - **Local horizons in scoring.** Scoring uses the site DEM only, on both bodies. The far-horizon test shows that
-  distant mountains explain the lower local ρ (Malapert 0.55 → 0.975 with 150 km of terrain).
+  distant mountains explain the lower local ρ (Malapert 0.55 → 0.975 with terrain up to 150 km away).
 - **Surface model on Earth.** Copernicus includes vegetation and buildings.
 - **Resolution.** 30 m hides boulders and small craters that matter for landing hazards.
 - **Flat-plains degeneracy.** Mars plains match much of Earth's flat terrain. Finer texture, ice or thermal

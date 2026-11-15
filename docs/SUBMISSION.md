@@ -26,7 +26,7 @@ NASA plans its Moon Base near the lunar south pole, where the Sun never rises ab
 landing, roving and power there. P.E.N. is an open tool that searches Earth for places that match a target
 Moon or Mars site **dimension by dimension**: terrain shape, low-Sun illumination, and (in progress) temperature.
 It explains what is similar and where the analogy breaks. Our cast-shadow model reproduces NASA's official LOLA
-illumination map at Shackleton Connecting Ridge (ρ = 0.86). P.E.N. also finds *when* Earth sites reproduce
+illumination map at all six Moon Base sites (ρ = 0.92–0.99). P.E.N. also finds *when* Earth sites reproduce
 lunar-pole light: an "analog in time" that tells field teams the best weeks to test.
 
 **Link to project demo:** <deck or video URL>
@@ -117,3 +117,19 @@ AI-assisted file is marked in its header. No AI-generated images.
 5. **Results** — fig1 side by side + blind rediscovery + top matches (Mauna Kea, Atacama, Chichinautzin; El Pinacate top 3 %)
 6. **Where Earth stops being an analog** — fig6 (Diviner) + analog in time (fig3); app screenshot
 7. **Impact & next steps** — field-test planning, Mexican analogs, thermal/mineral layers, global search
+
+## Judge Q&A: the light validation
+
+Numbers come from `data/processed/far_horizons.json` (`V3_far_curved`) and `data/processed/validation.json`.
+
+**"How do you know your light model is right?"**
+We compared it with NASA's own LOLA illumination map, averaged over 18.6 years: Spearman ρ = 0.92–0.99 at all six
+Moon Base sites, with a mean error of 2.0–3.2 percentage points of lit time.
+
+**"Why does the local model do worse?"**
+Distant mountains. Near the pole the Sun is hidden by terrain tens of kilometres away. Adding NASA's 85°S DEM up to
+150 km closes the gap; lunar curvature alone barely matters.
+
+**"Any caveat?"**
+Three sites, Malapert, Nobile Rim 1 and Leibnitz Beta, sit near the edge of NASA's DEM, so some rays stop after
+21–66 km (Haworth: 50–91 km). All of them still reach ρ ≥ 0.975. Do not say "150 km in every direction".
