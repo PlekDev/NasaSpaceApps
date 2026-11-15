@@ -61,6 +61,9 @@ export async function render(el: HTMLElement, m: Manifest, params?: Record<strin
   const brief = m.briefs[r.id], where = [r.place, r.cc].filter(Boolean).join(', ');
   const has = (set: string[]) => set.includes(wid);
   const route = parseRoute(q.get('route')), when = q.get('when'), fid = Number(q.get('fidelity'));
+  const whenDate = when ? new Date(when) : null, whenOk = !!whenDate && !Number.isNaN(whenDate.getTime());
+  const whenText = whenOk ? `${whenDate!.toISOString().slice(0, 10)} ${whenDate!.toISOString().slice(11, 16)} UTC` : when ?? '';
+  const whenPast = whenOk && whenDate!.getTime() < Date.now();
   const rv = rover?.[t.id], rvHere = rv && rv.earth_site === r.id && Math.abs(rv.earth_window[0] - lat) < 1e-3 && Math.abs(rv.earth_window[1] - lon) < 1e-3;
   const known = Object.entries((kr?.[t.id] ?? {}) as Record<string, { rank: number; n: number }>).filter(([, v]) => v.rank === rank);
   const [thermal, lowSun] = await Promise.all([thermalRef(t.id, t.body), brief?.csv ? fetch(`${BASE}extras/briefs/${brief.csv}`).then(x => (x.ok ? x.text() : '')).catch(() => '') : '']);
@@ -96,14 +99,14 @@ export async function render(el: HTMLElement, m: Manifest, params?: Record<strin
     ${has(m.previews.real) ? img(`${BASE}thumbs/real/${wid}.jpg`, `${r.name}, real view`, `Real view · ${esc(credits?.[wid] ?? 'NASA imagery')}`) : ''}</div></section>
 
   <section class="dossier-sec"><h2>When to go</h2>
-    ${when ? `<p class="dossier-pick">Rehearsal window chosen in Mission: <b class="tnum">${esc(when.replace('T', ' '))} UTC</b>${Number.isFinite(fid) && fid > 0 ? ` · rehearsal fidelity <b class="tnum">${pyFixed(fid <= 1 ? fid * 100 : fid)} %</b>` : ''}</p>` : ''}
+    ${when ? `<p class="dossier-pick">Rehearsal window chosen in Mission: <b class="tnum">${esc(whenText)}</b>${Number.isFinite(fid) && fid > 0 ? ` · rehearsal fidelity <b class="tnum">${pyFixed(fid <= 1 ? fid * 100 : fid)} %</b>` : ''}${whenPast ? ` · <span class="dossier-dim">this date has passed; the same Sun returns about a year later</span>` : ''}</p>` : ''}
     ${brief?.block ? `<p>Best 14-day campaign block at ${esc(r.name)}: <b>${esc(brief.block)}</b>, with <b>${brief.min_day} min/day</b> of Sun 0–7° above the horizon, the elevation range of the lunar south pole.</p>` : `<p>No campaign calendar was generated for ${esc(r.name)} yet. The When view gives the hours per day of Sun 0–7° for every region and month.</p>`}
     ${upcoming.length ? `<div class="dossier-tbl"><table><caption>Next low-Sun windows (Sun 0–7°), UTC</caption><thead><tr><th>Start</th><th>End</th><th>Minutes</th><th>Sun azimuth</th><th>Kind</th></tr></thead><tbody>
       ${upcoming.map(c => `<tr><th scope="row" class="tnum">${esc(c[0].replace('T', ' '))}</th><td class="tnum">${esc(c[1].slice(11))}</td><td class="tnum">${esc(c[2])}</td><td class="tnum">${esc(c[3])}°–${esc(c[4])}°</td><td>${esc(c[5])}</td></tr>`).join('')}</tbody></table></div>` : brief?.csv ? `<p class="dossier-note">The campaign calendar for ${esc(r.name)} has no low-Sun window after ${today}. Regenerate it (scripts/extras/campaign_calendar.py) for later dates.</p>` : ''}
     ${brief ? `<p class="dossier-links dossier-noprint">${brief.calendar ? `<a class="link" download href="${BASE}extras/briefs/${brief.calendar}">Calendar .ics</a>` : ''}${brief.csv ? `<a class="link" download href="${BASE}extras/briefs/${brief.csv}">All low-Sun windows (CSV)</a>` : ''}${brief.brief ? `<a class="link" download href="${BASE}extras/briefs/${brief.brief}">Field brief</a>` : ''}</p>` : ''}</section>
 
   ${route.length || rv ? `<section class="dossier-sec"><h2>Traverse and telemetry</h2>
-    ${route.length ? `<p>Traverse drawn in Mission: <b>${route.length} waypoints</b>.</p><ol class="dossier-route tnum">${route.map(p => `<li>${coord(p[1], p[0])}</li>`).join('')}</ol>` : ''}
+    ${route.length ? `<p>Earth traverse planned in Mission, on ${esc(r.name)}: <b>${route.length} waypoints</b>.</p><ol class="dossier-route tnum">${route.map(p => `<li>${coord(p[1], p[0])}</li>`).join('')}</ol>` : ''}
     ${rv ? `<p>${route.length ? 'For reference, the' : 'The'} precomputed least-cost twin traverse for ${esc(t.name)}${rvHere ? ' and this Earth window' : ` uses the Earth window at ${coord(rv.earth_window[0], rv.earth_window[1])}`}: the same cost function on both bodies, slopes above 20° impassable.</p>
     <div class="dossier-split"><div class="dossier-tbl"><table><thead><tr><th></th><th>${esc(t.name)}</th><th>Earth analog</th></tr></thead><tbody>
       ${([['Length', (o: Rec) => `${o.length_km.toFixed(2)} km`], ['Climb', (o: Rec) => `${nf(o.climb_m)} m`], ['Descent', (o: Rec) => `${nf(o.descent_m)} m`], ['Max slope', (o: Rec) => `${o.max_slope_deg.toFixed(1)}°`], ['Mean slope', (o: Rec) => `${o.mean_slope_deg.toFixed(1)}°`], ['Route in shadow (Sun 2°)', (o: Rec) => `${pyFixed(o.share_in_shadow * 100)} %`], ['Window impassable', (o: Rec) => `${pyFixed(o.share_window_impassable * 100)} %`]] as [string, (o: Rec) => string][])
