@@ -158,4 +158,3 @@ function temperatureHTML(d: Record<string, (number | null)[]>, k: number, ref: T
       <div class="tticks tnum">${[0, 100, 200, 300].map(v => `<span style="left:${x(v)}">${v} K</span>`).join('')}</div></div>
     <p class="d-note">Earth: MODIS MOD11A2 clear-sky land-surface temperature, 2025: mean of day and night, from the 5th percentile of nights to the 95th of days (${Math.round(e.mean - 273.15)} °C on average).${ref ? ` Target: ${esc(ref.what)}. On average this window is <b>${Math.abs(gap)} K ${gap >= 0 ? 'warmer' : 'colder'}</b>.` : ''} Context only, not scored: the two quantities are not measured the same way.</p></section>`;
 }
-

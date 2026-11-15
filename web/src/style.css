@@ -418,4 +418,3 @@ html[data-intro] .pin { display: none; }
 .tv { text-align: right; }
 .tticks { position: relative; height: 16px; margin-left: calc(92px + var(--s-3)); margin-right: calc(56px + var(--s-3)); font-size: 11px; color: var(--text-3, var(--text-2)); }
 .tticks span { position: absolute; transform: translateX(-50%); }
-
