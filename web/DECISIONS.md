@@ -9,3 +9,14 @@ Format: decision · options · why. Autonomous mode: decisions are made against 
 5. **Vanilla TypeScript, no framework.** The UI is a handful of panels with shared state; a framework would add bundle and a build step without removing code. A 40-line store + render functions is enough.
 6. **Hash routing** (`#/`, `#/time`, `#/validation`, `#/method`): static hosting on GitHub Pages without rewrites.
 7. **Attribution in the footer strip, not MapLibre's control**: one place for NASA/ESA credits, imagery attribution and the "Built with AI assistance" line; MapLibre's required attribution is rendered there too.
+8. **MapLibre in a lazy chunk.** The shell, intro text and manifest paint first (LCP 1.78 s throttled); the map chunk (288 KB gz) loads right after and queued camera/data calls are replayed. Option: single bundle (LCP 3.6 s measured).
+9. **Per-target data split core/detail.** Core (site, lon, lat, scores; 105 KB gz) for the map and lists; detail (window ids, scaled differences) fetched when a window opens. Option: one file (230 KB gz first load).
+10. **Text produced by the app's own code.** `export_data.py` extracts `cant_reproduce()` and `EARTH_LIMITS` from `app/streamlit_app.py` by AST and runs them on the committed JSON, so "Earth can't reproduce" (Diviner and Mars-climate rows) cannot drift from the app. Option: re-type the strings in TypeScript (rejected: drift risk).
+11. **Blind rediscovery from data, not typed ranks.** The app text hardcodes ranks ("#1 of 10,424", "#9", "#19", "#23"). known_analogs.json stores percentiles only, so the web shows "top x %" per target derived from the data. Option: copy the ranks (rejected: hand-typed numbers).
+12. **Sensitivity and Diviner sentences generated from data** (min/max, counts, target names) rather than copied.
+13. **Top-matches fade, not a hard clip.** The list scrolls inside its panel with proximity scroll-snap and a gradient fade at the edge that is shown only when more rows exist; the best match is always row 1.
+14. **Primary button colour.** `#3987e5` with white text is 3.6:1; buttons use `#2b72d0` (dark) / `#1a62c4` (light) for >= 4.5:1. The brand accent stays `#3987e5` for non-text chrome.
+15. **Score-matrix heatmap defaults to the Combined panel.** All three dimension panels side by side need ~2,200 px; "All" is one click away and scrolls horizontally with sticky region names.
+16. **No WebGL:** static NASA Blue Marble tile in the intro, a notice in place of the map, and rankings/filters/detail unchanged (tested).
+17. **Phone nav is a menu button** (4 views do not fit beside the wordmark and theme toggle at 390 px).
+18. **Short desktop screens (<= 860 px tall) compact the controls** so the best match stays in view at 1024x768.

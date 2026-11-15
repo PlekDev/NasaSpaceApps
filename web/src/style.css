@@ -392,3 +392,4 @@ html[data-intro] .pin { display: none; }
   .best .where { margin-top: var(--s-2); } .dimrow { margin-top: var(--s-2); } .legend { margin-top: var(--s-3); padding-top: var(--s-2); }
   .target { margin-top: var(--s-1); }
 }
+.sortable thead th:nth-child(-n+2) { text-align: left; }

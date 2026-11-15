@@ -11,21 +11,29 @@ Meaning for the web app: new optional "field extras" for the detail sheet (M2): 
 twin figure and its numbers (rover_twin.json); per Earth region the field brief (md), calendar (.ics) and low-sun CSV. Plan: export posters
 and PNGs downscaled, link the mp4/ics/csv from the repo files copied to public/extras (size-checked).
 
-## Milestones
-- M0 done (design system, static screen).
-- M1 done: export (manifest with data hash + commit), intro (spinning globe, skippable, static fallback if no WebGL), Explore map (GIBS globe,
-  sized points -> real 6 km squares from z7.5, eased flights), target picker (9 targets, grouped, wraps), live weights/min score, region filter
-  (search + checkboxes + all/none), Top matches (best window per region, expandable, scroll fade), best-match overlay + pin, footer with data hash,
-  phone bottom sheet with peek/half/full snaps, hash routes (secondary pages are stubs until M3).
-- Tests: `python -m pytest -q web/tests` (labels), `npm test` in web/ (W=1 recombination == precomputed for all 9 targets, max error <= 0.2).
-- M2 done: detail sheet (right sheet / phone bottom sheet): combined + per-dimension scores, swipe/blink compare (low-Sun and NASA imagery, credits),
-  diverging IQR bars with the explain() thresholds, "Earth can't reproduce" (text produced by the app's own cant_reproduce() at export time, so Diviner
-  rows for all 6 lunar targets and Mars-climate rows for the 3 Mars targets match the app), EONET live-with-snapshot fallback, Google Maps and
-  NASA Worldview links, field extras from the merged PR (twin-light video, astronaut view, rover twin + numbers, region brief/.ics/CSV).
-- M3 next: secondary views (time chart, validation incl. native score-matrix heatmap and figure lightbox, method) + light theme everywhere.
+## Milestones (all done)
+- M0 design system + static screen. M1 export, intro, Explore map, picker, region filter, top matches, best match, phone sheet.
+- M2 detail sheet (compare, diverging bars, Diviner/Mars rows from the app's own cant_reproduce(), EONET, extras).
+- M3 Analog in time, Validation (native score matrix, sortable known-analog table, figure lightbox), Method.
+- M4 perf (MapLibre in a lazy chunk, data split core/detail), axe-core clean on 8 views x 3 sizes x 2 themes, tests, short-screen layout, no-WebGL fallback.
+- Tests: `make test` (17), `python -m pytest -q web/tests` (4), `npm test` in web/ (19), `python web/tests/e2e.py` (18 browser checks).
 
-## Open decisions / known issues
-See DECISIONS.md. Screenshots: /tmp/pen-web/.
+## Main merges tracked
+- PR #8 (field extras): rendered in the detail sheet.
+- PR #7 + #9 (known-analog coordinates verified, 8 sites, n_tests 48; Earth LST pipeline, data pending; far-horizon wording "up to 150 km away"):
+  known-analog numbers and the METHOD text flow through the export automatically; the far-horizon sentence was updated to the app's new wording.
+  When a thermal dimension lands in `pen/features.py` DIMENSIONS and `windows.csv`, the export, sliders, bars and heatmap pick it up as a third dimension
+  (not exercised with real data yet: check the left panel height and the heatmap "All" panel).
 
-## Performance (M1 build)
-JS 297.9 KB gz + CSS 15 KB gz + fonts ~70 KB + first target ~230 KB gz + manifest 6 KB => ~620 KB first load (budget 1.5 MB). LCP not yet measured (M4).
+## Performance (production build, throttled "Fast 4G": 1.6 Mbit/s, 150 ms RTT, cache off)
+LCP 1.78 s on the intro (budget 2.5 s). First load 515 KB transferred (budget 1.5 MB): JS 303 KB gz (main chunk 22 KB + MapLibre chunk 288 KB, loaded after first paint),
+CSS 18 KB, fonts 68 KB, first target core data 105 KB gz (window ids and scaled differences load only when a window is opened), thumbs 19 KB.
+
+## Known issues / not done
+- Imagery is GIBS Blue Marble (about 500 m/px at its maximum level), so squares at zoom 9+ sit on blurry imagery. Landsat WELD is only served as WMS and returns opaque black over ocean, so it was not added.
+- Real-GPU frame rate was not measured (no GPU here); the 20 min deck.gl comparison could only compare bundle size.
+- Windows are drawn as axis-aligned squares around the centre; the real windows are projected squares, so edges can differ slightly at high latitude.
+- Safari and Firefox were not tested (Chromium only).
+- `web/tests/e2e.py` and the axe/perf scripts need Playwright and are not part of `make web-test`.
+
+Screenshots: /tmp/pen-web/ (m0..m4, both themes, 390/768/1024/1440/1920).
