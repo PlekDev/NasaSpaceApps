@@ -1,7 +1,7 @@
 import { esc, cap, nf, coord } from './format';
 import { icon } from './icons';
 import { ramp } from './score';
-import { getJSON } from './data';
+import { getJSON, loadDetail } from './data';
 import { fieldEvents } from './eonet';
 import { $, $$, html, isPhone } from './ui';
 import type { Manifest } from './types';
@@ -12,7 +12,7 @@ interface Rover { earth_site: string; target: Record<string, number>; earth: Rec
 const bold = (s: string) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 const THR_SIMILAR = 0.5, THR_DIFF = 1.5; // same thresholds as pen.scoring.explain()
 
-export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: () => { scored: Scored; d: Record<string, number[] | number>; km: number }) {
+export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: () => { scored: Scored }) {
   const S = store.state, dims = Object.keys(m.dims);
   const el = html(`<aside class="panel detail" id="detail" role="complementary" aria-label="Analog card" hidden tabindex="-1"></aside>`);
   root.appendChild(el);
@@ -22,12 +22,12 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
   const preview = (set: string[], id: string) => set.includes(id);
 
   async function open(k: number) {
-    const { scored, d } = get(), t = m.targets.find(x => x.id === S.target)!, r = regionOf(k);
+    const { scored } = get(), d = await loadDetail(S.target), t = m.targets.find(x => x.id === S.target)!, r = regionOf(k);
     const sc = m.scale, i = (d.i as number[])[k], j = (d.j as number[])[k], wid = `${r.id}_${i}_${j}`;
     const lat = scored.lat[k], lon = scored.lon[k], score = scored.s[k];
     const rank = scored.shown.indexOf(k) + 1;
     const feats = dims.flatMap(n => m.dims[n]);
-    const dv = feats.map(f => ({ f, v: (d[`d_${f}`] as number[])[k] / sc.d }));
+    const dv = feats.map(f => ({ f, v: d[`d_${f}`][k] / sc.d }));
     const R = Math.min(4, Math.max(2, Math.ceil(Math.max(...dv.map(x => Math.abs(x.v))))));
     const similar = dv.filter(x => Math.abs(x.v) <= THR_SIMILAR).map(x => m.feature_labels[x.f]);
     const differs = dv.filter(x => Math.abs(x.v) >= THR_DIFF).map(x => `${m.feature_labels[x.f]} (${x.v > 0 ? 'higher' : 'lower'} on Earth)`);

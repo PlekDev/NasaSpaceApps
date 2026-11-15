@@ -38,7 +38,7 @@ async function boot() {
     nav.querySelectorAll('a').forEach(a => { if (a.dataset.r === r) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
     stage.hidden = !explore; page.hidden = explore;
     ex.show(explore && !introOn);
-    if (explore) requestAnimationFrame(() => ex.view.map.resize?.());
+    if (explore) requestAnimationFrame(() => ex.view.resize());
     else { page.scrollTop = 0; renderPage(page, r, m).then(() => { page.insertAdjacentHTML('beforeend', footerHTML(m).replace('class="foot"', 'class="foot static"')); document.getElementById('credits-btn') && wireCredits(); }); }
     document.title = (explore ? '' : `${ROUTES.find(x => x[0] === r)?.[1] ?? ''} · `) + 'P.E.N. · Planetary Environmental Navigator';
   };

@@ -9,3 +9,6 @@ export const loadManifest = () => getJSON<Manifest>('manifest');
 export const loadTarget = (id: string) => getJSON<TargetData>(id);
 
 export const getText = (name: string) => fetch(`${base}data/${name}`).then(r => { if (!r.ok) throw new Error(name); return r.text(); });
+
+/** Window ids (i, j) and scaled differences d_*: only needed once a window is opened. */
+export const loadDetail = (id: string) => getJSON<Record<string, number[]>>(`${id}.detail`);

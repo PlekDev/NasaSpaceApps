@@ -1,4 +1,4 @@
-import { combine } from './score';
+import { combine } from './score.ts';
 import type { Manifest, TargetData } from './types';
 
 export interface Scored {

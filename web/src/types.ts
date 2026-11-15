@@ -8,5 +8,5 @@ export interface Manifest {
   scale: { lonlat: number; score: number; d: number }; targets: Target[]; regions: Region[]; windows_per_target: number;
 }
 /** Columnar per-target data, integer-scaled (see manifest.scale). */
-export interface TargetData { n: number; site: number[]; i: number[]; j: number[]; lon: number[]; lat: number[]; combined: number[];
+export interface TargetData { n: number; site: number[]; lon: number[]; lat: number[]; combined: number[];
   [col: string]: number[] | number }

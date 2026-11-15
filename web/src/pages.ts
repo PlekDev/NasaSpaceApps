@@ -10,5 +10,6 @@ export async function renderPage(el: HTMLElement, route: string, m: Manifest) {
     if (route === 'time') await renderTime(el, m);
     else if (route === 'validation') await renderValidation(el, m);
     else if (route === 'method') await renderMethod(el);
+    el.querySelectorAll<HTMLElement>('.tbl, .hm-scroll').forEach((t, i) => { t.tabIndex = 0; t.setAttribute('role', 'region'); t.setAttribute('aria-label', t.querySelector('caption')?.textContent || (t.classList.contains('hm-scroll') ? 'Score matrix' : `Table ${i + 1}`)); });
   } catch (e) { el.innerHTML = `<div class="page-in"><h1>Something went wrong</h1><p class="muted">The data for this view could not be loaded (${String(e)}). Run <code>python -I web/tools/export_data.py</code> and reload.</p></div>`; }
 }

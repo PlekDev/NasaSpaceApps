@@ -13,13 +13,13 @@ so they get the type; chrome gets almost none.
 |---|---|---|
 | page / space | `#0b0f17` (figures are plotted on it) | `#e8ebf0` |
 | panel | `rgba(15,21,32,.74)` + blur 18 px | `rgba(250,251,252,.84)` + blur 18 px |
-| text 1 / 2 / 3 | `#eceff4` / `#a9b1bf` / `#7f8897` | `#12161d` / `#46505e` / `#667080` |
+| text 1 / 2 / 3 | `#eceff4` / `#a9b1bf` / `#8a93a2` | `#12161d` / `#46505e` / `#566070` |
 | hairline | `rgba(255,255,255,.09)` | `rgba(15,23,42,.10)` |
 | accent | `#3987e5` | `#1a62c4` |
 
 Follows `prefers-color-scheme`; the toggle stores `pen-theme` in localStorage inside try/catch. Panels are translucent only
 because they really sit over the map. In light mode each committed PNG figure sits in its own dark frame.
-Contrast (WCAG): text 3 on the panel is >= 4.6:1 in both themes; accent on panel >= 4.5:1 (dark `#3987e5` 5.3:1, light `#1a62c4` 5.9:1).
+Contrast (WCAG, checked with axe-core on every view): text 3 is >= 4.6:1 on every surface in both themes; accent text `#6da7ec` (dark) and `#1a62c4` (light) >= 4.5:1; the primary button uses `--accent-btn` (`#2b72d0` dark, 4.75:1 with white; `#1a62c4` light, 5.9:1) because the raw accent `#3987e5` only reaches 3.6:1 with white text.
 
 ## Colour
 One accent for interactive chrome only (focus rings, slider fill, active nav, links). Warning `#d9a548` / `#8a5a00`

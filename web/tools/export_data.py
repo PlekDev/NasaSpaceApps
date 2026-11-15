@@ -166,12 +166,14 @@ def main():
                          credit=credits.get(f"ref__{t}")))
         rs = by_ref[t]
         q = lambda k, f: [round(float(r[k]) * f) for r in rs]
-        cols = dict(n=len(rs), site=[ridx[r["site"]] for r in rs], i=[int(r["i"]) for r in rs], j=[int(r["j"]) for r in rs],
-                    lon=q("lon", 1e5), lat=q("lat", 1e5), combined=q("score_combined", 10))
+        # core: what the map and lists need at first paint; detail: window ids and scaled differences, loaded when a window is opened
+        cols = dict(n=len(rs), site=[ridx[r["site"]] for r in rs], lon=q("lon", 1e5), lat=q("lat", 1e5), combined=q("score_combined", 10))
         for d in present:
             cols[f"score_{d}"] = q(f"score_{d}", 10)
+        det = dict(i=[int(r["i"]) for r in rs], j=[int(r["j"]) for r in rs])
         for f in feats:
-            cols[f"d_{f}"] = q(f"d_{f}", 1000)
+            det[f"d_{f}"] = q(f"d_{f}", 1000)
+        (DATA / f"{t}.detail.json").write_text(json.dumps(det, separators=(",", ":")))
         (DATA / f"{t}.json").write_text(json.dumps(cols, separators=(",", ":")))
 
     rman = []

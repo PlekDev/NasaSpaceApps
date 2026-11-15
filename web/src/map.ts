@@ -125,6 +125,16 @@ export class MapView {
     const duration = reduced() ? 0 : Math.round(Math.min(1200, Math.max(600, 600 + d / 12 + Math.abs(zoom - this.map.getZoom()) * 40)));
     this.map.flyTo({ center: [lon, lat], zoom, duration, easing: ease, essential: false, curve: 1.2, ...(padding ? { padding } : {}) });
   }
+  jumpTo(o: maplibregl.JumpToOptions) { this.map.jumpTo(o); }
+  easeTo(o: maplibregl.EaseToOptions) { this.map.easeTo(o); }
+  getCenter(): [number, number] { const c = this.map.getCenter(); return [c.lng, c.lat]; }
+  getZoom() { return this.map.getZoom(); }
+  resize() { this.map.resize(); }
+  private pin: maplibregl.Marker | null = null;
+  setPin(el: HTMLElement | null, lon = 0, lat = 0) {
+    if (!el) { this.pin?.remove(); this.pin = null; return; }
+    if (!this.pin) this.pin = new maplibregl.Marker({ element: el }).setLngLat([lon, lat]).addTo(this.map); else this.pin.setLngLat([lon, lat]);
+  }
   setPadding(p: maplibregl.PaddingOptions) { this.map.easeTo({ padding: p, duration: reduced() ? 0 : 300 }); }
 }
 
@@ -133,7 +143,8 @@ const noop: any = new Proxy(function () {}, { get: () => noop, apply: () => noop
 export class NullView {
   dead = true; map: maplibregl.Map = noop;
   onPick: MapView['onPick'] = () => {}; onHover: MapView['onHover'] = () => {};
-  async setScored() {} mark() {} fly(..._a: unknown[]) {} setPadding(..._a: unknown[]) {}
+  async setScored(..._a: unknown[]) {} mark(..._a: unknown[]) {} fly(..._a: unknown[]) {} setPadding(..._a: unknown[]) {} jumpTo(..._a: unknown[]) {} easeTo(..._a: unknown[]) {}
+  getCenter(): [number, number] { return [0, 0]; } getZoom() { return 1; } resize() {} setPin(..._a: unknown[]) {}
 }
 export const hasWebGL = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; } };
 export type View = MapView | NullView;

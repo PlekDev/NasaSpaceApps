@@ -2,7 +2,9 @@ import { esc, cap, nf, coord } from './format';
 import { icon } from './icons';
 import { ramp } from './score';
 import { score, type Scored } from './model';
-import { createView, zoomForGlobe, type View } from './map';
+/** Zoom at which the globe is `px` pixels across (calibrated: 685 px at z 2.35 in MapLibre's globe). */
+const zoomForGlobe = (px: number) => 2.35 + Math.log2(px / 685);
+import { createDeferredView, type View } from './view';
 import { createStore, type Store } from './store';
 import { loadTarget } from './data';
 import { $, $$, html, isPhone, popover } from './ui';
@@ -29,7 +31,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   <main class="explore" id="explore">
    <div class="dock" id="dock">
     <button class="grab" id="grab" aria-label="Resize panel" aria-expanded="false"><span></span></button>
-    <section class="panel best" id="best" aria-label="Best match"></section>
+    <div class="stack">
     <section class="panel col-l" aria-label="Controls">
       <div class="section"><div class="label" id="lbl-target">Target</div>
         <button class="target" id="target-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lbl-target target-name"></button></div>
@@ -37,6 +39,8 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
         ${dims.map(n => slider(`w-${n}`, cap(n), 1, 0, 2, .1)).join('')}${slider('min', 'Minimum score', 60, 0, 100, 1)}</div>
       <div class="section"><button class="rowbtn" id="regions-btn" aria-haspopup="dialog" aria-expanded="false"><span class="l">${icon.layers}Earth regions</span><span class="muted tnum" id="regions-count"></span></button></div>
     </section>
+    <section class="panel best" id="best" aria-label="Best match"></section>
+    </div>
     <section class="panel col-r" aria-label="Top matches"><header><h2>Top matches</h2><p class="tnum" id="matches-sub"></p></header>
       <div class="listwrap"><div class="list" id="list" tabindex="-1"></div></div></section>
     ${footerHTML(m)}
@@ -52,8 +56,9 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   }
   const mapEl = $('#map', root);
   const phone0 = isPhone();
-  const view = createView(mapEl, [0, 20], phone0 ? 1.2 : 2.6, theme);
+  const view = createDeferredView(mapEl, [0, 20], phone0 ? 1.2 : 2.6, theme);
   const tip = $('#tip', root);
+  view.ready.then(() => { if (view.dead) mapEl.innerHTML = '<p class="nogl">The map needs WebGL, which is not available in this browser. Rankings, filters and every analog card still work.</p>'; });
 
   const bestEl = $('#best', root), listEl = $('#list', root);
   // ---------- phone sheet snap points
@@ -155,13 +160,10 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
 
   // ---------- pin for the best match
   const pinEl = html(`<div class="pin" aria-hidden="true">${icon.crosshair}<span class="tnum"></span></div>`);
-  let pin: import('maplibre-gl').Marker | null = null;
-  async function updatePin() {
-    if ('dead' in view) return;
-    const k = scored.shown[0]; const { default: ml } = await import('maplibre-gl');
-    if (k == null) { pin?.remove(); pin = null; return; }
-    $('span', pinEl).textContent = scored.s[k].toFixed(0);
-    if (!pin) pin = new ml.Marker({ element: pinEl }).setLngLat([scored.lon[k], scored.lat[k]]).addTo(view.map); else pin.setLngLat([scored.lon[k], scored.lat[k]]);
+  function updatePin() {
+    const k = scored.shown[0];
+    if (k == null) { view.setPin(null); return; }
+    $('span', pinEl).textContent = scored.s[k].toFixed(0); view.setPin(pinEl, scored.lon[k], scored.lat[k]);
   }
 
   // ---------- overview camera
@@ -171,7 +173,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     const c: [number, number] = ks.length ? [med(ks.map(k => scored.lon[k])), med(ks.map(k => scored.lat[k]))] : [0, 20];
     const availH = innerHeight - 52 - (isPhone() ? Math.min(snaps()[snap], innerHeight * .6) : 0);
     const D = isPhone() ? Math.min(innerWidth * .94, availH * .94) : availH * 1.12;
-    if (animate) view.fly(c[0], c[1], zoomForGlobe(D)); else view.map.jumpTo({ center: c, zoom: zoomForGlobe(D) });
+    if (animate) view.fly(c[0], c[1], zoomForGlobe(D)); else view.jumpTo({ center: c, zoom: zoomForGlobe(D) });
   }
 
   // ---------- recompute + push to map
@@ -206,7 +208,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     tip.innerHTML = `<b class="tnum">${scored.s[k].toFixed(0)}</b> <span>${esc(r.name)}</span>`; tip.hidden = false;
     tip.style.transform = `translate(${Math.min(x + 14, innerWidth - 260)}px, ${y + 14}px)`;
   };
-  view.onPick = k => { store.set({ selected: k }); view.fly(scored.lon[k], scored.lat[k], Math.max(view.map.getZoom(), 9.4), pad(true)); };
+  view.onPick = k => { store.set({ selected: k }); view.fly(scored.lon[k], scored.lat[k], Math.max(view.getZoom(), 9.4), pad(true)); };
 
   async function switchTarget() {
     store.set({ selected: null, expanded: null, hover: null });
@@ -269,7 +271,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   credBtn.addEventListener('click', () => { credEl.style.cssText = ''; credPop.toggle(); credEl.style.left = credEl.style.top = ''; });
   $('#credits-close', root).addEventListener('click', () => credPop.close());
 
-  mountDetail(root.querySelector('#explore')!, m, store, () => ({ scored, d: data as unknown as Record<string, number[] | number>, km: m.window_km }));
+  mountDetail(root.querySelector('#explore')!, m, store, () => ({ scored }));
   renderTarget();
   const ready = loadTarget(S.target).then(d => { data = d; recompute(); requestAnimationFrame(() => { edge(); setSnap(snap); }); });
   return { store, view, ready,

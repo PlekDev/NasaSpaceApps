@@ -1,5 +1,5 @@
 /** Minimal Markdown to HTML for docs/METHOD.md: headings, paragraphs, lists, tables, bold/italic/code/links. Input is escaped first. */
-import { esc } from './format';
+import { esc } from './format.ts';
 const inline = (s: string) => esc(s)
   .replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, '$1<i>$2</i>')
   .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
