@@ -27,3 +27,4 @@
 @media (max-width: 760px) { .proof-h-xl { height: 720px; } }
 .proof-heat td { background: color-mix(in srgb, var(--accent) calc(var(--v, 0) * 55%), transparent); }
 .proof code { font-size: 13px; }
+button.proof-card { font: inherit; text-align: left; cursor: pointer; width: 100%; }

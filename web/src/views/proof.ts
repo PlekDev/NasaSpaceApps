@@ -30,6 +30,8 @@ export const targetKeys = (o: object, skip: string[] = []) => Object.keys(o).fil
 
 /* ---------- number formatting ---------- */
 export const fmtP = (p: number) => (p < 0.001 ? '< 0.001' : p.toFixed(3));
+/** Corrected p-values: 3 decimals below 0.01, else 2 significant digits (0.0246 -> 0.025, 0.148 -> 0.15). */
+export const fmtPc = (p: number) => (p < 0.001 ? '< 0.001' : p < 0.01 ? p.toFixed(3) : String(Number(p.toPrecision(2))));
 const f1 = (x: number) => x.toFixed(1), f2 = (x: number) => x.toFixed(2);
 const pct1 = (x: number) => (100 * x).toFixed(1);
 const range = (a: number[], f: (x: number) => string) => { const lo = Math.min(...a), hi = Math.max(...a); return f(lo) === f(hi) ? f(lo) : `${f(lo)}–${f(hi)}`; };
@@ -43,18 +45,23 @@ export function aucLine(roc: Record<string, RocRow>, moon: string[], mars: strin
   const above = lows.filter(x => x > 0.5).length;
   const terrIncl = moon.filter(t => roc[t].auc_ci95_by_score.terrain[0] <= 0.5).length;
   const marsAuc = mars.map(t => roc[t].auc);
+  const nS = roc[moon[0]].n_sites, same = moon.every(t => roc[t].sites.join('|') === roc[moon[0]].sites.join('|'));
   const ill1 = above === moon.length
-    ? `Low-Sun illumination separates NASA's lunar analog sites: AUC ${range(ill, f2)}, with the 95 % CI above 0.5 for all ${moon.length} lunar targets, by a small margin (lower bounds ${range(lows, f2)}).`
+    ? `Low-Sun illumination suggests that NASA's lunar analog sites stand out: AUC ${range(ill, f2)}, with the 95 % CI above 0.5 for all ${moon.length} lunar targets, by a small margin (lower bounds ${range(lows, f2)}).`
     : `Illumination AUC is ${range(ill, f2)} for the lunar targets; its 95 % CI is above 0.5 for ${above} of ${moon.length}.`;
+  const shared = same ? ` The ${moon.length} lunar targets share the same ${nS} known sites, so their AUCs are nearly equal (≈ ${f2(ill.reduce((a, b) => a + b, 0) / ill.length)}) and are not independent evidence.` : '';
   const terr = terrIncl === moon.length ? ' Terrain alone does not (its CI includes 0.5 for every lunar target).' : ` Terrain CI includes 0.5 for ${terrIncl} of ${moon.length} lunar targets.`;
-  return `${ill1}${terr} For Mars the score does not separate the known sites (AUC ${range(marsAuc, f2)}).`;
+  return `${ill1}${shared}${terr} For Mars the score does not separate the known sites (AUC ${range(marsAuc, f2)}).`;
 }
 
 /** 3: section title from stability.json. */
 export function stabilityTitle(stab: Record<string, StabRow>, targets: string[]): string {
-  const p1 = targets.map(t => stab[t].p_top1[stab[t].top1_equal_weights] ?? 0);
+  const p10 = targets.map(t => stab[t].p_top10[stab[t].top1_equal_weights] ?? 0), lo = Math.min(...p10);
   const taus = targets.flatMap(t => Object.entries(stab[t]).filter(([k]) => k.startsWith('kendall_tau_')).map(([, v]) => v as number));
-  return `Top windows are stable under slider weights (P(#1 stays #1) = ${range(p1, f2)}); less so across window sizes (Kendall τ = ${range(taus, f2)})`;
+  const tau = `Kendall τ = ${range(taus, f2)}`;
+  return lo >= 0.84
+    ? `The #1 window stays in the top 10 under at least ${Math.floor(lo * 100)} % of slider weightings for every target; ranks move more across window sizes (${tau})`
+    : `How far the top windows move with slider weights (#1 in the top 10 under ${Math.floor(lo * 100)}–${Math.floor(Math.max(...p10) * 100)} % of weightings) and window size (${tau})`;
 }
 
 /** 1A table rows and summary: Pu'u Hiwahine per lunar target. Two universes are kept apart: rank among the 10,424 windows,
@@ -66,9 +73,28 @@ export function puuSummary(n: NullStats, name: (id: string) => string): string {
 }
 
 /** Card 1: the headline target's region-matched p, one universe (share of the Mauna Kea area) only. */
-export function card1(n: NullStats, name: (id: string) => string): string {
+/** Corrections of the Pu'u Hiwahine p: over the lunar targets (null.json) and over all lunar site-target tests of the
+ *  known-analog test (nMoonTests, counted from known_analogs.json), since the best of those results is the one we report. */
+export function puuCorrections(n: NullStats, nMoonTests: number) {
   const v = n.pu_uhiwahine[n.headline_target];
-  return v ? `${name(n.headline_target)}: p = ${fmtP(v.p_value_region_matched)} within Mauna Kea (${fmtP(v.p_bonferroni)} after Bonferroni)` : n.headline;
+  if (!v) return null;
+  return { p: v.p_value_region_matched, pTargets: v.p_bonferroni, nTargets: Object.keys(n.pu_uhiwahine).length,
+           pTests: Math.min(1, v.p_value_region_matched * nMoonTests), nTests: nMoonTests };
+}
+const corrTxt = (c: NonNullable<ReturnType<typeof puuCorrections>>) =>
+  `${fmtPc(c.pTargets)} corrected for ${c.nTargets} lunar targets; ${fmtPc(c.pTests)} corrected for all ${c.nTests} site–target tests`;
+
+/** Lead sentence: one universe (share of the Mauna Kea area), both corrections. */
+export function leadLine(n: NullStats, name: (id: string) => string, nMoonTests: number): string {
+  const c = puuCorrections(n, nMoonTests);
+  if (!c) return n.headline;
+  return `Only ${(100 * c.p).toFixed(1)} % of Mauna Kea scores as high as NASA's exact test site for ${name(n.headline_target)}: `
+    + `p = ${fmtP(c.p)} (${corrTxt(c)}).`;
+}
+
+export function card1(n: NullStats, name: (id: string) => string, nMoonTests: number): string {
+  const c = puuCorrections(n, nMoonTests);
+  return c ? `p = ${fmtP(c.p)} for ${name(n.headline_target)} within Mauna Kea (${corrTxt(c)})` : n.headline;
 }
 
 /* ---------- controls (scripts/stats/controls.py) ---------- */
@@ -104,21 +130,25 @@ export function controlsLines(c: Record<string, CtrlTarget>, regions: CtrlRegion
 }
 
 /** 1B: the group test, with the exact p-values of null.json. */
-export function nullLine(n: NullStats, nSites: number): string {
-  const p = n.p_value;
-  return `As a group, the ${nSites} NASA analog sites are not significantly better than random points of our regions: median percentile `
-    + `${f1(n.observed.median_pct_combined)}, p = ${fmtP(p.global.combined)} (global) and ${fmtP(p.region_matched.combined)} (region-matched); `
-    + `illumination alone p = ${fmtP(p.global.illum)} (global) and ${fmtP(p.region_matched.illum)} (region-matched).`;
+export function nullLine(n: NullStats, nSites: number, nRegions: number): string {
+  const p = n.p_value, sig = p.global.combined < 0.05;
+  return `As a group, the ${nSites} known sites ${sig ? 'rank significantly higher' : 'do not rank significantly higher'} than random points of our ${nRegions} regions `
+    + `(combined score: p = ${fmtP(p.global.combined)} global, ${fmtP(p.region_matched.combined)} region-matched; illumination alone: p = ${fmtP(p.global.illum)} global, `
+    + `${fmtP(p.region_matched.illum)} region-matched)${sig ? '' : '; those regions were chosen because they are analogs, so a random point in them is already a reasonable analog'}.`;
 }
 
 /** The limits, generated from the stats files that are real (a stub contributes nothing). */
-export function notSupported(S: Stats, moon: string[], mars: string[], name: (id: string) => string, nSites: number): string[] {
+export function notSupported(S: Stats, moon: string[], mars: string[], name: (id: string) => string, nSites: number, nMoonTests = 0, nRegions = 14): string[] {
   const out: string[] = [];
   if (isReal(S.null)) {
-    const ok = Object.entries(S.null.pu_uhiwahine).filter(([, v]) => v.p_bonferroni < 0.05).map(([t]) => name(t));
-    out.push(`The ${nSites} known sites as a group do not beat random points of our 14 regions (combined p = ${fmtP(S.null.p_value.global.combined)} global, `
-      + `${fmtP(S.null.p_value.region_matched.combined)} region-matched; illumination p = ${fmtP(S.null.p_value.global.illum)} global). `
-      + `${ok.length ? `Only ${ok.join(' and ')} survives` : 'No lunar target survives'} the Bonferroni correction for the Pu'u Hiwahine test.`);
+    const ok6 = Object.entries(S.null.pu_uhiwahine).filter(([, v]) => v.p_bonferroni < 0.05).map(([t]) => name(t));
+    const okAll = nMoonTests ? Object.entries(S.null.pu_uhiwahine).filter(([, v]) => v.p_value_region_matched * nMoonTests < 0.05).map(([t]) => name(t)) : ok6;
+    out.push(`The ${nSites} known sites as a group do not beat random points of our ${nRegions} regions (combined p = ${fmtP(S.null.p_value.global.combined)} global, `
+      + `${fmtP(S.null.p_value.region_matched.combined)} region-matched; illumination p = ${fmtP(S.null.p_value.global.illum)} global).`);
+    const c = puuCorrections(S.null, nMoonTests);
+    if (c) out.push(`The Pu'u Hiwahine result is significant only before the widest correction: ${ok6.length ? ok6.join(' and ') : 'no lunar target'} stays below 0.05 after correcting for ${c.nTargets} lunar targets, `
+      + `but ${okAll.length ? `only ${okAll.join(' and ')}` : 'none'} after correcting for all ${c.nTests} lunar site–target tests (p = ${fmtPc(c.pTests)} for ${name(S.null.headline_target)}). `
+      + `We do not claim the site was chosen in advance.`);
   }
   if (isReal(S.roc)) out.push(`For Mars the score does not separate the known analog sites (AUC ${range(mars.map(t => S.roc[t].auc), f2)}): those sites were chosen for chemistry, climate or ice rather than terrain, and Arcadia is a flat plain (flat-plains degeneracy).`);
   if (isReal(S.bootstrap)) { const hi = Math.max(...[...moon, ...mars].map(t => (S.bootstrap[t] as BootRow[])[0].rank_ci95[1])); out.push(`The exact #1 window is not guaranteed: under bootstrap resampling of the reference its rank CI reaches up to #${hi}. Say "top window" with its CI, never "the best place".`); }
@@ -138,12 +168,14 @@ const pending = (what: string) => `<p class="proof-pending">${esc(what)}: result
 export async function render(el: HTMLElement, m: Manifest, _params: Params): Promise<void> {
   void import('./proof.css');
   const [{ mountChart }, { getJSON }] = await Promise.all([import('../lib/chart'), import('../data')]);
-  const got = await Promise.all(FILES.map(f => getJSON<Meta>(`stats/${f}`).catch(() => null)));
+  const [got, ka0] = await Promise.all([Promise.all(FILES.map(f => getJSON<Meta>(`stats/${f}`).catch(() => null))),
+    getJSON<{ rows: { reference: string }[] }>('known_analogs').catch(() => ({ rows: [] }))]);
   const S = Object.fromEntries(FILES.map((f, i) => [f, got[i]])) as unknown as Stats;
   const name = (id: string) => m.targets.find(t => t.id === id)?.name ?? id;
   const region = (wid: string) => { const r = m.regions.find(x => wid.startsWith(`${x.id}_`)); return r ? r.name : wid; };
   const moon = m.targets.filter(t => t.body === 'moon').map(t => t.id), mars = m.targets.filter(t => t.body === 'mars').map(t => t.id);
   const all = [...moon, ...mars];
+  const nMoonTests = ka0.rows.filter(r => moon.includes(r.reference)).length;   // lunar (site, target) tests of the known-analog test
   const okNull = isReal(S.null), okRoc = isReal(S.roc), okBoot = isReal(S.bootstrap), okStab = isReal(S.stability);
   const okCtrl = isReal(S.controls), okTor = isReal(S.tornado), okDec = isReal(S.decomp);
   const CT = S.controls as unknown as Record<string, CtrlTarget>, CR = okCtrl ? (S.controls as unknown as { regions: CtrlRegion[] }).regions : [];
@@ -156,20 +188,20 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
 
   el.innerHTML = `<div class="page-in wide proof">
     <h1>The 3 proofs</h1>
-    <p class="lead">${okNull ? esc(S.null.headline) + '.' : 'Validation results are being computed.'}</p>
+    <p class="lead">${okNull ? esc(leadLine(S.null, name, nMoonTests)) : 'Validation results are being computed.'}</p>
     <nav class="proof-cards" aria-label="The three proofs">
-      <a class="proof-card" href="#proof-1"><span class="proof-num">1</span><b>Blind test</b><span>${okNull ? esc(card1(S.null, name)) : 'pending'}</span></a>
-      <a class="proof-card" href="#proof-2"><span class="proof-num">2</span><b>Light vs NASA</b><span id="proof-card-2">Light model against NASA LOLA illumination</span></a>
-      <a class="proof-card" href="#proof-3"><span class="proof-num">3</span><b>Robustness</b><span>${esc(title3)}</span></a>
+      <button type="button" class="proof-card" data-goto="proof-1"><span class="proof-num">1</span><b>Blind test</b><span>${okNull ? esc(card1(S.null, name, nMoonTests)) : 'pending'}</span></button>
+      <button type="button" class="proof-card" data-goto="proof-2"><span class="proof-num">2</span><b>Light vs NASA</b><span id="proof-card-2">Light model against NASA LOLA illumination</span></button>
+      <button type="button" class="proof-card" data-goto="proof-3"><span class="proof-num">3</span><b>Robustness</b><span>${esc(title3)}</span></button>
     </nav>
 
     <section class="vsec proof-sec" id="proof-1" aria-labelledby="proof-1-h">
       <h2 id="proof-1-h">1 · Blind test: P.E.N. finds NASA's lunar test site on Mauna Kea without being told</h2>
       <h3>Pu'u Hiwahine, NASA's 2012 lunar-polar field-test site, per lunar target</h3>
       ${okNull ? `<div class="proof-chart proof-h-sm" id="proof-1a"></div><div class="tbl" id="proof-1a-tbl"></div>
-        <p class="note">Rank: position of the site's best 6 km window among all ${nf(Object.values(S.null.pu_uhiwahine)[0]?.of ?? 0)} Earth windows for that target. Share of Mauna Kea: share of the valid area of the Mauna Kea region (150 m lattice) whose best window scores as high or higher; this is the region-matched p. Bonferroni: p × ${Object.keys(S.null.pu_uhiwahine).length} lunar targets, capped at 1.</p>` : pending('Blind test')}
+        <p class="note">Rank: position of the site's best 6 km window among all ${nf(Object.values(S.null.pu_uhiwahine)[0]?.of ?? 0)} Earth windows for that target. Share of Mauna Kea: share of the valid area of the Mauna Kea region (150 m lattice) whose best window scores as high or higher; this is the region-matched p. Bonferroni corrections, capped at 1: p × ${Object.keys(S.null.pu_uhiwahine).length} lunar targets, and p × ${nMoonTests} lunar site–target tests of the known-analog test (we report the best of those results, so the wider correction is the fair one).</p>` : pending('Blind test')}
       <h3>As a group, are the NASA analog sites special?</h3>
-      ${okNull ? `<p class="prose-p">${esc(nullLine(S.null, nSites))}</p><div class="proof-chart proof-h-md" id="proof-1b"></div>
+      ${okNull ? `<p class="prose-p">${esc(nullLine(S.null, nSites, m.regions.length))}</p><div class="proof-chart proof-h-md" id="proof-1b"></div>
         <p class="note">Global null: ${esc(S.null.questions.global)} Region-matched null: ${esc(S.null.questions.region_matched)} ${nf(S.null.n_perm)} random sets each (seed ${S.null.seed}); p = (1 + #null ≥ observed) / (N + 1).</p>` : pending('Null test')}
       <h3>What separates NASA's analog sites from the rest?</h3>
       ${okRoc ? `<p class="prose-p">${esc(aucLine(S.roc, moon, mars))}</p><div class="proof-chart proof-h-lg" id="proof-1c"></div>
@@ -227,7 +259,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
 
     <section class="vsec proof-sec" id="proof-limits" aria-labelledby="proof-limits-h">
       <h2 id="proof-limits-h">What the statistics do NOT support</h2>
-      <ul class="proof-lines">${notSupported(S, moon, mars, name, nSites).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+      <ul class="proof-lines">${notSupported(S, moon, mars, name, nSites, nMoonTests, m.regions.length).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
     </section>
 
     <section class="vsec proof-sec" id="proof-all" aria-labelledby="proof-all-h">
@@ -237,12 +269,19 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
     </section>
   </div>`;
 
+  // in-page navigation without touching location.hash (the router treats any hash as a route)
+  const reduced = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.querySelectorAll<HTMLButtonElement>('.proof-card[data-goto]').forEach(b => b.addEventListener('click', ev => {
+    ev.preventDefault();
+    document.getElementById(b.dataset.goto!)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  }));
+
   // ---- 1A · Pu'u Hiwahine
   if (okNull) {
     const rows = Object.entries(S.null.pu_uhiwahine).sort((a, b) => a[1].rank - b[1].rank);
     el.querySelector('#proof-1a-tbl')!.innerHTML = `<table><caption>Pu'u Hiwahine (Mauna Kea) per lunar target</caption>
-      <thead><tr><th scope="col">Target</th><th scope="col">Rank of 10,424 windows</th><th scope="col">Share of Mauna Kea as high or higher</th><th scope="col">p (region)</th><th scope="col">p (Bonferroni)</th></tr></thead>
-      <tbody>${rows.map(([t, v]) => `<tr><th scope="row">${esc(name(t))}</th><td class="tnum">#${nf(v.rank)} of ${nf(v.of)}</td><td class="tnum">${pct1(v.p_value_region_matched)} %</td><td class="tnum">${fmtP(v.p_value_region_matched)}</td><td class="tnum">${fmtP(v.p_bonferroni)}</td></tr>`).join('')}</tbody></table>`;
+      <thead><tr><th scope="col">Target</th><th scope="col">Rank of 10,424 windows</th><th scope="col">Share of Mauna Kea as high or higher</th><th scope="col">p (region)</th><th scope="col">p × ${Object.keys(S.null.pu_uhiwahine).length} targets</th><th scope="col">p × ${nMoonTests} tests</th></tr></thead>
+      <tbody>${rows.map(([t, v]) => `<tr><th scope="row">${esc(name(t))}</th><td class="tnum">#${nf(v.rank)} of ${nf(v.of)}</td><td class="tnum">${pct1(v.p_value_region_matched)} %</td><td class="tnum">${fmtP(v.p_value_region_matched)}</td><td class="tnum">${fmtPc(v.p_bonferroni)}</td><td class="tnum">${fmtPc(Math.min(1, v.p_value_region_matched * nMoonTests))}</td></tr>`).join('')}</tbody></table>`;
     const cats = rows.map(([t]) => name(t)).reverse(), vals = rows.map(([, v]) => +(100 * v.p_value_region_matched).toFixed(1)).reverse();
     mountChart(el.querySelector('#proof-1a')!, {
       grid: { left: 8, right: 56, top: 8, bottom: 28, containLabel: true },
@@ -429,7 +468,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
         { name: 'region-matched null', type: 'line', step: 'middle', symbol: 'none', lineStyle: { type: 'dashed' }, data: mids.map((x, i) => [x, share(H.region_matched.counts)[i]]),
           markLine: { silent: true, symbol: 'none', lineStyle: { type: 'solid', width: 2 }, label: { formatter: `observed ${f1(obs)}` }, data: [{ xAxis: obs }] } },
       ],
-    }, { summary: `Distribution of the median percentile of ${nSites} random sites under the global null (mean ${f1(S.null.null_summary.global.combined.mean)}) and the region-matched null (mean ${f1(S.null.null_summary.region_matched.combined.mean)}), against the observed ${f1(obs)}. ${nullLine(S.null, nSites)}` });
+    }, { summary: `Distribution of the median percentile of ${nSites} random sites under the global null (mean ${f1(S.null.null_summary.global.combined.mean)}) and the region-matched null (mean ${f1(S.null.null_summary.region_matched.combined.mean)}), against the observed ${f1(obs)}. ${nullLine(S.null, nSites, m.regions.length)}` });
   }
 
   // ---- Read more · ROC curves
