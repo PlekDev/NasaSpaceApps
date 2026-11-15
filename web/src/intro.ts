@@ -64,7 +64,7 @@ export function mountHome(root: HTMLElement, o: { m: Manifest; view: View; targe
       $q('#home-stats').innerHTML =
         stat('lead', 'Blind test', `${esc(f.rankText)}<small> of ${esc(f.n.toLocaleString('en-US'))}</small>`, `Where NASA's own test site ranks among all Earth windows for ${f.target.name}, found without being told.`) +
         stat('', 'Light model', f.rhoText ? esc(f.rhoText) : '—', `Spearman ρ against NASA LOLA${f.horizonKm ? `, horizons up to ${f.horizonKm} km` : ''} (${f.target.name}).`, !f.rhoText) +
-        stat('', 'Permutation test · p-value', f.pText ? esc(f.pText) : '—', f.pCaption + (f.pText ? '.' : ''), f.pending);
+        stat('', 'Permutation test · p-value', f.pText ? esc(f.pText) : '—', f.pCaption, f.pending);
       siteName = "Pu'u Hiwahine";
       $q('#home-site').innerHTML = `<b>${esc(siteName)}</b><span>NASA's 2012 lunar-pole field-test site</span>`;
     }

@@ -1,0 +1,30 @@
+/* AI-assisted (Claude, Anthropic); reviewed by the team. Proof view (views/proof.ts): .proof-* classes, global tokens only. */
+.proof-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); margin: 0 0 var(--s-6); }
+.proof-card { display: flex; flex-direction: column; gap: var(--s-1); padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-3);
+  background: var(--raise); color: var(--text-2); text-decoration: none; font-size: 14px; line-height: 1.45; transition: border-color var(--dur) var(--ease); }
+.proof-card:hover, .proof-card:focus-visible { border-color: var(--line-strong); }
+.proof-card b { color: var(--text-1); font-size: 15px; }
+.proof-num { font: 400 28px/1 var(--font-serif); color: var(--accent-text); }
+.proof-sec { scroll-margin-top: var(--s-6); }
+.proof-chart { width: 100%; margin: var(--s-3) 0; }
+.proof-h-sm { height: 260px; }
+.proof-h-md { height: 340px; }
+.proof-h-lg { height: 440px; }
+.proof-pending { color: var(--text-3); font-style: italic; margin: var(--s-3) 0; }
+.proof-pick { display: inline-flex; align-items: center; gap: var(--s-2); color: var(--text-2); font-size: 14px; margin-bottom: var(--s-2); }
+.proof-pick select { font: inherit; color: var(--text-1); background: var(--raise); border: 1px solid var(--line-strong); border-radius: var(--r-1); padding: 6px 10px; }
+.proof-more { margin: var(--s-3) 0 var(--s-4); border-top: 1px solid var(--line); padding-top: var(--s-3); }
+.proof-more summary { cursor: pointer; color: var(--accent-text); font-weight: 500; }
+.proof-more[open] summary { margin-bottom: var(--s-3); }
+@media (max-width: 760px) {
+  .proof-cards { grid-template-columns: 1fr; }
+  .proof-h-lg { height: 520px; }
+  .proof-h-md { height: 300px; }
+}
+.proof-h-xl { height: 560px; }
+.proof-lines { margin: 0 0 var(--s-3); padding-left: 1.2em; color: var(--text-2); line-height: 1.6; max-width: 75ch; }
+.proof-lines li { margin-bottom: var(--s-1); }
+@media (max-width: 760px) { .proof-h-xl { height: 720px; } }
+.proof-heat td { background: color-mix(in srgb, var(--accent) calc(var(--v, 0) * 55%), transparent); }
+.proof code { font-size: 13px; }
+button.proof-card { font: inherit; text-align: left; cursor: pointer; width: 100%; }

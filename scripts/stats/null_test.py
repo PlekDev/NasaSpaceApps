@@ -16,7 +16,8 @@ p-value = (1 + #{null >= observed}) / (N + 1)   (the +1 counts the observed set 
 
 Pu'u Hiwahine, per lunar target: its rank (best window, stable order as web/tools/export_data.py), the exact share of the
 Mauna Kea valid area whose best window ranks at least as well (region-matched p) or strictly better (frac_region_above),
-its percentile among all windows and the Bonferroni p (x number of lunar targets, capped at 1). "headline" is the
+its percentile among all windows and two Bonferroni p (x number of lunar targets; x number of lunar site-target tests,
+since the reported result is the best of them; both capped at 1). "headline" is the
 sentence for the web and deck, generated from these numbers.
 
 Writes data/processed/stats/null.json.  Run: python scripts/stats/null_test.py
@@ -38,6 +39,16 @@ HIST_BINS = np.arange(0, 101, 2.0)
 PUU = "Pu'u Hiwahine"
 QUESTIONS = {"global": "Do the NASA analog sites rank higher than a random point anywhere in our 14 regions?",
              "region_matched": "Is the exact NASA site special within its own region?"}
+
+
+def fmt_p(p):
+    """p-value text: 3 decimals (as the Proof view)."""
+    return "< 0.001" if p < 0.001 else f"{p:.3f}"
+
+
+def fmt_pc(p):
+    """Corrected p text: 3 decimals below 0.01, else 2 significant digits (0.0246 -> 0.025, 0.1476 -> 0.15)."""
+    return "< 0.001" if p < 0.001 else f"{p:.3f}" if p < 0.01 else f"{float(f'{p:.2g}'):g}"
 
 
 def window_tables(w):
@@ -144,19 +155,23 @@ def main():
                    "pct_all_windows": round(float(puu["best"][puu["refs"].index(r), 0]), 1)}
 
     # Bonferroni over the lunar targets, and the headline sentence generated from the numbers (never typed by hand)
+    # Two corrections: over the lunar targets, and over all lunar (site, target) tests of the known-analog test, because
+    # the result we report is the best of those tests (the site was not chosen in advance in any dated record).
+    n_lunar_tests = sum(1 for t in tests for r in t["refs"] if body_of(refs[r]) == "moon")
     for v in pu.values():
         v["p_bonferroni"] = round(min(1.0, v["p_value_region_matched"] * len(pu)), 4)
+        v["p_bonferroni_all_lunar_tests"] = round(min(1.0, v["p_value_region_matched"] * n_lunar_tests), 4)
     best_t = min(pu, key=lambda t: (pu[t]["rank"], pu[t]["p_value_region_matched"]))
     b = pu[best_t]
     label = load_config()["sites"][best_t]["label"].split("·", 1)[1].split("(")[0].strip()
     headline = (f"Only {100 * b['p_value_region_matched']:.1f} % of Mauna Kea scores as high as NASA's exact test site for "
-                f"{label} (p = {b['p_value_region_matched']:.3f}; p = {b['p_bonferroni']:.3f} after correcting for "
-                f"{len(pu)} lunar targets)")
+                f"{label}: p = {fmt_p(b['p_value_region_matched'])} ({fmt_pc(b['p_bonferroni'])} corrected for {len(pu)} lunar "
+                f"targets; {fmt_pc(b['p_bonferroni_all_lunar_tests'])} corrected for all {n_lunar_tests} site–target tests)")
 
     names = list(SCORES)
     out = {"_stub": False,
            "_meta": meta(SEED, {"n_perm": N_PERM, "lattice_m": LATTICE_M, "window_km": 6, "n_tests": n_tests,
-                                "n_sites": len(tests), "p_value": "(1 + #null>=observed) / (N + 1)",
+                                "n_sites": len(tests), "p_value": "(1 + #null>=observed) / (N + 1)", "n_lunar_tests": n_lunar_tests,
                                 "statistic": "median over the (site, target) tests of the best-window percentile"},
                         [PROCESSED / "windows.csv", PROCESSED / "known_analogs.json"]),
            "n_perm": N_PERM, "seed": SEED, "questions": QUESTIONS,

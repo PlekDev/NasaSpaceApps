@@ -53,7 +53,8 @@ export function homeFacts(m: Manifest, kr: Rec, far: Rec | null, nul: Rec | null
     horizonKm: far?.settings?.max_distance_m ? far.settings.max_distance_m / 1000 : null,
     p, pText: p === null ? null : fx(p, 3), pending: p === null,
     pCorrText: pu && typeof pu.p_bonferroni === 'number' ? fx(pu.p_bonferroni, 3) : null,
-    pCaption: p === null ? 'Permutation test pending' : `Chance that a random Mauna Kea window matches NASA's exact site this well${pu?.p_bonferroni !== undefined ? ` (${fx(pu.p_bonferroni, 3)} after correcting for ${nLunar} lunar targets)` : ''}`,
+    // the caption is the null test's own sentence: share of Mauna Kea, p, and BOTH corrections (the wider one is the fair one, as on Proof)
+    pCaption: p === null ? 'Permutation test pending' : typeof nul!.headline === 'string' ? nul!.headline : `p = ${fx(p, 3)} for ${name}`,
     headline: nullOk && typeof nul!.headline === 'string' ? nul!.headline : null,
     site: parseSiteCoords(row?.note),
   };

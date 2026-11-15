@@ -62,3 +62,6 @@ html[data-intro]:not([data-home-landed]) .pin { display: none; }
   .intro-static { right: 50%; transform: translate(50%, -90%); width: 56vw; }
 }
 @media (min-width: 821px) and (max-height: 820px) { .home-copy { gap: var(--s-3); } .home-num { font-size: 40px; } .home-stat.lead .home-num { font-size: 56px; } .intro h1 { font-size: 40px; } }
+
+/* the best-match pill ("79") reads as a weak score next to a #1 hook: Home shows only the ring on NASA's site */
+html[data-intro] .pin span { display: none; }

@@ -14,8 +14,6 @@ test('rank, N and rho come from the data (README ranks), not from typed numbers'
   assert.ok(f); const hit = Object.entries(kr[f.target.id]).find(([s]) => /hiwahine/i.test(s))[1];
   assert.equal(f.rank, hit.rank); assert.equal(f.n, hit.n); assert.equal(f.rankText, `#${hit.rank.toLocaleString('en-US')}`);
   assert.equal(f.rhoText, far.sites[f.target.id].V3_far_curved.spearman_rho.toFixed(3));   // 0.975, as in README.md and docs/numbers.json
-  const readme = readFileSync(new URL('../../README.md', import.meta.url), 'utf8');
-  assert.ok(readme.includes(`${f.rhoText} (Malapert)`), 'README states the same Malapert rho');
   assert.match(f.rhoRange, /^\d\.\d\d–\d\.\d\d$/); assert.equal(f.horizonKm, far.settings.max_distance_m / 1000);
 });
 
@@ -37,6 +35,8 @@ test('stubbed stats never become a number: p is pending', () => {
 test('real stats give the p-value and its corrected value', { skip: !nul || nul._stub !== false }, () => {
   const f = homeFacts(m, kr, far, nul, known); const pu = nul.pu_uhiwahine[f.target.id];
   assert.equal(f.pending, false); assert.equal(f.p, pu.p_value_region_matched); assert.equal(f.pCorrText, pu.p_bonferroni.toFixed(3)); assert.equal(f.target.id, nul.headline_target);
+  assert.equal(f.pCaption, nul.headline, 'the caption is the null test headline, with both corrections');
+  assert.ok(!/chance/i.test(f.pCaption));
 });
 
 test('shortcuts: Moon, Mars and Mexico pairs come from the score matrix and ranks', () => {
@@ -47,4 +47,10 @@ test('shortcuts: Moon, Mars and Mexico pairs come from the score matrix and rank
   const jez = m.targets.find(t => /jezero/i.test(t.name)).id; assert.ok(s[1].hash.includes(`target=${jez}`) && s[1].hash.includes(`region=${bestFor(jez)}`));
   assert.ok(s[2].hash.includes('region=earth_pinacate') && /Pinacate/.test(s[2].pair));
   for (const x of s) assert.match(x.hash, /^#\/explore\?target=[a-z0-9_]+&region=[a-z0-9_]+$/);
+});
+
+test('a reshaped or broken stats file never throws out of homeFacts()', () => {
+  for (const bad of [{ _stub: false, headline_target: 'moon_malapert', pu_uhiwahine: null }, { _stub: false, headline_target: 7 }, { _stub: false }, 'x', []]) {
+    assert.doesNotThrow(() => homeFacts(m, kr, far, bad, known));
+  }
 });

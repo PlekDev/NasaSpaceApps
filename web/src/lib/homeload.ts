@@ -14,7 +14,7 @@ export function loadHome(m: Manifest): Promise<HomeData> {
       if (nul && (nul as { _stub?: boolean })._stub !== false && import.meta.env?.DEV) console.warn('[home] stats/null.json is a stub: the p-value stays pending');
       const facts = homeFacts(m, kr ?? {}, far, nul, known);
       return { facts, shortcuts: shortcuts(m, mx, kr, facts?.target.id ?? null) };
-    });
+    }).catch((e): HomeData => { console.error('[home] facts unavailable', e); return { facts: null, shortcuts: [] }; });   // a reshaped file must never blank the app
   }
   return cache;
 }
