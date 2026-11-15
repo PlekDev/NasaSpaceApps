@@ -1,0 +1,64 @@
+/* Home (the judge's path). Prefix: .home-*  (the container keeps the legacy class .intro, which e2e tests look for) */
+.intro { position: fixed; inset: 0; z-index: 30; pointer-events: none; transition: opacity 240ms var(--ease); }
+.intro.leaving { opacity: 0; }
+.intro .home-scroll { position: absolute; inset: var(--bar-h) 0 0 0; overflow-y: auto; pointer-events: none; display: flex; align-items: center;
+  padding: var(--s-5) clamp(24px, 6vw, 112px); background: linear-gradient(90deg, var(--space) 0%, color-mix(in srgb, var(--space) 78%, transparent) 38%, transparent 62%); scrollbar-width: none; }
+.home-scroll::-webkit-scrollbar { display: none; }
+[data-theme="light"] .intro .home-scroll { background: linear-gradient(90deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 78%, transparent) 38%, transparent 62%); }
+.home-copy { width: min(620px, 100%); display: grid; gap: var(--s-4); justify-items: start; pointer-events: auto; margin: auto 0; }
+.intro h1 { font: 400 clamp(34px, 3.9vw, 56px)/1.04 var(--font-serif); letter-spacing: -.025em; margin: 0; }
+.intro h1 em { font-style: normal; color: var(--accent-text); }
+.home-hook { margin: 0; font-size: 17px; line-height: 1.5; color: var(--text-1); max-width: 30em; animation: home-in 320ms var(--ease) both; }
+.home-hook b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.home-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); }
+.intro .btn { height: 48px; padding: 0 var(--s-6); font-size: 15px; text-decoration: none; }
+.home-btn { height: 48px; padding: 0 var(--s-5); border-radius: var(--r-2); border: 1px solid var(--line-strong); font-weight: 600; font-size: 15px; color: var(--text-1); transition: background var(--dur) var(--ease); }
+.home-btn:hover { background: var(--raise-2); }
+.home-skip { color: var(--text-3); font-size: 13px; min-height: 44px; padding: 0 var(--s-2); }
+.home-skip:hover { color: var(--text-1); }
+
+/* three numbers: the rank leads; hairline dividers, no cards */
+.home-stats { display: grid; grid-template-columns: 1.25fr 1fr 1.25fr; gap: 0; margin: var(--s-3) 0 0; width: 100%; animation: home-in 320ms var(--ease) 80ms both; }
+.home-stat { padding: 0 var(--s-4); border-left: 1px solid var(--line); min-width: 0; }
+.home-stat.lead { padding-left: 0; border-left: 0; }
+.home-stat dt { font-size: 12px; font-weight: 500; color: var(--text-3); letter-spacing: .01em; }
+.home-stat dd { margin: 0; }
+.home-num { font: 400 clamp(40px, 4vw, 56px)/1.02 var(--font-serif); letter-spacing: -.02em; margin-top: var(--s-1) !important; font-variant-numeric: lining-nums; }
+.home-stat.lead .home-num { font-size: clamp(52px, 5.4vw, 76px); }
+.home-num small { font: 500 13px/1 var(--font-ui); letter-spacing: 0; color: var(--text-3); }
+.home-cap { font-size: 12.5px; line-height: 1.45; color: var(--text-2); margin-top: var(--s-2) !important; max-width: 24em; }
+.home-stat.pending .home-num { color: var(--text-3); }
+
+/* shortcuts: a quiet list */
+.home-try { width: 100%; animation: home-in 320ms var(--ease) 160ms both; }
+.home-try-h { margin: 0 0 var(--s-1); font-size: 12px; font-weight: 500; color: var(--text-3); }
+.home-try ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.home-try li { border-bottom: 1px solid var(--line); }
+.home-try a { display: grid; grid-template-columns: 72px 1fr auto; gap: var(--s-3); align-items: center; min-height: 48px; padding: var(--s-2) 0; text-decoration: none; color: var(--text-1); transition: background var(--dur) var(--ease); }
+.home-try a::after { content: "→"; color: var(--text-3); padding-right: var(--s-2); }
+.home-try a:hover { background: var(--raise); }
+.home-try a b { font-weight: 600; font-size: 13px; color: var(--text-2); }
+.home-try a span { font-size: 14px; line-height: 1.3; }
+
+/* label next to the best-match marker, placed at the centre of the free map area (where the flight lands) */
+.home-site { position: absolute; left: calc(67% - 24px); top: calc(50% + 36px); transform: translateX(-50%); display: grid; gap: 2px; text-align: center; padding: var(--s-2) var(--s-3); border-radius: var(--r-2);
+  background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 13px; animation: home-in 320ms var(--ease) 120ms both; max-width: 260px; }
+.home-site b { font-weight: 600; } .home-site span { color: var(--text-2); font-size: 12px; }
+@keyframes home-in { from { opacity: 0; transform: translateY(8px); } }
+.intro-static { position: absolute; right: 8vw; top: 50%; width: min(56vh, 40vw); aspect-ratio: 1; transform: translateY(-50%); border-radius: var(--r-3); overflow: hidden; box-shadow: 0 0 0 1px var(--line-strong); }
+.intro-static img { width: 100%; height: 100%; object-fit: cover; display: block; }
+html[data-intro] .nogl { display: none; }
+html[data-intro]:not([data-home-landed]) .pin { display: none; }
+@media (prefers-reduced-motion: reduce) { .home-hook, .home-stats, .home-try, .home-site { animation: none; } }
+
+@media (max-width: 820px) {
+  .intro .home-scroll { align-items: flex-start; padding: calc(50vh - var(--bar-h) - 8px) var(--gutter) var(--s-6); background: linear-gradient(180deg, transparent 0, transparent 8vh, color-mix(in srgb, var(--space) 86%, transparent) 22vh, var(--space) 100%); }
+  [data-theme="light"] .intro .home-scroll { background: linear-gradient(180deg, transparent 0, transparent 8vh, color-mix(in srgb, var(--bg) 86%, transparent) 22vh, var(--bg) 100%); }
+  .intro h1 { font-size: 34px; }
+  .home-stats { grid-template-columns: 1fr 1fr; row-gap: var(--s-4); }
+  .home-stat.lead { grid-column: 1 / -1; }
+  .home-stat:nth-child(2) { padding-left: 0; border-left: 0; }
+  .home-site { left: 50%; top: calc(var(--bar-h) + (50vh - var(--bar-h)) / 2 + 34px); }
+  .intro-static { right: 50%; transform: translate(50%, -90%); width: 56vw; }
+}
+@media (min-width: 821px) and (max-height: 820px) { .home-copy { gap: var(--s-3); } .home-num { font-size: 40px; } .home-stat.lead .home-num { font-size: 56px; } .intro h1 { font-size: 40px; } }
