@@ -7,6 +7,17 @@
 
 ## 1. Horario (hora CDMX)
 
+### Carga por persona (resumen)
+| Persona | 10:30–19:00 (construir) | 19:00–23:30 (cerrar) |
+|---|---|---|
+| Victor | Exportadores, datos y núcleo del simulador (V1–V3), reproducibilidad (V6) | METHOD (V4), fact-check (V5), corte y release |
+| Diego Dona | Estadística y controles (D1–D2), vista Proof (D3), búsqueda inversa (D4), catálogo (D5), literatura y experto (D6) | QA de números, apoyo en Q&A |
+| Diego Lizárraga | Prueba 2 (L1–L2), Limits (L3), Marte (L4), Method (L5) | Revisión de la nota técnica (L6), QA de Luna/Marte |
+| Paul | Base de la web (P1), Home (P2), Explore y When (P3), conexiones (P4) | Integración y QA visual (P5), GIFs con Angel |
+| Aaron | Mission 3D (A1), Rehearse UI (A2) | QA e2e y deploy (A4), release (A5) |
+| Angel | Tour (G7), Dossier (G8), nota técnica (G9), escalabilidad y Zenodo (G10) | Deck, página, GIFs, README, pitch y envío (G1–G6) |
+
+### Hitos
 | Hora | Hito | Qué debe estar en `main` |
 |---|---|---|
 | **10:30–12:00** | **Fase base** | Paul: rutas, stubs de vistas, dependencias y wrapper de gráficas. Victor: mecanismo de exportadores y datos del simulador. **Nadie más toca archivos compartidos.** |
@@ -50,10 +61,10 @@
 |---|---|
 | **Victor** | `pen/`, `Makefile`, `config/sites.yaml`, `web/tools/export_data.py`, `web/tools/exports/sim.py`, `web/src/sim/**`, `web/tests/sim_*.test.mjs`, `tests/test_factcheck*.py`, `docs/METHOD.md` (integración) |
 | **Diego Dona** | `scripts/stats/` (excepto `light_*`), `data/processed/stats/` (excepto `light_*`), `data/processed/controls/`, `data/release/`, `scripts/release_catalog.py`, `web/tools/exports/stats.py`, `web/src/views/proof.ts`, `web/src/views/proof.css`, `web/src/components/reverse.ts`, `tests/test_stats.py`, `docs/notes/validation.md` |
-| **Diego Lizárraga** | `scripts/stats/light_*.py`, `data/processed/stats/light_*`, `web/tools/exports/light.py`, `web/tools/exports/limits.py`, `web/src/views/proof_light.ts`, `web/src/views/limits.ts`, `web/src/views/limits.css`, `web/src/views/method.ts`, `web/src/views/method.css`, `docs/notes/moon_mars.md`, `docs/technical_note/` |
-| **Paul** | `web/package.json`, `web/package-lock.json`, `web/src/main.ts`, `web/src/pages.ts`, `web/src/style.css`, `web/src/tokens.css`, `web/src/lib/**`, `web/src/intro.ts` (Home), `web/src/explore.ts`, `web/src/detail.ts`, `web/src/views/time.ts` (When), `web/src/views/tour.ts`, `web/src/views/home.css`, `web/src/views/tour.css`, `web/DESIGN.md` |
-| **Aaron** | `web/src/views/mission/**`, `web/src/views/dossier.ts`, `web/src/views/dossier.css`, `web/tests/e2e.py`, `web/tools/axe_run.py`, `web/tools/perf.py`, `.github/workflows/**`, `app/` |
-| **Angel** | `README.md` y `docs/SUBMISSION.md` (después de las 19:00), `docs/deck/` (o el link externo del deck), página del proyecto en spaceappschallenge.org, GIFs |
+| **Diego Lizárraga** | `scripts/stats/light_*.py`, `data/processed/stats/light_*`, `web/tools/exports/light.py`, `web/tools/exports/limits.py`, `web/src/views/proof_light.ts`, `web/src/views/limits.ts`, `web/src/views/limits.css`, `web/src/views/method.ts`, `web/src/views/method.css`, `docs/notes/moon_mars.md` |
+| **Paul** | `web/package.json`, `web/package-lock.json`, `web/src/main.ts`, `web/src/pages.ts`, `web/src/style.css`, `web/src/tokens.css`, `web/src/lib/**`, `web/src/intro.ts` (Home), `web/src/explore.ts`, `web/src/detail.ts`, `web/src/views/time.ts` (When), `web/src/views/home.css`, `web/DESIGN.md` |
+| **Aaron** | `web/src/views/mission/**`, `web/tests/e2e.py`, `web/tools/axe_run.py`, `web/tools/perf.py`, `.github/workflows/**`, `app/` |
+| **Angel** | `web/src/views/tour.ts`, `web/src/views/tour.css`, `web/src/views/dossier.ts`, `web/src/views/dossier.css`, `docs/technical_note/`, `docs/notes/scale.md`, `CITATION.cff`, `.zenodo.json`, `docs/numbers.json`, `README.md` y `docs/SUBMISSION.md` (después de las 19:00), deck, página del proyecto en spaceappschallenge.org, GIFs |
 
 Si un archivo no está en la tabla y lo necesitas, pregúntalo en el chat antes de crearlo o editarlo.
 
@@ -111,14 +122,12 @@ Victor convierte `web/tools/export_data.py` en un orquestador: al final ejecuta 
 
 **V5 · Coherencia de números** · U16
 → `tests/test_factcheck*.py`
-- Extiende el fact-check a los textos generados de la web (`web/public/data`) y a una lista `docs/numbers.json` con los números del deck que Angel llena.
+- Extiende el fact-check a los textos generados de la web (`web/public/data`) y a `docs/numbers.json` (los números del deck, que llena Angel).
 - ✅ Si un número del README, del deck o de la web no coincide con `data/processed`, CI falla.
 
-**V6 · Escalabilidad (U13), reproducibilidad y release**
-→ `docs/notes/scale.md`, `Makefile`
-- Medir el tiempo real por tile de 1° y documentar qué implicaría correr toda la tierra firme.
-- `make all` reproduce todo de punta a punta; documentar tiempos.
-- Con Aaron (admin del repo): **release `v1.0` + DOI de Zenodo** a las 22:30, después de la limpieza.
+**V6 · Reproducibilidad**
+→ `Makefile`
+- `make all` reproduce todo de punta a punta. Medir y pasarle a Angel (antes de las 16:00) el **tiempo real por tile de 1°** y de cada etapa, para G10.
 
 ### 5.2 Diego Dona · Validación y datos de la Tierra
 
@@ -180,9 +189,8 @@ Victor convierte `web/tools/export_data.py` en un orquestador: al final ejecuta 
 → `web/src/views/method.ts`, `web/src/views/method.css`
 - Diagrama SVG del flujo (DEMs → grilla de 30 m → sombras O(N) → 7 features → IQR → score → validación), fórmulas con KaTeX, tabla de datos con nombres exactos y links, texto largo en "Read more".
 
-**L6 · Nota técnica de 2 páginas (estilo abstract LPSC)**
-→ `docs/technical_note/PEN_technical_note.md` → PDF
-- Pregunta, método, resultados (con los números congelados de las 19:00), limitaciones y referencias. Revisada por Victor. Angel la enlaza en la página.
+**L6 · Revisor científico de la nota técnica (G9)**
+- Revisa la nota técnica de Angel (método, números y referencias de Luna y Marte) antes de las 20:00.
 
 ### 5.4 Paul · UI/UX e integrador de la web
 
@@ -206,9 +214,8 @@ Victor convierte `web/tools/export_data.py` en un orquestador: al final ejecuta 
 - Tarjeta del análogo con IC del score y descomposición por feature (de `stats/`); integrar `reverse.ts` de D. Dona.
 - When abre en **Mauna Kea**. Aaron mejoró esta vista en el PR #16: conservar su trabajo y coordinar con él.
 
-**P4 · Tour guiado** · U10
-→ `web/src/views/tour.ts`, `web/src/views/tour.css`
-- Recorrido de ~60 s con Scrollama: prueba ciega → luz validada → dónde se rompe → cuándo ir → ensayar la misión. Botón en Home.
+**P4 · Conexiones de las vistas de Angel**
+- Botón "Take the 60-second tour" en Home → `#/tour` (G7) y botón "Mission dossier" en la tarjeta del análogo → `#/dossier` (G8).
 
 **P5 · Integración y QA visual (continuo)**
 - Decide el orden de merge de todo `web/`; revisa consistencia visual, celular y proyector; captura pantallas y GIFs con Angel.
@@ -226,11 +233,8 @@ Victor convierte `web/tools/export_data.py` en un orquestador: al final ejecuta 
 
 **A2 · "Rehearse this traverse on Earth, on this date"** · U7
 → `web/src/views/mission/rehearse.ts`
-- Lista de ventanas de fecha y hora (de `web/src/sim/rehearse.ts`), con la **fidelity** de cada una; botón para descargar el `.ics`; botón "Add to dossier".
-
-**A3 · Dossier de misión descargable** · U9
-→ `web/src/views/dossier.ts`, `web/src/views/dossier.css`
-- `#/dossier?target=…&window=…`: una página con CSS de impresión → "Save as PDF". Contenido: rank y percentiles, score con IC, mejores fechas (A2), ruta y telemetría, Limits, EONET, LST y EMIT, datos y créditos. Reutilizar `data/processed/briefs/`.
+- Lista de ventanas de fecha y hora (de `web/src/sim/rehearse.ts`), con la **fidelity** de cada una; botón para descargar el `.ics`; botón "Open dossier" que abre `#/dossier?target=…&window=…&route=…` (la vista es de Angel, G8).
+- Publicar a las 14:00 el formato del parámetro `route` (lista de puntos) para que Angel lo consuma.
 
 **A4 · QA y deploy** · U16
 → `web/tests/e2e.py`, `web/tools/axe_run.py`, `web/tools/perf.py`, `.github/workflows/**`
@@ -239,10 +243,36 @@ Victor convierte `web/tools/export_data.py` en un orquestador: al final ejecuta 
 - Verificar Pages después de cada merge.
 
 **A5 · Release y app vieja**
-- Con Victor: release `v1.0` + integración Zenodo (DOI) a las 22:30.
+- Como admin del repo: activar la integración GitHub ↔ Zenodo que prepara Angel (G10) y crear el release `v1.0` a las 22:30, después de la limpieza.
 - Decidir con el equipo qué pasa con el Streamlit (`app/`): o queda como alternativa documentada, o se retira en la limpieza (sección 7).
 
-### 5.6 Angel · Presentación y envío
+### 5.6 Angel · Producto narrativo, entregables y envío
+
+> **Angel tiene dos bloques:** de 10:30 a 19:00 construye vistas y entregables (G7–G10); de 19:00 a 23:30, presentación y envío (G1–G6). Los dos son de tiempo completo.
+
+**G7 · Tour guiado (60 s)** · U10
+→ `web/src/views/tour.ts`, `web/src/views/tour.css`
+- Recorrido con Scrollama en 5 pasos, la misma historia del deck: (1) prueba ciega con el vuelo a Pu'u Hiwahine; (2) luz contra NASA (ρ y la gráfica de Lizárraga); (3) dónde se rompe la analogía (Limits); (4) cuándo ir (When, Mauna Kea); (5) ensayar la misión (Mission + Rehearse on date).
+- Cada paso con un visual vivo (reutilizando componentes ya exportados por cada dueño, sin copiar su código) y un texto ≤ 25 palabras.
+- Es la fuente principal de los GIFs (G3).
+- ✅ Funciona en escritorio y en el celular; respeta `prefers-reduced-motion`.
+
+**G8 · Dossier de misión descargable** · U9
+→ `web/src/views/dossier.ts`, `web/src/views/dossier.css`
+- `#/dossier?target=…&window=…&route=…`: una página con CSS de impresión → "Save as PDF".
+- Contenido: por qué este sitio (rank y percentiles), score con IC (stats de D. Dona), mejores fechas y fidelity (A2), ruta y telemetría, Limits (L3), EONET, LST y EMIT, datos y créditos. Reutilizar `data/processed/briefs/`.
+- ✅ El PDF sale limpio en Chrome y Safari, en 1–2 páginas por par de sitios.
+
+**G9 · Nota técnica de 2 páginas (estilo abstract LPSC)**
+→ `docs/technical_note/PEN_technical_note.md` → PDF en la misma carpeta
+- Pregunta, método, resultados, limitaciones y referencias. Escribir desde ya con los números como placeholders; los finales después de las 19:00.
+- Revisores: D. Lizárraga (Luna/Marte) y Victor (método). La enlazas en la página.
+
+**G10 · Escalabilidad, cita y release**
+→ `docs/notes/scale.md`, `CITATION.cff`, `.zenodo.json`
+- `scale.md`: con los tiempos de Victor (V6), qué costaría correr P.E.N. sobre toda la tierra firme (tiles, horas de cómputo, en paralelo). Es material para la slide 7 y la página.
+- `CITATION.cff` y `.zenodo.json` (autores, título, licencia, palabras clave) para que el release `v1.0` reciba un **DOI de Zenodo** (A5 lo activa).
+- La **historia humana** para la página (estudiantes en México y los análogos del país).
 
 **G1 · Deck de 7 slides** · U15
 - Estructura de `upgrades.md` U15: títulos que afirman el resultado, un visual por slide, inglés, sin marca de NASA, **exactamente ≤ 7 slides** (sin slide extra de gracias ni referencias).
@@ -250,9 +280,8 @@ Victor convierte `web/tools/export_data.py` en un orquestador: al final ejecuta 
 - Link público, probado en ventana privada.
 
 **G2 · Página del proyecto** · U15
-- Todos los campos: resumen con la prueba ciega y ρ en el primer párrafo; descripción detallada; **tabla de trazabilidad** (objetivo del reto ↔ función); **NASA Data** con nombres exactos de producto y links; ESA Copernicus en agencias socias; Use of AI; respuestas a preguntas de juez; link a la nota técnica (L6), al DOI de Zenodo y al catálogo abierto (D5).
-- **Historia humana:** estudiantes en México que encontraron, con datos abiertos, los mejores lugares de su país para ensayar misiones lunares.
-- **Cita del experto** (D6), si se consiguió y con permiso.
+- Todos los campos: resumen con la prueba ciega y ρ en el primer párrafo; descripción detallada; **tabla de trazabilidad** (objetivo del reto ↔ función); **NASA Data** con nombres exactos de producto y links; ESA Copernicus en agencias socias; Use of AI; respuestas a preguntas de juez; links a la nota técnica (G9), al DOI de Zenodo (G10) y al catálogo abierto (D5).
+- **Historia humana** (G10) y **cita del experto** (D6), si se consiguió y con permiso.
 
 **G3 · GIFs (≤ 10 MB c/u)**
 - Con Paul y Aaron: vuelo al sitio de NASA, barrido de sombras 3D, Rehearse on date.
@@ -278,7 +307,11 @@ Victor convierte `web/tools/export_data.py` en un orquestador: al final ejecuta 
 | Paul (Home) | `stats/null.json` con la forma final (stub) | D. Dona (D3) | 12:00 (real: 17:00) |
 | D. Dona (Proof) | `proof_light.ts` | D. Lizárraga (L2) | 16:30 |
 | Paul (Explore) | `reverse.ts` | D. Dona (D4) | 16:30 |
-| Aaron (Dossier) | Limits y stats exportados | D. Lizárraga (L3), D. Dona (D3) | 17:00 |
+| Angel (Dossier) | Limits y stats exportados | D. Lizárraga (L3), D. Dona (D3) | 17:00 |
+| Angel (Dossier) | Formato del parámetro `route` y salida de Rehearse | Aaron (A2) | 14:00 |
+| Angel (Tour) | Componentes reutilizables de Proof, Limits, When y Mission | Dueños de cada vista | 16:30 |
+| Angel (G10) | Tiempos del pipeline | Victor (V6) | 16:00 |
+| Paul (Home) | Rutas `#/tour` y `#/dossier` funcionando | Angel (G7, G8) | 16:30 |
 | Angel | Números congelados | Todos | **19:00** |
 | Angel | Capturas y GIFs | Paul, Aaron | 21:00 |
 
@@ -317,7 +350,7 @@ El repo es parte de lo que ven los jueces: tiene que verse profesional. **Respon
 3. Las 3 pruebas (D1, D3, L1, L2).
 4. Limits (L3).
 5. Rediseño de Explore y When (P3).
-6. Búsqueda inversa (D4), dossier (A3), tour (P4), Method visual (L5), Marte (L4).
-7. Controles (D2), escalabilidad (V6), Landsat (D7).
+6. Búsqueda inversa (D4), dossier (G8), tour (G7), Method visual (L5), Marte (L4), nota técnica (G9).
+7. Controles (D2), escalabilidad y Zenodo (G10), Landsat (D7).
 
 **Regla:** a las 20:30, lo que no esté mergeado y funcionando **no entra**. Mejor una función menos que una vista rota.
