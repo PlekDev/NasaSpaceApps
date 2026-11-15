@@ -1,6 +1,7 @@
 /** Guided tour (#/tour): the P.E.N. story in five steps, ~60 s. Blind test -> light vs NASA -> where the analogy breaks ->
  * when to go -> rehearse the mission. Every number is read from the exported data (web/public/data); nothing is typed by hand.
  * Steps are activated by scroll position (IntersectionObserver on the page scroller) or with the step buttons / arrow keys.
+ * Contract (lib/lazy): render(el, m, params) returns a cleanup function that the router calls when the route is left.
  * AI-assisted (Claude Code); reviewed by the author. */
 import './tour.css';
 import { BASE } from '../base';
@@ -21,7 +22,7 @@ const optional = <T>(name: string) => getJSON<T>(name).catch(() => null);
 
 interface Step { id: string; kicker: string; title: string; text: string; visual: string; cta?: [string, string]; onShow?: (stage: HTMLElement) => void }
 
-export async function render(el: HTMLElement, m: Manifest) {
+export async function render(el: HTMLElement, m: Manifest, _params?: Record<string, string>): Promise<() => void> {
   const [kr, far, gap, rover] = await Promise.all([getJSON<Ranks>('known_ranks'), getJSON<Rec>('far_horizons'), optional<Rec>('thermal_gap'), optional<Rec>('rover_twin')]);
   const proof = blindProof(kr, m);
   const hero = m.targets.find(t => t.id === proof?.best.id) ?? m.targets.find(t => t.body === 'moon') ?? m.targets[0];
@@ -32,6 +33,7 @@ export async function render(el: HTMLElement, m: Manifest) {
   const lowSun = brief?.csv ? await fetch(`${BASE}extras/briefs/${brief.csv}`).then(r => (r.ok ? r.text() : Promise.reject(new Error(brief.csv)))).then(monthlyMinutes).catch(() => null) : null;
 
   const steps: Step[] = [];
+  const maps: { remove(): void }[] = [];
 
   // 1 · blind test
   if (proof) steps.push({
@@ -42,7 +44,7 @@ export async function render(el: HTMLElement, m: Manifest) {
       <div class="tour-ranks">${proof.ranks.map(r => `<div class="tour-rank"><span>${esc(name(r.id))}</span><b class="tnum">#${nf(r.rank)}</b><span class="tnum tour-dim">${topShare(r.rank, r.n)}</span></div>`).join('')}</div>
       <p class="tour-cap">Rank of the window that contains Pu‘u Hiwahine, for each Moon Base site, among ${nf(proof.best.n)} Earth windows.</p></div>`,
     cta: ['See the proof', '#/proof'],
-    onShow: stage => flyTo(stage, best.lon, best.lat),
+    onShow: stage => { void flyTo(stage, best.lon, best.lat, maps); },
   });
 
   // 2 · light vs NASA
@@ -136,7 +138,7 @@ export async function render(el: HTMLElement, m: Manifest) {
     if (!el.isConnected) { io.disconnect(); return; }
     const hit = es.filter(e => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
     if (hit) show(Number((hit.target as HTMLElement).dataset.s));
-  }, { root: el, rootMargin: '-40% 0px -40% 0px', threshold: [0, 0.5, 1] });
+  }, { root: scroller(el), rootMargin: '-40% 0px -40% 0px', threshold: [0, 0.5, 1] });
   items.forEach(it => io.observe(it));
   const go = (i: number) => { const it = items[Math.max(0, Math.min(items.length - 1, i))]; it.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'center' }); };
   nav.forEach((b, n) => b.addEventListener('click', () => go(n)));
@@ -148,6 +150,16 @@ export async function render(el: HTMLElement, m: Manifest) {
   };
   addEventListener('keydown', key);
   show(0);
+  return () => { io.disconnect(); removeEventListener('keydown', key); stage.querySelectorAll('video').forEach(v => v.pause()); maps.splice(0).forEach(x => x.remove()); };
+}
+
+/** Nearest scrolling ancestor (the page view scrolls inside the app shell, not the window); null = the viewport. */
+function scroller(el: HTMLElement): HTMLElement | null {
+  for (let n: HTMLElement | null = el; n && n !== document.body; n = n.parentElement) {
+    const o = getComputedStyle(n).overflowY;
+    if (o === 'auto' || o === 'scroll') return n;
+  }
+  return null;
 }
 export { render as renderTour };
 
@@ -171,7 +183,7 @@ function monthlyMinutes(csv: string) {
 
 /** Step 1 visual: a small globe that flies to the site. MapLibre is loaded only here; without WebGL the panel keeps its static backdrop. */
 let flown: WeakSet<HTMLElement> | null = null;
-async function flyTo(stage: HTMLElement, lon: number, lat: number) {
+async function flyTo(stage: HTMLElement, lon: number, lat: number, maps: { remove(): void }[]) {
   const box = stage.querySelector<HTMLElement>('#tour-map');
   if (!box || (flown ??= new WeakSet()).has(box)) return;
   flown.add(box);
@@ -183,6 +195,8 @@ async function flyTo(stage: HTMLElement, lon: number, lat: number) {
       style: { version: 8, projection: { type: 'globe' }, sources: { gibs: { type: 'raster', tiles: [GIBS], tileSize: 256, maxzoom: 8 } },
         layers: [{ id: 'imagery', type: 'raster', source: 'gibs' }] },
     });
+    if (!box.isConnected) { map.remove(); return; }
+    maps.push(map);
     map.on('load', () => {
       const pin = document.createElement('div'); pin.className = 'tour-pin';
       new maplibregl.Marker({ element: pin }).setLngLat([lon, lat]).addTo(map);

@@ -18,7 +18,8 @@ const THR_SIMILAR = 0.5, THR_DIFF = 1.5; // same thresholds as pen.scoring.expla
 const optional = <T>(name: string) => getJSON<T>(name).catch(() => null);
 const bold = (s: string) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 const topShare = (rank: number, n: number) => { const p = (rank / n) * 100; return p < 0.05 ? 'top < 0.1 %' : `top ${p.toFixed(1)} %`; };
-const params = () => new URLSearchParams(location.hash.split('?')[1] ?? '');
+/** Query of the route: the router passes it as params (lib/routes); read from the hash when called without it. */
+const query = (params?: Record<string, string>) => new URLSearchParams(params ?? location.hash.split('?')[1] ?? '');
 
 /** Traverse waypoints from the URL: "lon,lat;lon,lat" (also accepts "|" or spaces between points, and a JSON array of pairs). */
 export function parseRoute(raw: string | null): [number, number][] {
@@ -38,8 +39,8 @@ function scoreInterval(boot: Rec | null, target: string, wid: string): [number, 
   return typeof lo === 'number' && typeof hi === 'number' ? [lo, hi] : null;
 }
 
-export async function render(el: HTMLElement, m: Manifest) {
-  const q = params();
+export async function render(el: HTMLElement, m: Manifest, params?: Record<string, string>) {
+  const q = query(params);
   const t = m.targets.find(x => x.id === q.get('target')) ?? m.targets.find(x => x.body === 'moon') ?? m.targets[0];
   const [core, det, repro, credits, rover, kr, boot] = await Promise.all([loadTarget(t.id), loadDetail(t.id), getJSON<Record<string, string[]>>('reproduce'),
     optional<Record<string, string>>('credits'), optional<Rec>('rover_twin'), optional<Rec>('known_ranks'), optional<Rec>('stats/bootstrap')]);
