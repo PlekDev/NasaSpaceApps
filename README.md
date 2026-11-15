@@ -34,9 +34,9 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 |---|---|---|---|---|
 | Moon · Shackleton Connecting Ridge | Mauna Kea upper slopes, Hawaiʻi (19.811, −155.544) | 91 | 89 | 98 |
 | Moon · de Gerlache Rim | Mauna Kea, Hawaiʻi (19.865, −155.516) | 85 | 83 | 92 |
-| Moon · Nobile Rim 1 (Artemis candidate region) | Mauna Kea, Hawaiʻi (19.865, −155.516) | 81 | 78 | 95 |
+| Moon · Nobile Rim 1 (Artemis candidate region) | Mauna Kea, Hawaiʻi (19.865, −155.516) | 80 | 78 | 95 |
 | Moon · Malapert Massif (Artemis candidate region) | Mauna Kea, Hawaiʻi (19.784, −155.487) | 79 | 76 | 91 |
-| Moon · Haworth (Artemis candidate region) | Mauna Loa flank, Hawaiʻi (19.459, −155.516) | 89 | 91 | 87 |
+| Moon · Haworth (Artemis candidate region) | Mauna Loa flank, Hawaiʻi (19.459, −155.516) | 89 | 90 | 87 |
 | Moon · Leibnitz Beta Plateau (Artemis candidate region) | Mauna Loa flank, Hawaiʻi (19.296, −155.830) | 85 | 84 | 91 |
 | Mars · Arcadia Planitia | Hyperarid Atacama near Yungay, Chile (−24.893, −69.914) | 96 | 95 | 98 |
 | Mars · Jezero | Sierra Chichinautzin volcanic field, Mexico (19.323, −99.887) | 89 | 87 | 97 |
