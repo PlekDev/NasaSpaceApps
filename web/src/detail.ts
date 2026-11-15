@@ -72,6 +72,7 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
       <ul class="stats">${(repro[t.id] ?? []).map(s => `<li>${bold(s)}</li>`).join('')}</ul></section>
 
     ${temperatureHTML(d as unknown as Record<string, (number | null)[]>, k, thermal)}
+    ${mineralsHTML(d as unknown as Record<string, (number | null)[]>, k, t.body)}
 
     <section class="d-sec"><div class="d-h"><h3>Field safety</h3><span class="muted tiny">NASA EONET</span></div><div id="eonet" class="eonet" aria-live="polite"><span class="muted">Checking NASA EONET…</span></div></section>
 
@@ -157,4 +158,22 @@ function temperatureHTML(d: Record<string, (number | null)[]>, k: number, ref: T
       ${bar('t-earth', 'This window', e)}${ref ? bar('t-ref', 'Target', ref) : ''}
       <div class="tticks tnum">${[0, 100, 200, 300].map(v => `<span style="left:${x(v)}">${v} K</span>`).join('')}</div></div>
     <p class="d-note">Earth: MODIS MOD11A2 clear-sky land-surface temperature, 2025: mean of day and night, from the 5th percentile of nights to the 95th of days (${Math.round(e.mean - 273.15)} °C on average).${ref ? ` Target: ${esc(ref.what)}. On average this window is <b>${Math.abs(gap)} K ${gap >= 0 ? 'warmer' : 'colder'}</b>.` : ''} Context only, not scored: the two quantities are not measured the same way.</p></section>`;
+}
+
+// ---- surface minerals: NASA EMIT EMIT-10 weighted shares for this Earth window, where EMIT saw at least half of it; context, not scored
+function mineralsHTML(d: Record<string, (number | null)[]>, k: number, body: string): string {
+  const v = (key: string) => d[key]?.[k];
+  const cov = v('emit_cov');
+  if (cov == null) return '';
+  const rows: [string, string, number][] = [['Clays', 'emit_clays', 0], ['Carbonates', 'emit_carbonates', 0], ['Iron oxides', 'emit_iron_oxides', 0], ['Sulfates', 'emit_sulfates', 0]]
+    .map(([lab, key]) => [lab as string, key as string, (v(key as string) ?? 0) / 1000]);
+  const none = (v('emit_none') ?? 0) / 1000, pct = (x: number) => `${Math.round(x * 100)}%`;
+  const why = body === 'moon'
+    ? 'The lunar surface has almost no clays, carbonates or sulfates, so where EMIT finds them the mineral analogy breaks. EMIT cannot see the basalt minerals (olivine, pyroxene, plagioclase) that make an Earth site look lunar.'
+    : 'Clays, carbonates and sulfates have been mapped from orbit in places on Mars, so here they can be a point of resemblance; they are not part of the score.';
+  const alien = Math.max(rows[0][2], rows[1][2], rows[3][2]);  // clays, carbonates, sulfates: what the Moon lacks
+  const here = body === 'moon' ? (alien < 0.05 ? ' Here EMIT finds almost none of them.' : ` Here they reach ${pct(alien)}: a mineral difference from the Moon.`) : '';
+  return `<section class="d-sec"><div class="d-h"><h3>Surface minerals</h3><span class="muted tiny">NASA EMIT</span></div>
+    <div class="dimbars">${rows.map(([lab, , x]) => `<div class="dimbar"><span>${lab}</span><span class="track"><i style="width:${Math.min(100, x * 100)}%;background:var(--text-3)"></i></span><b class="tnum">${pct(x)}</b></div>`).join('')}</div>
+    <p class="d-note">EMIT-10 weighted shares of the ${pct(cov / 1000)} of this window EMIT observed (2023–2025, cloud ≤ 20 %); not abundances. No detection: ${pct(none)}. Iron oxides are a lower bound. ${why}${here}</p></section>`;
 }

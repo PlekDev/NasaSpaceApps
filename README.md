@@ -113,6 +113,7 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 | Static web app (globe, ranking, analog card, Analog in time, Validation, Method), phone layout, accessibility and no-WebGL fallback, ready for GitHub Pages | `web/` | Paul |
 | Field tools: twin-light timelapse, astronaut's-eye view, rover twin, field brief and `.ics` campaign calendar per region, shown in the web app's Field kit | `scripts/extras/`, [`docs/EXTRAS.md`](docs/EXTRAS.md) | Victor |
 | Earth land-surface temperature per window (NASA MODIS MOD11A2 from NASA Earthdata), 10,417 of 10,424 windows, shown on every analog card of the web app next to Diviner or the Mars Climate Database (context, not scored) | `scripts/earth_lst.py`, `scripts/earth_lst_earthaccess.py`, `data/processed/earth_lst_windows.csv` | D. Dona · Victor |
+| Earth surface mineralogy per window (NASA EMIT L2B V002, EMIT-10 shares), 9 regions below 52°N, on the analog card where EMIT saw at least half the window (context, not scored) | `scripts/earth_emit.py`, `data/processed/earth_emit_windows.csv` | D. Dona · Victor |
 
 **To do before the freeze** (each line is a GitHub issue, see [`docs/TEAM.md`](docs/TEAM.md))
 
@@ -122,7 +123,7 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 | Deck (7 slides, our demo instead of the video) and project page around the blind-rediscovery result | It's the demo the judges see | Angel · Paul |
 | Fact-check every number in README, deck and page; tag `v1.0` | No wrong number in front of judges | Angel · Victor |
 
-**Stretch (only if time allows):** EMIT mineralogy per window (in progress on `ddona/emit`); the remaining Artemis regions (Nobile Rim 2 has a 5 m DEM but lies at 84°S, outside
+**Stretch (only if time allows):** the remaining Artemis regions (Nobile Rim 2 has a 5 m DEM but lies at 84°S, outside
 the 85°S illumination map and DEM we validate against; de Gerlache Rim 2).
 
 ## Quick start
@@ -288,6 +289,7 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 | [LRO Diviner polar resource product](https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/) (Paige et al.) | **NASA** LRO / PDS | Moon temperature and ice stability (where Earth stops being an analog) |
 | [NASA POWER climatology API](https://power.larc.nasa.gov/docs/services/api/temporal/climatology/) | **NASA** LaRC | Earth skin temperature per region, compared with Diviner |
 | [MODIS Terra MOD11A2 v061](https://doi.org/10.5067/MODIS/MOD11A2.061) (NASA Earthdata) | **NASA** LP DAAC | Earth land-surface temperature per window, 2025 (context on the analog card) |
+| [EMIT L2B mineralogy V002](https://doi.org/10.5067/EMIT/EMITL2BMIN.002) (NASA Earthdata) | **NASA** JPL / LP DAAC | Earth surface minerals per window (EMIT-10 shares, 9 regions below 52°N), context on the analog card |
 | [Moon Trek / Mars Trek WMTS](https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon) (via api.nasa.gov) | **NASA** SSERVI / JPL | Real view of Moon (LRO NAC mosaic) and Mars (CTX mosaic) windows |
 | [GIBS](https://nasa-gibs.github.io/gibs-api-docs/) (via api.nasa.gov) | **NASA** ESDIS | Real view of Earth windows (Landsat WELD, HLS, MODIS) |
 | [EONET v3](https://eonet.gsfc.nasa.gov/docs/v3) (via api.nasa.gov) | **NASA** Earth Observatory | Live field-safety check (open natural events near the site) |
@@ -300,8 +302,7 @@ More detail and references: [`docs/METHOD.md`](docs/METHOD.md).
 
 ![Thermal gap](figures/fig8_thermal_gap.png)
 
-Planned: EMIT surface mineralogy (NASA), MODIS/ECOSTRESS land-surface temperature (NASA),
-RADARSAT / Sentinel-1 radar (CSA / ESA).
+Planned: ECOSTRESS land-surface temperature at 70 m (NASA), RADARSAT / Sentinel-1 radar (CSA / ESA).
 
 ## Limitations
 

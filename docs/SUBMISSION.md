@@ -68,7 +68,7 @@ lunar-pole light, so field teams know the best weeks to test.
 5. *Tools:* Python (rasterio, NumPy, SciPy, pandas, Matplotlib), a static web app (TypeScript, Vite, MapLibre GL JS)
    on GitHub Pages, Streamlit + pydeck, GitHub; NASA APIs Trek WMTS, GIBS and EONET.
 6. *Limitations and next steps:* local horizons only, 30 m resolution, flat Mars plains, and Earth's limits
-   (gravity, vacuum, radiation). Next: thermal as a scored dimension (Diviner vs MODIS/ECOSTRESS), EMIT minerals,
+   (gravity, vacuum, radiation). Next: thermal as a scored dimension (Diviner vs MODIS/ECOSTRESS), a mineral dimension beyond EMIT-10,
    global search.
 
 **NASA data:**
@@ -81,6 +81,7 @@ lunar-pole light, so field teams know the best weeks to test.
 - LRO Diviner polar resource product (NASA PDS Geosciences, Paige et al.)
 - NASA POWER climatology API (NASA LaRC, MERRA-2): Earth skin temperature for the Diviner comparison
 - MODIS Terra MOD11A2 v061 land-surface temperature (NASA LP DAAC, via NASA Earthdata), 2025: per Earth window, shown on every analog card next to Diviner or the Mars Climate Database
+- EMIT L2B mineral identification V002 (NASA JPL, via NASA Earthdata), 2023–2025: EMIT-10 mineral shares per Earth window below 52°N, shown on the analog card
 
 **Moon & Mars data paragraph (Diego Lizárraga, ~200 words; numbers from `data/processed/`):**
 Every reference site in P.E.N. comes from NASA missions archived in the Planetary Data System (PDS). For the Moon
@@ -109,15 +110,26 @@ mid-latitude region with buried ice), and the CTX global mosaic
 and refactor code and documentation. The team chose the approach and sites, ran and checked all results, and every
 AI-assisted file is marked in its header. No AI-generated images.
 
-## 7-slide deck outline
+## 7-slide deck (the demo link)
 
-1. **P.E.N.** (Planetary Environmental Navigator) — by **Pollones en Fuga**: 6 members, challenge title. Hook: without being told, P.E.N. picked the exact spot on Mauna Kea where NASA rehearsed a lunar-polar mission, #1 of 10,424 places
-2. **The problem** — the Moon Base goes where the Sun never climbs above 7°; existing analog searches ignore light
-3. **Our idea** — score Earth places by terrain *and* low-Sun light; explain where the analogy breaks
-4. **How it works** — common grid → shadow model → scores; validated against NASA: ρ = 0.92–0.99 at all six Moon Base sites (fig7). Second check, only if it fits with both numbers: "Our model's never-lit points agree with NASA's permanently-shadowed-region map on 98.0–99.7 % of points (intersection over union 0.53–0.82)." Never quote the 98–99.7 % alone: permanent shadow covers only 0.6–4.8 % of each site, so that figure is high for almost any model
-5. **Results** — fig1 side by side + blind rediscovery (#1 of 10,424 for Malapert; top 0.2 % for four of the six Moon Base sites, top 5 % for all six) + top matches (Mauna Kea and Mauna Loa 79–91, Atacama 93–96, Chichinautzin 89; El Pinacate top 3 % for four sites, top 8 % for six)
-6. **Where Earth stops being an analog** — fig8 (Moon, Mars and Earth together: "Earth's coldest places come close to Mars, but not to the Moon Base") + fig6 (Diviner) + analog in time (fig3); app screenshot. Line for the slide: "Our Mars sites average 200–224 K, only 15–38 K colder than Antarctica's University Valley. The Moon Base sites are 95–132 K colder. What Earth cannot give Mars is the air: under 1 % of sea-level pressure." Say "modelled" for Mars (Mars Climate Database v6.2) and "measured" only for the Moon (LRO Diviner).
-7. **Impact & next steps** — field-test planning, Mexican analogs, thermal/mineral layers, global search
+Built as a slide deck with speaker notes (export to PDF or PowerPoint and host it publicly; that link is the demo).
+Every number below is checked by `tests/test_claims.py` against `data/processed/`.
+
+1. **Cover**: P.E.N., Pollones en Fuga (Mexico), the challenge, and the hook: "Blind test: NASA's 2012 lunar test site
+   comes out #1 of 10,424".
+2. **The problem**: at the Moon Base the Sun never climbs above 7°; Earth test sites are chosen for geology and looks,
+   and the light is rarely checked.
+3. **How it works**: NASA elevation models → one 30 m grid, 10,424 Earth windows of 6 km → 5 terrain features plus exact
+   cast shadows at 2° and 5° → S = 100 · exp(−D), with what matches and what differs.
+4. **Blind test**: the twin-light timelapse (Malapert vs Mauna Kea) and "#1 of 10,424 for Malapert Massif; top 0.2 % for
+   4 of 6 Moon Base sites, top 5 % for all 6".
+5. **Validation**: fig7 and four numbers: ρ = 0.92–0.99 against NASA's LOLA map; 2.0–3.2 pp mean error; 98.0–99.7 %
+   agreement with NASA's permanent-shadow map (say it only next to the ρ, see the Q&A); 84th percentile for classic
+   analog sites in illumination.
+6. **Where and when to rehearse**: astronaut's-eye view; analog in time (about 1 h a day of 0–7° Sun at Mauna Kea, up to
+   5.6–6.7 h around the equinoxes at Arctic and Antarctic sites); field brief + `.ics`; rover twin; EONET check.
+7. **What it gives NASA**: pick the site, pick the week, know the limits (the coldest Earth region we search is still
+   95–132 K warmer than the Moon Base); the links; the NASA data list; no AI imagery, no NASA logos.
 
 ## Judge Q&A: the light validation
 
@@ -137,5 +149,47 @@ is rare there (0.6–4.8 % of each footprint), so the honest number is the overl
 intersection over union 0.53–0.82. The headline validation remains ρ = 0.92–0.99 on the full illumination map.
 
 **"Any caveat?"**
-Three sites, Malapert, Nobile Rim 1 and Leibnitz Beta, sit near the edge of NASA's DEM, so some rays stop after
-21–66 km (Haworth: 50–91 km). All of them still reach ρ ≥ 0.975. Do not say "150 km in every direction".
+Four sites, Malapert, Nobile Rim 1, Leibnitz Beta and Haworth, sit near the edge of NASA's 85°S DEM, so their rays
+toward lower latitudes stop after 21–91 km. All of them still reach ρ ≥ 0.975. Do not say "150 km in every direction".
+
+## Judge Q&A: the method and the blind test
+
+Numbers come from `data/processed/known_analogs.json`, `sensitivity.json`, `results.json` and `windows.csv`.
+
+**"Did you tune P.E.N. until it found Mauna Kea?"**
+No. The weights are equal (terrain 1, illumination 1) and the 6 km window was fixed before the known-analog test was
+added. The known sites are only used to check the ranking, never to fit it. Pu'u Hiwahine is #1 of 10,424 for Malapert,
+top 0.2 % for four of the six Moon Base sites and top 5 % for all six.
+
+**"How stable is the ranking?"**
+Re-weighting illumination from 0.5× to 2× keeps 5 to 10 of the top 10 windows (5 for Malapert and Haworth, 10 for
+de Gerlache, Nobile Rim 1 and Leibnitz Beta). The window size matters more: at 12 km the best region changes for several
+Moon sites. We report that rather than hide it (`stability_top10_by_window_km`).
+
+**"Why these features and this score?"**
+Five terrain features (relief, median and 90th-percentile slope, roughness, hypsometry) plus the shadow fraction with the
+Sun at 2° and 5°. Each difference is divided by its spread across all Earth windows (IQR), so no feature dominates by its
+units; S = 100 · exp(−D) turns the weighted distance into 0–100, and every card says which features match and which do
+not.
+
+**"Why should a classic analog site not always rank first?"**
+Because sites are chosen for different reasons. Meteor Crater is an impact-geology analog and University Valley a
+dry-permafrost (thermal) analog; neither was picked for terrain and low-Sun light, and they rank lower, as they should.
+
+## Judge Q&A: temperature and minerals (context, not scored)
+
+**"Does P.E.N. use temperature?"**
+As context on every card, not in the score. Earth: NASA MODIS MOD11A2 land-surface temperature for 2025, per window
+(10,417 of 10,424; 7 have too few clear-sky composites). Moon: LRO Diviner, measured. Mars: Mars Climate Database v6.2,
+modelled. The coldest Earth region we search (University Valley, 239 K mean) is still 95–132 K warmer than the Moon Base
+sites, so a lunar thermal score would be 0 everywhere; for Mars the gap is only 15–38 K.
+
+**"Why not score minerals?"**
+NASA EMIT maps the EMIT-10 minerals (clays, carbonates, iron oxides, sulfates…) between 52°N and 52°S, so 9 of our 14
+regions. Those minerals are almost absent on the Moon, so on a lunar card they show where the analogy breaks, and EMIT
+cannot see the basalt minerals (olivine, pyroxene, plagioclase) that make a site lunar. On the best Mauna Kea windows EMIT
+finds almost none of them. The shares are weighted shares, not abundances, and iron oxides are a lower bound.
+
+**"What can Earth not reproduce at all?"**
+Reduced gravity, vacuum, the radiation environment and, for the Moon Base, the cold. Every card lists these.
+
