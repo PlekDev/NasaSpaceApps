@@ -1,5 +1,5 @@
 {
- "_note": "Numbers used in the deck and on the project page. Generated from data/processed; entries with pending=true have their value from data/processed but no rule yet in tests/test_factcheck_numbers.py. Do not edit values by hand.",
+ "_note": "Numbers as written in the deck and on the project page. Each entry is checked by tests/test_factcheck_numbers.py against data/processed. rehearsal_fidelity stays pending: it is computed in the browser from today's date.",
  "generated": "2026-11-15",
  "numbers": [
   {
@@ -403,7 +403,7 @@
    "text": "about 230 core-hours for all land",
    "value": 230,
    "source": "benchmark_tile.json all_land_estimate.core_hours",
-   "pending": true
+   "pending": false
   },
   {
    "id": "scale_hours_64",
@@ -413,7 +413,7 @@
    "text": "under 4 hours on 64 cores (3.6 h)",
    "value": 3.6,
    "source": "benchmark_tile.json all_land_estimate.hours_on_64_cores",
-   "pending": true
+   "pending": false
   },
   {
    "id": "null_p_malapert",
@@ -428,7 +428,7 @@
     0.1476
    ],
    "source": "stats/null.json pu_uhiwahine.moon_malapert: p_value_region_matched, p_bonferroni, p_bonferroni_all_lunar_tests",
-   "pending": true
+   "pending": false
   },
   {
    "id": "null_frac_mauna_kea",
@@ -439,7 +439,7 @@
    "text": "only 0.4 % of Mauna Kea scores as high",
    "value": 0.0041,
    "source": "stats/null.json pu_uhiwahine.moon_malapert.p_value_region_matched (the share in the generated headline)",
-   "pending": true
+   "pending": false
   },
   {
    "id": "null_p_group",
@@ -452,7 +452,7 @@
     0.06489
    ],
    "source": "stats/null.json p_value.global",
-   "pending": true
+   "pending": false
   },
   {
    "id": "score_ci_malapert",
@@ -466,7 +466,7 @@
     89.9
    ],
    "source": "stats/bootstrap.json moon_malapert[0]",
-   "pending": true
+   "pending": false
   },
   {
    "id": "stability_top1",
@@ -479,7 +479,7 @@
     "moon_connecting_ridge": 1.0
    },
    "source": "stats/stability.json p_top1",
-   "pending": true
+   "pending": false
   },
   {
    "id": "auc_mars",
@@ -493,7 +493,7 @@
     0.4445
    ],
    "source": "stats/roc.json <mars target>.auc",
-   "pending": true
+   "pending": false
   },
   {
    "id": "light_bias",
@@ -506,16 +506,16 @@
     -0.007
    ],
    "source": "stats/light_summary.json overall.bias",
-   "pending": true
+   "pending": false
   },
   {
    "id": "rehearsal_fidelity",
    "slide": [
     6
    ],
-   "text": "about 80 % for the Malapert traverse with the lunar Sun from the east (late March 2027, about half an hour after sunrise)",
-   "value": 80,
-   "source": "Mission view after the physics fixes (#39, #42), lunar Sun from the east (hour angle -90), computed in the browser from today; approximate, take the final value from the view after #42 merges. With the default hour angle (-35) Mauna Kea has no direction match.",
+   "text": "fidelity 80 % for the Malapert traverse with the lunar Sun from the east (29–30 March 2027, about half an hour after sunrise)",
+   "value": 80.2,
+   "source": "Mission view (main after #42), Malapert, default route, Sun 2.5° high, hour angle -90 (from the east): best window 2027-03-29 16:30–17:00 UTC, 81 of 101 route points match. Computed in the browser from today, so it can shift by a few days; no file in data/processed yet.",
    "pending": true
   }
  ]
