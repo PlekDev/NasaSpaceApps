@@ -1,11 +1,11 @@
-# P.E.N.: FINDING AND SCHEDULING EARTH ANALOGS OF LUNAR SOUTH-POLE AND MARS SITES BY TERRAIN AND LOW-SUN ILLUMINATION, VALIDATED AGAINST NASA LOLA
+﻿# P.E.N.: FINDING AND SCHEDULING EARTH ANALOGS OF LUNAR SOUTH-POLE AND MARS SITES BY TERRAIN AND LOW-SUN ILLUMINATION, VALIDATED AGAINST NASA LOLA
 
 **Pollones en Fuga** (Mexico): V. Velázquez, D. Lizárraga, D. Dona, A. Landin, A. Hernández, Paul.
 NASA Space Apps Challenge 2026 · *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars*.
 Code, data and web app: https://github.com/PlekDev/NasaSpaceApps · https://plekdev.github.io/NasaSpaceApps/
 
 <!-- DRAFT. Statistics are those in data/processed/stats and data/processed/controls on Sun 15 Nov; they are re-read
-     after the 19:00 number freeze. The rehearsal example is the Mission view's default Malapert traverse. -->
+     after the 19:00 number freeze. The rehearsal example is the Mission view after the physics fixes (#39, #42), Victor's values; re-read after #42 merges. -->
 
 **Introduction.** NASA plans its Moon Base near the lunar south pole, where the Sun never rises more than about 7°
 above the horizon. Long terrain-cast shadows there control landing safety, rover vision, power and EVA planning.
@@ -71,10 +71,11 @@ intervals, not "the best place".
 up to 5.6–6.7 h/day in spring and autumn at Arctic and Antarctic sites. For a traverse drawn on the lunar site, P.E.N.
 lists the dates and times at which the Earth analog has the same Sun elevation and a compatible direction, with a
 rehearsal fidelity (share of 101 samples along the route with the same lit or shadowed state on both bodies). For
-the default Malapert traverse, the best windows on Mauna Kea fall in early March and early October, about half an hour
-after sunrise, with a fidelity of 33 %: at that Sun the lunar route is fully shadowed while two thirds of the Earth route
-is lit. Low fidelity is a finding, not a failure: it tells a field team which stretches of a rehearsal will not
-reproduce lunar lighting.
+the default Malapert traverse the lunar Sun comes from the north-northeast, a direction Mauna Kea's low Sun never
+reaches; the view says so and offers the closest dates (late June, at sunrise). With the lunar Sun from the east, the
+best Mauna Kea windows are in late March 2027, about half an hour after sunrise, with a rehearsal fidelity of about
+80 %. Saying when no Earth date matches is part of the answer: it tells a field team which lunar lighting a site
+cannot rehearse.
 
 **Where the analogy breaks.** Per Diviner [3], in 88–100 % of each lunar site the annual mean temperature (2 cm below
 the surface) is colder than the lowest air temperature ever recorded on Earth (184 K), and water ice is thermally
@@ -87,7 +88,7 @@ under 1 % of sea-level pressure. Gravity, vacuum and radiation are never reprodu
 windows are not re-scored with distant terrain. Four sites lie near the edge of the 85°S DEM, so their rays toward
 lower latitudes stop after 21–91 km. Rankings depend on window size. Flat Mars plains match much of Earth. Temperature
 and minerals are context, not scored. Only 14 Earth regions are searched so far. A global run is mostly a matter of
-compute (about 50 s per one-degree tile on one core); the main method change is a land-cover mask, because the Earth
+compute (52 s per one-degree tile on one core); the main method change is a land-cover mask, because the Earth
 DEM is a surface model that includes forest canopy and buildings.
 
 **References.** [1] Barker M. K. et al., High-resolution LOLA topography for lunar south pole sites, NASA GSFC PGDA
