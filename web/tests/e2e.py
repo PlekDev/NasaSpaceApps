@@ -49,7 +49,7 @@ with sync_playwright() as p:
         ("proof", "#hm .hm, .proof"),
         ("limits", ".limits, .view-wip, .page-stub"),
         ("mission", ".mission-page, .view-wip, .page-stub"),
-        ("method", ".prose"),
+        ("method", ".method, .prose"),
         ("dossier", ".dossier, .view-wip, .page-stub"),
         ("tour", ".tour, .view-wip, .page-stub"),
     ]:
