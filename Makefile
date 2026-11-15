@@ -1,7 +1,7 @@
 PY ?= python
 # EMIT needs netCDF4 + earthaccess + rasterio (conda-forge env), see docs/METHOD.md
 EMIT_PY ?= $(PY)
-.PHONY: web web-dev web-test web-e2e setup data pipeline validate figures extras far imagery eonet lst-submit lst emit all app test
+.PHONY: web web-data web-dev web-test web-e2e setup data pipeline validate figures extras far imagery eonet lst-submit lst emit all app test
 setup:     ; $(PY) -m pip install -r requirements.txt
 data:      ; $(PY) scripts/download_data.py
 pipeline:  ; $(PY) scripts/run_pipeline.py
@@ -17,6 +17,7 @@ eonet:     ; $(PY) scripts/eonet_snapshot.py
 all: data pipeline validate figures extras far imagery eonet
 app:       ; streamlit run app/streamlit_app.py
 test:      ; $(PY) -m pytest -q
+web-data:  ; $(PY) -I web/tools/export_data.py
 web:       ; $(PY) -I web/tools/export_data.py && cd web && npm ci && npm run build
 web-dev:   ; $(PY) -I web/tools/export_data.py && cd web && npm install && npm run dev
 web-test:  ; $(PY) -m pytest -q web/tests && cd web && npm test
