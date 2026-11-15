@@ -52,7 +52,7 @@ lunar-pole light: an "analog in time" that tells field teams the best weeks to t
    - Best matches: the six Moon sites ↔ Mauna Kea and Mauna Loa, Hawaiʻi (79–91), Arcadia Planitia and Deuteronilus
      Mensae ↔ Atacama near Yungay (96 and 93), Jezero ↔ Sierra Chichinautzin, Mexico (89). El Pinacate is in the top
      8 % for all six Moon Base sites (top 3 % for four).
-   - Known analog sites rank at the 80th percentile in illumination (median of 57 tests with 10 sites; 50 = random).
+   - Known analog sites rank at the 84th percentile in illumination (median of 48 tests with 8 sites; 50 = random).
    - LRO Diviner: in 88–100 % of each lunar site the annual mean temperature (2 cm below the surface) is colder than
      Earth's record low air temperature (184 K); ice is stable within 1 m in 22–64 %.
    - Diviner vs Earth's cold analogs (NASA POWER): University Valley, Antarctica, the coldest region we search, has a

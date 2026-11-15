@@ -60,9 +60,46 @@ from 0.46–0.88 (local DEM) to 0.92–0.99 (150 km), and the mean error falls t
 Malapert, Nobile Rim 1 and Leibnitz Beta lie near the DEM edge, so their rays toward lower latitudes stop after
 21–39 km, 41–66 km and 31–49 km (`ray_reach` in `far_horizons.json`).
 
-**Known-analog test.** `scripts/validate_known_analogs.py` takes 10 classic analog sites that fall inside our
-regions (Meteor Crater, SP Crater, Cinder Lake Crater Field, Pinacate Peaks, Haughton crater, the HMP Research
-Station, Pu'u Hiwahine on Mauna Kea, Askja, Yungay and University Valley) and reports the percentile of the windows containing them among all Earth windows.
+**Known-analog test.** `scripts/validate_known_analogs.py` takes 8 classic analog sites that fall inside our
+regions (Meteor Crater, SP Crater, Cinder Lake Crater Field, Pinacate Peaks, Haughton crater, Pu'u Hiwahine on
+Mauna Kea, Yungay and University Valley) and reports the percentile of the windows containing them among all Earth windows. Askja (its point lies on a lake that the water mask removes, so no window is valid) and the
+HMP Research Station (same crater as Haughton) were removed. Each coordinate comes from an official gazetteer or a
+publication, listed in the `note` field of the script; Pinacate comes from a secondary source (Wikipedia) and is not verified against an official database.
+
+### Earth temperature layer
+
+`scripts/earth_lst.py` adds land-surface temperature (LST) for every Earth window, from MODIS Terra **MOD11A2 v061**
+(8-day composites, 1 km, DOI 10.5067/MODIS/MOD11A2.061) requested through NASA AppEEARS as GeoTIFF in EPSG:4326
+(one area task per 1°×1° region of `config/sites.yaml`, year 2025, 46 composites). Credentials come from
+`EARTHDATA_USERNAME` / `EARTHDATA_PASSWORD` or `~/.netrc` and are never committed. Run `make lst-submit`, wait for the tasks
+(`python scripts/earth_lst.py status`), then `make lst`. Output: `data/processed/earth_lst_windows.csv`, keyed by
+`(site, i, j)` as in `windows.csv`; per-region GeoTIFFs stay in `data/cache/lst/`.
+
+- **Quality control.** A composite is used when the mandatory QA flag (bits 0-1) is `00` (good), or `01` (other quality)
+  *and* the LST error flag (bits 6-7) is `00` or `01` (error ≤ 2 K). Cloud and not-produced pixels are rejected. Scale factor
+  0.02, fill value 0, valid range 150-400 K.
+- **Per pixel (K).** `lst_min_K` = 5th percentile of the valid night composites (not the raw minimum, which undetected
+  clouds make falsely cold); `lst_max_K` = 95th percentile of the valid day composites; `lst_mean_K` = mean of all valid
+  day and night composites; `lst_range_K` = `lst_max_K` − `lst_min_K`. A pixel needs ≥ 12 valid composites per variable.
+- **Per window.** Mean over the window's pixels that are valid for all three statistics. A window with < 50 % valid pixels
+  gets NaN (no filling or interpolation). `n_pixels_valid` / `n_pixels` count window pixels; `n_valid` is the mean number of
+  valid day + night composites per pixel (maximum 92).
+- **Gaps.** Cloudy composites are lost, so the layer is a clear-sky statistic and its minimum is biased warm. In the polar
+  regions (Svalbard, Axel Heiberg, University Valley) the polar night leaves few valid day composites and ice causes false
+  cloud flags: look at `n_valid` and `n_pixels_valid` before trusting those windows.
+- **Caveats.** An 8-day composite averages the extremes down, a 1 km pixel is coarse against 30 m terrain, and a 6 km window
+  holds only ~36 pixels.
+
+**Relation to `thermal_gap.py`.** This layer is per window (1 km pixels, year 2025); `scripts/thermal_gap.py` gives NASA POWER
+skin temperatures per region. They complement each other and neither replaces the other.
+
+**Pairing with LRO Diviner (for the scorer).** Diviner `temp_avg` ↔ `lst_mean_K` and Diviner `temp_max` ↔ `lst_max_K`
+(`data/processed/diviner.json`: `temp_avg_mean_K`, `temp_max_mean_K`). They are not the same quantity: Diviner `temp_avg` is
+the average temperature at 2 cm below the surface, while LST is the skin temperature of the surface under clear sky.
+
+**Scaling note.** Lunar polar `temp_avg` is ~120-130 K, far from any Earth LST (~250-300 K). With IQR scaling over Earth
+windows the thermal distance of every window is huge and the thermal score tends to 0. How to scale it is left to the
+scoring owner; this layer does not change `pen/`.
 
 ### Limitations
 
