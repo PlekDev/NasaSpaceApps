@@ -13,8 +13,9 @@ taken from gazetteers and papers. They rank at the 84th percentile for illuminat
 (50 = random). Pu'u Hiwahine on Mauna Kea, a NASA lunar test site, lands in the top 0.2 % for four of the six Moon sites,
 found without labels; El Pinacate is in the top 3 % for four.
 
-*Optional sentence if the temperature layer is merged:* "Each window also carries a MODIS land-surface-temperature
-summary (MOD11A2, 2025), so Earth's heat and cold can be set against LRO Diviner." (Do not use until `earth_lst_windows.csv` is in `main`.)
+*Temperature and minerals (both in `main`, both context only):* "Each window also carries a NASA MODIS land-surface-temperature
+summary (MOD11A2, 2025) and, below 52°N, NASA EMIT surface minerals, so Earth's heat, cold and mineralogy can be set
+against LRO Diviner and the Mars Climate Database."
 
 ## 2. Space Agency Partner data: ESA Copernicus
 
