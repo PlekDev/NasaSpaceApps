@@ -1,8 +1,13 @@
 // AI-assisted (Claude Code); reviewed by the author.
 /**
- * Interactive control bar for Mission Rehearsal 3D:
- * Target & Earth window selection, vertical exaggeration (1x-5x),
- * solar geometry & diurnal animation, route waypoint tools, and camera/rover modes.
+ * Split instrument controls for Mission Rehearsal 3D:
+ * - `renderPrimaryControls`: clean single-row bar above the dual 3D viewports
+ *   (Target, Matched Earth Window, Synchronized Camera Mode, Vertical Scale).
+ * - `renderSecondaryControls`: spacious two-column workbench strip below the
+ *   viewports (Solar Geometry & Rehearsal Sun, Rover Playback & Waypoints).
+ *
+ * Updates existing control DOM nodes in place via WeakMaps so slider drags
+ * and keyboard focus are never interrupted.
  */
 import { h } from './dom.ts';
 import type { Manifest } from '../../types.ts';
@@ -44,344 +49,515 @@ export interface MissionControlsCallbacks {
   onTogglePlaySun: () => void;
   onToggleDriveRover: () => void;
   onScrubRover: (progress: number) => void;
-  onApplyPresetRoute: (start: [number, number], end: [number, number]) => void;
   onSwapRoute: () => void;
 }
 
-export function renderControlsBar(
+interface PrimaryController {
+  root: HTMLElement;
+  state: MissionControlsState;
+  cb: MissionControlsCallbacks;
+  targetsSig: string;
+  windowsSig: string;
+  targetSelect: HTMLSelectElement;
+  winSelect: HTMLSelectElement;
+  camButtons: Map<CameraMode, HTMLButtonElement>;
+  exagSlider: HTMLInputElement;
+  exagBadge: HTMLElement;
+}
+
+interface SecondaryController {
+  root: HTMLElement;
+  state: MissionControlsState;
+  cb: MissionControlsCallbacks;
+  sunElevSlider: HTMLInputElement;
+  sunElevVal: HTMLElement;
+  sunHaSlider: HTMLInputElement;
+  sunHaVal: HTMLElement;
+  playSunBtn: HTMLButtonElement;
+  earthSunButtons: Map<EarthSunMode, HTMLButtonElement>;
+  toolButtons: Map<PointerTool, HTMLButtonElement>;
+  roverSlider: HTMLInputElement;
+  roverVal: HTMLElement;
+  driveRoverBtn: HTMLButtonElement;
+  slopeCheckbox: HTMLInputElement;
+}
+
+const primaryControllers = new WeakMap<HTMLElement, PrimaryController>();
+const secondaryControllers = new WeakMap<HTMLElement, SecondaryController>();
+
+function setRangeValue(input: HTMLInputElement, val: number, min: number, max: number): void {
+  if (document.activeElement !== input) {
+    input.value = String(val);
+  }
+  const pct = Math.max(0, Math.min(100, ((val - min) / Math.max(1e-9, max - min)) * 100));
+  input.style.setProperty('--p', `${pct.toFixed(1)}%`);
+}
+
+function buildTargetOptions(select: HTMLSelectElement, manifest: Manifest, targetId: string): void {
+  const moonTargets = manifest.targets.filter((t) => t.body === 'moon');
+  const marsTargets = manifest.targets.filter((t) => t.body === 'mars');
+  select.replaceChildren(
+    h(
+      'optgroup',
+      { label: 'Moon · Artemis South Pole (LOLA 30 m)' },
+      ...moonTargets.map((t) => h('option', { value: t.id }, `Moon · ${t.name}`)),
+    ),
+    h(
+      'optgroup',
+      { label: 'Mars · Candidate Landing Zones (MOLA 30 m)' },
+      ...marsTargets.map((t) => h('option', { value: t.id }, `Mars · ${t.name}`)),
+    ),
+  );
+  select.value = targetId;
+}
+
+function buildWindowOptions(select: HTMLSelectElement, windows: SimWindow[], rank: number): void {
+  select.replaceChildren(
+    ...windows.map((w) =>
+      h(
+        'option',
+        { value: String(w.rank) },
+        `#${w.rank} · ${w.region}${w.place ? ` (${w.place})` : ''} — ${w.score.toFixed(1)}%`,
+      ),
+    ),
+  );
+  select.value = String(rank);
+}
+
+function syncPrimaryDOM(ctrl: PrimaryController, manifest: Manifest): void {
+  const { state } = ctrl;
+
+  const tSig = manifest.targets.map((t) => t.id).join('|');
+  if (ctrl.targetsSig !== tSig) {
+    buildTargetOptions(ctrl.targetSelect, manifest, state.targetId);
+    ctrl.targetsSig = tSig;
+  } else if (ctrl.targetSelect.value !== state.targetId) {
+    ctrl.targetSelect.value = state.targetId;
+  }
+
+  const wSig = state.windows.map((w) => `${w.rank}:${w.site}:${w.i}:${w.j}:${w.score.toFixed(1)}`).join('|');
+  if (ctrl.windowsSig !== wSig) {
+    buildWindowOptions(ctrl.winSelect, state.windows, state.windowRank);
+    ctrl.windowsSig = wSig;
+  } else if (ctrl.winSelect.value !== String(state.windowRank)) {
+    ctrl.winSelect.value = String(state.windowRank);
+  }
+
+  for (const [mode, btn] of ctrl.camButtons) {
+    btn.setAttribute('aria-pressed', state.cameraMode === mode ? 'true' : 'false');
+  }
+
+  setRangeValue(ctrl.exagSlider, state.exag, 1, 5);
+  ctrl.exagBadge.textContent = `${state.exag.toFixed(1)}×`;
+}
+
+function syncSecondaryDOM(ctrl: SecondaryController): void {
+  const { state } = ctrl;
+
+  setRangeValue(ctrl.sunElevSlider, state.sunElevDeg, 0.5, 20);
+  ctrl.sunElevVal.textContent = `${state.sunElevDeg.toFixed(1)}°`;
+
+  const roundedHa = Math.round(state.sunHourAngleDeg);
+  setRangeValue(ctrl.sunHaSlider, roundedHa, -180, 180);
+  ctrl.sunHaVal.textContent = `${Math.round(state.sunGridAzDeg)}° az`;
+
+  ctrl.playSunBtn.setAttribute('aria-pressed', state.playingSun ? 'true' : 'false');
+  ctrl.playSunBtn.classList.toggle('is-playing', state.playingSun);
+  ctrl.playSunBtn.textContent = state.playingSun ? 'Pause Sun' : 'Play Sun';
+
+  for (const [mode, btn] of ctrl.earthSunButtons) {
+    btn.setAttribute('aria-pressed', state.earthSunMode === mode ? 'true' : 'false');
+  }
+
+  for (const [tool, btn] of ctrl.toolButtons) {
+    btn.setAttribute('aria-pressed', state.pointerTool === tool ? 'true' : 'false');
+  }
+
+  const roverPct = Math.round(state.roverProgress * 100);
+  setRangeValue(ctrl.roverSlider, roverPct, 0, 100);
+  ctrl.roverVal.textContent = `${roverPct}%`;
+
+  ctrl.driveRoverBtn.setAttribute('aria-pressed', state.drivingRover ? 'true' : 'false');
+  ctrl.driveRoverBtn.classList.toggle('is-playing', state.drivingRover);
+  ctrl.driveRoverBtn.textContent = state.drivingRover ? 'Pause rover' : 'Drive rover';
+
+  ctrl.slopeCheckbox.checked = state.showSlopeMask;
+}
+
+export function renderPrimaryControls(
   container: HTMLElement,
   manifest: Manifest,
   state: MissionControlsState,
   cb: MissionControlsCallbacks,
 ): void {
-  const moonTargets = manifest.targets.filter((t) => t.body === 'moon');
-  const marsTargets = manifest.targets.filter((t) => t.body === 'mars');
+  const existing = primaryControllers.get(container);
+  if (existing && existing.root.parentElement === container) {
+    existing.state = state;
+    existing.cb = cb;
+    syncPrimaryDOM(existing, manifest);
+    return;
+  }
 
-  const targetSelect = h(
-    'select',
-    {
-      id: 'mission-target-select',
-      class: 'mission-select',
-      'aria-label': 'Select planetary target site',
-      onchange: (e: Event) => cb.onSelectTarget((e.target as HTMLSelectElement).value),
-    },
-    h(
-      'optgroup',
-      { label: 'Moon · Artemis South Pole (LOLA 30 m)' },
-      ...moonTargets.map((t) =>
-        h(
-          'option',
-          { value: t.id, ...(t.id === state.targetId ? { selected: 'selected' } : {}) },
-          `Moon · ${t.name}`,
-        ),
-      ),
-    ),
-    h(
-      'optgroup',
-      { label: 'Mars · Candidate Landing Zones (MOLA 30 m)' },
-      ...marsTargets.map((t) =>
-        h(
-          'option',
-          { value: t.id, ...(t.id === state.targetId ? { selected: 'selected' } : {}) },
-          `Mars · ${t.name}`,
-        ),
-      ),
-    ),
-  ) as HTMLSelectElement;
-  targetSelect.value = state.targetId;
+  const ctrl: PrimaryController = {} as PrimaryController;
+  ctrl.state = state;
+  ctrl.cb = cb;
+  ctrl.targetsSig = '';
+  ctrl.windowsSig = '';
+  ctrl.camButtons = new Map();
 
-  const winSelect = h(
-    'select',
-    {
-      id: 'mission-window-select',
-      class: 'mission-select',
-      'aria-label': 'Select top-5 Earth analog window',
-      onchange: (e: Event) => cb.onSelectWindow(Number((e.target as HTMLSelectElement).value)),
-    },
-    ...state.windows.map((w) =>
-      h(
-        'option',
-        { value: String(w.rank), ...(w.rank === state.windowRank ? { selected: 'selected' } : {}) },
-        `#${w.rank} · ${w.region}${w.place ? ` (${w.place})` : ''} — ${w.score.toFixed(1)} %`,
-      ),
-    ),
-  ) as HTMLSelectElement;
-  winSelect.value = String(state.windowRank);
+  const targetSelect = h('select', {
+    id: 'mission-target-select',
+    class: 'mission-select',
+    'aria-label': 'Select planetary target site',
+    onchange: () => ctrl.cb.onSelectTarget(targetSelect.value),
+  }) as HTMLSelectElement;
+
+  const winSelect = h('select', {
+    id: 'mission-window-select',
+    class: 'mission-select',
+    'aria-label': 'Select top-5 Earth analog window',
+    onchange: () => ctrl.cb.onSelectWindow(Number(winSelect.value)),
+  }) as HTMLSelectElement;
 
   const camModes: Array<{ id: CameraMode; label: string; title: string }> = [
     { id: 'orbital', label: 'Orbital 3D', title: 'Synchronized 3D orbit camera' },
     { id: 'astronaut', label: 'Astronaut 1.7 m', title: 'First-person eye height at 1.7 m above local surface' },
-    { id: 'rover', label: 'Rover follow', title: 'Chase camera behind the traversing rover' },
-    { id: 'topdown', label: '2D Map', title: 'Top-down hillshade + cast shadow map (no-WebGL fallback)' },
+    { id: 'rover', label: 'Rover', title: 'Chase camera behind the traversing rover' },
+    { id: 'topdown', label: '2D Map', title: 'Top-down hillshade + cast shadow map' },
   ];
 
-  const pointerTools: Array<{ id: PointerTool; label: string }> = [
-    { id: 'orbit', label: 'Orbit / Zoom' },
-    { id: 'start', label: 'Pick Start (A)' },
-    { id: 'end', label: 'Pick End (B)' },
-  ];
+  const camSeg = h(
+    'div',
+    { class: 'seg mission-seg', role: 'group', 'aria-label': 'Camera view modes' },
+    ...camModes.map((m) => {
+      const btn = h(
+        'button',
+        {
+          type: 'button',
+          title: m.title,
+          'aria-pressed': 'false',
+          onclick: () => ctrl.cb.onChangeCameraMode(m.id),
+        },
+        m.label,
+      ) as HTMLButtonElement;
+      ctrl.camButtons.set(m.id, btn);
+      return btn;
+    }),
+  );
 
-  const presets: Array<{ label: string; s: [number, number]; e: [number, number] }> = [
-    { label: 'Diagonal SW→NE', s: [0.82, 0.16], e: [0.18, 0.84] },
-    { label: 'Diagonal NW→SE', s: [0.16, 0.16], e: [0.84, 0.84] },
-    { label: 'South→North', s: [0.86, 0.5], e: [0.14, 0.5] },
-    { label: 'West→East', s: [0.5, 0.14], e: [0.5, 0.86] },
-  ];
+  const exagBadge = h(
+    'span',
+    { class: 'mission-exag-badge tnum', 'aria-live': 'polite' },
+    `${state.exag.toFixed(1)}×`,
+  );
+
+  const exagSlider = h('input', {
+    id: 'mission-exag-slider',
+    type: 'range',
+    min: '1',
+    max: '5',
+    step: '0.5',
+    value: String(state.exag),
+    oninput: () => {
+      const val = Number(exagSlider.value);
+      setRangeValue(exagSlider, val, 1, 5);
+      exagBadge.textContent = `${val.toFixed(1)}×`;
+      ctrl.cb.onChangeExag(val);
+    },
+  }) as HTMLInputElement;
+
+  const resetCamBtn = h(
+    'button',
+    {
+      type: 'button',
+      class: 'btn small',
+      onclick: () => ctrl.cb.onResetCamera(),
+      title: 'Reset orbital camera angle and zoom',
+    },
+    'Reset',
+  ) as HTMLButtonElement;
 
   const bar = h(
     'section',
-    { class: 'panel mission-controls-panel', 'aria-label': 'Mission rehearsal controls' },
-
-    // Row 1: Target, Earth Window, Vertical Exaggeration, Camera Mode
+    { class: 'panel mission-top-bar', 'aria-label': 'Mission target and camera controls' },
     h(
       'div',
-      { class: 'mission-controls-grid' },
-
-      // Target & Earth Window selectors
+      { class: 'mission-field' },
+      h('label', { class: 'label', for: 'mission-target-select' }, 'Planetary target'),
+      targetSelect,
+    ),
+    h(
+      'div',
+      { class: 'mission-field' },
+      h('label', { class: 'label', for: 'mission-window-select' }, 'Earth analog window'),
+      winSelect,
+    ),
+    h(
+      'div',
+      { class: 'mission-field' },
+      h('span', { class: 'label' }, 'View'),
+      camSeg,
+    ),
+    h(
+      'div',
+      { class: 'mission-field mission-field-exag' },
       h(
         'div',
-        { class: 'mission-ctrl-group' },
-        h('label', { class: 'mission-ctrl-label', for: 'mission-target-select' }, '1. Planetary target (6×6 km)'),
-        targetSelect,
+        { class: 'mission-field-head' },
+        h('label', { class: 'label', for: 'mission-exag-slider' }, 'Vertical scale (1×–5×)'),
+        exagBadge,
+      ),
+      h(
+        'div',
+        { class: 'mission-exag-row' },
+        exagSlider,
+        resetCamBtn,
+      ),
+    ),
+  );
+
+  ctrl.root = bar;
+  ctrl.targetSelect = targetSelect;
+  ctrl.winSelect = winSelect;
+  ctrl.exagSlider = exagSlider;
+  ctrl.exagBadge = exagBadge;
+
+  primaryControllers.set(container, ctrl);
+  syncPrimaryDOM(ctrl, manifest);
+  container.replaceChildren(bar);
+}
+
+export function renderSecondaryControls(
+  container: HTMLElement,
+  state: MissionControlsState,
+  cb: MissionControlsCallbacks,
+): void {
+  const existing = secondaryControllers.get(container);
+  if (existing && existing.root.parentElement === container) {
+    existing.state = state;
+    existing.cb = cb;
+    syncSecondaryDOM(existing);
+    return;
+  }
+
+  const ctrl: SecondaryController = {} as SecondaryController;
+  ctrl.state = state;
+  ctrl.cb = cb;
+  ctrl.earthSunButtons = new Map();
+  ctrl.toolButtons = new Map();
+
+  const playSunBtn = h(
+    'button',
+    {
+      type: 'button',
+      class: 'btn small mission-toggle-btn',
+      'aria-pressed': 'false',
+      onclick: () => ctrl.cb.onTogglePlaySun(),
+    },
+    'Play Sun',
+  ) as HTMLButtonElement;
+
+  const sunElevVal = h('output', { class: 'mission-slider-val tnum', for: 'mission-sun-elev' }, '');
+  const sunElevSlider = h('input', {
+    id: 'mission-sun-elev',
+    type: 'range',
+    min: '0.5',
+    max: '20',
+    step: '0.5',
+    value: String(state.sunElevDeg),
+    oninput: () => {
+      const val = Number(sunElevSlider.value);
+      setRangeValue(sunElevSlider, val, 0.5, 20);
+      sunElevVal.textContent = `${val.toFixed(1)}°`;
+      ctrl.cb.onChangeSun(val, ctrl.state.sunHourAngleDeg);
+    },
+  }) as HTMLInputElement;
+
+  const sunHaVal = h('output', { class: 'mission-slider-val tnum', for: 'mission-sun-ha' }, '');
+  const sunHaSlider = h('input', {
+    id: 'mission-sun-ha',
+    type: 'range',
+    min: '-180',
+    max: '180',
+    step: '5',
+    value: String(Math.round(state.sunHourAngleDeg)),
+    oninput: () => {
+      const val = Number(sunHaSlider.value);
+      setRangeValue(sunHaSlider, val, -180, 180);
+      ctrl.cb.onChangeSun(ctrl.state.sunElevDeg, val);
+    },
+  }) as HTMLInputElement;
+
+  const earthSunOpts: Array<{ id: EarthSunMode; label: string }> = [
+    { id: 'rehearsal', label: 'Rehearsal date' },
+    { id: 'mirror', label: 'Mirror target' },
+  ];
+  const earthSunSeg = h(
+    'div',
+    { class: 'seg mission-seg', role: 'group', 'aria-label': 'Earth viewport Sun source' },
+    ...earthSunOpts.map((opt) => {
+      const btn = h(
+        'button',
+        {
+          type: 'button',
+          'aria-pressed': 'false',
+          onclick: () => ctrl.cb.onChangeEarthSunMode(opt.id),
+        },
+        opt.label,
+      ) as HTMLButtonElement;
+      ctrl.earthSunButtons.set(opt.id, btn);
+      return btn;
+    }),
+  );
+
+  const driveRoverBtn = h(
+    'button',
+    {
+      type: 'button',
+      class: 'btn small mission-toggle-btn',
+      'aria-pressed': 'false',
+      onclick: () => ctrl.cb.onToggleDriveRover(),
+    },
+    'Drive rover',
+  ) as HTMLButtonElement;
+
+  const pointerTools: Array<{ id: PointerTool; label: string }> = [
+    { id: 'orbit', label: 'Orbit' },
+    { id: 'start', label: 'Set A' },
+    { id: 'end', label: 'Set B' },
+  ];
+  const toolSeg = h(
+    'div',
+    { class: 'seg mission-seg', role: 'group', 'aria-label': 'Terrain click action' },
+    ...pointerTools.map((pt) => {
+      const btn = h(
+        'button',
+        {
+          type: 'button',
+          'aria-pressed': 'false',
+          onclick: () => ctrl.cb.onChangePointerTool(pt.id),
+        },
+        pt.label,
+      ) as HTMLButtonElement;
+      ctrl.toolButtons.set(pt.id, btn);
+      return btn;
+    }),
+  );
+
+  const swapBtn = h(
+    'button',
+    {
+      type: 'button',
+      class: 'btn small',
+      title: 'Reverse Start (A) and End (B)',
+      onclick: () => ctrl.cb.onSwapRoute(),
+    },
+    'A ↔ B',
+  ) as HTMLButtonElement;
+
+  const roverVal = h('output', { class: 'mission-slider-val tnum', for: 'mission-rover-scrub' }, '');
+  const roverSlider = h('input', {
+    id: 'mission-rover-scrub',
+    type: 'range',
+    min: '0',
+    max: '100',
+    step: '1',
+    value: String(Math.round(state.roverProgress * 100)),
+    oninput: () => {
+      const val = Number(roverSlider.value);
+      setRangeValue(roverSlider, val, 0, 100);
+      roverVal.textContent = `${Math.round(val)}%`;
+      ctrl.cb.onScrubRover(val / 100);
+    },
+  }) as HTMLInputElement;
+
+  const slopeCheckbox = h('input', {
+    id: 'mission-slope-mask',
+    type: 'checkbox',
+    onchange: () => ctrl.cb.onToggleSlopeMask(slopeCheckbox.checked),
+  }) as HTMLInputElement;
+
+  const strip = h(
+    'section',
+    { class: 'panel mission-workbench-strip', 'aria-label': 'Sun geometry and traverse controls' },
+    // Left column: Solar geometry
+    h(
+      'div',
+      { class: 'mission-workbench-col' },
+      h(
+        'div',
+        { class: 'mission-subpanel-head' },
+        h('span', { class: 'label' }, 'Solar illumination & cast shadows'),
+        h('div', { class: 'mission-inline-actions' }, earthSunSeg, playSunBtn),
+      ),
+      h(
+        'div',
+        { class: 'mission-sliders-duo' },
+        h(
+          'div',
+          { class: 'mission-slider-row' },
+          h('label', { class: 'mission-slider-lbl', for: 'mission-sun-elev' }, 'Sun elev'),
+          sunElevSlider,
+          sunElevVal,
+        ),
+        h(
+          'div',
+          { class: 'mission-slider-row' },
+          h('label', { class: 'mission-slider-lbl', for: 'mission-sun-ha' }, 'Sun azimuth'),
+          sunHaSlider,
+          sunHaVal,
+        ),
+      ),
+    ),
+
+    // Right column: Rover & traverse
+    h(
+      'div',
+      { class: 'mission-workbench-col' },
+      h(
+        'div',
+        { class: 'mission-subpanel-head' },
+        h('span', { class: 'label' }, 'Rover & waypoints (A* avoids > 20° slopes)'),
+        h(
+          'div',
+          { class: 'mission-inline-actions' },
+          toolSeg,
+          swapBtn,
+          driveRoverBtn,
+        ),
+      ),
+      h(
+        'div',
+        { class: 'mission-traverse-row' },
+        h(
+          'div',
+          { class: 'mission-slider-row mission-rover-row' },
+          h('label', { class: 'mission-slider-lbl', for: 'mission-rover-scrub' }, 'Rover pos'),
+          roverSlider,
+          roverVal,
+        ),
         h(
           'label',
-          { class: 'mission-ctrl-label mission-mt-2', for: 'mission-window-select' },
-          '2. Top-5 Earth analog window',
-        ),
-        winSelect,
-      ),
-
-      // Camera & Vertical Exaggeration
-      h(
-        'div',
-        { class: 'mission-ctrl-group' },
-        h(
-          'div',
-          { class: 'mission-ctrl-header' },
-          h('span', { class: 'mission-ctrl-label' }, '3. Synchronized camera & relief'),
-          h(
-            'span',
-            { class: 'mission-exag-badge num', 'aria-live': 'polite' },
-            `Vert. exaggeration: ${state.exag.toFixed(1)}×`,
-          ),
-        ),
-        h(
-          'div',
-          { class: 'mission-btn-row', role: 'group', 'aria-label': 'Camera view modes' },
-          ...camModes.map((m) =>
-            h(
-              'button',
-              {
-                type: 'button',
-                class: `mission-seg-btn ${state.cameraMode === m.id ? 'active' : ''}`,
-                title: m.title,
-                'aria-pressed': state.cameraMode === m.id ? 'true' : 'false',
-                onclick: () => cb.onChangeCameraMode(m.id),
-              },
-              m.label,
-            ),
-          ),
-        ),
-        h(
-          'div',
-          { class: 'mission-slider-row' },
-          h(
-            'label',
-            { class: 'mission-slider-lbl', for: 'mission-exag-slider' },
-            'Vertical scale (1×–5×)',
-          ),
-          h('input', {
-            id: 'mission-exag-slider',
-            type: 'range',
-            min: '1',
-            max: '5',
-            step: '0.5',
-            value: String(state.exag),
-            class: 'mission-range',
-            oninput: (e: Event) => cb.onChangeExag(Number((e.target as HTMLInputElement).value)),
-          }),
-          h('span', { class: 'mission-slider-val num' }, `${state.exag.toFixed(1)}×`),
-          h(
-            'button',
-            {
-              type: 'button',
-              class: 'mission-mini-btn',
-              onclick: () => cb.onResetCamera(),
-              title: 'Reset orbital camera angle and zoom',
-            },
-            'Reset cam',
-          ),
-        ),
-      ),
-
-      // Solar Geometry & Diurnal Animation
-      h(
-        'div',
-        { class: 'mission-ctrl-group' },
-        h(
-          'div',
-          { class: 'mission-ctrl-header' },
-          h('span', { class: 'mission-ctrl-label' }, '4. Solar illumination & cast shadows'),
-          h(
-            'button',
-            {
-              type: 'button',
-              class: `mission-play-btn ${state.playingSun ? 'playing' : ''}`,
-              'aria-pressed': state.playingSun ? 'true' : 'false',
-              onclick: () => cb.onTogglePlaySun(),
-            },
-            state.playingSun ? 'Pause Sun' : 'Play Sun cycle',
-          ),
-        ),
-        h(
-          'div',
-          { class: 'mission-slider-row' },
-          h('label', { class: 'mission-slider-lbl', for: 'mission-sun-elev' }, 'Sun elevation'),
-          h('input', {
-            id: 'mission-sun-elev',
-            type: 'range',
-            min: '0.5',
-            max: '20',
-            step: '0.5',
-            value: String(state.sunElevDeg),
-            class: 'mission-range',
-            oninput: (e: Event) =>
-              cb.onChangeSun(Number((e.target as HTMLInputElement).value), state.sunHourAngleDeg),
-          }),
-          h('span', { class: 'mission-slider-val num' }, `${state.sunElevDeg.toFixed(1)}°`),
-        ),
-        h(
-          'div',
-          { class: 'mission-slider-row' },
-          h('label', { class: 'mission-slider-lbl', for: 'mission-sun-ha' }, 'Hour angle / az'),
-          h('input', {
-            id: 'mission-sun-ha',
-            type: 'range',
-            min: '-180',
-            max: '180',
-            step: '5',
-            value: String(Math.round(state.sunHourAngleDeg)),
-            class: 'mission-range',
-            oninput: (e: Event) =>
-              cb.onChangeSun(state.sunElevDeg, Number((e.target as HTMLInputElement).value)),
-          }),
-          h('span', { class: 'mission-slider-val num' }, `az ${Math.round(state.sunGridAzDeg)}°`),
-        ),
-        h(
-          'div',
-          { class: 'mission-earth-sun-toggle' },
-          h(
-            'button',
-            {
-              type: 'button',
-              class: `mission-seg-btn ${state.earthSunMode === 'rehearsal' ? 'active' : ''}`,
-              'aria-pressed': state.earthSunMode === 'rehearsal' ? 'true' : 'false',
-              onclick: () => cb.onChangeEarthSunMode('rehearsal'),
-            },
-            'Earth: Rehearsal date Sun',
-          ),
-          h(
-            'button',
-            {
-              type: 'button',
-              class: `mission-seg-btn ${state.earthSunMode === 'mirror' ? 'active' : ''}`,
-              'aria-pressed': state.earthSunMode === 'mirror' ? 'true' : 'false',
-              onclick: () => cb.onChangeEarthSunMode('mirror'),
-            },
-            'Earth: Mirror target Sun',
-          ),
-        ),
-      ),
-
-      // Route Planning & Rover Drive
-      h(
-        'div',
-        { class: 'mission-ctrl-group' },
-        h(
-          'div',
-          { class: 'mission-ctrl-header' },
-          h('span', { class: 'mission-ctrl-label' }, '5. Least-cost A* traverse & rover drive'),
-          h(
-            'button',
-            {
-              type: 'button',
-              class: `mission-play-btn ${state.drivingRover ? 'playing' : ''}`,
-              'aria-pressed': state.drivingRover ? 'true' : 'false',
-              onclick: () => cb.onToggleDriveRover(),
-            },
-            state.drivingRover ? 'Pause rover' : 'Drive rover',
-          ),
-        ),
-        h(
-          'div',
-          { class: 'mission-btn-row', role: 'group', 'aria-label': 'Terrain click action' },
-          ...pointerTools.map((pt) =>
-            h(
-              'button',
-              {
-                type: 'button',
-                class: `mission-seg-btn ${state.pointerTool === pt.id ? 'active' : ''}`,
-                'aria-pressed': state.pointerTool === pt.id ? 'true' : 'false',
-                onclick: () => cb.onChangePointerTool(pt.id),
-              },
-              pt.label,
-            ),
-          ),
-          h(
-            'button',
-            {
-              type: 'button',
-              class: 'mission-mini-btn',
-              title: 'Reverse Start (A) and End (B)',
-              onclick: () => cb.onSwapRoute(),
-            },
-            'A ↔ B',
-          ),
-        ),
-        h(
-          'div',
-          { class: 'mission-slider-row' },
-          h('label', { class: 'mission-slider-lbl', for: 'mission-rover-scrub' }, 'Rover position'),
-          h('input', {
-            id: 'mission-rover-scrub',
-            type: 'range',
-            min: '0',
-            max: '100',
-            step: '1',
-            value: String(Math.round(state.roverProgress * 100)),
-            class: 'mission-range',
-            oninput: (e: Event) => cb.onScrubRover(Number((e.target as HTMLInputElement).value) / 100),
-          }),
-          h('span', { class: 'mission-slider-val num' }, `${Math.round(state.roverProgress * 100)}%`),
-        ),
-        h(
-          'div',
-          { class: 'mission-presets-row' },
-          ...presets.map((p) =>
-            h(
-              'button',
-              {
-                type: 'button',
-                class: 'mission-chip-btn',
-                onclick: () => cb.onApplyPresetRoute(p.s, p.e),
-              },
-              p.label,
-            ),
-          ),
-          h(
-            'label',
-            { class: 'mission-slope-toggle' },
-            h('input', {
-              type: 'checkbox',
-              ...(state.showSlopeMask ? { checked: 'checked' } : {}),
-              onchange: (e: Event) => cb.onToggleSlopeMask((e.target as HTMLInputElement).checked),
-            }),
-            ' >20° wall',
-          ),
+          { class: 'mission-slope-toggle', for: 'mission-slope-mask' },
+          slopeCheckbox,
+          '> 20° wall',
         ),
       ),
     ),
   );
 
-  container.replaceChildren(bar);
+  ctrl.root = strip;
+  ctrl.sunElevSlider = sunElevSlider;
+  ctrl.sunElevVal = sunElevVal;
+  ctrl.sunHaSlider = sunHaSlider;
+  ctrl.sunHaVal = sunHaVal;
+  ctrl.playSunBtn = playSunBtn;
+  ctrl.roverSlider = roverSlider;
+  ctrl.roverVal = roverVal;
+  ctrl.driveRoverBtn = driveRoverBtn;
+  ctrl.slopeCheckbox = slopeCheckbox;
+
+  secondaryControllers.set(container, ctrl);
+  syncSecondaryDOM(ctrl);
+  container.replaceChildren(strip);
 }
