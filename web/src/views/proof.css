@@ -21,3 +21,7 @@
   .proof-h-lg { height: 520px; }
   .proof-h-md { height: 300px; }
 }
+.proof-h-xl { height: 560px; }
+.proof-lines { margin: 0 0 var(--s-3); padding-left: 1.2em; color: var(--text-2); line-height: 1.6; max-width: 75ch; }
+.proof-lines li { margin-bottom: var(--s-1); }
+@media (max-width: 760px) { .proof-h-xl { height: 720px; } }

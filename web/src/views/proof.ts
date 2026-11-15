@@ -71,6 +71,38 @@ export function card1(n: NullStats, name: (id: string) => string): string {
   return v ? `${name(n.headline_target)}: p = ${fmtP(v.p_value_region_matched)} within Mauna Kea (${fmtP(v.p_bonferroni)} after Bonferroni)` : n.headline;
 }
 
+/* ---------- controls (scripts/stats/controls.py) ---------- */
+export interface Dist { p50: number; p90: number; max: number; n_windows: number }
+export interface CtrlStat extends Dist { best_rank_if_inserted: number; of: number; p90_rank_among_regions: number; n_regions: number; terrain: Dist; illumination: Dist }
+export interface CtrlTarget { candidates: Dist; by_region: Record<string, Dist>; controls: Record<string, CtrlStat>; control: Dist }
+export interface CtrlRegion { id: string; label: string; tile: string; why: string }
+export const ctrlName = (r: CtrlRegion) => r.label.split(' (')[0];
+
+/** 1D: three sentences, each with its statistic named, generated from controls.json. */
+export function controlsLines(c: Record<string, CtrlTarget>, regions: CtrlRegion[], moon: string[], name: (id: string) => string, arcadia?: string): string[] {
+  const alps = regions.find(r => /alps/.test(r.id)), soft = regions.filter(r => r !== alps);
+  const out: string[] = [];
+  const below = (r: CtrlRegion) => moon.filter(t => c[t].controls[r.id] && c[t].controls[r.id].p90_rank_among_regions > c[t].controls[r.id].n_regions).length;
+  if (soft.length) {
+    const all = soft.every(r => below(r) === moon.length);
+    out.push(all ? `${soft.map(ctrlName).join(' and ')} fall below all ${c[moon[0]].controls[soft[0].id].n_regions} regions at P90 for every lunar target.`
+      : soft.map(r => `${ctrlName(r)} falls below all regions at P90 for ${below(r)} of ${moon.length} lunar targets.`).join(' '));
+  }
+  if (alps) {
+    const ranked = moon.filter(t => c[t].controls[alps.id]).sort((a, b) => c[a].controls[alps.id].best_rank_if_inserted - c[b].controls[alps.id].best_rank_if_inserted);
+    const top = ranked.slice(0, 2), a0 = c[top[0]].controls[alps.id];
+    out.push(`The Alps are the hard control: their best window would rank `
+      + top.map(t => `#${nf(c[t].controls[alps.id].best_rank_if_inserted)} for ${name(t)}`).join(' and ') + ` (of ${nf(a0.of)}); `
+      + `for ${name(top[0])} their terrain score reaches ${f1(a0.terrain.max)} but their illumination score only ${f1(a0.illumination.max)}.`);
+  }
+  if (arcadia && c[arcadia]) {
+    const ca = c[arcadia], above = soft.filter(r => ca.controls[r.id] && ca.controls[r.id].p50 > ca.candidates.p50);
+    if (above.length) out.push(`For ${name(arcadia)}, flat plains score above the median of our regions (P50 `
+      + above.map(r => `${f1(ca.controls[r.id].p50)} ${ctrlName(r)}`).join(', ') + ` vs ${f1(ca.candidates.p50)}): the flat-plains degeneracy.`);
+  }
+  return out;
+}
+
 /* ---------- view ---------- */
 const FILES = ['null', 'roc', 'bootstrap', 'stability', 'tornado', 'decomp', 'controls'] as const;
 const pending = (what: string) => `<p class="proof-pending">${esc(what)}: results pending.</p>`;
@@ -85,6 +117,10 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
   const moon = m.targets.filter(t => t.body === 'moon').map(t => t.id), mars = m.targets.filter(t => t.body === 'mars').map(t => t.id);
   const all = [...moon, ...mars];
   const okNull = isReal(S.null), okRoc = isReal(S.roc), okBoot = isReal(S.bootstrap), okStab = isReal(S.stability);
+  const okCtrl = isReal(S.controls), okTor = isReal(S.tornado), okDec = isReal(S.decomp);
+  const CT = S.controls as unknown as Record<string, CtrlTarget>, CR = okCtrl ? (S.controls as unknown as { regions: CtrlRegion[] }).regions : [];
+  const arcadia = mars.find(t => /arcadia/.test(t));
+  const flabel = (k: string) => m.feature_labels[k] ?? k;
   const title3 = okStab ? stabilityTitle(S.stability, all) : 'Robustness';
   const pickDefault = okNull && S.null.headline_target ? S.null.headline_target : moon[0];
 
@@ -105,6 +141,14 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
       <h3>What separates NASA's analog sites from the rest?</h3>
       ${okRoc ? `<p class="prose-p">${esc(aucLine(S.roc, moon, mars))}</p><div class="proof-chart proof-h-lg" id="proof-1c"></div>
         <p class="note">AUC = probability that a window containing a known analog site scores higher than a random other window (0.5 = no separation). Whiskers: 95 % CI, cluster bootstrap over sites (${nf(Number((S.roc._meta?.params as Record<string, unknown> | undefined)?.bootstrap ?? 0))} replicates). Only ${S.roc[moon[0]].n_sites} lunar and ${S.roc[mars[0]].n_sites} Mars sites, so this is descriptive.</p>` : pending('ROC')}
+      <h3>Control regions: does P.E.N. rank ordinary terrain high?</h3>
+      ${okCtrl ? `<ul class="proof-lines">${controlsLines(CT, CR, moon, name, arcadia).map(s => `<li>${esc(s)}</li>`).join('')}</ul>
+        <div class="proof-chart proof-h-xl" id="proof-1d"></div>
+        <p class="note">Bars: P50 to P90 of the combined score of all 6 km windows; marker: the maximum. Controls are scored with the same IQR and references as the main run and are not added to the official ranking.</p>
+        <details class="proof-more"><summary>Read more: why these control tiles</summary>
+          <ul class="proof-lines">${CR.map(r => `<li><b>${esc(r.label)}</b>, Copernicus GLO-30 tile ${esc(r.tile.replace(/_00/g, '').replace('_', ' '))}. ${esc(r.why)}</li>`).join('')}</ul>
+          <p class="note">An Amazon rainforest tile was considered and rejected: the Copernicus DEM is a surface model, so its roughness would be that of the forest canopy, not the ground.</p>
+        </details>` : pending('Controls')}
     </section>
 
     <section class="vsec proof-sec" id="proof-2" aria-labelledby="proof-2-h">
@@ -121,6 +165,11 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
       <h3>Does the #1 window survive the app's slider weights?</h3>
       ${okStab ? `<div class="proof-chart proof-h-lg" id="proof-3b"></div>
         <p class="note">${nf(Number((S.stability._meta?.params as Record<string, unknown> | undefined)?.n_draws ?? 0))} random weightings, each dimension log-uniform in [0.25, 4] (the slider range). #1 = the equal-weight #1 window of each target.</p>` : pending('Stability')}
+      <h3>Which feature moves the score of the top window?</h3>
+      ${okTor ? `<p class="prose-p" id="proof-3d-line"></p><div class="proof-chart proof-h-md" id="proof-3d"></div>
+        <p class="note">Change of the combined score of the target's top window when one feature moves by −1 or +1 IQR (all else fixed). Large drops on both sides mean the window already matches that feature.</p>` : pending('Tornado')}
+      ${okDec ? `<h3>What the distance is made of, top 20 windows</h3><div class="proof-chart proof-h-md" id="proof-3d2"></div>
+        <p class="note">Share of each feature in the squared distance d²/Σd² of the combined score: a large share is where the Earth window still differs from the target.</p>` : ''}
     </section>
   </div>`;
 
@@ -214,8 +263,73 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
     const summary = `${name(t)}: scores of the top 20 windows with 95 % bootstrap CI. ` + rows.map((r, i) => `#${i + 1} ${region(r.window_id)} ${f1(r.score)} [${f1(r.ci95[0])}–${f1(r.ci95[1])}]`).join('; ') + '.';
     if (h3a) h3a.update(opt, { replace: true, summary }); else h3a = mountChart(el.querySelector('#proof-3a')!, opt, { summary });
   };
-  draw3a(sel.value);
-  sel.addEventListener('change', () => draw3a(sel.value));
+  // ---- 3D · tornado and D^2 decomposition (per selected target)
+  type TorRow = { feature: string; low: number; high: number; removed: number };
+  let h3d: ReturnType<typeof mountChart> | null = null, h3d2: ReturnType<typeof mountChart> | null = null;
+  const draw3d = (t: string) => {
+    if (okTor) {
+      const rows = (S.tornado[t] as TorRow[]).slice().reverse(), top = (S.tornado[t] as TorRow[])[0];
+      const w0 = okBoot ? (S.bootstrap[t] as BootRow[])[0] : null;
+      el.querySelector('#proof-3d-line')!.textContent = `${name(t)}${w0 ? `, top window in ${region(w0.window_id)}` : ''}: the score is most sensitive to ${flabel(top.feature)} (−1 IQR: ${top.low > 0 ? '+' : ''}${f1(top.low)}; +1 IQR: ${top.high > 0 ? '+' : ''}${f1(top.high)} points).`;
+      const lbl = { show: true, fontSize: 11, textBorderWidth: 0, textBorderColor: 'transparent', formatter: (p: { value: number }) => `${p.value > 0 ? '+' : ''}${f1(p.value)}` };
+      const opt = {
+        legend: { top: 0 }, grid: { left: 8, right: 40, top: 32, bottom: 32, containLabel: true },
+        xAxis: { type: 'value', name: 'change in score (points)', nameLocation: 'middle', nameGap: 24 },
+        yAxis: { type: 'category', data: rows.map(r => flabel(r.feature)) },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v: number) => `${v > 0 ? '+' : ''}${f1(v)}` },
+        series: [{ name: '−1 IQR', type: 'bar', data: rows.map(r => r.low), barMaxWidth: 12, label: { ...lbl, position: 'left' } },
+          { name: '+1 IQR', type: 'bar', data: rows.map(r => r.high), barMaxWidth: 12, itemStyle: { opacity: 0.75 }, label: { ...lbl, position: 'right' } }],
+      };
+      const summary = `${name(t)}, top window: change of the combined score when each feature moves by −1 / +1 IQR: ` + (S.tornado[t] as TorRow[]).map(r => `${flabel(r.feature)} ${f1(r.low)} / ${f1(r.high)}`).join('; ') + '.';
+      if (h3d) h3d.update(opt, { replace: true, summary }); else h3d = mountChart(el.querySelector('#proof-3d')!, opt, { summary });
+    }
+    if (okDec) {
+      const dec = S.decomp[t] as Record<string, Record<string, number>>, ids = Object.keys(dec), feats = Object.keys(dec[ids[0]]);
+      const opt = {
+        legend: { top: 0, type: 'scroll' }, grid: { left: 8, right: 16, top: 36, bottom: 40, containLabel: true },
+        xAxis: { type: 'category', data: ids.map((_, i) => `#${i + 1}`), name: 'window rank (equal weights)', nameLocation: 'middle', nameGap: 28 },
+        yAxis: { type: 'value', max: 1, axisLabel: { formatter: (v: number) => `${Math.round(v * 100)} %` } },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v: number) => `${Math.round(v * 100)} %` },
+        series: feats.map(f => ({ name: flabel(f), type: 'bar', stack: 'd2', data: ids.map(id => dec[id][f]), barMaxWidth: 26 })),
+      };
+      const summary = `${name(t)}: share of each feature in the squared distance of the top 20 windows. Top window: ` + feats.map(f => [f, dec[ids[0]][f]] as [string, number]).sort((a, b) => b[1] - a[1]).map(([f, v]) => `${flabel(f)} ${Math.round(v * 100)} %`).join(', ') + '.';
+      if (h3d2) h3d2.update(opt, { replace: true, summary }); else h3d2 = mountChart(el.querySelector('#proof-3d2')!, opt, { summary });
+    }
+  };
+
+  draw3a(sel.value); draw3d(sel.value);
+  sel.addEventListener('change', () => { draw3a(sel.value); draw3d(sel.value); });
+
+  // ---- 1D · controls vs the 14 regions
+  if (okCtrl) {
+    const cats = [...all].reverse();
+    const groups = [{ name: 'Our 14 regions', get: (t: string) => CT[t].candidates }, ...CR.map(r => ({ name: ctrlName(r), get: (t: string) => CT[t].controls[r.id] as Dist }))];
+    const sym = ['circle', 'rect', 'triangle', 'diamond'], n = groups.length;
+    type Api = { value: (i: number) => number; coord: (v: number[]) => number[]; size: (v: number[]) => number[]; visual: (k: string) => string };
+    const off = (gi: number, api: Api) => (gi - (n - 1) / 2) * api.size([0, 1])[1] * (0.8 / n);
+    const series = groups.flatMap((g, gi) => [
+      { type: 'custom', name: g.name, silent: true, encode: { x: [1, 2], y: 0 }, data: cats.map((t, i) => [i, g.get(t).p50, g.get(t).p90]),
+        renderItem: (_p: unknown, api: Api) => { const a = api.coord([api.value(1), api.value(0)]), b = api.coord([api.value(2), api.value(0)]), dy = off(gi, api);
+          return { type: 'rect', shape: { x: a[0], y: a[1] + dy - 3, width: Math.max(2, b[0] - a[0]), height: 6 }, style: { fill: api.visual('color') } }; } },
+      { type: 'custom', name: g.name, encode: { x: 1, y: 0 }, data: cats.map((t, i) => [i, g.get(t).max, g.get(t).p50, g.get(t).p90]),
+        renderItem: (_p: unknown, api: Api) => { const c = api.coord([api.value(1), api.value(0)]), dy = off(gi, api), r = 4.5, y = c[1] + dy, fill = api.visual('color');
+          const s = sym[gi % sym.length];
+          return s === 'rect' ? { type: 'rect', shape: { x: c[0] - r, y: y - r, width: 2 * r, height: 2 * r }, style: { fill } }
+            : s === 'triangle' ? { type: 'polygon', shape: { points: [[c[0], y - r - 1], [c[0] - r, y + r], [c[0] + r, y + r]] }, style: { fill } }
+            : s === 'diamond' ? { type: 'polygon', shape: { points: [[c[0], y - r - 1], [c[0] + r + 1, y], [c[0], y + r + 1], [c[0] - r - 1, y]] }, style: { fill } }
+            : { type: 'circle', shape: { cx: c[0], cy: y, r }, style: { fill } }; } },
+    ]);
+    const summary = `Combined score P50, P90 and maximum per target, our 14 regions against the control tiles. ` + all.map(t => `${name(t)}: `
+      + groups.map(g => { const d = g.get(t); return `${g.name} ${f1(d.p50)}/${f1(d.p90)}/${f1(d.max)}`; }).join(', ')).join('; ') + '. ' + controlsLines(CT, CR, moon, name, arcadia).join(' ');
+    mountChart(el.querySelector('#proof-1d')!, {
+      legend: { top: 0, data: groups.map((g, i) => ({ name: g.name, icon: sym[i % sym.length] })) },
+      grid: { left: 8, right: 16, top: 40, bottom: 32, containLabel: true },
+      xAxis: { type: 'value', min: 0, max: 100, name: 'combined score (bar P50–P90, marker = max)', nameLocation: 'middle', nameGap: 24 },
+      yAxis: { type: 'category', data: cats.map(name) },
+      tooltip: { trigger: 'item', formatter: (p: { seriesName: string; value: number[] }) => p.value.length > 3 ? `${esc(name(cats[p.value[0]]))} · ${esc(p.seriesName)}<br>P50 ${f1(p.value[2])} · P90 ${f1(p.value[3])} · max ${f1(p.value[1])}` : '' },
+      series,
+    }, { summary });
+  }
 
   // ---- 3B · weight stability
   if (okStab) {
