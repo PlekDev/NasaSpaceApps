@@ -139,3 +139,25 @@ def test_real_results_keep_the_stub_shape():
             continue
         real = json.loads(src.read_text(encoding="utf-8"))
         assert set(s[name]) - {"_stub"} <= set(real), (name, set(s[name]) - set(real))
+
+
+def test_corrected_p_formatting():
+    from null_test import fmt_p, fmt_pc
+    assert fmt_p(0.0041) == "0.004" and fmt_p(0.36746) == "0.367" and fmt_p(0.0002) == "< 0.001"
+    assert fmt_pc(0.0246) == "0.025" and fmt_pc(0.1476) == "0.15" and fmt_pc(1.0) == "1" and fmt_pc(0.0041) == "0.004"
+
+
+def test_headline_carries_both_corrections():
+    """The headline in null.json is generated from its own numbers and carries both multiple-testing corrections."""
+    import json
+    from null_test import fmt_p, fmt_pc
+    path = ROOT / "data" / "processed" / "stats" / "null.json"
+    n = json.loads(path.read_text(encoding="utf-8"))
+    if n.get("_stub"):
+        return
+    b, k = n["pu_uhiwahine"][n["headline_target"]], n["_meta"]["params"]["n_lunar_tests"]
+    assert abs(b["p_bonferroni_all_lunar_tests"] - min(1, b["p_value_region_matched"] * k)) < 1e-3
+    h = n["headline"]
+    assert f"p = {fmt_p(b['p_value_region_matched'])}" in h
+    assert f"{fmt_pc(b['p_bonferroni'])} corrected for {len(n['pu_uhiwahine'])} lunar targets" in h
+    assert f"{fmt_pc(b['p_bonferroni_all_lunar_tests'])} corrected for all {k} site–target tests" in h
