@@ -1,5 +1,5 @@
 import { BASE } from './base';
-import { esc, cap, nf, coord } from './format';
+import { esc, cap, nf, coord, pyFixed } from './format';
 import { icon } from './icons';
 import { ramp } from './score';
 import { getJSON, loadDetail } from './data';
@@ -45,8 +45,8 @@ export function mountDetail(root: HTMLElement, m: Manifest, store: Store, get: (
       <div class="sub tnum">${esc(where(r))}${where(r) ? ' · ' : ''}${coord(lat, lon)}</div></div>
       <button class="icon-btn small" id="d-close" aria-label="Close analog card">${icon.close}</button></header>
     <div class="d-body">
-    <section class="d-sec"><div class="d-score"><b class="tnum">${score.toFixed(0)}</b><span>/ 100 combined</span></div>
-      <div class="dimbars">${dims.map((n, x) => `<div class="dimbar"><span>${cap(n)}</span><span class="track"><i style="width:${scored.dim[x][k]}%;background:${ramp(scored.dim[x][k], S.minScore)}"></i></span><b class="tnum">${scored.dim[x][k].toFixed(0)}</b></div>`).join('')}</div></section>
+    <section class="d-sec"><div class="d-score"><b class="tnum">${pyFixed(score)}</b><span>/ 100 combined</span></div>
+      <div class="dimbars">${dims.map((n, x) => `<div class="dimbar"><span>${cap(n)}</span><span class="track"><i style="width:${scored.dim[x][k]}%;background:${ramp(scored.dim[x][k], S.minScore)}"></i></span><b class="tnum">${pyFixed(scored.dim[x][k])}</b></div>`).join('')}</div></section>
 
     <section class="d-sec"><div class="d-h"><h3>Compare</h3>
       <div class="seg" role="group" aria-label="Image source"><button data-src="low" aria-pressed="true">Low Sun</button><button data-src="real" aria-pressed="false">NASA imagery</button></div></div>

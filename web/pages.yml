@@ -1,4 +1,4 @@
-# Prepared, NOT enabled: copy to .github/workflows/pages.yml to publish web/ on GitHub Pages.
+# Copy of .github/workflows/pages.yml (kept for reference; the workflow itself lives there now).
 name: Web (GitHub Pages)
 on:
   workflow_dispatch:

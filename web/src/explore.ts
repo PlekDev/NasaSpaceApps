@@ -1,5 +1,5 @@
 import { BASE } from './base';
-import { esc, cap, nf, coord } from './format';
+import { esc, cap, nf, coord, pyFixed } from './format';
 import { icon } from './icons';
 import { ramp } from './score';
 import { score, type Scored } from './model';
@@ -102,16 +102,16 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     bestEl.innerHTML = `
       <div class="tchip">${t.thumb ? `<img src="${BASE}thumbs/${t.thumb}" alt="" width="32" height="32">` : ''}<span><b>${esc(t.name)}</b><em>${esc(t.detail)}</em></span></div>
       <div class="label">Best match</div>
-      <button class="score" id="best-go" aria-label="Fly to the best match: ${esc(r.name)}, score ${scored.s[k].toFixed(0)} of 100"><b class="tnum">${scored.s[k].toFixed(0)}</b><span>/ 100</span></button>
+      <button class="score" id="best-go" aria-label="Fly to the best match: ${esc(r.name)}, score ${pyFixed(scored.s[k])} of 100"><b class="tnum">${pyFixed(scored.s[k])}</b><span>/ 100</span></button>
       <div class="where">${esc(r.name)}</div>
       <div class="coords tnum">${esc(where(r))}${where(r) ? ' · ' : ''}${coord(scored.lat[k], scored.lon[k])}</div>
-      <div class="dimrow tnum">${dims.map((n, x) => `<span>${cap(n)}<b>${scored.dim[x][k].toFixed(0)}</b></span>`).join('')}</div>
+      <div class="dimrow tnum">${dims.map((n, x) => `<span>${cap(n)}<b>${pyFixed(scored.dim[x][k])}</b></span>`).join('')}</div>
       <div class="legend"><span class="tnum">${S.minScore}</span><span class="ramp" role="img" aria-label="Score colour ramp from ${S.minScore} to 100"></span><span class="tnum">100</span></div>`;
     $('#best-go', root).addEventListener('click', () => flyWindow(k, false));
   }
   const winRow = (k: number, n: number) => `<li><button class="win" data-k="${k}"><span class="rk tnum">${n}</span>
-      <span><span class="nm tnum">${coord(scored.lat[k], scored.lon[k])}</span><span class="dm tnum">${dims.map((d, x) => `${cap(d)} ${scored.dim[x][k].toFixed(0)}`).join(' · ')}</span></span>
-      <span class="sc tnum"><span class="v"><i style="background:${ramp(scored.s[k], S.minScore)}"></i>${scored.s[k].toFixed(0)}</span></span></button></li>`;
+      <span><span class="nm tnum">${coord(scored.lat[k], scored.lon[k])}</span><span class="dm tnum">${dims.map((d, x) => `${cap(d)} ${pyFixed(scored.dim[x][k])}`).join(' · ')}</span></span>
+      <span class="sc tnum"><span class="v"><i style="background:${ramp(scored.s[k], S.minScore)}"></i>${pyFixed(scored.s[k])}</span></span></button></li>`;
   function renderList() {
     $('#matches-sub', root).textContent = scored.zeroWeights ? 'All weights are 0'
       : `Best window per region · ${nf(scored.shown.length)} of ${nf(scored.n)} score ${S.minScore}+`;
@@ -121,7 +121,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
       return `<div class="rg" data-ri="${ri}"><button class="match${n === 0 ? ' top' : ''}" aria-expanded="${open}" data-ri="${ri}">
         <span class="rk tnum">${n + 1}</span>
         <span><span class="nm">${esc(r.name)}</span><span class="dm">${esc(where(r))}</span></span>
-        <span class="sc tnum"><span class="v"><i style="background:${ramp(scored.s[best], S.minScore)}"></i>${scored.s[best].toFixed(0)}</span><span class="n">${nf(ks.length)} window${ks.length === 1 ? '' : 's'}</span></span>
+        <span class="sc tnum"><span class="v"><i style="background:${ramp(scored.s[best], S.minScore)}"></i>${pyFixed(scored.s[best])}</span><span class="n">${nf(ks.length)} window${ks.length === 1 ? '' : 's'}</span></span>
         <span class="chev">${icon.chevron}</span></button>
         ${open ? `<ol class="wins">${ks.slice(0, WIN_CHUNK).map((k, i) => winRow(k, i + 1)).join('')}${ks.length > WIN_CHUNK ? `<li><button class="more" data-ri="${ri}" data-shown="${WIN_CHUNK}">Show more (${nf(ks.length - WIN_CHUNK)})</button></li>` : ''}</ol>` : ''}</div>`;
     }).join('');
@@ -164,7 +164,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   function updatePin() {
     const k = scored.shown[0];
     if (k == null) { view.setPin(null); return; }
-    $('span', pinEl).textContent = scored.s[k].toFixed(0); view.setPin(pinEl, scored.lon[k], scored.lat[k]);
+    $('span', pinEl).textContent = pyFixed(scored.s[k]); view.setPin(pinEl, scored.lon[k], scored.lat[k]);
   }
 
   // ---------- overview camera
@@ -206,7 +206,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     view.mark('hl', k);
     if (k == null || isPhone()) { tip.hidden = true; return; }
     const r = m.regions[scored.site[k]];
-    tip.innerHTML = `<b class="tnum">${scored.s[k].toFixed(0)}</b> <span>${esc(r.name)}</span>`; tip.hidden = false;
+    tip.innerHTML = `<b class="tnum">${pyFixed(scored.s[k])}</b> <span>${esc(r.name)}</span>`; tip.hidden = false;
     tip.style.transform = `translate(${Math.min(x + 14, innerWidth - 260)}px, ${y + 14}px)`;
   };
   view.onPick = k => { store.set({ selected: k }); view.fly(scored.lon[k], scored.lat[k], Math.max(view.getZoom(), 9.4), pad(true)); };

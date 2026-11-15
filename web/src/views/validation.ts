@@ -1,12 +1,16 @@
 import { BASE } from '../base';
-import { esc, cap, nf, pyFixed } from '../format';
+import { esc, nf, pyFixed } from '../format';
 import { getJSON } from '../data';
 import { ramp } from '../score';
 import { figureCard, wireFigures } from './lightbox';
 import { mountHeatmap } from './heatmap';
 import type { Manifest } from '../types';
+import { blindProof, proofLine, type Ranks } from '../proof';
 
 type Rec = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+const ord = (n: string) => n + (/1[123]$/.test(n) ? 'th' : ({ '1': 'st', '2': 'nd', '3': 'rd' } as Record<string, string>)[n.slice(-1)] ?? 'th');
+// rays toward lower latitudes that stop this short of the DEM limit mean the site sits near the edge of NASA's 85°S DEM
+const EDGE_KM = 100;
 
 export async function renderValidation(el: HTMLElement, m: Manifest) {
   const [val, far, ka, sens, div, mx, kr] = await Promise.all(['validation', 'far_horizons', 'known_analogs', 'sensitivity', 'diviner', 'matrix', 'known_ranks'].map(n => getJSON<Rec>(n)));
@@ -17,12 +21,15 @@ export async function renderValidation(el: HTMLElement, m: Manifest) {
   // 1 · illumination metric
   const rhoRows = Object.entries(val as Rec).map(([id, v]) => `<tr><th scope="row">${esc(name(id))}</th><td class="tnum">${v.spearman_rho.toFixed(2)}</td><td class="tnum">${nf(v.n_pixels)}</td></tr>`).join('');
   const farSites = Object.entries(far.sites as Rec), maxKm = far.settings.max_distance_m / 1000;
-  const edge = farSites.filter(([, v]) => v.ray_reach && v.ray_reach.outward_ray_km_max < maxKm - 0.5);
+  const edge = farSites.filter(([, v]) => v.ray_reach && v.ray_reach.outward_ray_km_min < EDGE_KM);
   const list = (a: string[]) => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
-  const farRows = farSites.map(([id, v]) => `<tr><th scope="row">${esc(name(id))}</th><td class="tnum">${v.V1_local_flat.spearman_rho.toFixed(2)}</td><td class="tnum"><b>${v.V3_far_curved.spearman_rho.toFixed(2)}</b></td>
-    <td class="tnum">±${v.V3_far_curved.mean_abs_error.toFixed(3)}</td><td class="tnum">${v.ray_reach ? `${v.ray_reach.outward_ray_km_min.toFixed(0)}–${v.ray_reach.outward_ray_km_max.toFixed(0)} km` : '—'}${edge.some(e => e[0] === id) ? ' <span class="tag">near DEM edge</span>' : ''}</td></tr>`).join('');
+  const farRows = farSites.map(([id, v]) => `<tr><th scope="row">${esc(name(id))}</th><td class="tnum"><b>${v.V3_far_curved.spearman_rho.toFixed(2)}</b></td>
+    <td class="tnum">±${v.V3_far_curved.mean_abs_error.toFixed(3)}</td><td class="tnum">${v.V1_local_flat.spearman_rho.toFixed(2)}</td><td class="tnum">${v.ray_reach ? `${v.ray_reach.outward_ray_km_min.toFixed(0)}–${v.ray_reach.outward_ray_km_max.toFixed(0)} km` : '—'}${edge.some(e => e[0] === id) ? ' <span class="tag">near DEM edge</span>' : ''}</td></tr>`).join('');
   const rays = edge.map(([, v]) => `${v.ray_reach.outward_ray_km_min.toFixed(0)}–${v.ray_reach.outward_ray_km_max.toFixed(0)} km`);
 
+  const farRho = farSites.map(([, v]) => v.V3_far_curved.spearman_rho as number);
+  const farRange = `${Math.min(...farRho).toFixed(2)}–${Math.max(...farRho).toFixed(2)}`;
+  const proof = blindProof(kr as Ranks, m);
   const psr = farSites.filter(([, x]) => x.psr) as [string, Rec][];
   const rng = (f: (p: Rec) => number, d: number, mul = 1) => { const a = psr.map(([, x]) => f(x.psr) * mul); return `${pyFixed(Math.min(...a), d)}–${pyFixed(Math.max(...a), d)}`; };
   const psrHtml = psr.length ? `<h3>Permanent shadow, a second check against NASA</h3>
@@ -35,8 +42,8 @@ export async function renderValidation(el: HTMLElement, m: Manifest) {
   const hiw = rows.filter(r => /hiwahine/i.test(r.site)).sort((a, b) => (rankOf(a.reference, a.site)?.rank ?? 1e9) - (rankOf(b.reference, b.site)?.rank ?? 1e9));
   const top = (p: number) => (100 - p) < 0.05 ? 'top < 0.1 %' : `top ${(100 - p).toFixed(1)} %`;
 
-  const lunarRanks = hiw.filter(r => moonIds.includes(r.reference)).map(r => ({ id: r.reference, k: rankOf(r.reference, r.site)! })).filter(x => x.k).sort((a, b) => a.k.rank - b.k.rank);
-  const hiwMoon = lunarRanks.length ? `is window #${nf(lunarRanks[0].k.rank)} of ${nf(lunarRanks[0].k.n)} for ${esc(name(lunarRanks[0].id))} and #${nf(lunarRanks[lunarRanks.length - 1].k.rank)} for ${esc(name(lunarRanks[lunarRanks.length - 1].id))}, across the ${lunarRanks.length} lunar targets` : 'ranks high for the lunar targets';
+  // the blind-rediscovery callout is about the lunar targets only: Pu'u Hiwahine is a lunar-polar test site, not a Mars analog
+  const hiwMoon = hiw.filter(r => moonIds.includes(r.reference));
 
   // 3 · sensitivity
   const W = sens.illumination_weight as number[], iLo = W.indexOf(0.5), iHi = W.indexOf(2);
@@ -48,25 +55,26 @@ export async function renderValidation(el: HTMLElement, m: Manifest) {
   const shares = Object.values(div.sites as Rec).map((v: Rec) => v.share_colder_than_earth_record * 100);
 
   el.innerHTML = `<div class="page-in wide"><h1>Validation</h1>
-  <p class="lead">What the numbers on the map are worth: the light model against NASA's own illumination maps, the ranking against classic analog sites, and how far it moves when the settings change.</p>
+  <p class="lead">What the numbers on the map are worth. In short: P.E.N. finds NASA's own lunar test site on Earth without being told about it, and its light model matches NASA's illumination maps with Spearman ρ = ${farRange} once distant mountains are included.</p>
 
-  <section class="vsec"><h2>1 · Is the illumination metric real?</h2>
-    <div class="cols"><div class="tbl"><table><caption>Pipeline, local DEM only</caption><thead><tr><th>Target</th><th>Spearman ρ vs NASA LOLA</th><th>Pixels (120 m)</th></tr></thead><tbody>${rhoRows}</tbody></table></div>
-    <p class="note">Spearman ρ against NASA's LOLA average-illumination map. ${esc(cap(String(far.settings.dem ?? '')))}</p></div>
-    ${figureCard('fig4_illumination_validation.png', 'Illumination validation against LOLA', 'Lit fraction from the light model against the LOLA 18.6-year average-illumination map, per lunar site.', { wide: true })}
-    <h3>Where the remaining gap comes from</h3>
-    <p class="prose-p">Away from the pole, the Sun is hidden by mountains tens of kilometres away. Re-computing the light with NASA's 40 m polar DEM up to ${maxKm.toFixed(0)} km away, on the curved lunar surface and with real Sun positions, brings the agreement to:</p>
-    <div class="tbl"><table><thead><tr><th>Target</th><th>Local DEM (ρ)</th><th>Horizons up to ${maxKm.toFixed(0)} km (ρ)</th><th>Error, lit fraction</th><th>Outward rays</th></tr></thead><tbody>${farRows}</tbody></table></div>
-    <p class="note">${edge.length ? `${esc(list(edge.map(e => name(e[0]))))} sit near the edge of NASA's 85°S DEM: rays toward lower latitudes reach only ${esc(list(rays))}. ` : ''}Scoring still uses local windows on both bodies, so Moon and Earth are treated the same way; this test shows the light model itself is right once distant terrain is included.</p>
-    ${psrHtml}
-    ${figureCard('fig7_far_horizons.png', 'Local DEM against horizons up to 150 km', 'Spearman ρ and mean error per lunar site, local DEM against far horizons.', { wide: true })}</section>
-
-  <section class="vsec"><h2>2 · Does it rediscover known analog sites?</h2>
-    <p class="prose-p">Classic NASA analog sites inside our regions rank at the <b>${pyFixed(s.median_percentile_illumination_best)}th percentile</b> in illumination and <b>${pyFixed(s.median_percentile_terrain_best)}th</b> in terrain (median of ${s.n_tests} site × target tests; 50 = random).</p>
-    ${hiw.length ? `<div class="callout"><h3>Blind rediscovery</h3><p>Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar prospecting mission in 2012 (PISCES ISRU field test), ${hiwMoon}. P.E.N. was never told about it.</p>
-      <div class="rank-list">${hiw.map(r => { const k = rankOf(r.reference, r.site); return `<div class="rk-row"><span>${esc(name(r.reference))}</span><span class="rk-bar"><i style="width:${r.score_combined_pct_best}%;background:${ramp(r.score_combined_pct_best, 20)}"></i></span><b class="tnum">${k ? `#${nf(k.rank)} of ${nf(k.n)}` : ''}</b><span class="tnum muted">${top(r.score_combined_pct_best)}</span></div>`; }).join('')}</div></div>` : ''}
-    <p class="note">Sites chosen for other reasons rank lower, as they should: Meteor Crater is an impact-geology analog and University Valley a dry-permafrost (thermal) analog, not terrain-and-light analogs.</p>
+  <section class="vsec"><h2>1 · Does it find NASA's own test site, blind?</h2>
+    ${hiwMoon.length ? `<div class="callout"><h3>Blind rediscovery</h3><p>Pu'u Hiwahine on Mauna Kea is where NASA, CSA and DLR rehearsed a lunar-polar prospecting mission in 2012 (PISCES ISRU field test). P.E.N. was never told about it, yet it comes out ${proof ? proofLine(proof) : 'near the top for every lunar target'}.</p>
+      <div class="rank-list">${hiwMoon.map(r => { const k = rankOf(r.reference, r.site); return `<div class="rk-row"><span>${esc(name(r.reference))}</span><span class="rk-bar"><i style="width:${r.score_combined_pct_best}%;background:${ramp(r.score_combined_pct_best, 20)}"></i></span><b class="tnum">${k ? `#${nf(k.rank)} of ${nf(k.n)}` : ''}</b><span class="tnum muted">${top(r.score_combined_pct_best)}</span></div>`; }).join('')}</div></div>` : ''}
+    <p class="prose-p">Across all ${s.n_tests} tests of classic NASA analog sites inside our regions against every target, the best window containing the site has a median rank at the <b>${ord(pyFixed(s.median_percentile_illumination_best))} percentile</b> in illumination and the <b>${ord(pyFixed(s.median_percentile_terrain_best))}</b> in terrain (50 = random).</p>
+    <p class="note">Sites chosen for other reasons rank lower, as they should: Meteor Crater is an impact-geology analog and University Valley a dry-permafrost (thermal) analog, not terrain-and-light analogs. The table lists every site and target, Mars included.</p>
     <div class="tbl scroll sortable" id="kt"></div></section>
+
+  <section class="vsec"><h2>2 · Is the light model right?</h2>
+    <p class="prose-p">We recompute the light at each lunar site with NASA's 40 m polar DEM, tracing horizons up to ${maxKm.toFixed(0)} km away on the curved lunar surface with 1,728 real Sun positions, and compare it with NASA's LOLA 18.6-year average-illumination map:</p>
+    <div class="tbl"><table><caption>Light model against NASA LOLA average illumination</caption><thead><tr><th>Target</th><th>Spearman ρ, horizons up to ${maxKm.toFixed(0)} km</th><th>Error, lit fraction</th><th>ρ, local DEM only</th><th>Outward rays</th></tr></thead><tbody>${farRows}</tbody></table></div>
+    <p class="note">${edge.length ? `${esc(list(edge.map(e => name(e[0]))))} sit near the edge of NASA's 85°S DEM, so their rays toward lower latitudes stop after ${esc(list(rays))}. ` : ''}Scoring still uses local windows on both bodies, so Moon and Earth are treated the same way; this test shows the light model itself is right once distant terrain is included.</p>
+    ${psrHtml}
+    ${figureCard('fig7_far_horizons.png', 'Local DEM against horizons up to 150 km', 'Spearman ρ and mean error per lunar site, local DEM against far horizons.', { wide: true })}
+    <h3>Why the local model alone agrees less</h3>
+    <p class="prose-p">Away from the pole, the Sun is often hidden by mountains tens of kilometres away, outside a local DEM. The scoring pipeline itself only sees the local DEM, and its lit fraction already follows NASA's pattern:</p>
+    <div class="cols"><div class="tbl"><table><caption>Scoring pipeline, local DEM only (Sun 0.5–2.5°, 17 azimuths)</caption><thead><tr><th>Target</th><th>Spearman ρ vs NASA LOLA</th><th>Pixels (120 m)</th></tr></thead><tbody>${rhoRows}</tbody></table></div>
+    <p class="note">Against the LOLA 18.6-year average-illumination map (Mazarico et al. 2011), sampled every 120 m. The "local DEM only" column of the table above uses the far-horizon run's 1,728 Sun positions and 240 m sampling instead, so the two local values differ slightly.</p></div>
+    ${figureCard('fig4_illumination_validation.png', 'Illumination validation against LOLA', 'Lit fraction from the light model against the LOLA 18.6-year average-illumination map, per lunar site.', { wide: true })}</section>
 
   <section class="vsec"><h2>3 · How robust is the ranking?</h2>
     <p class="prose-p">Re-weighting illumination 0.5–2× keeps ${lo}–10 of the top 10 for ${hiCount} of ${mins.length} targets (down to ${lo} for ${esc(list(lowest))}); the window size (3/6/12 km) changes rankings much more — reported, not hidden.</p>

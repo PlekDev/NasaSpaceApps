@@ -36,7 +36,7 @@ difference is divided by the inter-quartile range of all Earth windows at that s
 **5. Validation of illumination.** For each lunar site we compute the lit fraction with the Sun at 0.5°, 1.5° and
 2.5° over 17 azimuths (every 22°). We compare it with the official LOLA 18.6-year average-illumination map
 (Mazarico et al. 2011) resampled to the same grid, excluding a 1.5 km border and sampling every 120 m. With the
-local DEM only, Spearman ρ = 0.86 at Connecting Ridge, 0.61 at Nobile Rim 1, 0.54 at de Gerlache Rim, 0.55 at
+local DEM only, Spearman ρ = 0.86 at Connecting Ridge, 0.60 at Nobile Rim 1, 0.54 at de Gerlache Rim, 0.55 at
 Malapert, 0.44 at Haworth and 0.64 at Leibnitz Beta; the far-horizon test below raises this to 0.92–0.99.
 
 **6. Analog in time.** Hours per day with solar elevation between 0° and 7° at each Earth site's latitude, by
@@ -57,8 +57,8 @@ sea-level pressure.
 references with the LOLA 85°S 40 m DEM, horizons traced up to 150 km in exact 3D on the lunar sphere, and 1,728 real
 Sun positions (subsolar latitude ±1.54°, Sun as a 0.53° disk). Against the LOLA average-illumination map, ρ rises
 from 0.46–0.88 (local DEM) to 0.92–0.99 (150 km), and the mean error falls to 2.0–3.2 percentage points of lit time.
-Malapert, Nobile Rim 1 and Leibnitz Beta lie near the DEM edge, so their rays toward lower latitudes stop after
-21–39 km, 41–66 km and 31–49 km (`ray_reach` in `far_horizons.json`). The points that never see the Sun in this model agree
+Malapert, Nobile Rim 1, Leibnitz Beta and Haworth lie near the DEM edge, so their rays toward lower latitudes stop
+after 21–39 km, 41–66 km, 31–49 km and 50–91 km (`ray_reach` in `far_horizons.json`). The points that never see the Sun in this model agree
 with NASA's permanently-shadowed-region map on 98.0–99.7 % of the points (intersection over union 0.53–0.82).
 
 **Known-analog test.** `scripts/validate_known_analogs.py` takes 8 classic analog sites that fall inside our

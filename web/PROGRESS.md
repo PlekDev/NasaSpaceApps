@@ -1,6 +1,6 @@
 # web/ — progress (resume file)
 
-Branch `paul/web-ui` (not pushed). UI AI-assisted (Claude Code); reviewed by the author.
+Merged into `main` (PR #12); follow-up fixes in `web/judge-fixes`. UI AI-assisted (Claude Code); reviewed by the author.
 Run: `python -I web/tools/export_data.py && cd web && npm install && npm run dev` (or `make web-dev`; `make web` builds to web/dist).
 
 ## Main merge check (PR #8 "extras/field-tools", rebased onto origin/main b612108)

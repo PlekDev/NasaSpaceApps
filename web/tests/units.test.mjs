@@ -56,3 +56,20 @@ test('Field kit: a brief alone is enough; twin, astronaut and rover appear only 
   assert.match(full, /Twin-light timelapse/); assert.match(full, /What the astronaut sees/); assert.match(full, /Twin rover traverse/); assert.match(full, /extras\/t\.mp4/);
   assert.ok(full.includes('<details class="kit">'));
 });
+
+test('blindProof(): the intro and Validation headline match the exported ranks and the README claim', async () => {
+  const { blindProof, proofLine } = await import('../src/proof.ts');
+  const p = blindProof(read('known_ranks.json'), m);
+  assert.ok(p, 'Pu\'u Hiwahine ranks exist for the lunar targets');
+  assert.equal(p.lunar, m.targets.filter(t => t.body === 'moon').length);
+  assert.equal(p.best.rank, Math.min(...p.ranks.map(r => r.rank)));
+  assert.ok(p.ranks.every(r => r.n === m.windows_per_target));
+  // README: "#1 of 10,424 for Malapert ... top 0.2 % for four of six lunar sites ... top 5 % for all six" (re-checked against data, not hard-coded)
+  const share = r => Math.round((r.rank / r.n) * 1000) / 10;
+  assert.equal(p.top02, p.ranks.filter(r => share(r) <= 0.2).length);
+  assert.match(proofLine(p), /^<b>#[\d,]+ of [\d,]+<\/b> Earth windows for .+, top 0\.2 % for .+ lunar sites and top 5 % for .+$/);
+});
+
+test('pyFixed(): scores round half to even like the Python tables (98.5 -> 98)', () => {
+  assert.equal(pyFixed(98.5), '98'); assert.equal(pyFixed(97.5), '98'); assert.equal(pyFixed(90.9), '91');
+});
