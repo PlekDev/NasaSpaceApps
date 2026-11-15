@@ -16,7 +16,8 @@ p-value = (1 + #{null >= observed}) / (N + 1)   (the +1 counts the observed set 
 
 Pu'u Hiwahine, per lunar target: its rank (best window, stable order as web/tools/export_data.py), the exact share of the
 Mauna Kea valid area whose best window ranks at least as well (region-matched p) or strictly better (frac_region_above),
-and its percentile among all windows.
+its percentile among all windows and the Bonferroni p (x number of lunar targets, capped at 1). "headline" is the
+sentence for the web and deck, generated from these numbers.
 
 Writes data/processed/stats/null.json.  Run: python scripts/stats/null_test.py
 """
@@ -29,6 +30,7 @@ import pandas as pd
 from shapely import STRtree, points
 from shapely.geometry import Point, Polygon
 from common import PROCESSED, SCORES, SEED, body_of, known_sites, load_windows, meta, pct_below, stable_rank, write
+from pen.config import load_config  # noqa: E402  (common puts the repo root on sys.path)
 
 N_PERM = 10000
 LATTICE_M = 150.0
@@ -141,6 +143,16 @@ def main():
                    "frac_region_above": round(float(mk["w"][mk["rank"][:, r] < rk].sum()), 4),
                    "pct_all_windows": round(float(puu["best"][puu["refs"].index(r), 0]), 1)}
 
+    # Bonferroni over the lunar targets, and the headline sentence generated from the numbers (never typed by hand)
+    for v in pu.values():
+        v["p_bonferroni"] = round(min(1.0, v["p_value_region_matched"] * len(pu)), 4)
+    best_t = min(pu, key=lambda t: (pu[t]["rank"], pu[t]["p_value_region_matched"]))
+    b = pu[best_t]
+    label = load_config()["sites"][best_t]["label"].split("·", 1)[1].split("(")[0].strip()
+    headline = (f"Only {100 * b['p_value_region_matched']:.1f} % of Mauna Kea scores as high as NASA's exact test site for "
+                f"{label} (p = {b['p_value_region_matched']:.3f}; p = {b['p_bonferroni']:.3f} after correcting for "
+                f"{len(pu)} lunar targets)")
+
     names = list(SCORES)
     out = {"_stub": False,
            "_meta": meta(SEED, {"n_perm": N_PERM, "lattice_m": LATTICE_M, "window_km": 6, "n_tests": n_tests,
@@ -154,6 +166,7 @@ def main():
                                     "p05": round(float(np.percentile(null[m][:, i], 5)), 2),
                                     "p95": round(float(np.percentile(null[m][:, i], 95)), 2)}
                                 for i, s in enumerate(names)} for m in null},
+           "headline": headline, "headline_target": best_t,
            "pu_uhiwahine": pu,
            "null_hist": {m: {"score": "combined", "bins": HIST_BINS.tolist(),
                              "counts": np.histogram(null[m][:, 0], HIST_BINS)[0].tolist()} for m in null},
