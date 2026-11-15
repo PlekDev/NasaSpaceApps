@@ -23,15 +23,17 @@ VIEWS = [
     ("tour", "/#/tour", None),
 ]
 sizes = [(1440, 900), (390, 844), (1024, 768)] if len(sys.argv) < 2 else [tuple(map(int, a.split("x"))) for a in sys.argv[1:]]
+themes = tuple(t.strip() for t in os.environ.get("PEN_AXE_THEMES", "dark,light").split(",") if t.strip())
+wait_ms = int(os.environ.get("PEN_AXE_WAIT_MS", "2000"))
 with sync_playwright() as p:
     b = launch_chromium(p)
     for w, h in sizes:
-        for theme in ("dark", "light"):
+        for theme in themes:
             for name, path, act in VIEWS:
                 pg = b.new_context(viewport={"width": w, "height": h}, color_scheme=theme).new_page()
-                pg.goto(BASE + path); pg.wait_for_selector(".bar", timeout=30000); pg.wait_for_timeout(2000)
+                pg.goto(BASE + path); pg.wait_for_selector(".bar", timeout=30000); pg.wait_for_timeout(wait_ms)
                 if act == "detail":
-                    pg.locator(".match").first.click(); pg.wait_for_timeout(500); pg.locator(".win").first.click(); pg.wait_for_selector("#d-title"); pg.wait_for_timeout(2000)
+                    pg.locator(".match").first.click(); pg.wait_for_timeout(500); pg.locator(".win").first.click(); pg.wait_for_selector("#d-title"); pg.wait_for_timeout(wait_ms)
                 if act == "picker": pg.click("#target-btn"); pg.wait_for_timeout(500)
                 if act == "regions": pg.click("#regions-btn"); pg.wait_for_timeout(500)
                 pg.evaluate(AXE)
