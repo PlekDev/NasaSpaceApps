@@ -172,6 +172,24 @@ def known_ranks(known_json):
     return out
 
 
+def known_sites(known_json, centers, regions):
+    """NASA's and other classic analog sites with their coordinates, read from scripts/validate_known_analogs.py (KNOWN, the
+    list the known-analog test uses) without importing it. Each site: name, lat, lon, analog_for (moon/mars), note (source
+    of the coordinate), region (the 1° Earth tile it lies in, or None) and the targets it was tested against."""
+    tree = ast.parse((ROOT / "scripts" / "validate_known_analogs.py").read_text(encoding="utf-8"))
+    node = next(n.value for n in tree.body if isinstance(n, ast.Assign) and any(getattr(t, "id", None) == "KNOWN" for t in n.targets))
+    tested = {}
+    for r in known_json["rows"]:
+        tested.setdefault(r["site"], []).append(r["reference"])
+    out = []
+    for call in node.elts:                        # each entry is dict(name=..., lat=..., ...)
+        k = {kw.arg: ast.literal_eval(kw.value) for kw in call.keywords}
+        near = [s for s in regions if abs(centers[s][1] - k["lat"]) <= 0.5 and abs(((centers[s][0] - k["lon"] + 180) % 360) - 180) <= 0.5]
+        out.append(dict(name=k["name"], lat=k["lat"], lon=k["lon"], analog_for=k["analog_for"].split(","), note=k.get("note", ""),
+                        region=near[0] if len(near) == 1 else None, tested_for=sorted(tested.get(k["name"], []))))
+    return out
+
+
 def app_cant_reproduce(diviner, mars):
     """Run the app's own cant_reproduce() (and EARTH_LIMITS) from app/streamlit_app.py so the web text can never drift from it.
     Only those two definitions are extracted (no Streamlit code is executed)."""
@@ -280,6 +298,7 @@ def main():
     matrix = dict(dims=mdims, targets=targets, regions=regions,
                   v={d: [[float(cell[(t, s)][f"score_{d}"]) if (t, s) in cell else None for t in targets] for s in regions] for d in mdims})
     write_json(DATA / "known_ranks.json", known_ranks(read_json(PROC / "known_analogs.json")))
+    write_json(DATA / "known_sites.json", known_sites(read_json(PROC / "known_analogs.json"), centers, regions))
     write_json(DATA / "matrix.json", matrix)
     for f in sorted((ROOT / "figures").glob("fig*.png")):
         copy_atomic(f, OUT / "figures" / f.name)
