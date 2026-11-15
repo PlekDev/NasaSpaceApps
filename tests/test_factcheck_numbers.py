@@ -5,10 +5,10 @@ docs/numbers.json (Angel) lists each number as the deck and the project page wri
     {"numbers": [{"id": "blind_rank", "slide": [1, 4], "text": "#1 of 10,424", "value": [1, 10424],
                   "source": "...", "pending": false}, ...]}
 
-For every entry that is not pending, RULES[id] recomputes the value from data/processed now:
+For every entry with a rule (pending or not), RULES[id] recomputes the value from data/processed now:
   - `value` must equal it (numbers within 0.1 % or 1e-6, strings exactly), and
   - `text` must contain it as written (Python rounding, en dash ranges, thousands with a comma).
-An id without a rule fails, so a new number on a slide cannot skip the check: add its rule here.
+A final (non-pending) id without a rule fails, so a new number on a slide cannot skip the check: add its rule here.
 If a rerun changes a result, CI fails and names the entry and its slides.
 
 `python tests/test_factcheck_numbers.py` lists the recomputed values (and the headline registry used by
@@ -198,8 +198,39 @@ def rules():
                            [f"{rover['target']['length_km']:.1f} km", f"{rover['earth']['length_km']:.1f} km"]),
     }
     if (PROC / "benchmark_tile.json").exists():
-        sec = load("benchmark_tile")["median_seconds"]["total_without_reproject"]
+        bt = load("benchmark_tile")
+        sec = bt["median_seconds"]["total_without_reproject"]
         R["tile_seconds"] = (sec, [f"{sec:.0f}"])
+        est = bt["all_land_estimate"]
+        R["scale_core_hours"] = (est["core_hours"], [f"{est['core_hours']:,}"])
+        R["scale_hours_64"] = (est["hours_on_64_cores"], [f"{est['hours_on_64_cores']:.1f}"])
+
+    # statistics (data/processed/stats, scripts/stats/*.py)
+    st = PROC / "stats"
+    if (st / "null.json").exists():
+        nul = load("stats/null")
+        pu = nul["pu_uhiwahine"]["moon_malapert"]
+        R["null_p_malapert"] = ([pu["p_value_region_matched"], pu["p_bonferroni"], pu["p_bonferroni_all_lunar_tests"]],
+                                [f"p = {pu['p_value_region_matched']:.3f}", f"{pu['p_bonferroni']:.3f}"])
+        R["null_frac_mauna_kea"] = (pu["p_value_region_matched"], [f"{100 * pu['p_value_region_matched']:.1f} %"])
+        g = nul["p_value"]["global"]
+        R["null_p_group"] = ([g["combined"], g["illum"]], [f"{g['combined']:.2f}", f"{g['illum']:.3f}"])
+    if (st / "bootstrap.json").exists():
+        top = load("stats/bootstrap")["moon_malapert"][0]
+        R["score_ci_malapert"] = ([top["score"], *top["ci95"]],
+                                  [f"{top['score']:.0f}", f"{top['ci95'][0]:.0f}–{top['ci95'][1]:.0f}"])
+    if (st / "stability.json").exists():
+        stab = load("stats/stability")
+        p1 = {t: max(stab[t]["p_top1"].values()) for t in ("moon_malapert", "moon_connecting_ridge")}
+        R["stability_top1"] = (p1, [f"{100 * v:.0f} %" for v in p1.values()])
+    if (st / "roc.json").exists():
+        roc = load("stats/roc")
+        auc = [roc[t]["auc"] for t in roc if t.startswith("mars_")]
+        R["auc_mars"] = (auc, [rng(auc, 2)])
+    if (st / "light_summary.json").exists():
+        b = load("stats/light_summary")["overall"]["bias"]               # [most negative, least negative], fractions
+        R["light_bias"] = (b, [f"−{abs(100 * max(b)):.1f} to −{abs(100 * min(b)):.1f}"])
+    # rehearsal_fidelity is computed in the browser from today's date (Mission view): no rule, keep it pending
     return R
 
 
@@ -231,11 +262,10 @@ def test_every_deck_number_matches_the_data():
     R, bad = rules(), []
     for e in entries():
         where = f"{e.get('id')} (slide {e.get('slide')})"
-        if e.get("pending"):
-            continue
         if e.get("id") not in R:
-            bad.append(f"{where}: no rule to recompute it: add one to RULES in tests/test_factcheck_numbers.py")
-            continue
+            if not e.get("pending"):                                   # a final number must be checkable
+                bad.append(f"{where}: no rule to recompute it: add one to RULES in tests/test_factcheck_numbers.py")
+            continue                                                   # pending without a rule (computed in the browser)
         want, texts = R[e["id"]]
         if not same(want, e.get("value")):
             bad.append(f"{where}: value {e.get('value')!r}, data say {want!r}")
