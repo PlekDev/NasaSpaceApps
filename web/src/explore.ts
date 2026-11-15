@@ -16,7 +16,7 @@ import type { Manifest, Target, TargetData } from './types';
 const where = (r: { place: string; cc: string }) => [r.place, r.cc].filter(Boolean).join(', ');
 const WIN_CHUNK = 12;
 
-export interface Explore { store: Store; view: View; ready: Promise<void>; show(on: boolean): void; overview(animate?: boolean): void }
+export interface Explore { store: Store; view: View; ready: Promise<void>; show(on: boolean): void; overview(animate?: boolean): void; focus(p: { target?: string; region?: string }): void }
 
 export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string, startTarget: string): Explore {
   const dims = Object.keys(m.dims);
@@ -64,11 +64,13 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   const bestEl = $('#best', root), listEl = $('#list', root);
   // ---------- phone sheet snap points
   const dock = $('#dock', root), grab = $('#grab', root);
+  const homeOn = () => document.documentElement.dataset.intro !== undefined;
   const snaps = () => [isPhone() ? 24 + bestEl.offsetHeight + 4 : 168, Math.round(innerHeight * .55), innerHeight - 64];
   let snap = 0;
   const applySnap = (h: number, i = snap) => {
     if (i > 0 && snap === 0) dock.scrollTop = 0;
     snap = i; dock.style.setProperty('--sheet-h', `${h}px`); dock.dataset.snap = ['peek', 'half', 'full'][i]; grab.setAttribute('aria-expanded', String(i > 0));
+    if (homeOn()) return;                                    // Home (intro.ts) owns the camera while it is shown
     if (isPhone()) view.setPadding({ top: 52, bottom: Math.min(h, innerHeight * .6), left: 0, right: 0 }); else view.setPadding({ top: 0, bottom: 0, left: 0, right: 0 });
   };
   const setSnap = (i: number) => applySnap(snaps()[i], i);
@@ -169,12 +171,24 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
 
   // ---------- overview camera
   function overview(animate = true) {
+    if (homeOn()) return;
     const ks = scored.shown.slice(0, 400);
     const med = (a: number[]) => a.slice().sort((x, y) => x - y)[Math.floor(a.length / 2)];
     const c: [number, number] = ks.length ? [med(ks.map(k => scored.lon[k])), med(ks.map(k => scored.lat[k]))] : [0, 20];
     const availH = innerHeight - 52 - (isPhone() ? Math.min(snaps()[snap], innerHeight * .6) : 0);
     const D = isPhone() ? Math.min(innerWidth * .94, availH * .94) : availH * 1.12;
     if (animate) view.fly(c[0], c[1], zoomForGlobe(D)); else view.jumpTo({ center: c, zoom: zoomForGlobe(D) });
+  }
+
+  // ---------- deep link: #/explore?target=..&region=..  (Home shortcuts): switch target, then fly to the region's best window
+  let pendingRegion: string | null = null;
+  function applyPending() {
+    if (!pendingRegion || !scored) return;
+    const id = pendingRegion; pendingRegion = null;
+    if (!S.regions.has(id)) { store.set({ regions: new Set([...S.regions, id]) }); pendingRegion = id; return; }   // recompute() runs again, then retries
+    const ri = m.regions.findIndex(r => r.id === id), ks = scored.byRegion.get(ri);
+    if (!ks?.length) return;
+    store.set({ expanded: id }); flyWindow(ks[0], false, 6.4, true);
   }
 
   // ---------- recompute + push to map
@@ -185,6 +199,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     renderBest(); renderList(); updatePin();
     view.setScored(scored, S.minScore, m.window_km);
     if (fit || first) { overview(!first); first = false; }
+    applyPending();
   }
   const sched = (fit = false) => { cancelAnimationFrame(pending); pending = requestAnimationFrame(() => recompute(fit)); };
 
@@ -276,6 +291,10 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   renderTarget();
   const ready = loadTarget(S.target).then(d => { data = d; recompute(); requestAnimationFrame(() => { edge(); setSnap(snap); }); });
   return { store, view, ready,
-    show(on: boolean) { $('#explore', root).classList.toggle('off', !on); (root.querySelector('#explore') as HTMLElement).inert = !on; },
-    overview };
+    show(on: boolean) { $('#explore', root).classList.toggle('off', !on); (root.querySelector('#explore') as HTMLElement).inert = !on; if (on) setSnap(snap); },
+    overview,
+    focus(p: { target?: string; region?: string }) {
+      pendingRegion = p.region ?? null;
+      if (p.target && m.targets.some(t => t.id === p.target) && p.target !== S.target) store.set({ target: p.target }); else applyPending();
+    } };
 }

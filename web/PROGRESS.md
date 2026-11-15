@@ -25,6 +25,15 @@ and PNGs downscaled, link the mp4/ics/csv from the repo files copied to public/e
   When a thermal dimension lands in `pen/features.py` DIMENSIONS and `windows.csv`, the export, sliders, bars and heatmap pick it up as a third dimension
   (not exercised with real data yet: check the left panel height and the heatmap "All" panel).
 
+## Sunday plan (docs/plan/chamba.md, section 5.4: P2 to P5)
+- Slice A `paul/home` (P2): Home is the judge's path. Done: flight to Pu'u Hiwahine, hook with rank/N from data, rank + rho + p numbers, Moon/Mars/Mexico shortcuts (pairs from matrix.json and known_ranks.json), validation seal in the top bar, Skip/Esc, reduced motion, stub-safe p (pending state, tested).
+- Slice B `paul/explore` (P3) and slice C `paul/links` (P4): not started.
+
+### Requests (to other owners; I do not edit their files)
+- **Victor (export_data.py / exports):** export NASA's known-site coordinates explicitly (e.g. `known_sites.json`: name, lat, lon) so Home does not parse them from the free-text `note` of known_analogs.json (`lib/home.ts: parseSiteCoords`). Until then the regex `\((lat), (lon)\)` on the Hiwahine row is used (covered by a test).
+- **Aaron (tests/e2e.py):** (1) Method: `.prose` is now hidden inside "Read more"; wait for `#page h1` instead (fails on main today). (2) Home has changed: `#go` is now the secondary button "Explore the map" (still goes to Explore); the primary button is `#home-proof` ("See the proof"). `.intro .btn` count is still 1.
+- **format.ts owner (shared, no owner in the table):** `pyFixed` detects ties with `x * 10**d`, which turns 0.975 into a false tie and prints 0.98 where Python prints 0.97. `lib/home.ts` uses an exact-decimal check (`fx`) instead; the same fix is needed in `format.ts` for Proof/Method numbers.
+
 ## Round 2 (done)
 1. Blind rediscovery ranks computed in `export_data.py` (stdlib, no pandas) from windows.csv: position of the best window containing the site in the descending score_combined order (stable, ties keep file order = pandas rank "first"), with the percentile recomputed by the script's formula and asserted equal to known_analogs.json. Reproduces the README exactly: Malapert #1, Nobile Rim 1 #9, de Gerlache #19, Connecting Ridge #23, Leibnitz Beta #115, Haworth #483, of 10,424 (Mars: Jezero #4,798, Deuteronilus #5,215, Arcadia #7,706). `web/tests/test_export.py` parses README.md and fails on any mismatch. Shown on Validation (callout + sortable table with a Rank column).
 2. GitHub Pages: `BASE_PATH` env (default "/"; "/NasaSpaceApps/" for Pages) drives Vite `base`; every asset/data/font/thumb URL goes through `src/base.ts` / `%BASE_URL%`. Production build served under /NasaSpaceApps/ (`tools/serve_dist.py`, gzip) passes the browser tests with no failed same-origin request. `pages.yml` runs export, tests and the build with `BASE_PATH=/<repo>/`; still not enabled.
