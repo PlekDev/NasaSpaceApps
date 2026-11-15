@@ -1,0 +1,34 @@
+{
+  "title": "P.E.N.: Planetary Environmental Navigator",
+  "upload_type": "software",
+  "description": "<p>P.E.N. finds and schedules Earth analog sites for lunar south-pole Moon Base sites and Mars landing areas. It scores 6 km Earth windows at 30 m by terrain and by low-Sun cast shadows, validates its light model against NASA LOLA illumination maps, and reports where the analogy breaks (temperature, ice, minerals).</p><p>Built by team Pollones en Fuga (Mexico) for the NASA Space Apps Challenge 2026, challenge \"Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars\". Not endorsed by NASA or ESA.</p>",
+  "creators": [
+    { "name": "Velázquez, Víctor" },
+    { "name": "Lizárraga, Diego" },
+    { "name": "Dominguez Najera, Diego" },
+    { "name": "Landin Lopez, Angel" },
+    { "name": "Hernández Rodriguez, Aaron Emmanuel" },
+    { "name": "Paul" }
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "version": "1.0",
+  "language": "eng",
+  "keywords": [
+    "planetary analogs",
+    "lunar south pole",
+    "Artemis",
+    "Moon Base",
+    "Mars",
+    "illumination",
+    "cast shadows",
+    "LOLA",
+    "Copernicus DEM",
+    "NASA Space Apps Challenge"
+  ],
+  "related_identifiers": [
+    { "identifier": "https://github.com/PlekDev/NasaSpaceApps", "relation": "isSupplementTo", "scheme": "url" },
+    { "identifier": "https://plekdev.github.io/NasaSpaceApps/", "relation": "isDocumentedBy", "scheme": "url" }
+  ],
+  "notes": "Data belong to their providers. NASA data are public domain; Copernicus DEM © DLR e.V. / Airbus, provided under the Copernicus programme by ESA. Built with AI assistance (see README, Use of AI)."
+}
