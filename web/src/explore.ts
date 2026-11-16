@@ -266,7 +266,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     const t = tgt(), far0 = far?.sites?.[t.id]?.V3_far_curved?.spearman_rho as number | undefined;
     if (X.zero) return `<section class="ex-ph panel"><span class="ex-cap">${kicker()}</span><h1>${esc(t.name)}</h1><p>All weights are 0, so there is no score to compute. Raise a weight to rank the windows.</p></section>`;
     if (S.zone == null) {
-      return `<section class="ex-ph panel"><span class="ex-cap">${kicker()}</span><h1>${esc(t.name)}</h1><p>${esc(ABOUT[t.id] ?? t.label)}</p><p class="ex-facts">${esc(TOPO_SOURCE[t.body] ?? '')}${far0 != null ? ` · Light model vs NASA LOLA ρ ${pyFixed(far0, 3)}` : ''}</p></section>`
+      return `<section class="ex-ph panel"><figure class="ex-hero"><img src="${BASE}thumbs/ref_real/${t.id}.jpg" alt="${esc(t.name)}, NASA imagery" width="360" height="203"><figcaption>${esc(credits[`ref__${t.id}`] ?? 'NASA imagery')}</figcaption></figure><span class="ex-cap">${kicker()}</span><h1>${esc(t.name)}</h1><p>${esc(ABOUT[t.id] ?? t.label)}</p><p class="ex-facts">${esc(TOPO_SOURCE[t.body] ?? '')}${far0 != null ? ` · Light model vs NASA LOLA ρ ${pyFixed(far0, 3)}` : ''}</p></section>`
         + CARDS_OVERVIEW.map((c, i) => cardHTML(c, i + 1)).join('');
     }
     const z = X.Z[S.zone], r = m.regions[z.zone], w = curWin(), im = winImage(w), ref = `${BASE}thumbs/ref_real/${t.id}.jpg`, refOk = true;
