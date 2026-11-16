@@ -17,7 +17,8 @@ authors:
     given-names: Angel
   - family-names: Hernández Rodriguez
     given-names: Aaron Emmanuel
-  - name: Paul
+  - family-names: Sarmiento Baldenebro
+    given-names: Paul Aureliano
   - name: "Pollones en Fuga"
 repository-code: "https://github.com/PlekDev/NasaSpaceApps"
 url: "https://plekdev.github.io/NasaSpaceApps/"
