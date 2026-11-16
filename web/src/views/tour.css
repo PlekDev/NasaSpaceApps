@@ -1,20 +1,20 @@
 /* Guided tour (#/tour). Every class is prefixed .tour-; colours and type come from tokens.css. AI-assisted (Claude Code); reviewed by the author. */
-.tour { max-width: 1240px; margin: 0 auto; padding: var(--s-6) var(--gutter) 0; }
-.tour-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-5); flex-wrap: wrap; margin-bottom: var(--s-5); }
-.tour-head h1 { font: 600 clamp(40px, 5vw, 62px)/1.05 var(--font-serif); letter-spacing: -.005em; margin: 0 0 var(--s-1); }
+.tour { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter) 0; }
+.tour-head { position: sticky; top: 0; z-index: 4; display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-5); flex-wrap: wrap; padding: var(--s-5) 0 var(--s-4); margin-bottom: var(--s-5); background: var(--bg); border-bottom: 1px solid var(--line); }
+.tour-head h1 { font: 600 clamp(32px, 4vw, 48px)/1.05 var(--font-serif); letter-spacing: -.005em; margin: 0 0 var(--s-1); }
 .tour-nav { display: flex; gap: var(--s-2); }
 .tour-nav button { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-pill); border: 1px solid var(--line-strong); color: var(--text-2); font-weight: 600; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
 .tour-nav button:hover { background: var(--raise); }
 .tour-nav button[aria-current="step"] { background: var(--accent-btn); border-color: var(--accent-btn); color: var(--on-accent); }
 
 .tour-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-7); align-items: start; }
-.tour-stage { position: sticky; top: var(--s-5); height: min(640px, calc(100vh - var(--bar-h) - 48px)); border: 1px solid var(--line); border-radius: var(--r-3); background: var(--panel-solid); overflow: hidden; }
+.tour-stage { position: sticky; top: calc(var(--tour-head-h, 128px) + var(--s-4)); height: min(600px, calc(100vh - var(--bar-h) - var(--tour-head-h, 128px) - var(--s-6))); border: 1px solid var(--line); border-radius: var(--r-3); background: var(--panel-solid); overflow: hidden; }
 .tour-visual { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; }
 .tour-card { padding: var(--s-5); display: grid; gap: var(--s-4); max-height: 100%; overflow: auto; }
 .tour-cap { color: var(--text-3); font-size: 12px; line-height: 1.5; margin: 0; }
 
 .tour-steps { list-style: none; margin: 0; padding: 0; }
-.tour-step { min-height: 78vh; display: flex; align-items: center; opacity: .38; transition: opacity 240ms var(--ease); }
+.tour-step { min-height: 78vh; display: flex; align-items: center; scroll-margin-top: var(--tour-head-h, 128px); opacity: .38; transition: opacity 240ms var(--ease); }
 .tour-step.on { opacity: 1; }
 .tour-step:first-child { min-height: 60vh; }
 .tour-end { min-height: 70vh; }
@@ -22,8 +22,8 @@
 .tour-text h2 { font: 600 clamp(32px, 3.2vw, 44px)/1.12 var(--font-serif); letter-spacing: -.005em; margin: 0; }
 .tour-text p { font-size: 17px; line-height: 1.55; color: var(--text-2); margin: 0; }
 .tour-text p b { color: var(--text-1); font-weight: 600; }
-.tour-actions { display: flex; gap: var(--s-3); flex-wrap: wrap; margin-top: var(--s-2); }
-.tour-actions .btn { text-decoration: none; }
+.tour-actions { display: flex; gap: var(--s-3); flex-wrap: wrap; align-items: center; margin-top: var(--s-2); }
+.tour-actions .btn { height: 44px; padding: 0 18px; text-decoration: none; }
 
 /* 1 · blind test */
 .tour-map { position: absolute; inset: 0; background: var(--space); }
@@ -80,12 +80,13 @@
 .tour-tele tbody th { text-align: left; font-weight: 500; color: var(--text-2); }
 
 @media (max-width: 820px) {
-  .tour { padding-top: var(--s-4); }
-  .tour-head { margin-bottom: var(--s-3); }
+  .tour { padding-top: 0; }
+  .tour-head { padding: var(--s-3) 0; margin-bottom: var(--s-3); }
+  .tour-head h1 { font-size: clamp(26px, 6.5vw, 34px); }
   .tour-head p { display: none; }
   .tour-nav button { width: 36px; height: 36px; }
   .tour-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .tour-stage { top: 0; z-index: 2; height: 46vh; border-radius: var(--r-2); }
+  .tour-stage { top: calc(var(--tour-head-h, 96px) + var(--s-2)); z-index: 2; height: min(42vh, calc(100vh - var(--bar-h) - var(--tour-head-h, 96px) - var(--s-4))); border-radius: var(--r-2); }
   .tour-card { padding: var(--s-3); gap: var(--s-2); }
   .tour-over { left: var(--s-2); right: var(--s-2); bottom: var(--s-2); padding: var(--s-3); gap: var(--s-2); }
   .tour-big { font-size: 40px; }

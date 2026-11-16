@@ -121,6 +121,11 @@ export async function render(el: HTMLElement, m: Manifest, _params?: Record<stri
     </div></div>`;
 
   // ---- step activation
+  const tourEl = el.querySelector<HTMLElement>('#tour')!, headEl = el.querySelector<HTMLElement>('.tour-head')!;
+  const syncHeadH = () => tourEl.style.setProperty('--tour-head-h', `${Math.ceil(headEl.getBoundingClientRect().height)}px`);
+  syncHeadH();
+  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(syncHeadH) : null;
+  ro?.observe(headEl);
   const stage = el.querySelector<HTMLElement>('#tour-stage')!, visuals = [...stage.querySelectorAll<HTMLElement>('.tour-visual')];
   const items = [...el.querySelectorAll<HTMLElement>('.tour-step')], nav = [...el.querySelectorAll<HTMLButtonElement>('[data-go]')];
   let active = -1;
@@ -150,7 +155,7 @@ export async function render(el: HTMLElement, m: Manifest, _params?: Record<stri
   };
   addEventListener('keydown', key);
   show(0);
-  return () => { io.disconnect(); removeEventListener('keydown', key); stage.querySelectorAll('video').forEach(v => v.pause()); maps.splice(0).forEach(x => x.remove()); };
+  return () => { io.disconnect(); ro?.disconnect(); removeEventListener('keydown', key); stage.querySelectorAll('video').forEach(v => v.pause()); maps.splice(0).forEach(x => x.remove()); };
 }
 
 /** Nearest scrolling ancestor (the page view scrolls inside the app shell, not the window); null = the viewport. */
