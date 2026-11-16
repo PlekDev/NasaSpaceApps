@@ -199,10 +199,16 @@
   .dossier-doc > div { flex-basis: 45%; border-bottom: 1px solid var(--line); }
   .dossier-tbl thead th.dossier-dvh, .dossier-dvc { width: 28%; }
   .dossier-dvh span { display: none; }
-  .dossier-sym table { font-size: 14px; } .dossier-sym tbody th { width: 56px; } .dossier-sym td:nth-child(2) { width: auto; }
+  /* nomenclature on a phone: one block per symbol (symbol, meaning, then type and unit) instead of three squeezed columns */
+  .dossier-sym table { font-size: 15px; } .dossier-sym table, .dossier-sym tbody, .dossier-sym tr, .dossier-sym tbody th, .dossier-sym td { display: block; width: auto; }
+  .dossier-sym thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .dossier-sym tbody tr { padding: 10px 0; } .dossier-sym th, .dossier-sym td { padding: 2px 0; }
+  .dossier-sym tbody tr + tr { border-top: 1px solid var(--line); } .dossier-sym tbody tr + tr > * { border-top: 0; }
+  .dossier-sym td:nth-child(2) { width: auto; } .dossier-sym td:nth-child(3) { color: var(--text-3); font-size: 14px; }
+  .dossier-sym .dossier-tex { white-space: normal; }
+  .dossier-eq { padding: var(--s-4) var(--s-3); } .dossier-eq > div:not(.dossier-sym) .dossier-tex { font-size: 16px; }
   .dossier { font-size: 16px; } .dossier-sec p, .dossier-list, .dossier-head p.dossier-abstract, .dossier-explain { font-size: 16px; }
   .dossier.page-in h2 { font-size: 26px; } .dossier-tbl table { font-size: 14.5px; } .dossier-tbl th, .dossier-tbl td { padding: 9px var(--s-3); }
-  .dossier-eq > div:not(.dossier-sym) .dossier-tex { font-size: 18px; }
 }
 
 /* ---- print: the app shell is a fixed, scroll-locked layout; undo that so the whole dossier paginates, on white paper.
