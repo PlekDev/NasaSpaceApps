@@ -46,8 +46,8 @@ export type Vars = Record<string, string>;
 const NAMES = ['--text-1', '--text-2', '--text-3', '--line', '--line-strong', '--panel-solid', '--accent', '--warn', '--ok', '--font-ui',
   '--series-1', '--series-2', '--series-3', '--series-4', '--series-5', '--series-6', '--series-7', '--ramp-0', '--ramp-1', '--ramp-2', '--ramp-3'];
 export const FALLBACK: Vars = {   // dark theme values, used only when the CSS variables cannot be read (SSR, tests)
-  '--text-1': '#eceff4', '--text-2': '#a9b1bf', '--text-3': '#8a93a2', '--line': 'rgba(255,255,255,0.09)', '--line-strong': 'rgba(255,255,255,0.18)',
-  '--panel-solid': '#0f1520', '--accent': '#3987e5', '--warn': '#d9a548', '--ok': '#5db38b', '--font-ui': 'Inter, sans-serif',
+  '--text-1': '#eef2f6', '--text-2': '#b6c2cf', '--text-3': '#8f9db0', '--line': 'rgba(170,200,230,0.16)', '--line-strong': 'rgba(170,200,230,0.34)',
+  '--panel-solid': '#0e1722', '--accent': '#94bce3', '--warn': '#e0b060', '--ok': '#86cba7', '--font-ui': 'Barlow, sans-serif',
   '--series-1': '#3987e5', '--series-2': '#e69f00', '--series-3': '#009e73', '--series-4': '#cc79a7', '--series-5': '#d55e00', '--series-6': '#56b4e9', '--series-7': '#f0e442',
   '--ramp-0': '#1c3d6e', '--ramp-1': '#2a78d6', '--ramp-2': '#6da7ec', '--ramp-3': '#ffd166',
 };
@@ -69,11 +69,12 @@ export function buildTheme(v: Vars = FALLBACK) {
     textStyle: { color: g('--text-2'), fontFamily: g('--font-ui'), fontSize: 12 },
     title: { textStyle: { color: g('--text-1'), fontWeight: 600, fontSize: 14 }, subtextStyle: { color: g('--text-3') } },
     legend: { textStyle: { color: g('--text-2') }, pageTextStyle: { color: g('--text-2') } },
-    tooltip: { backgroundColor: g('--panel-solid'), borderColor: g('--line-strong'), borderWidth: 1, textStyle: { color: g('--text-1'), fontSize: 13 }, extraCssText: 'border-radius:10px;box-shadow:none;' },
+    tooltip: { backgroundColor: g('--panel-solid'), borderColor: g('--line-strong'), borderWidth: 1, textStyle: { color: g('--text-1'), fontSize: 13 }, extraCssText: 'border-radius:0;box-shadow:none;' },
     categoryAxis: axis, valueAxis: axis, logAxis: axis, timeAxis: axis,
-    line: { symbolSize: 6, lineStyle: { width: 2.25 } }, bar: { itemStyle: { borderRadius: [3, 3, 0, 0] } },
+    line: { symbolSize: 6, lineStyle: { width: 2.25 } },
+    bar: { itemStyle: { borderRadius: 0 }, label: { color: g('--text-2') } },   // square bars; value labels sit outside them and ECharts' default dark grey vanishes on the dark ground
     visualMap: { textStyle: { color: g('--text-3') } },
-    dataZoom: { textStyle: { color: g('--text-3') }, borderColor: g('--line'), fillerColor: 'rgba(57,135,229,0.15)' },
+    dataZoom: { textStyle: { color: g('--text-3') }, borderColor: g('--line'), fillerColor: 'rgba(148,188,227,0.15)' },
     markLine: { lineStyle: { color: g('--text-2') }, label: { color: g('--text-2') } },
   };
 }

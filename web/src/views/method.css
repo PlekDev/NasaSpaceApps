@@ -3,7 +3,7 @@
 .method-lede { font-size: 17px; line-height: 1.5; color: var(--text-2); max-width: 70ch; }
 
 .method-flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-4) var(--s-5); }
-.method-step { position: relative; padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--raise); }
+.method-step { position: relative; padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--glass); }
 /* arrows only between cards on the same row: 4 per row on desktop, 2 on tablets, a downward arrow on phones */
 .method-step::after { content: "→"; position: absolute; right: calc(-1 * var(--s-5) + 4px); top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 16px; }
 .method-step:nth-child(4n)::after, .method-step:last-child::after { content: none; }
@@ -14,7 +14,7 @@
 .method-step small { font-size: 12px; line-height: 1.35; color: var(--text-3); }
 
 .method-formulas { display: grid; gap: var(--s-4); }
-.method-formulas figure { margin: 0; padding: var(--s-4) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--raise); }
+.method-formulas figure { margin: 0; padding: var(--s-4) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--glass); }
 .method-math { overflow-x: auto; overflow-y: hidden; padding: var(--s-2) 0 var(--s-3); color: var(--text-1); font-size: 19px; }
 .method-math.is-katex .katex-display { margin: 0; }
 .method-math.is-katex .katex { font-size: 1.15em; }

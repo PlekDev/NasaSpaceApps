@@ -1,37 +1,49 @@
-@font-face { font-family: "Inter"; src: url("/fonts/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
-@font-face { font-family: "Instrument Serif"; src: url("/fonts/instrument-serif-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+/* P.E.N. design tokens, "Industry over the globe": square instrument chrome (Barlow, hairlines, registration marks, steel accent) on a dark, real-imagery stage with glass panels. See DESIGN.md. */
+@font-face { font-family: "Barlow"; src: url("/fonts/barlow-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("/fonts/barlow-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("/fonts/barlow-latin-700-normal.woff2") format("woff2"); font-weight: 600 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Barlow Condensed"; src: url("/fonts/barlow-condensed-latin-400-normal.woff2") format("woff2"); font-weight: 400 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Barlow Condensed"; src: url("/fonts/barlow-condensed-latin-600-normal.woff2") format("woff2"); font-weight: 600 700; font-style: normal; font-display: swap; }
 
 :root {
-  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
-  --r-1: 6px; --r-2: 10px; --r-3: 16px; --r-pill: 999px;
+  --font-ui: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --font-serif: var(--font-display);   /* legacy name still used by view stylesheets: the display face is now Barlow Condensed */
+  --r-1: 0px; --r-2: 0px; --r-3: 0px; --r-pill: 0px;   /* square corners everywhere; round marks (dots, thumbs) say border-radius: 50% explicitly */
   --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px;
   --ease: cubic-bezier(.2, .8, .2, 1); --dur: 200ms;
   --bar-h: 52px; --col-l: 320px; --col-r: 344px; --gutter: 16px;
+  --cap-ls: .08em;   /* tracking of the condensed uppercase labels */
 }
 :root, [data-theme="dark"] {
   color-scheme: dark;
   --bg: #0b0f17; --space: #05070b;
-  --panel: rgba(15, 21, 32, .74); --panel-solid: #0f1520; --raise: rgba(255, 255, 255, .05); --raise-2: rgba(255, 255, 255, .09);
-  --text-1: #eceff4; --text-2: #a9b1bf; --text-3: #8a93a2;
-  --line: rgba(255, 255, 255, .09); --line-strong: rgba(255, 255, 255, .18);
-  --accent: #3987e5; --accent-btn: #2b72d0; --accent-soft: rgba(57, 135, 229, .16); --accent-text: #6da7ec; --on-accent: #fff;
-  --warn: #d9a548; --ok: #5db38b;
-  --shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 8px 32px rgba(0, 0, 0, .32);
+  --glass: linear-gradient(155deg, rgba(38, 60, 88, .40), rgba(8, 14, 24, .46) 62%); --panel: rgba(10, 18, 30, .6); --panel-solid: #0e1722; --glass-solid: rgba(12, 20, 32, .80);
+  --raise: rgba(148, 188, 227, .06); --raise-2: rgba(148, 188, 227, .12);
+  --text-1: #eef2f6; --text-2: #b6c2cf; --text-3: #8a99ab;
+  --line: rgba(170, 200, 230, .16); --line-strong: rgba(170, 200, 230, .34);
+  --accent: #94bce3; --accent-btn: #94bce3; --accent-soft: rgba(148, 188, 227, .15); --accent-text: #b5d9fd; --on-accent: #0b1a2a;
+  --warn: #e0b060; --ok: #86cba7;
+  --shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 18px 44px rgba(0, 0, 0, .38);
   --halo: rgba(255, 255, 255, .85);
+  --mark: rgba(181, 217, 253, .55);   /* registration marks on framed objects */
+  --scrim: rgba(3, 6, 12, .5);
   /* chart series: Okabe-Ito based, colour-blind safe; lib/chart.ts reads these */
   --series-1: #3987e5; --series-2: #e69f00; --series-3: #009e73; --series-4: #cc79a7; --series-5: #d55e00; --series-6: #56b4e9; --series-7: #f0e442;
 }
 [data-theme="light"] {
   color-scheme: light;
-  --bg: #e8ebf0; --space: #dde2ea;
-  --panel: rgba(250, 251, 252, .84); --panel-solid: #fafbfc; --raise: rgba(15, 23, 42, .045); --raise-2: rgba(15, 23, 42, .08);
-  --text-1: #12161d; --text-2: #46505e; --text-3: #566070;
-  --line: rgba(15, 23, 42, .10); --line-strong: rgba(15, 23, 42, .22);
-  --accent: #1a62c4; --accent-btn: #1a62c4; --accent-soft: rgba(26, 98, 196, .12); --accent-text: #1a62c4; --on-accent: #fff;
-  --warn: #8a5a00; --ok: #1f7a4f;
-  --shadow: 0 1px 0 rgba(255, 255, 255, .6) inset, 0 8px 28px rgba(20, 30, 50, .14);
+  --bg: #f2f2f3; --space: #e4e7ea;
+  --glass: linear-gradient(155deg, rgba(255, 255, 255, .62), rgba(232, 237, 243, .66) 62%); --panel: rgba(244, 246, 248, .72); --panel-solid: #f5f6f7; --glass-solid: rgba(245, 246, 248, .9);
+  --raise: rgba(29, 31, 32, .05); --raise-2: rgba(29, 31, 32, .09);
+  --text-1: #1d1f20; --text-2: #424244; --text-3: #5b5b5e;
+  --line: rgba(29, 31, 32, .16); --line-strong: rgba(29, 31, 32, .38);
+  --accent: #5980a6; --accent-btn: #416180; --accent-soft: rgba(89, 128, 166, .16); --accent-text: #416180; --on-accent: #fff;
+  --warn: #8a5a00; --ok: #2f6b4f;
+  --shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 12px 30px rgba(20, 30, 50, .16);
   --halo: rgba(255, 255, 255, .9);
+  --mark: rgba(29, 31, 32, .5);
+  --scrim: rgba(29, 31, 32, .32);
   --series-1: #1a62c4; --series-2: #b36b00; --series-3: #00755a; --series-4: #a8457f; --series-5: #c24e00; --series-6: #2b83bd; --series-7: #8a7500;
 }
 :root { --ramp-0: #1c3d6e; --ramp-1: #2a78d6; --ramp-2: #6da7ec; --ramp-3: #ffd166; }   /* score ramp: data encoding, identical in both themes */

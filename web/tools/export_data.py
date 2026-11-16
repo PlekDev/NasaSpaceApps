@@ -249,6 +249,8 @@ def main():
     matrix = dict(dims=mdims, targets=targets, regions=regions,
                   v={d: [[float(cell[(t, s)][f"score_{d}"]) if (t, s) in cell else None for t in targets] for s in regions] for d in mdims})
     write_json(DATA / "known_ranks.json", known_ranks(read_json(PROC / "known_analogs.json")))
+    # position of every known analog site: the Explore view re-ranks them live when the weights change
+    write_json(DATA / "known_sites.json", [dict(name=k["name"], lat=k["lat"], lon=k["lon"], analog_for=k.get("analog_for", "")) for k in extract_known()])
     write_json(DATA / "matrix.json", matrix)
     for f in sorted((ROOT / "figures").glob("fig*.png")):
         copy_atomic(f, OUT / "figures" / f.name)

@@ -6,7 +6,8 @@ export interface State {
   regions: Set<string>;       // active Earth regions
   hover: number | null;       // window index hovered in the list or on the map
   selected: number | null;    // window index with the detail sheet open
-  expanded: string | null;    // region id expanded in Top matches
+  expanded: string | null;    // region id expanded in Top matches (legacy list)
+  zone: number | null;        // Earth zone (region index) shown in the Explore panel; null = overview of the globe
 }
 type Listener = (changed: (keyof State)[]) => void;
 export function createStore(initial: State) {
