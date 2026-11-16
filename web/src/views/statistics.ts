@@ -319,8 +319,8 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
       xAxis: { type: 'value', min: 0, max: 100, name: 'terrain score', nameLocation: 'middle', nameGap: 28, splitLine: { lineStyle: { color: c.line } } },
       yAxis: { type: 'value', min: 0, max: 100, name: 'illumination score', nameLocation: 'middle', nameGap: 36, splitLine: { lineStyle: { color: c.line } } },
       visualMap: { show: false, type: 'continuous', min: 0, max: 90, dimension: 2, seriesIndex: 0, inRange: { color: inZone ? [c.t3, c.t3] : [c.ramp[0], c.ramp[1], c.ramp[2], c.ramp[3]] } },
-      series: [{ type: 'scatter', symbolSize: 4, data: dots, itemStyle: { opacity: inZone ? .2 : .7 }, markLine: thrLines, progressive: 3000, animationDuration: 600 },
-        ...(inZone ? [{ type: 'scatter', symbolSize: 7, data: zdots, itemStyle: { color: c.warn, borderColor: c.panel, borderWidth: .6, opacity: .95 }, z: 4 }] : [])],
+      series: [{ type: 'scatter', symbolSize: 4, data: dots, itemStyle: { opacity: inZone ? .2 : .7 }, markLine: thrLines, progressive: 0, animationDuration: 600 },
+        ...(inZone ? [{ type: 'scatter', progressive: 0, symbolSize: 7, data: zdots, itemStyle: { color: c.warn, borderColor: c.panel, borderWidth: .6, opacity: .95 }, z: 4 }] : [])],
     }, `Terrain score against illumination score of every window; Spearman correlation ${f2(rho)}.`);
     const pr = pearson(T, I);
     facts('scatter', table(['Measure', 'Value'], [['Spearman ρ (rank)', f2(rho)], ['Pearson r (linear)', f2(pr)], [`Both ≥ ${S.thr}`, `${nf(q.both)} (${f1(q.both / w.n * 100)} %)`], [`Illumination only`, `${nf(q.onlyY)} (${f1(q.onlyY / w.n * 100)} %)`], [`Terrain only`, `${nf(q.onlyX)} (${f1(q.onlyX / w.n * 100)} %)`], ['Neither', `${nf(q.neither)} (${f1(q.neither / w.n * 100)} %)`]]));
