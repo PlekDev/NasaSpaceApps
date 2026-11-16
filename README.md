@@ -5,18 +5,20 @@
 
 **Team:** Pollones en Fuga (Mexico) · **NASA Space Apps Challenge 2026 · Challenge:** *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars*
 
-**Try it:** [web app](https://plekdev.github.io/NasaSpaceApps/) (no install, works on a phone) · [method](docs/METHOD.md) · [field tools](docs/EXTRAS.md)
+**Try it:** [web app](https://plekdev.github.io/NasaSpaceApps/) (no install, works on a phone) · [guided tour](https://plekdev.github.io/NasaSpaceApps/#/tour) · [method](docs/METHOD.md) · [field tools](docs/EXTRAS.md) · [submission kit](docs/SUBMISSION.md)
 
 > **Blind test.** Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar prospecting mission
 > in 2012, was never shown to P.E.N. It comes out **#1 of 10,424** Earth windows for Malapert Massif, in the top
-> 0.2 % for four of the six Moon Base sites and in the top 5 % for all six.
+> 0.2 % for four of the six Moon Base sites and in the top 5 % for all six. **Not luck:** against random Earth windows,
+> p = 0.004 (0.025 corrected for 6 lunar targets); only 0.4 % of Mauna Kea scores as high.
 
 P.E.N. finds the **exact field-test site on Earth** for the planned **lunar south-pole Moon Base** and for
 candidate **Mars landing areas**. It scores 6 km windows at 30 m resolution, **one dimension at a time**. Today
 those dimensions are terrain and **low-Sun illumination**, searched across **14 Earth regions** (~10,400 windows).
 For each candidate it says *how* similar it is, *in what*, and *where the analogy breaks*, with NASA LRO Diviner
-temperature and ice data quantifying that last part for the Moon sites. Every analog card also shows the **real view**
-of both sites from NASA imagery APIs and a **live field-safety check** from NASA EONET.
+temperature and ice data quantifying that last part for the Moon sites. Every analog dossier also shows the **real view**
+of both sites from NASA imagery APIs and a **live field-safety check** from NASA EONET, and the Mission view turns a
+match into a **date**: the hours when the Earth site's Sun lights a rover traverse the way the lunar Sun does.
 
 > **Why light?** At the lunar south pole the Sun never rises above ~7°. Long shadows define landing safety,
 > rover vision, power and EVA planning. P.E.N. scores **terrain-cast shadows** with an exact shadow model and
@@ -29,6 +31,24 @@ is the zoom-in stage: *which 6 km site* inside that region matches the target's 
 the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Artemis candidate landing regions.
 
 ![Low-Sun side-by-side](figures/fig1_low_sun_side_by_side.png)
+
+## The web app
+
+One static page, no install, no account: [plekdev.github.io/NasaSpaceApps](https://plekdev.github.io/NasaSpaceApps/).
+Every number on screen is read from the exported data in `web/public/data/`; none is typed by hand
+(`tests/test_factcheck_web.py` checks it).
+
+| View | What it does |
+|---|---|
+| **Home** | Asks the question in plain words, flies the globe to NASA's 2012 test site on Mauna Kea and shows the three proofs: the blind-test rank, the null test and the light model against NASA |
+| **Explore** | Live globe over NASA GIBS imagery. Pick a Moon or Mars target and the weights of terrain and low-Sun light; all 10,424 Earth windows re-rank in the browser. Zone review with the real view of both sites (Moon Trek, GIBS) and a link to the dossier |
+| **Mission** | Three steps: plan a least-cost rover route on the target and its Earth twin (3D orbital, astronaut and rover views, exact cast shadows on both), set the lunar Sun, and get the Earth date and hour with the same light along the route, as a calendar file (`.ics`) |
+| **Statistics** | The null test, bootstrap intervals and weight stability behind the headline numbers |
+| **When** | Analog in time: the Sun's height through one day for the Moon site and Earth regions (plays through the year), hours per day of 0–7° Sun per region and month, and the best 14-day field block per region with its `.ics` |
+| **Method** | The method, running: the exact shadow algorithm live on the real terrain of a Moon site and its best Earth window as the Sun moves, a playground for the score, and every data product with its link |
+| **Proof** | The annex: how each claim was checked against NASA (illumination map, permanent shadow, known analog sites) |
+| **Dossier** | A technical report per target and Earth window: why the site matches, the same low Sun, when to go, traverse and telemetry, where the analogy breaks (Diviner, MODIS), field safety (EONET), typeset equations. Prints to a 3-page PDF |
+| **Tour** | A guided mission briefing through light, limits, timing and the rover |
 
 ## Key results (v0.5, 6 km windows, 30 m grid, 9 targets, 14 Earth regions, 10,424 windows)
 
@@ -55,7 +75,7 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 - **The light model matches NASA.** With NASA's 40 m polar DEM up to 150 km away, exact lunar curvature and real Sun
   positions, our illumination reproduces the LOLA 18.6-year average-illumination map with Spearman ρ = 0.92
   (Connecting Ridge), 0.99 (Nobile Rim 1), 0.97 (de Gerlache), 0.975 (Malapert), 0.99 (Haworth) and 0.98 (Leibnitz
-  Beta), with a mean error of 2.0–3.2 percentage points of lit time. With the local DEM alone ρ is 0.46–0.88: the gap was distant mountains, and
+  Beta), with a mean error of 2.0–3.2 percentage points of lit time. With the local DEM alone (ρ 0.46–0.88) the gap was distant mountains, and
   curvature by itself barely matters.
 - **Permanent shadow, a second check against NASA.** The same far-horizon run also says which points never see
   any part of the Sun. Compared with NASA's permanently-shadowed-region map (LOLA LPSR), the two agree on
@@ -76,57 +96,28 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 - **Mars is a much closer thermal match than the Moon.** The Mars Climate Database (a model, v6.2) gives the three
   Mars sites a mean surface temperature of 200–224 K, only 15–38 K colder than University Valley, with midday peaks
   of 275–287 K. What Earth cannot give is the air: 680–830 Pa on average, under 1 % of sea level and close to water's
-  triple point (612 Pa). Every Mars analog card now shows these numbers.
-- **Analog in time:** polar sites (Haughton, Axel Heiberg, Svalbard, University Valley) give 4–7 h/day of
-  lunar-pole-like low Sun (0–7°) around the equinoxes; sites below 40° latitude get about 1 h/day.
+  triple point (612 Pa). Every Mars dossier shows these numbers.
+- **Analog in time:** polar sites (Haughton, Axel Heiberg, Svalbard, University Valley) give 5.6–6.7 h/day at polar
+  sites around the equinoxes of lunar-pole-like low Sun (0–7°); sites below 40° latitude get about 1 h/day of 0–7° Sun
+  (Mauna Kea included).
+- **Scale:** 52 s per one-degree tile on one core, about 230 core-hours for all land: under 4 hours on 64 cores (3.6 h)
+  (`scripts/benchmark_tile.py`, `make benchmark`).
 - **NASA APIs in the app** ([api.nasa.gov](https://api.nasa.gov/)): Moon Trek WMTS (LRO NAC south-pole mosaic, 1 m),
   Mars Trek WMTS (CTX global mosaic) and GIBS (Landsat/HLS 30 m) give a real photo of both windows, reprojected onto
   the same grid as the low-Sun preview. EONET flags open natural events within 150 km of the Earth site; when we
   checked, it listed active wildfires 20–35 km from our best Mauna Kea window.
+- **Not luck, and stable.** A null test against random Earth windows gives p = 0.004 (0.025 corrected for 6 lunar
+  targets) for Malapert: only 0.4 % of Mauna Kea scores as high as NASA's exact test site. Malapert score 79, 95 %
+  bootstrap interval 60–90; the site stays #1 in 81 % of random weightings for Malapert, 100 % for Connecting Ridge.
+  As a group, p = 0.37 combined, 0.065 illumination: the strong result is the specific site, not every target.
+- **Honest negative:** for Mars the score does not separate the known sites (AUC 0.33–0.50). We report it.
+- **A date, not just a place.** For the Malapert traverse with the lunar Sun from the east, Mission finds fidelity 84 %
+  (7 March 2027, about half an hour after sunrise) at Mauna Kea, computed in the browser from today's date over the
+  next 12 months, so it can shift by a few days.
 - **Robustness:** re-weighting illumination 0.5–2× keeps 7–10 of the top 10 for seven of the nine targets (it drops to
   5 at one end for Malapert and Haworth). Window size (3/6/12 km) changes rankings much more; we report it instead of hiding it.
 
 ![Scores](figures/fig2_score_matrix.png)
-
-## Project status (Sat Nov 14, 21:30 local · freeze Sun 12:00 · submit Sun 18:00)
-
-**Done**
-
-| What | Where | Area owner |
-|---|---|---|
-| Common 30 m grid for Moon, Mars and Earth; Earth sea/lake mask | `pen/grid.py` | Victor |
-| Exact O(N) cast-shadow model, 2 Sun elevations × 8 azimuths | `pen/shadows.py` | Victor |
-| Terrain + illumination features, IQR-scaled similarity, per-dimension scores | `pen/features.py`, `pen/scoring.py` | Victor |
-| 9 references (6 Moon Base sites incl. Artemis candidates Nobile Rim 1, Malapert, Haworth and Leibnitz Beta; 3 Mars incl. Deuteronilus Mensae, buried ice) and 14 Earth regions | `config/sites.yaml` | D. Lizárraga · D. Dona |
-| Light model vs NASA LOLA illumination, local (ρ 0.46–0.88) and with 150 km horizons + curvature (ρ 0.92–0.99) | `scripts/validate_illumination.py`, `scripts/validate_far_horizons.py`, fig4, fig7 | D. Lizárraga · Victor |
-| Known-analog test with 8 classic sites (Mauna Kea ISRU site #1 for Malapert, top 0.2 % for four of six Moon sites) | `scripts/validate_known_analogs.py` | D. Dona |
-| Sensitivity to weights and window size | `scripts/sensitivity.py`, fig5 | Victor |
-| LRO Diviner temperature and ice context for the Moon sites | `scripts/diviner_context.py`, fig6 | D. Lizárraga |
-| Permanent shadow from our light model vs NASA's LPSR map (agreement 98.0–99.7 %, IoU 0.53–0.82); tests for the Moon & Mars helpers | `scripts/validate_far_horizons.py`, `tests/test_moon_mars.py` | D. Lizárraga |
-| Diviner vs Earth analog regions (NASA POWER skin temperature) | `scripts/thermal_gap.py`, fig8 | D. Lizárraga |
-| Mars surface temperature and pressure per Mars site (Mars Climate Database), in fig8 and on the Mars analog cards | `scripts/mars_context.py` | D. Lizárraga |
-| Moon/Mars data paragraph for the project page; Mars DTMs checked against their headers (metres above the MOLA geoid, R = 3,396,190 m) | `docs/SUBMISSION.md` | D. Lizárraga |
-| Analog in time (hours/day of 0–7° Sun per month) | `pen/sun.py`, fig3 | Victor |
-| Dark app with 3D globe / flat map, colour-by-dimension, NASA reference analog markers, dynamic `DIMENSIONS` support, analog card with low-Sun previews, validation tab, CSV download | `app/` | Paul · Aaron |
-| Far-horizon method and Diviner numbers reviewed against the NASA labels (PDS3 LDEM, AVGVISIB scale, PDS4 Diviner); `ray_reach` and the AVGVISIB scale guard added | `scripts/validate_far_horizons.py`, `scripts/diviner_context.py` | D. Lizárraga |
-| Real NASA imagery for every analog card (Moon/Mars Trek WMTS, GIBS), aligned with the previews | `scripts/real_imagery.py` | Aaron · Paul |
-| Live field-safety check from NASA EONET, with an offline snapshot | `pen/eonet.py`, `scripts/eonet_snapshot.py` | Aaron |
-| Tests (17) and CI with an offline app smoke test | `tests/`, `.github/` | Aaron |
-| Static web app (globe, ranking, analog card, Analog in time, Validation, Method), phone layout, accessibility and no-WebGL fallback, ready for GitHub Pages | `web/` | Paul |
-| Field tools: twin-light timelapse, astronaut's-eye view, rover twin, field brief and `.ics` campaign calendar per region, shown in the web app's Field kit | `scripts/extras/`, [`docs/EXTRAS.md`](docs/EXTRAS.md) | Victor |
-| Earth land-surface temperature per window (NASA MODIS MOD11A2 from NASA Earthdata), 10,417 of 10,424 windows, shown on every analog card of the web app next to Diviner or the Mars Climate Database (context, not scored) | `scripts/earth_lst.py`, `scripts/earth_lst_earthaccess.py`, `data/processed/earth_lst_windows.csv` | D. Dona · Victor |
-| Earth surface mineralogy per window (NASA EMIT L2B V002, EMIT-10 shares), 9 regions below 52°N, on the analog card where EMIT saw at least half the window (context, not scored) | `scripts/earth_emit.py`, `data/processed/earth_emit_windows.csv` | D. Dona · Victor |
-
-**To do before the freeze** (each line is a GitHub issue, see [`docs/TEAM.md`](docs/TEAM.md))
-
-| What | Why it matters | Owner |
-|---|---|---|
-| Turn on GitHub Pages for the web app (Settings → Pages → GitHub Actions, then run `.github/workflows/pages.yml`) and test the link in a private window and on a phone | The judges need a link that opens without installing anything | Aaron (repo admin) |
-| Deck (7 slides, our demo instead of the video) and project page around the blind-rediscovery result | It's the demo the judges see | Angel · Paul |
-| Fact-check every number in README, deck and page; tag `v1.0` | No wrong number in front of judges | Angel · Victor |
-
-**Stretch (only if time allows):** the remaining Artemis regions (Nobile Rim 2 has a 5 m DEM but lies at 84°S, outside
-the 85°S illumination map and DEM we validate against; de Gerlache Rim 2).
 
 ## Quick start
 
@@ -134,8 +125,8 @@ the 85°S illumination map and DEM we validate against; de Gerlache Rim 2).
 git clone https://github.com/PlekDev/NasaSpaceApps.git && cd NasaSpaceApps
 python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-streamlit run app/streamlit_app.py                   # uses the committed results in data/processed/
 make web-dev                                         # the web app (needs Node 20+), at http://localhost:5173
+streamlit run app/streamlit_app.py                   # the earlier Streamlit app, on the committed results
 ```
 
 Reproduce everything from raw data (~950 MB download, ~25 min compute):
@@ -149,6 +140,8 @@ make extras      # thumbnails, known-analog test, sensitivity, Diviner and Mars 
 make far         # far-horizon light validation (~4 min, needs the 230 MB LOLA polar DEM)
 make imagery     # real NASA imagery for the analog cards (Trek WMTS + GIBS, ~150 requests, no API key)
 make eonet       # refresh the offline EONET snapshot
+make sim         # terrain grids for Mission and the Method shadow lab
+make benchmark   # time one 1° tile (for the scale estimate)
 make test        # pytest
 make web-test    # web export and web unit tests
 ```
@@ -221,7 +214,7 @@ In the app, the sliders give a weight W to each dimension and the score is recom
 `S = 100·exp(−sqrt(Σ_dim W·n_dim·D_dim² / Σ_dim W·n_dim))`, where n_dim is the number of features. With all
 W = 1 this is exactly the combined score.
 
-**8 · Explanation.** On each analog card a feature with |d_k| ≤ 0.5 is listed as *similar* and one with
+**8 · Explanation.** In each analog dossier a feature with |d_k| ≤ 0.5 is listed as *similar* and one with
 |d_k| ≥ 1.5 as *differs*. The "Earth can't reproduce" list is fixed per body (gravity, vacuum, …) plus, for the Moon,
 the measured Diviner numbers of step 10.
 
