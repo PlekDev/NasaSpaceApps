@@ -179,7 +179,7 @@
 }
 
 .mission-viewports { display: flex; flex-wrap: wrap; gap: 1px; background: var(--line); }
-.mission-vp { flex: 1 1 520px; min-width: 0; position: relative; height: var(--mission-canvas-h); overflow: hidden; background: var(--mission-viewport); }
+.mission-vp { flex: 1 1 300px; min-width: 0; position: relative; height: var(--mission-canvas-h); overflow: hidden; background: var(--mission-viewport); }
 .mission-canvas { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; }
 .mission-vp-id { position: absolute; top: 12px; left: 12px; right: 68px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; pointer-events: none; }
 .mission-vp-title, .mission-vp-meta, .mission-exag-badge { margin: 0; background: rgba(5, 7, 11, .8); }
@@ -434,9 +434,7 @@
 .mission-rover--sun .mission-rover-val { min-width: 120px; text-align: left; white-space: nowrap; }
 @media (max-width: 760px) { .mission-dock-hint { display: none; } .mission-rover--sun { flex-basis: 100%; } }
 
-/* stacked, at the same width as the other pages: each view takes the whole column */
-.mission-viewports { flex-direction: column; flex-wrap: nowrap; }
-.mission-vp { flex: none; width: 100%; height: var(--mission-canvas-h); }
+/* side-by-side route viewports on wide screens (stacks via max-width: 760px above) */
 .mission-vp-id { right: 100px; }
 
 /* the run dock: legend, rover and Sun on one aligned row */
