@@ -1,13 +1,12 @@
 // AI-assisted (Claude Code); reviewed by the author.
 /**
- * Split instrument controls for Mission Rehearsal 3D:
- * - `renderPrimaryControls`: clean single-row bar above the dual 3D viewports
- *   (Target, Matched Earth Window, Synchronized Camera Mode, Vertical Scale).
- * - `renderSecondaryControls`: spacious two-column workbench strip below the
- *   viewports (Solar Geometry & Rehearsal Sun, Rover Playback & Waypoints).
+ * Mission Rehearsal controls, grouped by the step they change:
+ * - `routeBar`  (step 1): target, Earth analog, click tool (Orbit / Set A / Set B), swap A and B
+ * - `viewerBar` (top of the 3D frame): camera mode, vertical scale
+ * - `roverBar`  (bottom of the 3D frame): legend, slope mask, drive + scrub the rover
+ * - `sunBlock`  (step 2): Sun elevation and azimuth, Earth view source, play the Sun, Sun-direction range
  *
- * Updates existing control DOM nodes in place via WeakMaps so slider drags
- * and keyboard focus are never interrupted.
+ * All nodes are built once; `sync()` updates them in place so slider drags and focus are never interrupted.
  */
 import { h } from './dom.ts';
 import type { Manifest } from '../../types.ts';
@@ -15,6 +14,18 @@ import type { CameraMode, PointerTool } from './scene.ts';
 import type { SimWindow } from './sim.ts';
 
 export type EarthSunMode = 'rehearsal' | 'mirror';
+
+export interface SunReach {
+  /** Earth site name used in copy */
+  site: string;
+  /** "Moon" or "Mars" */
+  body: string;
+  /** grid azimuths (deg, 5 deg bin centres) the Earth Sun reaches in the elevation band within 12 months */
+  reachAz: number[];
+  elevBandDeg: [number, number];
+  /** Earth Sun grid azimuth on the selected rehearsal date, if any */
+  earthAzDeg: number | null;
+}
 
 export interface MissionControlsState {
   targetId: string;
@@ -28,12 +39,11 @@ export interface MissionControlsState {
   sunHourAngleDeg: number;
   sunGridAzDeg: number;
   earthSunMode: EarthSunMode;
-  earthSunSummary: string;
   playingSun: boolean;
   drivingRover: boolean;
   roverProgress: number;
-  startFrac: [number, number];
-  endFrac: [number, number];
+  reach: SunReach | null;
+  webgl: boolean;
 }
 
 export interface MissionControlsCallbacks {
@@ -52,512 +62,524 @@ export interface MissionControlsCallbacks {
   onSwapRoute: () => void;
 }
 
-interface PrimaryController {
-  root: HTMLElement;
-  state: MissionControlsState;
-  cb: MissionControlsCallbacks;
-  targetsSig: string;
-  windowsSig: string;
-  targetSelect: HTMLSelectElement;
-  winSelect: HTMLSelectElement;
-  camButtons: Map<CameraMode, HTMLButtonElement>;
-  exagSlider: HTMLInputElement;
-  exagBadge: HTMLElement;
-}
-
-interface SecondaryController {
-  root: HTMLElement;
-  state: MissionControlsState;
-  cb: MissionControlsCallbacks;
-  sunElevSlider: HTMLInputElement;
-  sunElevVal: HTMLElement;
-  sunHaSlider: HTMLInputElement;
-  sunHaVal: HTMLElement;
-  playSunBtn: HTMLButtonElement;
-  earthSunButtons: Map<EarthSunMode, HTMLButtonElement>;
-  toolButtons: Map<PointerTool, HTMLButtonElement>;
-  roverSlider: HTMLInputElement;
-  roverVal: HTMLElement;
-  driveRoverBtn: HTMLButtonElement;
-  slopeCheckbox: HTMLInputElement;
-}
-
-const primaryControllers = new WeakMap<HTMLElement, PrimaryController>();
-const secondaryControllers = new WeakMap<HTMLElement, SecondaryController>();
+const EXAG_MIN = 1;
+const EXAG_MAX = 5;
+const EXAG_STEP = 0.5;
 
 function setRangeValue(input: HTMLInputElement, val: number, min: number, max: number): void {
-  if (document.activeElement !== input) {
-    input.value = String(val);
-  }
+  if (document.activeElement !== input) input.value = String(val);
   const pct = Math.max(0, Math.min(100, ((val - min) / Math.max(1e-9, max - min)) * 100));
   input.style.setProperty('--p', `${pct.toFixed(1)}%`);
 }
 
-function buildTargetOptions(select: HTMLSelectElement, manifest: Manifest, targetId: string): void {
-  const moonTargets = manifest.targets.filter((t) => t.body === 'moon');
-  const marsTargets = manifest.targets.filter((t) => t.body === 'mars');
-  select.replaceChildren(
-    h(
-      'optgroup',
-      { label: 'Moon · Artemis South Pole (LOLA 30 m)' },
-      ...moonTargets.map((t) => h('option', { value: t.id }, `Moon · ${t.name}`)),
-    ),
-    h(
-      'optgroup',
-      { label: 'Mars · Candidate Landing Zones (MOLA 30 m)' },
-      ...marsTargets.map((t) => h('option', { value: t.id }, `Mars · ${t.name}`)),
-    ),
-  );
-  select.value = targetId;
+function norm360(a: number): number {
+  return ((a % 360) + 360) % 360;
 }
 
-function buildWindowOptions(select: HTMLSelectElement, windows: SimWindow[], rank: number): void {
-  select.replaceChildren(
-    ...windows.map((w) =>
-      h(
-        'option',
-        { value: String(w.rank) },
-        `#${w.rank} · ${w.region}${w.place ? ` (${w.place})` : ''} — ${w.score.toFixed(1)}%`,
-      ),
-    ),
-  );
-  select.value = String(rank);
+/** angular distance from `az` to the nearest reachable bin (5 deg bins, centres in `reach`) */
+export function reachGapDeg(az: number, reach: number[]): number {
+  if (!reach.length) return 180;
+  let best = 180;
+  for (const c of reach) {
+    const lo = c - 2.5;
+    const hi = c + 2.5;
+    const a = norm360(az);
+    if (a >= lo && a < hi) return 0;
+    const d = Math.min(Math.abs(norm360(a - lo + 180) - 180), Math.abs(norm360(a - hi + 180) - 180));
+    if (d < best) best = d;
+  }
+  return best;
 }
 
-function syncPrimaryDOM(ctrl: PrimaryController, manifest: Manifest): void {
-  const { state } = ctrl;
-
-  const tSig = manifest.targets.map((t) => t.id).join('|');
-  if (ctrl.targetsSig !== tSig) {
-    buildTargetOptions(ctrl.targetSelect, manifest, state.targetId);
-    ctrl.targetsSig = tSig;
-  } else if (ctrl.targetSelect.value !== state.targetId) {
-    ctrl.targetSelect.value = state.targetId;
+/** contiguous runs of reachable 5 deg bins as [startDeg, endDeg) in 0..360 */
+export function reachRuns(reach: number[]): Array<[number, number]> {
+  const bins = new Set(reach.map((c) => Math.floor(c / 5)));
+  const runs: Array<[number, number]> = [];
+  let start = -1;
+  for (let b = 0; b <= 72; b++) {
+    const on = b < 72 && bins.has(b);
+    if (on && start < 0) start = b;
+    if (!on && start >= 0) {
+      runs.push([start * 5, b * 5]);
+      start = -1;
+    }
   }
-
-  const wSig = state.windows.map((w) => `${w.rank}:${w.site}:${w.i}:${w.j}:${w.score.toFixed(1)}`).join('|');
-  if (ctrl.windowsSig !== wSig) {
-    buildWindowOptions(ctrl.winSelect, state.windows, state.windowRank);
-    ctrl.windowsSig = wSig;
-  } else if (ctrl.winSelect.value !== String(state.windowRank)) {
-    ctrl.winSelect.value = String(state.windowRank);
-  }
-
-  for (const [mode, btn] of ctrl.camButtons) {
-    btn.setAttribute('aria-pressed', state.cameraMode === mode ? 'true' : 'false');
-  }
-
-  setRangeValue(ctrl.exagSlider, state.exag, 1, 5);
-  ctrl.exagBadge.textContent = `${state.exag.toFixed(1)}×`;
+  return runs;
 }
 
-function syncSecondaryDOM(ctrl: SecondaryController): void {
-  const { state } = ctrl;
-
-  setRangeValue(ctrl.sunElevSlider, state.sunElevDeg, 0.5, 20);
-  ctrl.sunElevVal.textContent = `${state.sunElevDeg.toFixed(1)}°`;
-
-  const roundedHa = Math.round(state.sunHourAngleDeg);
-  setRangeValue(ctrl.sunHaSlider, roundedHa, -180, 180);
-  ctrl.sunHaVal.textContent = `${Math.round(state.sunGridAzDeg)}° az`;
-
-  ctrl.playSunBtn.setAttribute('aria-pressed', state.playingSun ? 'true' : 'false');
-  ctrl.playSunBtn.classList.toggle('is-playing', state.playingSun);
-  ctrl.playSunBtn.textContent = state.playingSun ? 'Pause Sun' : 'Play Sun';
-
-  for (const [mode, btn] of ctrl.earthSunButtons) {
-    btn.setAttribute('aria-pressed', state.earthSunMode === mode ? 'true' : 'false');
+/** a 0-360 deg horizon strip: reachable runs, the lunar Sun mark and (optionally) the Earth Sun mark and the gap */
+export function buildAzimuthStrip(
+  reach: number[],
+  moonAz: number,
+  earthAz: number | null,
+  opts: { gap?: boolean; label: string },
+): HTMLElement {
+  const pct = (a: number) => `${((norm360(a) / 360) * 100).toFixed(2)}%`;
+  const bar = h('div', { class: 'mission-az', role: 'img', 'aria-label': opts.label });
+  for (const [a, b] of reachRuns(reach)) {
+    const seg = h('i', { class: 'mission-az-reach' });
+    seg.style.left = pct(a);
+    seg.style.width = `${(((b - a) / 360) * 100).toFixed(2)}%`;
+    bar.appendChild(seg);
   }
-
-  for (const [tool, btn] of ctrl.toolButtons) {
-    btn.setAttribute('aria-pressed', state.pointerTool === tool ? 'true' : 'false');
+  if (opts.gap && reach.length) {
+    // dashed span from the lunar Sun to the nearest reachable edge
+    const a = norm360(moonAz);
+    let nearest = a;
+    let bestD = 999;
+    for (const [lo, hi] of reachRuns(reach)) {
+      for (const edge of [lo, hi]) {
+        const d = Math.abs(norm360(edge - a + 180) - 180);
+        if (d < bestD) {
+          bestD = d;
+          nearest = edge;
+        }
+      }
+    }
+    const from = Math.min(a, nearest);
+    const to = Math.max(a, nearest);
+    if (to - from <= 180) {
+      const gap = h('i', { class: 'mission-az-gap' });
+      gap.style.left = pct(from);
+      gap.style.width = `${(((to - from) / 360) * 100).toFixed(2)}%`;
+      bar.appendChild(gap);
+    }
   }
-
-  const roverPct = Math.round(state.roverProgress * 100);
-  setRangeValue(ctrl.roverSlider, roverPct, 0, 100);
-  ctrl.roverVal.textContent = `${roverPct}%`;
-
-  ctrl.driveRoverBtn.setAttribute('aria-pressed', state.drivingRover ? 'true' : 'false');
-  ctrl.driveRoverBtn.classList.toggle('is-playing', state.drivingRover);
-  ctrl.driveRoverBtn.textContent = state.drivingRover ? 'Pause rover' : 'Drive rover';
-
-  ctrl.slopeCheckbox.checked = state.showSlopeMask;
-}
-
-export function renderPrimaryControls(
-  container: HTMLElement,
-  manifest: Manifest,
-  state: MissionControlsState,
-  cb: MissionControlsCallbacks,
-): void {
-  const existing = primaryControllers.get(container);
-  if (existing && existing.root.parentElement === container) {
-    existing.state = state;
-    existing.cb = cb;
-    syncPrimaryDOM(existing, manifest);
-    return;
+  if (earthAz !== null) {
+    const e = h('i', { class: 'mission-az-mark mission-az-mark--earth' });
+    e.style.left = pct(earthAz);
+    bar.appendChild(e);
   }
+  const mk = h('i', { class: 'mission-az-mark mission-az-mark--moon' });
+  mk.style.left = pct(moonAz);
+  bar.appendChild(mk);
 
-  const ctrl: PrimaryController = {} as PrimaryController;
-  ctrl.state = state;
-  ctrl.cb = cb;
-  ctrl.targetsSig = '';
-  ctrl.windowsSig = '';
-  ctrl.camButtons = new Map();
-
-  const targetSelect = h('select', {
-    id: 'mission-target-select',
-    class: 'mission-select',
-    'aria-label': 'Select planetary target site',
-    onchange: () => ctrl.cb.onSelectTarget(targetSelect.value),
-  }) as HTMLSelectElement;
-
-  const winSelect = h('select', {
-    id: 'mission-window-select',
-    class: 'mission-select',
-    'aria-label': 'Select top-5 Earth analog window',
-    onchange: () => ctrl.cb.onSelectWindow(Number(winSelect.value)),
-  }) as HTMLSelectElement;
-
-  const camModes: Array<{ id: CameraMode; label: string; title: string }> = [
-    { id: 'orbital', label: 'Orbital 3D', title: 'Synchronized 3D orbit camera' },
-    { id: 'astronaut', label: 'Astronaut 1.7 m', title: 'First-person eye height at 1.7 m above local surface' },
-    { id: 'rover', label: 'Rover', title: 'Chase camera behind the traversing rover' },
-    { id: 'topdown', label: '2D Map', title: 'Top-down hillshade + cast shadow map' },
-  ];
-
-  const camSeg = h(
+  return h(
     'div',
-    { class: 'seg mission-seg', role: 'group', 'aria-label': 'Camera view modes' },
-    ...camModes.map((m) => {
-      const btn = h(
+    { class: 'mission-az-wrap' },
+    bar,
+    h(
+      'div',
+      { class: 'mission-az-ticks', 'aria-hidden': 'true' },
+      h('span', null, 'N'),
+      h('span', null, 'E'),
+      h('span', null, 'S'),
+      h('span', null, 'W'),
+      h('span', null, 'N'),
+    ),
+  );
+}
+
+function segButton(label: string, onclick: () => void, title?: string): HTMLButtonElement {
+  return h('button', { type: 'button', 'aria-pressed': 'false', title, onclick }, label) as HTMLButtonElement;
+}
+
+export class MissionControls {
+  readonly routeBar: HTMLElement;
+  readonly viewerBar: HTMLElement;
+  readonly roverBar: HTMLElement;
+  readonly sunBlock: HTMLElement;
+  readonly windowSelect: HTMLSelectElement;
+
+  private state: MissionControlsState;
+  private targetsSig = '';
+  private windowsSig = '';
+  private reachSig = '';
+
+  private targetSelect: HTMLSelectElement;
+  private toolButtons = new Map<PointerTool, HTMLButtonElement>();
+  private camButtons = new Map<CameraMode, HTMLButtonElement>();
+  private exagVal: HTMLElement;
+  private exagLess: HTMLButtonElement;
+  private exagMore: HTMLButtonElement;
+  private slopeCheckbox: HTMLInputElement;
+  private driveBtn: HTMLButtonElement;
+  private roverSlider: HTMLInputElement;
+  private roverVal: HTMLElement;
+  private elevSlider: HTMLInputElement;
+  private elevVal: HTMLElement;
+  private haSlider: HTMLInputElement;
+  private azVal: HTMLElement;
+  private reachNote: HTMLElement;
+  private earthSunButtons = new Map<EarthSunMode, HTMLButtonElement>();
+  private playSunBtn: HTMLButtonElement;
+  private rangeSlot: HTMLElement;
+  private rangeCaption: HTMLElement;
+
+  constructor(
+    private manifest: Manifest,
+    initial: MissionControlsState,
+    private cb: MissionControlsCallbacks,
+  ) {
+    this.state = initial;
+
+    // ── Step 1 · route bar ──────────────────────────────────────────────
+    this.targetSelect = h('select', {
+      id: 'mission-target-select',
+      class: 'mission-select',
+      onchange: () => this.cb.onSelectTarget(this.targetSelect.value),
+    }) as HTMLSelectElement;
+    this.windowSelect = h('select', {
+      id: 'mission-window-select',
+      class: 'mission-select',
+      onchange: () => this.cb.onSelectWindow(Number(this.windowSelect.value)),
+    }) as HTMLSelectElement;
+
+    const tools: Array<{ id: PointerTool; label: string; title: string }> = [
+      { id: 'orbit', label: 'Orbit', title: 'Drag to orbit, wheel to zoom' },
+      { id: 'start', label: 'Set A', title: 'Click a view to place the start' },
+      { id: 'end', label: 'Set B', title: 'Click a view to place the end' },
+    ];
+    const toolSeg = h(
+      'div',
+      { class: 'mission-seg', role: 'group', 'aria-label': 'Click a view to' },
+      ...tools.map((t) => {
+        const b = segButton(t.label, () => this.cb.onChangePointerTool(t.id), t.title);
+        this.toolButtons.set(t.id, b);
+        return b;
+      }),
+      h(
         'button',
-        {
-          type: 'button',
-          title: m.title,
-          'aria-pressed': 'false',
-          onclick: () => ctrl.cb.onChangeCameraMode(m.id),
-        },
-        m.label,
-      ) as HTMLButtonElement;
-      ctrl.camButtons.set(m.id, btn);
-      return btn;
-    }),
-  );
+        { type: 'button', title: 'Swap start and end', 'aria-label': 'Swap A and B', onclick: () => this.cb.onSwapRoute() },
+        'A ⇄ B',
+      ),
+    );
 
-  const exagBadge = h(
-    'span',
-    { class: 'mission-exag-badge tnum', 'aria-live': 'polite' },
-    `${state.exag.toFixed(1)}×`,
-  );
-
-  const exagSlider = h('input', {
-    id: 'mission-exag-slider',
-    type: 'range',
-    min: '1',
-    max: '5',
-    step: '0.5',
-    value: String(state.exag),
-    oninput: () => {
-      const val = Number(exagSlider.value);
-      setRangeValue(exagSlider, val, 1, 5);
-      exagBadge.textContent = `${val.toFixed(1)}×`;
-      ctrl.cb.onChangeExag(val);
-    },
-  }) as HTMLInputElement;
-
-  const resetCamBtn = h(
-    'button',
-    {
-      type: 'button',
-      class: 'btn small',
-      onclick: () => ctrl.cb.onResetCamera(),
-      title: 'Reset orbital camera angle and zoom',
-    },
-    'Reset',
-  ) as HTMLButtonElement;
-
-  const bar = h(
-    'section',
-    { class: 'panel mission-top-bar', 'aria-label': 'Mission target and camera controls' },
-    h(
+    this.routeBar = h(
       'div',
-      { class: 'mission-field' },
-      h('label', { class: 'label', for: 'mission-target-select' }, 'Planetary target'),
-      targetSelect,
-    ),
-    h(
+      { class: 'mission-route-bar' },
+      h(
+        'label',
+        { class: 'mission-field mission-field--target', for: 'mission-target-select' },
+        h('span', { class: 'mission-cap' }, 'Target'),
+        this.targetSelect,
+      ),
+      h(
+        'label',
+        { class: 'mission-field mission-field--analog', for: 'mission-window-select' },
+        h('span', { class: 'mission-cap' }, 'Earth analog'),
+        this.windowSelect,
+      ),
+      toolSeg,
+    );
+
+    // ── 3D frame · toolbar ──────────────────────────────────────────────
+    const cams: Array<{ id: CameraMode; label: string; title: string }> = [
+      { id: 'orbital', label: 'Orbital 3D', title: 'Synchronized orbit camera' },
+      { id: 'astronaut', label: 'Astronaut 1.7 m', title: 'Eye height 1.7 m above the surface' },
+      { id: 'rover', label: 'Rover', title: 'Chase camera behind the rover' },
+      { id: 'topdown', label: '2D map', title: 'Top-down hillshade and cast shadows' },
+    ];
+    const camSeg = h(
       'div',
-      { class: 'mission-field' },
-      h('label', { class: 'label', for: 'mission-window-select' }, 'Earth analog window'),
-      winSelect,
-    ),
-    h(
+      { class: 'mission-seg', role: 'group', 'aria-label': 'Camera' },
+      ...cams.map((c) => {
+        const b = segButton(c.label, () => this.cb.onChangeCameraMode(c.id), c.title);
+        this.camButtons.set(c.id, b);
+        return b;
+      }),
+    );
+
+    this.exagVal = h('output', { class: 'mission-stepper-val', 'aria-live': 'polite' }, '');
+    this.exagLess = h(
+      'button',
+      {
+        type: 'button',
+        'aria-label': 'Less vertical exaggeration',
+        onclick: () => this.cb.onChangeExag(Math.max(EXAG_MIN, this.state.exag - EXAG_STEP)),
+      },
+      '−',
+    ) as HTMLButtonElement;
+    this.exagMore = h(
+      'button',
+      {
+        type: 'button',
+        'aria-label': 'More vertical exaggeration',
+        onclick: () => this.cb.onChangeExag(Math.min(EXAG_MAX, this.state.exag + EXAG_STEP)),
+      },
+      '+',
+    ) as HTMLButtonElement;
+
+    this.viewerBar = h(
       'div',
-      { class: 'mission-field' },
-      h('span', { class: 'label' }, 'View'),
+      { class: 'mission-viewer-bar' },
       camSeg,
-    ),
-    h(
+      h(
+        'div',
+        { class: 'mission-viewer-bar-end' },
+        h('span', { class: 'mission-cap', id: 'mission-exag-cap' }, 'Vert. scale'),
+        h(
+          'div',
+          { class: 'mission-stepper', role: 'group', 'aria-labelledby': 'mission-exag-cap' },
+          this.exagLess,
+          this.exagVal,
+          this.exagMore,
+        ),
+        h(
+          'button',
+          { type: 'button', class: 'mission-btn mission-btn--quiet', onclick: () => this.cb.onResetCamera() },
+          'Reset view',
+        ),
+      ),
+    );
+
+    // ── 3D frame · legend + rover ───────────────────────────────────────
+    this.slopeCheckbox = h('input', {
+      id: 'mission-slope-mask',
+      type: 'checkbox',
+      onchange: () => this.cb.onToggleSlopeMask(this.slopeCheckbox.checked),
+    }) as HTMLInputElement;
+
+    this.driveBtn = h(
+      'button',
+      { type: 'button', class: 'mission-btn', 'aria-pressed': 'false', onclick: () => this.cb.onToggleDriveRover() },
+      'Drive',
+    ) as HTMLButtonElement;
+    this.roverVal = h('output', { class: 'mission-rover-val', for: 'mission-rover-scrub' }, '');
+    this.roverSlider = h('input', {
+      id: 'mission-rover-scrub',
+      type: 'range',
+      min: '0',
+      max: '100',
+      step: '1',
+      'aria-label': 'Rover position along the route',
+      oninput: () => {
+        const v = Number(this.roverSlider.value);
+        setRangeValue(this.roverSlider, v, 0, 100);
+        this.roverVal.textContent = `${Math.round(v)} %`;
+        this.cb.onScrubRover(v / 100);
+      },
+    }) as HTMLInputElement;
+
+    this.roverBar = h(
       'div',
-      { class: 'mission-field mission-field-exag' },
+      { class: 'mission-viewer-foot' },
+      h(
+        'ul',
+        { class: 'mission-legend', 'aria-label': 'Legend' },
+        h('li', null, h('i', { class: 'mission-key mission-key--lit' }), 'Lit'),
+        h('li', null, h('i', { class: 'mission-key mission-key--shadow' }), 'Shadow'),
+        h(
+          'li',
+          null,
+          h(
+            'label',
+            { class: 'mission-wall-toggle', for: 'mission-slope-mask' },
+            this.slopeCheckbox,
+            h('i', { class: 'mission-key mission-key--wall' }),
+            'Slope > 20°',
+          ),
+        ),
+        h('li', null, h('i', { class: 'mission-key mission-key--route' }), 'Route'),
+        h(
+          'li',
+          null,
+          h('i', { class: 'mission-pin' }, 'A'),
+          h('i', { class: 'mission-pin' }, 'B'),
+          'Start, end',
+        ),
+      ),
+      h('div', { class: 'mission-rover' }, this.driveBtn, this.roverSlider, this.roverVal),
+    );
+
+    // ── Step 2 · Sun ────────────────────────────────────────────────────
+    this.elevVal = h('output', { class: 'mission-readout', for: 'mission-sun-elev' }, '');
+    this.elevSlider = h('input', {
+      id: 'mission-sun-elev',
+      type: 'range',
+      min: '0.5',
+      max: '20',
+      step: '0.5',
+      oninput: () => {
+        const v = Number(this.elevSlider.value);
+        setRangeValue(this.elevSlider, v, 0.5, 20);
+        this.elevVal.textContent = `${v.toFixed(1)}°`;
+        this.cb.onChangeSun(v, this.state.sunHourAngleDeg);
+      },
+    }) as HTMLInputElement;
+
+    this.azVal = h('output', { class: 'mission-readout', for: 'mission-sun-ha' }, '');
+    this.reachNote = h('span', { class: 'mission-reach-note' }, '');
+    this.haSlider = h('input', {
+      id: 'mission-sun-ha',
+      type: 'range',
+      min: '-180',
+      max: '180',
+      step: '5',
+      oninput: () => {
+        const v = Number(this.haSlider.value);
+        setRangeValue(this.haSlider, v, -180, 180);
+        this.cb.onChangeSun(this.state.sunElevDeg, v);
+      },
+    }) as HTMLInputElement;
+
+    const earthSunSeg = h(
+      'div',
+      { class: 'mission-seg mission-seg--sm', role: 'group', 'aria-label': 'Earth view Sun' },
+      ...(
+        [
+          { id: 'rehearsal', label: 'Rehearsal date' },
+          { id: 'mirror', label: 'Mirror target Sun' },
+        ] as Array<{ id: EarthSunMode; label: string }>
+      ).map((o) => {
+        const b = segButton(o.label, () => this.cb.onChangeEarthSunMode(o.id));
+        this.earthSunButtons.set(o.id, b);
+        return b;
+      }),
+    );
+
+    this.playSunBtn = h(
+      'button',
+      { type: 'button', class: 'mission-btn', 'aria-pressed': 'false', onclick: () => this.cb.onTogglePlaySun() },
+      'Play Sun',
+    ) as HTMLButtonElement;
+
+    this.rangeSlot = h('div', { class: 'mission-range-slot' });
+    this.rangeCaption = h('p', { class: 'mission-range-caption' }, '');
+
+    this.sunBlock = h(
+      'div',
+      { class: 'mission-sun' },
       h(
         'div',
-        { class: 'mission-field-head' },
-        h('label', { class: 'label', for: 'mission-exag-slider' }, 'Vertical scale (1×–5×)'),
-        exagBadge,
+        { class: 'mission-sun-sliders' },
+        h(
+          'div',
+          { class: 'mission-slider mission-slider--elev' },
+          h(
+            'div',
+            { class: 'mission-slider-head' },
+            h('label', { class: 'mission-cap', for: 'mission-sun-elev' }, 'Elevation'),
+            this.elevVal,
+          ),
+          this.elevSlider,
+          h('div', { class: 'mission-slider-ends', 'aria-hidden': 'true' }, h('span', null, '0.5°'), h('span', null, '20°')),
+        ),
+        h(
+          'div',
+          { class: 'mission-slider mission-slider--az' },
+          h(
+            'div',
+            { class: 'mission-slider-head' },
+            h('label', { class: 'mission-cap', for: 'mission-sun-ha' }, 'Azimuth'),
+            h('span', { class: 'mission-slider-head-end' }, this.reachNote, this.azVal),
+          ),
+          this.haSlider,
+          h(
+            'div',
+            { class: 'mission-slider-ends', 'aria-hidden': 'true' },
+            h('span', null, 'Earlier'),
+            h('span', null, 'Later'),
+          ),
+        ),
+        this.playSunBtn,
       ),
       h(
         'div',
-        { class: 'mission-exag-row' },
-        exagSlider,
-        resetCamBtn,
+        { class: 'mission-range' },
+        h(
+          'div',
+          { class: 'mission-range-head' },
+          h('span', { class: 'mission-cap' }, 'Sun-direction range'),
+          h('span', { class: 'mission-range-earth' }, h('span', { class: 'mission-cap' }, 'Earth view'), earthSunSeg),
+        ),
+        this.rangeSlot,
+        this.rangeCaption,
       ),
-    ),
-  );
+    );
 
-  ctrl.root = bar;
-  ctrl.targetSelect = targetSelect;
-  ctrl.winSelect = winSelect;
-  ctrl.exagSlider = exagSlider;
-  ctrl.exagBadge = exagBadge;
-
-  primaryControllers.set(container, ctrl);
-  syncPrimaryDOM(ctrl, manifest);
-  container.replaceChildren(bar);
-}
-
-export function renderSecondaryControls(
-  container: HTMLElement,
-  state: MissionControlsState,
-  cb: MissionControlsCallbacks,
-): void {
-  const existing = secondaryControllers.get(container);
-  if (existing && existing.root.parentElement === container) {
-    existing.state = state;
-    existing.cb = cb;
-    syncSecondaryDOM(existing);
-    return;
+    this.sync(initial);
   }
 
-  const ctrl: SecondaryController = {} as SecondaryController;
-  ctrl.state = state;
-  ctrl.cb = cb;
-  ctrl.earthSunButtons = new Map();
-  ctrl.toolButtons = new Map();
+  sync(state: MissionControlsState): void {
+    this.state = state;
+    const m = this.manifest;
 
-  const playSunBtn = h(
-    'button',
-    {
-      type: 'button',
-      class: 'btn small mission-toggle-btn',
-      'aria-pressed': 'false',
-      onclick: () => ctrl.cb.onTogglePlaySun(),
-    },
-    'Play Sun',
-  ) as HTMLButtonElement;
+    const tSig = m.targets.map((t) => t.id).join('|');
+    if (this.targetsSig !== tSig) {
+      const moon = m.targets.filter((t) => t.body === 'moon');
+      const mars = m.targets.filter((t) => t.body === 'mars');
+      this.targetSelect.replaceChildren(
+        h('optgroup', { label: 'Moon · south pole' }, ...moon.map((t) => h('option', { value: t.id }, `Moon · ${t.name}`))),
+        h('optgroup', { label: 'Mars' }, ...mars.map((t) => h('option', { value: t.id }, `Mars · ${t.name}`))),
+      );
+      this.targetsSig = tSig;
+    }
+    if (this.targetSelect.value !== state.targetId) this.targetSelect.value = state.targetId;
 
-  const sunElevVal = h('output', { class: 'mission-slider-val tnum', for: 'mission-sun-elev' }, '');
-  const sunElevSlider = h('input', {
-    id: 'mission-sun-elev',
-    type: 'range',
-    min: '0.5',
-    max: '20',
-    step: '0.5',
-    value: String(state.sunElevDeg),
-    oninput: () => {
-      const val = Number(sunElevSlider.value);
-      setRangeValue(sunElevSlider, val, 0.5, 20);
-      sunElevVal.textContent = `${val.toFixed(1)}°`;
-      ctrl.cb.onChangeSun(val, ctrl.state.sunHourAngleDeg);
-    },
-  }) as HTMLInputElement;
-
-  const sunHaVal = h('output', { class: 'mission-slider-val tnum', for: 'mission-sun-ha' }, '');
-  const sunHaSlider = h('input', {
-    id: 'mission-sun-ha',
-    type: 'range',
-    min: '-180',
-    max: '180',
-    step: '5',
-    value: String(Math.round(state.sunHourAngleDeg)),
-    oninput: () => {
-      const val = Number(sunHaSlider.value);
-      setRangeValue(sunHaSlider, val, -180, 180);
-      ctrl.cb.onChangeSun(ctrl.state.sunElevDeg, val);
-    },
-  }) as HTMLInputElement;
-
-  const earthSunOpts: Array<{ id: EarthSunMode; label: string }> = [
-    { id: 'rehearsal', label: 'Rehearsal date' },
-    { id: 'mirror', label: 'Mirror target' },
-  ];
-  const earthSunSeg = h(
-    'div',
-    { class: 'seg mission-seg', role: 'group', 'aria-label': 'Earth viewport Sun source' },
-    ...earthSunOpts.map((opt) => {
-      const btn = h(
-        'button',
-        {
-          type: 'button',
-          'aria-pressed': 'false',
-          onclick: () => ctrl.cb.onChangeEarthSunMode(opt.id),
-        },
-        opt.label,
-      ) as HTMLButtonElement;
-      ctrl.earthSunButtons.set(opt.id, btn);
-      return btn;
-    }),
-  );
-
-  const driveRoverBtn = h(
-    'button',
-    {
-      type: 'button',
-      class: 'btn small mission-toggle-btn',
-      'aria-pressed': 'false',
-      onclick: () => ctrl.cb.onToggleDriveRover(),
-    },
-    'Drive rover',
-  ) as HTMLButtonElement;
-
-  const pointerTools: Array<{ id: PointerTool; label: string }> = [
-    { id: 'orbit', label: 'Orbit' },
-    { id: 'start', label: 'Set A' },
-    { id: 'end', label: 'Set B' },
-  ];
-  const toolSeg = h(
-    'div',
-    { class: 'seg mission-seg', role: 'group', 'aria-label': 'Terrain click action' },
-    ...pointerTools.map((pt) => {
-      const btn = h(
-        'button',
-        {
-          type: 'button',
-          'aria-pressed': 'false',
-          onclick: () => ctrl.cb.onChangePointerTool(pt.id),
-        },
-        pt.label,
-      ) as HTMLButtonElement;
-      ctrl.toolButtons.set(pt.id, btn);
-      return btn;
-    }),
-  );
-
-  const swapBtn = h(
-    'button',
-    {
-      type: 'button',
-      class: 'btn small',
-      title: 'Reverse Start (A) and End (B)',
-      onclick: () => ctrl.cb.onSwapRoute(),
-    },
-    'A ↔ B',
-  ) as HTMLButtonElement;
-
-  const roverVal = h('output', { class: 'mission-slider-val tnum', for: 'mission-rover-scrub' }, '');
-  const roverSlider = h('input', {
-    id: 'mission-rover-scrub',
-    type: 'range',
-    min: '0',
-    max: '100',
-    step: '1',
-    value: String(Math.round(state.roverProgress * 100)),
-    oninput: () => {
-      const val = Number(roverSlider.value);
-      setRangeValue(roverSlider, val, 0, 100);
-      roverVal.textContent = `${Math.round(val)}%`;
-      ctrl.cb.onScrubRover(val / 100);
-    },
-  }) as HTMLInputElement;
-
-  const slopeCheckbox = h('input', {
-    id: 'mission-slope-mask',
-    type: 'checkbox',
-    onchange: () => ctrl.cb.onToggleSlopeMask(slopeCheckbox.checked),
-  }) as HTMLInputElement;
-
-  const strip = h(
-    'section',
-    { class: 'panel mission-workbench-strip', 'aria-label': 'Sun geometry and traverse controls' },
-    // Left column: Solar geometry
-    h(
-      'div',
-      { class: 'mission-workbench-col' },
-      h(
-        'div',
-        { class: 'mission-subpanel-head' },
-        h('span', { class: 'label' }, 'Solar illumination & cast shadows'),
-        h('div', { class: 'mission-inline-actions' }, earthSunSeg, playSunBtn),
-      ),
-      h(
-        'div',
-        { class: 'mission-sliders-duo' },
-        h(
-          'div',
-          { class: 'mission-slider-row' },
-          h('label', { class: 'mission-slider-lbl', for: 'mission-sun-elev' }, 'Sun elev'),
-          sunElevSlider,
-          sunElevVal,
+    const wSig = state.windows.map((w) => `${w.rank}:${w.site}:${w.i}:${w.j}:${w.score}`).join('|');
+    if (this.windowsSig !== wSig) {
+      this.windowSelect.replaceChildren(
+        ...state.windows.map((w) =>
+          h(
+            'option',
+            { value: String(w.rank) },
+            `#${w.rank} ${w.region}${w.place ? `, ${w.place}` : ''} · score ${Math.round(w.score)}`,
+          ),
         ),
-        h(
-          'div',
-          { class: 'mission-slider-row' },
-          h('label', { class: 'mission-slider-lbl', for: 'mission-sun-ha' }, 'Sun azimuth'),
-          sunHaSlider,
-          sunHaVal,
-        ),
-      ),
-    ),
+      );
+      this.windowsSig = wSig;
+    }
+    if (this.windowSelect.value !== String(state.windowRank)) this.windowSelect.value = String(state.windowRank);
 
-    // Right column: Rover & traverse
-    h(
-      'div',
-      { class: 'mission-workbench-col' },
-      h(
-        'div',
-        { class: 'mission-subpanel-head' },
-        h('span', { class: 'label' }, 'Rover & waypoints (A* avoids > 20° slopes)'),
-        h(
-          'div',
-          { class: 'mission-inline-actions' },
-          toolSeg,
-          swapBtn,
-          driveRoverBtn,
-        ),
-      ),
-      h(
-        'div',
-        { class: 'mission-traverse-row' },
-        h(
-          'div',
-          { class: 'mission-slider-row mission-rover-row' },
-          h('label', { class: 'mission-slider-lbl', for: 'mission-rover-scrub' }, 'Rover pos'),
-          roverSlider,
-          roverVal,
-        ),
-        h(
-          'label',
-          { class: 'mission-slope-toggle', for: 'mission-slope-mask' },
-          slopeCheckbox,
-          '> 20° wall',
-        ),
-      ),
-    ),
-  );
+    for (const [id, b] of this.toolButtons) b.setAttribute('aria-pressed', String(state.pointerTool === id));
+    for (const [id, b] of this.camButtons) {
+      b.setAttribute('aria-pressed', String(state.cameraMode === id));
+      b.disabled = !state.webgl && id !== 'topdown';
+    }
 
-  ctrl.root = strip;
-  ctrl.sunElevSlider = sunElevSlider;
-  ctrl.sunElevVal = sunElevVal;
-  ctrl.sunHaSlider = sunHaSlider;
-  ctrl.sunHaVal = sunHaVal;
-  ctrl.playSunBtn = playSunBtn;
-  ctrl.roverSlider = roverSlider;
-  ctrl.roverVal = roverVal;
-  ctrl.driveRoverBtn = driveRoverBtn;
-  ctrl.slopeCheckbox = slopeCheckbox;
+    this.exagVal.textContent = `${state.exag.toFixed(1)}×`;
+    this.exagLess.disabled = state.exag <= EXAG_MIN;
+    this.exagMore.disabled = state.exag >= EXAG_MAX;
 
-  secondaryControllers.set(container, ctrl);
-  syncSecondaryDOM(ctrl);
-  container.replaceChildren(strip);
+    this.slopeCheckbox.checked = state.showSlopeMask;
+
+    const rp = Math.round(state.roverProgress * 100);
+    setRangeValue(this.roverSlider, rp, 0, 100);
+    this.roverVal.textContent = `${rp} %`;
+    this.driveBtn.setAttribute('aria-pressed', String(state.drivingRover));
+    this.driveBtn.textContent = state.drivingRover ? 'Pause' : 'Drive';
+
+    setRangeValue(this.elevSlider, state.sunElevDeg, 0.5, 20);
+    this.elevVal.textContent = `${state.sunElevDeg.toFixed(1)}°`;
+    setRangeValue(this.haSlider, Math.round(state.sunHourAngleDeg), -180, 180);
+    const az = Math.round(norm360(state.sunGridAzDeg));
+    this.azVal.textContent = `${az}°`;
+    this.haSlider.setAttribute('aria-valuetext', `Sun azimuth ${az} degrees`);
+
+    this.playSunBtn.setAttribute('aria-pressed', String(state.playingSun));
+    this.playSunBtn.textContent = state.playingSun ? 'Pause Sun' : 'Play Sun';
+    for (const [id, b] of this.earthSunButtons) b.setAttribute('aria-pressed', String(state.earthSunMode === id));
+
+    const r = state.reach;
+    if (!r) {
+      this.reachNote.textContent = '';
+      this.reachNote.removeAttribute('data-state');
+      this.rangeSlot.replaceChildren();
+      this.rangeCaption.textContent = '';
+      this.reachSig = '';
+      return;
+    }
+    const gap = reachGapDeg(state.sunGridAzDeg, r.reachAz);
+    this.reachNote.dataset.state = gap === 0 ? 'in' : 'out';
+    this.reachNote.textContent = gap === 0 ? `Inside ${r.site}'s range` : `${Math.round(gap)}° outside ${r.site}'s range`;
+
+    const sig = `${r.site}|${r.reachAz.join(',')}|${az}|${r.earthAzDeg === null ? '' : Math.round(r.earthAzDeg)}`;
+    if (sig !== this.reachSig) {
+      this.reachSig = sig;
+      this.rangeSlot.replaceChildren(
+        buildAzimuthStrip(r.reachAz, state.sunGridAzDeg, r.earthAzDeg, {
+          gap: gap > 0,
+          label: `${r.body} Sun at ${az}°; ${r.site} reaches ${r.reachAz.length * 5}° of horizon`,
+        }),
+      );
+      this.rangeCaption.replaceChildren(
+        h('i', { class: 'mission-key mission-key--reach' }),
+        `${r.site} reaches ${r.reachAz.length * 5}° of horizon at Sun elevation ${r.elevBandDeg[0]}–${r.elevBandDeg[1]}° in the next 12 months.`,
+        h('i', { class: 'mission-key mission-key--moonmark' }),
+        `${r.body} Sun`,
+        ...(r.earthAzDeg !== null ? [h('i', { class: 'mission-key mission-key--earthmark' }), 'Earth Sun on the date'] : []),
+      );
+    }
+  }
 }

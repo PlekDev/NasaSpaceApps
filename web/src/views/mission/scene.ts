@@ -52,6 +52,57 @@ interface SideWebGLObjects {
   exagZ: Float32Array;
 }
 
+/* Terrain encoding shared by the 3D texture and the 2D map (Mission redesign):
+ *  lit    = the body's hillshade, floored so no lit face goes darker than shadow, with a warm lift toward #ffd166
+ *  shadow = #56698a, a steel blue a clear lightness step below lit, modulated lightly by relief
+ *  wall   = #d55e00 diagonal hatch (slope > 20 deg), so it never depends on hue alone */
+const LIT_TINT = [255, 209, 102];
+const SHADOW_RGB = [86, 105, 138];
+const WALL_RGB = [213, 94, 0];
+export const ROUTE_RGB = [0.96, 0.97, 0.98];
+
+function terrainRGB(
+  out: Uint8Array | Uint8ClampedArray,
+  p: number,
+  shade: number,
+  inShadow: boolean,
+  wall: boolean,
+  isMoon: boolean,
+  isMars: boolean,
+  idx: number,
+  cols: number,
+): void {
+  let r: number;
+  let g: number;
+  let b: number;
+  if (inShadow) {
+    const k = 0.82 + 0.3 * Math.min(1, shade);
+    r = SHADOW_RGB[0] * k;
+    g = SHADOW_RGB[1] * k;
+    b = SHADOW_RGB[2] * k;
+  } else {
+    const s = 0.55 + 0.45 * Math.min(1, shade);
+    const base = isMoon ? [214, 218, 226] : isMars ? [234, 182, 146] : [200, 210, 218];
+    r = base[0] * s * 0.82 + LIT_TINT[0] * s * 0.18;
+    g = base[1] * s * 0.82 + LIT_TINT[1] * s * 0.18;
+    b = base[2] * s * 0.82 + LIT_TINT[2] * s * 0.18;
+  }
+  if (wall) {
+    const row = Math.floor(idx / cols);
+    const col = idx - row * cols;
+    // thin hatch (1 cell in 6) so the lit / shadow reading underneath survives
+    if ((row + col) % 6 === 0) {
+      r = r * 0.25 + WALL_RGB[0] * 0.75;
+      g = g * 0.25 + WALL_RGB[1] * 0.75;
+      b = b * 0.25 + WALL_RGB[2] * 0.75;
+    }
+  }
+  out[p] = Math.max(0, Math.min(255, r));
+  out[p + 1] = Math.max(0, Math.min(255, g));
+  out[p + 2] = Math.max(0, Math.min(255, b));
+  out[p + 3] = 255;
+}
+
 export class MissionDualScene {
   private targetCanvas: HTMLCanvasElement;
   private earthCanvas: HTMLCanvasElement;
@@ -345,46 +396,8 @@ export class MissionDualScene {
     const isMars = body === 'mars';
 
     for (let i = 0; i < n; i++) {
-      const sh = shade[i];
-      const inShadow = layers.shadow[i] === 1;
       const imp = this.showSlopeMask && layers.impassable[i] === 1;
-
-      let r: number;
-      let g: number;
-      let b: number;
-      if (isMoon) {
-        r = sh * 218;
-        g = sh * 222;
-        b = sh * 232;
-      } else if (isMars) {
-        r = sh * 234;
-        g = sh * 176;
-        b = sh * 138;
-      } else {
-        r = sh * 196;
-        g = sh * 212;
-        b = sh * 224;
-      }
-
-      if (inShadow) {
-        // Cool cast-shadow tint so shadow boundaries are unmistakable
-        r = r * 0.52 + 12;
-        g = g * 0.62 + 22;
-        b = b * 0.85 + 44;
-      }
-
-      if (imp) {
-        // Slope > 20 deg impassable rover wall tint
-        r = Math.min(255, r * 0.58 + 96);
-        g = g * 0.42 + 18;
-        b = b * 0.45 + 22;
-      }
-
-      const p = i * 4;
-      bytes[p] = Math.max(0, Math.min(255, r));
-      bytes[p + 1] = Math.max(0, Math.min(255, g));
-      bytes[p + 2] = Math.max(0, Math.min(255, b));
-      bytes[p + 3] = 255;
+      terrainRGB(bytes, i * 4, shade[i], layers.shadow[i] === 1, imp, isMoon, isMars, i, grid.cols);
     }
 
     side.terrainTex.needsUpdate = true;
@@ -414,7 +427,7 @@ export class MissionDualScene {
     pos.needsUpdate = true;
     side.terrainGeo.computeVertexNormals();
 
-    // Rebuild 3D route ribbon / vertex-colored line (Gold = Lit, Blue = Shadowed)
+    // Rebuild the 3D route line
     if (side.routeLine) {
       side.scene.remove(side.routeLine);
       side.routeLine.geometry.dispose();
@@ -429,12 +442,8 @@ export class MissionDualScene {
         const [r, c] = route[k];
         const [wx, wy, wz] = this.cellToWorld(grid, side.exagZ, r, c);
         pts.push(wx, wy + 16, wz);
-        const shadowed = layers.shadow[r * grid.cols + c] === 1;
-        if (shadowed) {
-          cols.push(0.42, 0.68, 0.96); // #6baef5 shadow blue
-        } else {
-          cols.push(1.0, 0.82, 0.35); // #ffd159 solar gold
-        }
+        // one light route colour: lit vs shadow is read from the terrain under it
+        cols.push(ROUTE_RGB[0], ROUTE_RGB[1], ROUTE_RGB[2]);
       }
       const lineGeo = new THREE.BufferGeometry();
       lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
@@ -697,27 +706,8 @@ export class MissionDualScene {
       const isMoon = body === 'moon';
       const isMars = body === 'mars';
       for (let i = 0; i < shade.length; i++) {
-        const sh = shade[i];
-        const inShadow = layers.shadow[i] === 1;
         const imp = this.showSlopeMask && layers.impassable[i] === 1;
-        let r = isMoon ? sh * 218 : isMars ? sh * 234 : sh * 196;
-        let g = isMoon ? sh * 222 : isMars ? sh * 176 : sh * 212;
-        let b = isMoon ? sh * 232 : isMars ? sh * 138 : sh * 224;
-        if (inShadow) {
-          r = r * 0.52 + 12;
-          g = g * 0.62 + 22;
-          b = b * 0.85 + 44;
-        }
-        if (imp) {
-          r = Math.min(255, r * 0.58 + 96);
-          g = g * 0.42 + 18;
-          b = b * 0.45 + 22;
-        }
-        const p = i * 4;
-        bytes[p] = r;
-        bytes[p + 1] = g;
-        bytes[p + 2] = b;
-        bytes[p + 3] = 255;
+        terrainRGB(bytes, i * 4, shade[i], layers.shadow[i] === 1, imp, isMoon, isMars, i, grid.cols);
       }
       octx.putImageData(img, 0, 0);
       ctx.imageSmoothingEnabled = true;
@@ -729,22 +719,17 @@ export class MissionDualScene {
     ctx.lineWidth = 1 * dpr;
     ctx.strokeRect(ox, oy, mapSize, mapSize);
 
-    // Draw planned route (Gold = lit, Blue = shadowed)
+    // Planned route: dark casing under a light line, so it reads on lit and shadowed ground alike
     if (route.length >= 2) {
-      ctx.lineWidth = 3 * dpr;
+      const pts = route.map(([r, c]) => [ox + (c / (grid.cols - 1)) * mapSize, oy + (r / (grid.rows - 1)) * mapSize] as const);
       ctx.lineCap = 'round';
-      for (let k = 1; k < route.length; k++) {
-        const [r0, c0] = route[k - 1];
-        const [r1, c1] = route[k];
-        const x0 = ox + (c0 / (grid.cols - 1)) * mapSize;
-        const y0 = oy + (r0 / (grid.rows - 1)) * mapSize;
-        const x1 = ox + (c1 / (grid.cols - 1)) * mapSize;
-        const y1 = oy + (r1 / (grid.rows - 1)) * mapSize;
-        const sh = layers.shadow[r1 * grid.cols + c1] === 1;
-        ctx.strokeStyle = sh ? '#6baef5' : '#ffd159';
+      ctx.lineJoin = 'round';
+      for (const [style, width] of [['rgba(5,7,11,0.85)', 5], ['#f5f7fa', 2.5]] as const) {
+        ctx.strokeStyle = style;
+        ctx.lineWidth = width * dpr;
         ctx.beginPath();
-        ctx.moveTo(x0, y0);
-        ctx.lineTo(x1, y1);
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for (let k = 1; k < pts.length; k++) ctx.lineTo(pts[k][0], pts[k][1]);
         ctx.stroke();
       }
     }
