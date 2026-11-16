@@ -72,6 +72,7 @@
 	background: var(--mission-control); border: 1px solid var(--line-strong); transition: border-color var(--mission-motion);
 }
 .mission-field:hover, .mission-field:focus-within { border-color: var(--accent); }
+.mission-field:focus-within:has(:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 .mission-field--target { flex: 1 1 220px; }
 .mission-field--analog { flex: 1.3 1 260px; }
 .mission-select {
@@ -104,6 +105,55 @@
 .mission-btn--quiet { border-color: var(--line); color: var(--text-2); }
 
 .mission-page :is(button, a, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mission-page :is(button, a, select, input, label) { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+#mission-windows { scroll-margin-top: calc(var(--bar-h) + 16px); }
+
+/* ── motion ─────────────────────────────────────────────────────────────
+   1 entrance: once per visit, the title rises out of its mask, then the steps and the verdict settle (about 1.1 s)
+   2 dealt moment: when the scan lands, the fidelity counts up and the 101-point strip fills from A to B
+   3 hover and press: buttons step up 1 px, press 1 px down at .985; chips and rows answer the pointer
+   Transform, opacity and clip-path only; everything rests under reduced motion. */
+.mission-page {
+	--m-in: 150ms; --m-out: 120ms; --m-press: 90ms;
+	--m-ease-enter: cubic-bezier(.22, 1, .36, 1);
+}
+@keyframes mission-rise { from { transform: translateY(60%); clip-path: inset(0 0 100% 0); } to { transform: none; clip-path: inset(0 0 0 0); } }
+@keyframes mission-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes mission-settle { from { opacity: 0; transform: scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes mission-fill { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes mission-swap { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+.mission-page.is-entering .mission-header h1 { animation: mission-rise 700ms var(--m-ease-enter) both; }
+.mission-page.is-entering .mission-lead { animation: mission-up 520ms var(--m-ease-enter) 350ms both; }
+.mission-page.is-entering .mission-step--route { animation: mission-up 520ms var(--m-ease-enter) 410ms both; }
+.mission-page.is-entering .mission-viewer { animation: mission-settle 900ms var(--m-ease-enter) 470ms both; }
+.mission-page.is-entering .mission-step--sun { animation: mission-up 520ms var(--m-ease-enter) 590ms both; }
+.mission-page.is-entering .mission-aside { animation: mission-up 520ms var(--m-ease-enter) 530ms both; }
+
+/* the verdict lands */
+.mission-verdict.is-reveal .mission-badge { animation: mission-swap 240ms var(--m-ease-enter) both; }
+.mission-verdict.is-reveal .mission-verdict-copy { animation: mission-up 520ms var(--m-ease-enter) both; }
+.mission-verdict.is-reveal .mission-strip-cells { animation: mission-fill 700ms cubic-bezier(.65, 0, .35, 1) both; }
+.mission-verdict.is-reveal .mission-strip-grid > .mission-strip-cells:nth-of-type(2) { animation-delay: 80ms; }
+.mission-verdict.is-reveal .mission-strip-cells--same { animation-delay: 260ms; }
+.mission-verdict.is-reveal .mission-verdict-actions,
+.mission-verdict.is-reveal .mission-also { animation: mission-up 520ms var(--m-ease-enter) 420ms both; }
+.mission-verdict .mission-badge { transition: color var(--m-in) var(--ease); }
+
+/* hover and press: fine pointers only; keyboard focus shows the ring */
+.mission-page :is(.mission-btn, .mission-seg button, .mission-chip, .mission-verdict-actions .btn, .mission-stepper button) {
+	transition: transform var(--m-out) var(--ease), background-color var(--m-out) var(--ease), border-color var(--m-out) var(--ease), color var(--m-out) var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+	.mission-page :is(.mission-btn, .mission-chip, .mission-verdict-actions .btn):hover:not(:disabled):not([aria-disabled="true"]) {
+		transform: translateY(-1px); transition-duration: var(--m-in);
+	}
+	.mission-run:hover .mission-run-dates { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+}
+.mission-page :is(.mission-btn, .mission-seg button, .mission-chip, .mission-verdict-actions .btn, .mission-stepper button):active:not(:disabled) {
+	transform: translateY(1px) scale(.985); transition-duration: var(--m-press);
+}
+.mission-run:active { transform: scale(.995); transition: transform var(--m-press) var(--ease); }
 
 /* 3D frame */
 .mission-viewer { position: relative; border: 1px solid var(--line-strong); background: var(--mission-panel); padding: 0; }
@@ -113,13 +163,14 @@
 .mission-viewer-bar-end { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .mission-stepper { display: flex; border: 1px solid var(--line-strong); }
 .mission-stepper button {
-	width: var(--mission-hit-sm); height: var(--mission-hit-sm); border: 0; border-radius: 0; background: transparent;
-	color: var(--text-1); font-size: 16px; cursor: pointer;
+	flex: none; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+	width: var(--mission-hit-sm); min-width: 0; height: var(--mission-hit-sm); padding: 0; border: 0; border-radius: 0;
+	background: transparent; color: var(--text-1); font: 400 18px/1 var(--font-ui); cursor: pointer;
 }
 .mission-stepper button:hover:not(:disabled) { background: var(--mission-selected); }
 .mission-stepper button:disabled { color: var(--text-3); cursor: not-allowed; }
 .mission-stepper-val {
-	min-width: 48px; display: flex; align-items: center; justify-content: center; font-size: 14px;
+	flex: none; width: 52px; min-width: 0; display: flex; align-items: center; justify-content: center; font-size: 14px;
 	border-left: 1px solid var(--line); border-right: 1px solid var(--line);
 }
 
@@ -135,15 +186,6 @@
 	position: absolute; left: 12px; bottom: 12px; padding: 4px 8px; border: 1px solid rgba(170, 200, 230, .34);
 	font: 600 12px/1.2 var(--font-display); letter-spacing: var(--cap-ls); text-transform: uppercase; color: #eef2f6; pointer-events: none;
 }
-.mission-compass {
-	position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; box-sizing: border-box; border-radius: 50%;
-	border: 1px solid rgba(170, 200, 230, .34); background: rgba(5, 7, 11, .8); pointer-events: none;
-}
-.mission-compass span { position: absolute; top: 2px; left: 0; right: 0; text-align: center; font: 600 12px/12px var(--font-display); color: #b6c2cf; }
-.mission-compass-sun {
-	position: absolute; left: 21px; top: 21px; width: 16px; height: 2px; margin-top: -1px; background: var(--mission-lit);
-	transform-origin: 0 50%;
-}
 
 /* legend keys */
 .mission-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin: 0; padding: 0; list-style: none; font-size: 14px; color: var(--text-2); }
@@ -153,7 +195,7 @@
 .mission-key { display: inline-block; width: 12px; height: 12px; flex: none; }
 .mission-key--lit { background: var(--mission-lit); }
 .mission-key--shadow { background: var(--mission-shadow); }
-.mission-key--wall { background: repeating-linear-gradient(45deg, var(--mission-wall) 0 1.5px, var(--mission-shadow) 1.5px 4px); }
+.mission-key--wall { background: color-mix(in srgb, var(--mission-wall) 55%, var(--mission-shadow)); }
 .mission-key--route { width: 14px; height: 2px; background: var(--text-1); }
 .mission-key--same { background: var(--mission-match); }
 .mission-key--reach { background: var(--mission-reach); }
@@ -260,7 +302,8 @@
 .mission-strip-cells .is-lit { background: var(--mission-lit); }
 .mission-strip-cells .is-shadow { background: var(--mission-shadow); }
 .mission-strip-cells .is-same { background: var(--mission-match); }
-.mission-strip-track { grid-column: 2; grid-row: 1 / span 3; align-self: stretch; position: relative; pointer-events: none; }
+/* overlay on the cells column (40 px label + 12 px gap, 12 px gap + 64 px value), outside the grid flow */
+.mission-strip-track { position: absolute; top: 0; bottom: 0; left: 52px; right: 76px; pointer-events: none; }
 .mission-strip-rover { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: var(--text-1); }
 .mission-strip-ab { display: flex; justify-content: space-between; margin: 0 76px 0 52px; font-size: 12px; color: var(--text-3); }
 

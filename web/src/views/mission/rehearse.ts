@@ -39,9 +39,38 @@ export interface VerdictOptions {
   onSnapSun: (gridAzDeg: number) => void;
   /** move focus to the Earth analog picker */
   onPickAnotherSite: () => void;
+  /** play the reveal (the scan just finished): fidelity counts up, the strip fills from A to B */
+  reveal: boolean;
+  /** fidelity shown before this render, so a new date counts from the old value */
+  fromFidelity: number | null;
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const reduceMotion = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** count the big fidelity number from `from` to `to` (ease-out, about 900 ms); jumps under reduced motion */
+function countUp(el: HTMLElement, from: number, to: number, ms = 900): void {
+  const text = el.firstChild;
+  if (!text || text.nodeType !== Node.TEXT_NODE) return;
+  if (reduceMotion() || Math.abs(to - from) < 0.05) {
+    text.textContent = to.toFixed(1);
+    return;
+  }
+  const t0 = performance.now();
+  const step = (now: number) => {
+    if (!el.isConnected) return;
+    // a frame's timestamp can be earlier than t0, so clamp at 0 too
+    const k = Math.max(0, Math.min(1, (now - t0) / ms));
+    const e = 1 - Math.pow(1 - k, 3);
+    text.textContent = (from + (to - from) * e).toFixed(1);
+    if (k < 1) requestAnimationFrame(step);
+  };
+  text.textContent = from.toFixed(1);
+  requestAnimationFrame(step);
+}
+
+// month names from Intl (English UI, UTC dates from the scan)
+const MONTH_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' });
+const MONTHS = Array.from({ length: 12 }, (_, i) => MONTH_FMT.format(Date.UTC(2027, i, 15)));
 const NBSP = ' ';
 
 function dParts(date: string): { y: number; m: number; d: number } {
@@ -249,7 +278,7 @@ export function updateVerdictRover(container: HTMLElement, progress: number): vo
 function stepHead(state: VerdictState, fidelity: number | null): HTMLElement {
   let badge: HTMLElement;
   if (state === 'loading') {
-    badge = h('span', { class: 'mission-badge', 'data-state': 'loading' }, h('i'), 'Scanning');
+    badge = h('span', { class: 'mission-badge', 'data-state': 'loading' }, h('i'), 'Scanning…');
   } else if (state === 'nomatch') {
     badge = h('span', { class: 'mission-badge', 'data-state': 'nomatch' }, h('i'), 'No direction match');
   } else if (fidelity !== null && fidelity < 60) {
@@ -283,7 +312,7 @@ export function renderVerdict(container: HTMLElement, o: VerdictOptions): void {
   head.querySelector('h2')!.id = 'mission-verdict-title';
   root.appendChild(head);
 
-  const live = h('div', { class: 'mission-verdict-live', 'aria-live': 'polite' });
+  const live = h('div', { class: 'mission-verdict-live' });
   root.appendChild(live);
 
   if (state === 'loading') {
@@ -292,7 +321,7 @@ export function renderVerdict(container: HTMLElement, o: VerdictOptions): void {
         'div',
         { class: 'mission-verdict-copy' },
         pair,
-        h('p', { class: 'mission-verdict-headline is-pending' }, `Scanning 365 days at ${site} for this Sun direction`),
+        h('p', { class: 'mission-verdict-headline is-pending' }, `Scanning 365 days at ${site} for this Sun direction…`),
         h('p', { class: 'mission-verdict-sub' }, 'Sun position every 10 minutes, next 12 months'),
       ),
       h(
@@ -524,7 +553,12 @@ export function renderVerdict(container: HTMLElement, o: VerdictOptions): void {
     );
   }
 
+  if (o.reveal) root.classList.add('is-reveal');
   container.replaceChildren(root);
+  const num = root.querySelector<HTMLElement>('.mission-fidelity-num');
+  if (num && (o.reveal || (o.fromFidelity !== null && o.fromFidelity !== win.fidelity))) {
+    countUp(num, o.reveal ? 0 : (o.fromFidelity ?? win.fidelity), win.fidelity, o.reveal ? 900 : 480);
+  }
 }
 
 /* ── rehearsal windows (runs of consecutive days) ─────────────────────── */

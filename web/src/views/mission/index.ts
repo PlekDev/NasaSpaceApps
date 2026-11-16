@@ -12,7 +12,7 @@ import { h } from './dom.ts';
 import type { Params } from '../../lib/routes.ts';
 import type { Manifest } from '../../types.ts';
 import { MissionControls, type EarthSunMode, type MissionControlsCallbacks, type MissionControlsState } from './controls.ts';
-import { renderVerdict, renderWindows, updateVerdictRover, type VerdictState } from './rehearse.ts';
+import { fmtDate, renderVerdict, renderWindows, updateVerdictRover, type VerdictState } from './rehearse.ts';
 import { MissionDualScene, type CameraMode, type PointerTool } from './scene.ts';
 import {
   castShadow,
@@ -62,18 +62,15 @@ function buildViewport(which: 'target' | 'earth') {
   }) as HTMLCanvasElement;
   const title = h('p', { class: 'mission-vp-title' }, which === 'target' ? 'Loading target…' : 'Loading Earth analog…');
   const meta = h('p', { class: 'mission-vp-meta' }, '');
-  const arrow = h('i', { class: 'mission-compass-sun' });
-  const compass = h('div', { class: 'mission-compass', 'aria-hidden': 'true' }, h('span', null, 'N'), arrow);
   const badge = h('p', { class: 'mission-exag-badge' }, '');
   const wrap = h(
     'div',
     { class: 'mission-vp' },
     canvas,
     h('div', { class: 'mission-vp-id' }, title, meta),
-    compass,
     badge,
   );
-  return { wrap, canvas, title, meta, arrow, badge };
+  return { wrap, canvas, title, meta, badge };
 }
 
 export async function render(el: HTMLElement, m: Manifest, params: Params): Promise<() => void> {
@@ -135,6 +132,9 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
   const telemetrySlot = h('div', { class: 'mission-telemetry-slot' });
   const hint = h('span', { class: 'mission-step-hint' }, 'Shift+click a view to move B');
   const sunStepTitle = h('h2', { class: 'mission-step-title' }, 'Set the Sun');
+  const status = h('p', { class: 'sr-only', role: 'status', 'aria-live': 'polite' }, '');
+  let shownState: VerdictState | null = null;
+  let shownFidelity: number | null = null;
 
   const callbacks: MissionControlsCallbacks = {
     onSelectTarget: (newId) => {
@@ -258,10 +258,16 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
       h('aside', { class: 'mission-aside', 'aria-label': 'Step 3, when does Earth match' }, verdictSlot),
     ),
     h('div', { class: 'mission-lower' }, windowsSlot, telemetrySlot),
+    status,
   );
   sunStepTitle.id = 'mission-step2';
 
   el.replaceChildren(page);
+  // the entrance plays once per visit (mission.css .is-entering); content is whole without it
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    page.classList.add('is-entering');
+    window.setTimeout(() => page.classList.remove('is-entering'), 1600);
+  }
 
   const dualScene = new MissionDualScene({
     targetCanvas: tVp.canvas,
@@ -475,19 +481,17 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
     const scale = `Vert ×${exag.toFixed(1)} · ${km} × ${km} km · ${simMeta.dx} m/px`;
 
     tVp.title.textContent = `${bodyName()} · ${tInfo?.name ?? simMeta.label}`;
-    tVp.meta.textContent = `${simMeta.center.lat.toFixed(1)}°, ${simMeta.center.lon.toFixed(1)}° · Sun el ${targetSun.elevDeg.toFixed(1)}° az ${Math.round(norm360(targetSun.gridAzDeg))}° · route ${Math.round(targetTel.litShareNow * 100)} % lit`;
-    tVp.arrow.style.transform = `rotate(${(targetSun.gridAzDeg - 90).toFixed(1)}deg)`;
+    tVp.meta.textContent = `Sun ${targetSun.elevDeg.toFixed(1)}° el, ${Math.round(norm360(targetSun.gridAzDeg))}° az · route ${Math.round(targetTel.litShareNow * 100)} % lit`;
     tVp.badge.textContent = scale;
 
     eVp.title.textContent = `Earth · ${earthWin.region}`;
     const when =
       earthSunMode === 'rehearsal' && active && verdictState !== 'loading'
-        ? `${active.date} ${active.peakIso.slice(11, 16)} UTC`
+        ? `${fmtDate(active.date, false)} ${active.peakIso.slice(11, 16)} UTC`
         : earthSunMode === 'mirror'
-          ? 'Mirrored target Sun'
-          : `${earthWin.lat.toFixed(2)}°, ${earthWin.lon.toFixed(2)}°`;
-    eVp.meta.textContent = `${when} · Sun el ${earthSun.elevDeg.toFixed(1)}° az ${Math.round(norm360(earthSun.gridAzDeg))}° · route ${Math.round(earthTel.litShareNow * 100)} % lit`;
-    eVp.arrow.style.transform = `rotate(${(earthSun.gridAzDeg - 90).toFixed(1)}deg)`;
+          ? 'Mirrored Sun'
+          : 'Scanning…';
+    eVp.meta.textContent = `${when} · Sun ${earthSun.elevDeg.toFixed(1)}° el, ${Math.round(norm360(earthSun.gridAzDeg))}° az · route ${Math.round(earthTel.litShareNow * 100)} % lit`;
     eVp.badge.textContent = scale;
   }
 
@@ -533,7 +537,20 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
         controls.windowSelect.focus();
         controls.windowSelect.scrollIntoView({ block: 'center', behavior: 'auto' });
       },
+      reveal: shownState === 'loading' && verdictState !== 'loading',
+      fromFidelity: shownFidelity,
     });
+    const shownWin = verdictState === 'loading' ? null : activeWindow();
+    if (verdictState !== shownState || (shownWin?.fidelity ?? null) !== shownFidelity) {
+      status.textContent =
+        verdictState === 'loading'
+          ? `Scanning 365 days at ${earthWin.region}…`
+          : verdictState === 'good' && shownWin
+            ? `Rehearse on ${fmtDate(shownWin.date)}, ${shownWin.startIso.slice(11, 16)} to ${shownWin.endIso.slice(11, 16)} UTC. Fidelity ${shownWin.fidelity.toFixed(1)} %.`
+            : `No date at ${earthWin.region} has this Sun direction.${shownWin ? ` Best fidelity ${shownWin.fidelity.toFixed(1)} %.` : ''}`;
+    }
+    shownState = verdictState;
+    shownFidelity = shownWin?.fidelity ?? null;
 
     renderWindows(windowsSlot, {
       site: earthWin.region,

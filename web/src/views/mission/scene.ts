@@ -8,6 +8,7 @@
  * strictly match the pipeline's LOLA/MOLA metrics.
  */
 import { loadThree } from '../../lib/three.ts';
+import { buildRover, type RoverModel } from './rover3d.ts';
 import {
   DEG,
   SLOPE_MAX_DEG,
@@ -46,6 +47,7 @@ interface SideWebGLObjects {
   texBytes: Uint8Array;
   routeLine: any | null;
   roverGroup: any;
+  rover: RoverModel;
   startPin: any;
   endPin: any;
   sunArrow: any;
@@ -55,7 +57,7 @@ interface SideWebGLObjects {
 /* Terrain encoding shared by the 3D texture and the 2D map (Mission redesign):
  *  lit    = the body's hillshade, floored so no lit face goes darker than shadow, with a warm lift toward #ffd166
  *  shadow = #56698a, a steel blue a clear lightness step below lit, modulated lightly by relief
- *  wall   = #d55e00 diagonal hatch (slope > 20 deg), so it never depends on hue alone */
+ *  wall   = 55 % #d55e00 over the ground (slope > 20 deg), a warm lightness step against shadow */
 const LIT_TINT = [255, 209, 102];
 const SHADOW_RGB = [86, 105, 138];
 const WALL_RGB = [213, 94, 0];
@@ -88,14 +90,10 @@ function terrainRGB(
     b = base[2] * s * 0.82 + LIT_TINT[2] * s * 0.18;
   }
   if (wall) {
-    const row = Math.floor(idx / cols);
-    const col = idx - row * cols;
-    // thin hatch (1 cell in 6) so the lit / shadow reading underneath survives
-    if ((row + col) % 6 === 0) {
-      r = r * 0.25 + WALL_RGB[0] * 0.75;
-      g = g * 0.25 + WALL_RGB[1] * 0.75;
-      b = b * 0.25 + WALL_RGB[2] * 0.75;
-    }
+    // an even warm tint: a hatch at 30 m/px breaks into dashes, so the wall is a colour and lightness step instead
+    r = r * 0.45 + WALL_RGB[0] * 0.55;
+    g = g * 0.45 + WALL_RGB[1] * 0.55;
+    b = b * 0.45 + WALL_RGB[2] * 0.55;
   }
   out[p] = Math.max(0, Math.min(255, r));
   out[p + 1] = Math.max(0, Math.min(255, g));
@@ -220,6 +218,11 @@ export class MissionDualScene {
     this.cameraMode = mode;
     this.lookYawOffset = 0;
     this.lookPitchOffset = 0;
+    for (const side of [this.targetSide, this.earthSide]) {
+      if (!side) continue;
+      side.startPin.visible = mode === 'orbital';
+      side.endPin.visible = mode === 'orbital';
+    }
     this.requestRender();
   }
 
@@ -316,42 +319,28 @@ export class MissionDualScene {
     // Start (A) and End (B) vertical beacon pins
     const makePin = (hex: number) => {
       const group = new THREE.Group();
+      // a thin survey stake with a square flag: reads at orbit distance, stays out of the way up close
       const pole = new THREE.Mesh(
-        new THREE.CylinderGeometry(12, 12, 190, 10),
-        new THREE.MeshBasicMaterial({ color: hex }),
+        new THREE.CylinderGeometry(3.5, 3.5, 170, 8),
+        new THREE.MeshBasicMaterial({ color: 0x8a99ab }),
       );
-      pole.position.y = 95;
+      pole.position.y = 85;
       const head = new THREE.Mesh(
-        new THREE.SphereGeometry(42, 14, 14),
+        new THREE.BoxGeometry(34, 22, 3),
         new THREE.MeshBasicMaterial({ color: hex }),
       );
-      head.position.y = 200;
+      head.position.set(17, 158, 0);
       group.add(pole, head);
       return group;
     };
-    const startPin = makePin(0x36d399);
-    const endPin = makePin(0xf87272);
+    const startPin = makePin(0xeef2f6);
+    const endPin = makePin(0xeef2f6);
     scene.add(startPin, endPin);
 
-    // Rover 3D marker (chassis + mast + solar deck + headlight cone)
-    const roverGroup = new THREE.Group();
-    const chassis = new THREE.Mesh(
-      new THREE.BoxGeometry(85, 38, 115),
-      new THREE.MeshBasicMaterial({ color: 0xf6c453 }),
-    );
-    chassis.position.y = 28;
-    const mast = new THREE.Mesh(
-      new THREE.CylinderGeometry(8, 8, 65, 8),
-      new THREE.MeshBasicMaterial({ color: 0xe8edf7 }),
-    );
-    mast.position.set(0, 68, -22);
-    const camHead = new THREE.Mesh(
-      new THREE.BoxGeometry(34, 18, 22),
-      new THREE.MeshBasicMaterial({ color: 0x38bdf8 }),
-    );
-    camHead.position.set(0, 102, -22);
-    roverGroup.add(chassis, mast, camHead);
-    scene.add(roverGroup);
+    // Rover: a rocker-bogie model lit by the scene's own Sun (rover3d.ts)
+    const rover = buildRover(THREE);
+    const roverGroup = rover.group;
+    scene.add(roverGroup, rover.light);
 
     // Sun direction indicator arrow hovering above terrain
     const sunArrow = new THREE.Group();
@@ -365,6 +354,7 @@ export class MissionDualScene {
       texBytes,
       routeLine: null,
       roverGroup,
+      rover,
       startPin,
       endPin,
       sunArrow,
@@ -461,8 +451,9 @@ export class MissionDualScene {
       const [ex, ey, ez] = this.cellToWorld(grid, side.exagZ, er, ec);
       side.startPin.position.set(sx, sy, sz);
       side.endPin.position.set(ex, ey, ez);
-      side.startPin.visible = true;
-      side.endPin.visible = true;
+      // stakes only in the orbital view; up close they stand between the camera and the rover
+      side.startPin.visible = this.cameraMode === 'orbital';
+      side.endPin.visible = this.cameraMode === 'orbital';
     } else {
       side.startPin.visible = false;
       side.endPin.visible = false;
@@ -506,9 +497,22 @@ export class MissionDualScene {
   }
 
   private updateRoverPose(side: SideWebGLObjects, data: SceneSideData): void {
-    const pose = this.sampleRoutePose(data.grid, side.exagZ, data.route, this.roverProgress);
+    const t = this.roverProgress;
+    const pose = this.sampleRoutePose(data.grid, side.exagZ, data.route, t);
     side.roverGroup.position.set(pose.x, pose.y, pose.z);
     side.roverGroup.rotation.y = pose.headingRad;
+    // pitch with the ground: compare the surface just ahead and just behind
+    const a = this.sampleRoutePose(data.grid, side.exagZ, data.route, Math.max(0, t - 0.006));
+    const b = this.sampleRoutePose(data.grid, side.exagZ, data.route, Math.min(1, t + 0.006));
+    const run = Math.hypot(b.x - a.x, b.z - a.z);
+    const pitch = run > 1 ? Math.atan2(b.y - a.y, run) : 0;
+    side.roverGroup.rotation.x = -Math.max(-0.45, Math.min(0.45, pitch));
+    // wheels turn with the distance driven
+    let len = 0;
+    const r = data.route;
+    for (let k = 1; k < r.length; k++) len += Math.hypot(r[k][0] - r[k - 1][0], r[k][1] - r[k - 1][1]);
+    side.rover.spin(len * data.grid.dx * t);
+    side.rover.setSun(data.sun.gridAzDeg, data.sun.elevDeg);
   }
 
   private configureCameraForSide(side: SideWebGLObjects, data: SceneSideData, aspect: number): void {
@@ -643,38 +647,23 @@ export class MissionDualScene {
       const [ex, ey, ez] = this.cellToWorld(data.grid, side.exagZ, er, ec);
 
       const sp = this.projectToScreen(sx, sy + 220, sz, w, h);
-      if (sp.visible) this.drawPinBadge(ctx, sp.x, sp.y, dpr, 'A', '#36d399', '#051b11');
+      if (sp.visible) this.drawPinBadge(ctx, sp.x, sp.y, dpr, 'A');
 
       const ep = this.projectToScreen(ex, ey + 220, ez, w, h);
-      if (ep.visible) this.drawPinBadge(ctx, ep.x, ep.y, dpr, 'B', '#f87272', '#260808');
+      if (ep.visible) this.drawPinBadge(ctx, ep.x, ep.y, dpr, 'B');
 
       const pose = this.sampleRoutePose(data.grid, side.exagZ, data.route, this.roverProgress);
-      const rp = this.projectToScreen(pose.x, pose.y + 135, pose.z, w, h);
+      const rp = this.projectToScreen(pose.x, pose.y + 150, pose.z, w, h);
       if (rp.visible && this.cameraMode === 'orbital') {
-        this.drawPinBadge(
-          ctx,
-          rp.x,
-          rp.y,
-          dpr,
-          `ROVER ${Math.round(pose.realY)} m`,
-          '#ffd166',
-          '#1e1604',
-        );
+        this.drawTag(ctx, rp.x, rp.y, dpr, `Rover · ${Math.round(pose.realY)} m`);
       }
     }
 
-    // Draw Sun Azimuth & Elevation compass widget in top-right corner
-    this.drawSunCompass(ctx, w - 48 * dpr, 48 * dpr, 30 * dpr, dpr, data.sun);
-
-    // Draw camera mode + vertical exaggeration pill in bottom-left corner
-    const modeLabel =
-      this.cameraMode === 'astronaut'
-        ? 'Astronaut 1.7 m eye level'
-        : this.cameraMode === 'rover'
-          ? 'Rover chase cam'
-          : '3D Orbital sync';
-    const badgeText = `${modeLabel} · Vert. exag ${this.exag.toFixed(1)}× · 6×6 km (30 m/px)`;
-    this.drawBottomPill(ctx, 12 * dpr, h - 12 * dpr, dpr, badgeText);
+    // the compass turns with the camera: screen-up is the view direction
+    const dir = new this.THREE.Vector3();
+    this.glCamera.getWorldDirection(dir);
+    const viewHeadingDeg = Math.hypot(dir.x, dir.z) > 1e-6 ? Math.atan2(dir.x, -dir.z) / DEG : 0;
+    this.drawSunCompass(ctx, w - 34 * dpr, 34 * dpr, 22 * dpr, dpr, data.sun, viewHeadingDeg);
     ctx.restore();
   }
 
@@ -743,8 +732,6 @@ export class MissionDualScene {
         oy + (sr / (grid.rows - 1)) * mapSize,
         dpr,
         'A',
-        '#36d399',
-        '#051b11',
       );
       this.drawPinBadge(
         ctx,
@@ -752,8 +739,6 @@ export class MissionDualScene {
         oy + (er / (grid.rows - 1)) * mapSize,
         dpr,
         'B',
-        '#f87272',
-        '#260808',
       );
       const pose = this.sampleRoutePose(grid, grid.z, route, this.roverProgress);
       this.drawPinBadge(
@@ -762,46 +747,64 @@ export class MissionDualScene {
         oy + (pose.row / (grid.rows - 1)) * mapSize,
         dpr,
         'R',
-        '#ffd166',
-        '#1e1604',
+        true,
       );
     }
 
-    this.drawSunCompass(ctx, w - 48 * dpr, 48 * dpr, 30 * dpr, dpr, sun);
-    const badge = `2D Top-down Hillshade · Vert. exag ${this.exag.toFixed(1)}× · 6×6 km (30 m/px)`;
-    this.drawBottomPill(ctx, 12 * dpr, h - 12 * dpr, dpr, badge);
+    this.drawSunCompass(ctx, w - 34 * dpr, 34 * dpr, 22 * dpr, dpr, sun, 0);
   }
 
-  private drawPinBadge(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    dpr: number,
-    label: string,
-    bg: string,
-    fg: string,
-  ): void {
+  /** round start / end / rover marks, as in the legend */
+  private drawPinBadge(ctx: CanvasRenderingContext2D, x: number, y: number, dpr: number, label: string, rover = false): void {
     ctx.save();
-    ctx.font = `700 ${Math.round(11 * dpr)}px Inter, system-ui, sans-serif`;
-    const tw = ctx.measureText(label).width;
-    const pw = Math.max(20 * dpr, tw + 12 * dpr);
-    const ph = 20 * dpr;
-    const rx = x - pw * 0.5;
-    const ry = y - ph * 0.5;
-    ctx.fillStyle = bg;
+    const r = 9 * dpr;
     ctx.beginPath();
-    ctx.roundRect(rx, ry, pw, ph, 10 * dpr);
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = rover ? '#ffd166' : '#eef2f6';
     ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.55)';
     ctx.lineWidth = 1.5 * dpr;
+    ctx.strokeStyle = 'rgba(5,7,11,0.85)';
     ctx.stroke();
-    ctx.fillStyle = fg;
+    ctx.fillStyle = '#05070b';
+    ctx.font = `600 ${Math.round(12 * dpr)}px "Barlow Condensed", "Arial Narrow", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(label, x, y + 0.5 * dpr);
     ctx.restore();
   }
 
+  /** square instrument tag with a leader line (the rover's elevation) */
+  private drawTag(ctx: CanvasRenderingContext2D, x: number, y: number, dpr: number, text: string): void {
+    ctx.save();
+    ctx.font = `600 ${Math.round(12 * dpr)}px "Barlow Condensed", "Arial Narrow", sans-serif`;
+    const label = text.toUpperCase();
+    const track = 0.96 * dpr; // +0.08 em at 12 px
+    const tw = ctx.measureText(label).width + label.length * track;
+    const pw = Math.round(tw + 14 * dpr);
+    const ph = Math.round(20 * dpr);
+    const rx = Math.round(x - pw / 2);
+    const ry = Math.round(y - ph);
+    ctx.fillStyle = 'rgba(5,7,11,0.82)';
+    ctx.fillRect(rx, ry, pw, ph);
+    ctx.strokeStyle = 'rgba(170,200,230,0.34)';
+    ctx.lineWidth = dpr;
+    ctx.strokeRect(rx + 0.5 * dpr, ry + 0.5 * dpr, pw - dpr, ph - dpr);
+    ctx.beginPath();
+    ctx.moveTo(x, ry + ph);
+    ctx.lineTo(x, ry + ph + 10 * dpr);
+    ctx.stroke();
+    ctx.fillStyle = '#eef2f6';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
+    let cx = rx + 7 * dpr;
+    for (const ch of label) {
+      ctx.fillText(ch, cx, ry + ph / 2 + 0.5 * dpr);
+      cx += ctx.measureText(ch).width + track;
+    }
+    ctx.restore();
+  }
+
+  /** Sun compass that turns with the view: N and the Sun are drawn where they lie on screen */
   private drawSunCompass(
     ctx: CanvasRenderingContext2D,
     cx: number,
@@ -809,62 +812,39 @@ export class MissionDualScene {
     r: number,
     dpr: number,
     sun: SunAngles,
+    viewHeadingDeg: number,
   ): void {
     ctx.save();
-    ctx.fillStyle = 'rgba(13, 18, 28, 0.84)';
+    ctx.fillStyle = 'rgba(5, 7, 11, 0.8)';
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
-    ctx.lineWidth = 1 * dpr;
+    ctx.strokeStyle = 'rgba(170, 200, 230, 0.34)';
+    ctx.lineWidth = dpr;
     ctx.stroke();
 
-    // N tick
-    ctx.fillStyle = '#9aa6bc';
-    ctx.font = `600 ${Math.round(9 * dpr)}px Inter, system-ui, sans-serif`;
+    const at = (headingDeg: number, rr: number): [number, number] => {
+      const a = (headingDeg - viewHeadingDeg) * DEG;
+      return [cx + Math.sin(a) * rr, cy - Math.cos(a) * rr];
+    };
+    const [nx, ny] = at(0, r - 7 * dpr);
+    ctx.fillStyle = '#b6c2cf';
+    ctx.font = `600 ${Math.round(11 * dpr)}px "Barlow Condensed", "Arial Narrow", sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('N', cx, cy - r + 10 * dpr);
+    ctx.textBaseline = 'middle';
+    ctx.fillText('N', nx, ny);
 
-    // Sun vector in grid azimuth
-    const rad = sun.gridAzDeg * DEG;
-    const sx = cx + Math.sin(rad) * (r - 8 * dpr);
-    const sy = cy - Math.cos(rad) * (r - 8 * dpr);
+    const [sx, sy] = at(sun.gridAzDeg, r - 4 * dpr);
     ctx.strokeStyle = '#ffd166';
     ctx.lineWidth = 2 * dpr;
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.lineTo(sx, sy);
     ctx.stroke();
-
     ctx.fillStyle = '#ffd166';
     ctx.beginPath();
-    ctx.arc(sx, sy, 4 * dpr, 0, Math.PI * 2);
+    ctx.arc(sx, sy, 3 * dpr, 0, Math.PI * 2);
     ctx.fill();
-    ctx.restore();
-  }
-
-  private drawBottomPill(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    yBottom: number,
-    dpr: number,
-    text: string,
-  ): void {
-    ctx.save();
-    ctx.font = `500 ${Math.round(11 * dpr)}px Inter, system-ui, sans-serif`;
-    const tw = ctx.measureText(text).width;
-    const pw = tw + 16 * dpr;
-    const ph = 24 * dpr;
-    ctx.fillStyle = 'rgba(13, 18, 28, 0.86)';
-    ctx.beginPath();
-    ctx.roundRect(x, yBottom - ph, pw, ph, 6 * dpr);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
-    ctx.lineWidth = 1 * dpr;
-    ctx.stroke();
-    ctx.fillStyle = '#dbe4f3';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, x + 8 * dpr, yBottom - ph * 0.5);
     ctx.restore();
   }
 
@@ -1043,6 +1023,7 @@ export class MissionDualScene {
       s.terrainGeo?.dispose();
       s.terrainTex?.dispose();
       s.terrainMesh?.material?.dispose();
+      s.rover?.dispose();
       if (s.routeLine) {
         s.routeLine.geometry?.dispose();
         s.routeLine.material?.dispose();

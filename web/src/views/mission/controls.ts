@@ -232,7 +232,7 @@ export class MissionControls {
     ];
     const toolSeg = h(
       'div',
-      { class: 'mission-seg', role: 'group', 'aria-label': 'Click a view to' },
+      { class: 'mission-seg', role: 'group', 'aria-label': 'Click action on the views' },
       ...tools.map((t) => {
         const b = segButton(t.label, () => this.cb.onChangePointerTool(t.id), t.title);
         this.toolButtons.set(t.id, b);
