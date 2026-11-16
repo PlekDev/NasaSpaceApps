@@ -49,7 +49,7 @@ const DETAIL: Record<string, { what: string; read: string[]; care: string; tools
   drivers: {
     what: 'For the best windows of this target, which feature accounts for most of the gap to the reference site. The score is a distance; this splits that distance by feature.',
     read: ['Each bar is the average share of the squared distance a feature explains across the exported top windows; the bars add up to 100 %.', 'Blue bars are terrain features, amber bars are illumination (shadow) features.', 'A long bar is the feature where even the best windows still differ most from the target.'],
-    care: 'This describes the top windows exported (20 per target), not all 10,424. It explains the distance, not whether the site is scientifically useful.', tools: [] },
+    care: 'This describes only the top windows exported for each target, not every window. It explains the distance, not whether the site is scientifically useful.', tools: [] },
   matrix: {
     what: 'The whole comparison at once: for each Earth region (row) and each target (column), the best window found, on the score you chose.',
     read: ['Dark blue is a weak match, amber a strong one; the number is the score.', 'Look down a column to see which regions imitate one target best, and across a row to see which targets a region can stand in for.', 'Click any cell to move every panel to that target and region; the outlined cell is your current selection.', 'Rows are sorted by their best cell, so strong regions rise to the bottom.'],
