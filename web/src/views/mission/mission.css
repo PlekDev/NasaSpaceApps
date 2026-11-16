@@ -179,7 +179,7 @@
 }
 
 .mission-viewports { display: flex; flex-wrap: wrap; gap: 1px; background: var(--line); }
-.mission-vp { flex: 1 1 520px; min-width: 0; position: relative; height: var(--mission-canvas-h); overflow: hidden; background: var(--mission-viewport); }
+.mission-vp { flex: 1 1 300px; min-width: 0; position: relative; height: var(--mission-canvas-h); overflow: hidden; background: var(--mission-viewport); }
 .mission-canvas { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; }
 .mission-vp-id { position: absolute; top: 12px; left: 12px; right: 68px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; pointer-events: none; }
 .mission-vp-title, .mission-vp-meta, .mission-exag-badge { margin: 0; background: rgba(5, 7, 11, .8); }
@@ -434,9 +434,7 @@
 .mission-rover--sun .mission-rover-val { min-width: 120px; text-align: left; white-space: nowrap; }
 @media (max-width: 760px) { .mission-dock-hint { display: none; } .mission-rover--sun { flex-basis: 100%; } }
 
-/* stacked, at the same width as the other pages: each view takes the whole column */
-.mission-viewports { flex-direction: column; flex-wrap: nowrap; }
-.mission-vp { flex: none; width: 100%; height: var(--mission-canvas-h); }
+/* side-by-side route viewports on wide screens (stacks via max-width: 760px above) */
 .mission-vp-id { right: 100px; }
 
 /* the run dock: legend, rover and Sun on one aligned row */
@@ -457,7 +455,7 @@
 .mission-dock-result[data-state="good"] i { background: var(--ok); }
 .mission-dock-result[data-state="nomatch"] i { background: var(--warn); }
 .mission-dock-result:hover { border-color: var(--accent); }
-@media (max-width: 1100px) { .mission-viewer-foot > .mission-dock-result, .mission-viewer-foot .mission-dock-hint { grid-column: 1; grid-row: auto; } }
+@media (max-width: 1100px) { .mission-viewer-foot > .mission-legend, .mission-viewer-foot > .mission-rover, .mission-viewer-foot > .mission-dock-result, .mission-viewer-foot .mission-dock-hint { grid-column: 1; grid-row: auto; } }
 
 /* step 2 and step 3 as two boxes of the same height */
 .mission-deck { align-items: start; }
@@ -476,13 +474,6 @@
 	.mission-sun-sliders { grid-template-columns: 1fr; }
 	.mission-sun-sliders > .mission-play { margin-bottom: 0; }
 }
-@media (max-width: 760px) {
-	.mission-page { --mission-canvas-h: min(78vh, 520px); }
-	.mission-vp-id { right: 12px; top: 8px; }
-	.mission-step--sun { padding: 14px; }
-}
-
-
 /* the two views keep one colour each, in the title and in the verdict strip */
 .mission-vp[data-side="target"], .mission-strip-lbl[data-side="target"] { --side: #ffb347; }
 .mission-vp[data-side="earth"], .mission-strip-lbl[data-side="earth"] { --side: #56b4e9; }
@@ -492,5 +483,26 @@
 .mission-vp[data-side] { box-shadow: inset 0 3px 0 var(--side); }
 .mission-strip-lbl[data-side]::before { margin-right: 6px; }
 
-/* the run dock follows the scroll while the views are on screen */
+/* the run dock follows the scroll while the views are on screen (desktop) */
 .mission-viewer-foot { position: sticky; bottom: 0; z-index: 6; background: var(--panel-solid); box-shadow: 0 -10px 24px rgba(0, 0, 0, .3); }
+
+@media (max-width: 760px) {
+	.mission-page { --mission-canvas-h: min(44vh, 320px); }
+	.mission-vp-id { right: 12px; top: 8px; }
+	.mission-route-bar .mission-field--target, .mission-route-bar .mission-field--analog { flex: 1 1 100%; }
+	.mission-viewer-bar { padding: 10px; gap: 8px; }
+	.mission-viewer-bar .mission-seg { width: 100%; }
+	.mission-viewer-bar .mission-seg button { flex: 1; }
+	.mission-viewer-bar-end { justify-content: flex-start; gap: 8px; width: 100%; margin-left: 0; }
+	.mission-viewer-foot { position: static; box-shadow: none; padding: 12px; gap: 12px; }
+	.mission-viewer-foot .mission-rover { flex-wrap: wrap; gap: 8px 10px; min-width: 0; width: 100%; }
+	.mission-viewer-foot .mission-rover .mission-cap { flex: 1 1 100%; }
+	.mission-rover input[type="range"], .mission-rover--sun input[type="range"] { min-width: 100px; flex: 1 1 120px; }
+	.mission-rover--sun .mission-rover-val { min-width: 0; text-align: right; }
+	.mission-dock-result { width: 100%; }
+	.mission-step--sun { padding: 14px; }
+	.mission-slider-head { flex-wrap: wrap; gap: 4px 8px; }
+	.mission-strip-grid { grid-template-columns: 48px minmax(0, 1fr) 52px; column-gap: 8px; }
+	.mission-strip-track { left: 56px; right: 60px; }
+	.mission-strip-ab { margin: 0 60px 0 56px; }
+}
