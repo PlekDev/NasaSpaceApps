@@ -5,6 +5,11 @@
 
 **Team:** Pollones en Fuga (Mexico) · **NASA Space Apps Challenge 2026 · Challenge:** *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars*
 
+<p align="center"><a href="https://plekdev.github.io/NasaSpaceApps/"><b>▶ Open the web app: plekdev.github.io/NasaSpaceApps</b></a><br>
+<sub>No install, no account, works on a phone.</sub></p>
+
+<p align="center"><a href="https://plekdev.github.io/NasaSpaceApps/"><img src="docs/screenshots/home.jpg" alt="P.E.N. home page: the question, the blind-test hook and three cards over NASA GIBS satellite imagery of Hawai‘i with Pu‘u Hiwahine marked" width="860"></a></p>
+
 **Try it:** [web app](https://plekdev.github.io/NasaSpaceApps/) (no install, works on a phone) · [guided tour](https://plekdev.github.io/NasaSpaceApps/#/tour) · [method](docs/METHOD.md) · [field tools](docs/EXTRAS.md) · [submission kit](docs/SUBMISSION.md)
 
 > **Blind test.** Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar prospecting mission
@@ -49,6 +54,18 @@ Every number on screen is read from the exported data in `web/public/data/`; non
 | **Proof** | The annex: how each claim was checked against NASA (illumination map, permanent shadow, known analog sites) |
 | **Dossier** | A technical report per target and Earth window: why the site matches, the same low Sun, when to go, traverse and telemetry, where the analogy breaks (Diviner, MODIS), field safety (EONET), typeset equations. Prints to a 3-page PDF |
 | **Tour** | A guided mission briefing through light, limits, timing and the rover |
+
+### Screenshots
+
+| | |
+|---|---|
+| ![Explore zoomed on Mexico, with the Ceboruco volcano zone and NASA GIBS imagery](docs/screenshots/explore-mexico.jpg) | ![Explore on the globe, zone 6 of 14](docs/screenshots/explore-globe.jpg) |
+| **Explore**: every 6 km window re-ranks live as you change the target or the weights; zone review with the real view of both sites. | **Explore**, globe view: the 14 Earth regions, coloured by score. |
+| ![Mission rover camera: the same rover on the same traverse on the Moon and on Mauna Kea](docs/screenshots/mission-rover.jpg) | ![When: the Sun's height through one day for the Moon site and two Earth regions](docs/screenshots/when.jpg) |
+| **Mission**, rover camera: the same traverse on the Moon and on its Earth twin, on real terrain, with cast shadows. | **When**: the Moon Base stays in the 0–7° band all day; on Earth the Sun crosses it fast, except near the poles. |
+
+<p align="center"><img src="docs/screenshots/method-shadows.gif" alt="Method page: the exact cast-shadow algorithm running live on the real terrain of Malapert Massif and of Mauna Kea as the Sun turns" width="860"><br>
+<sub><b>Method</b>, live: the exact cast-shadow algorithm on the real terrain of Malapert Massif (Moon, left) and Mauna Kea (Earth, right) as the Sun turns at 2°.</sub></p>
 
 ## Key results (v0.5, 6 km windows, 30 m grid, 9 targets, 14 Earth regions, 10,424 windows)
 
