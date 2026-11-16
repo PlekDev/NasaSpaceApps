@@ -104,6 +104,19 @@ function terrainRGB(
   out[p + 3] = 255;
 }
 
+interface CamState {
+  az: number; // radians
+  el: number; // radians above horizon
+  dist: number; // meters
+  panX: number;
+  panZ: number;
+  yaw: number; // radians (astronaut / rover drag-look)
+  pitch: number; // radians (astronaut / rover drag-look)
+  chase: number; // meters behind the rover in the chase camera
+  fov: number; // degrees (wheel zoom in astronaut mode)
+}
+const newCam = (): CamState => ({ az: -0.65, el: 0.62, dist: 6600, panX: 0, panZ: 0, yaw: 0, pitch: 0, chase: 320, fov: 45 });
+
 export class MissionDualScene {
   private targetCanvas: HTMLCanvasElement;
   private earthCanvas: HTMLCanvasElement;
@@ -127,16 +140,9 @@ export class MissionDualScene {
   private showSlopeMask = true;
   private roverProgress = 0; // 0..1 along route
 
-  // Synchronized orbital / chase / astronaut camera state
-  private orbitAz = -0.65; // radians
-  private orbitEl = 0.62; // radians above horizon
-  private orbitDist = 6600; // meters
-  private panX = 0;
-  private panZ = 0;
-  private lookYawOffset = 0; // radians (astronaut / rover drag-look)
-  private lookPitchOffset = 0; // radians (astronaut / rover drag-look)
-  private chaseDist = 320; // meters behind rover in chase cam
-  private camFov = 45; // degrees (wheel zoom in astronaut mode)
+  // Orbital / chase / astronaut camera state, one per viewport; `linked` makes a drag in either view move both
+  private cams: Record<'target' | 'earth', CamState> = { target: newCam(), earth: newCam() };
+  private linked = false;
 
   private dragging = false;
   private dragPanning = false;
@@ -219,8 +225,7 @@ export class MissionDualScene {
 
   setCameraMode(mode: CameraMode): void {
     this.cameraMode = mode;
-    this.lookYawOffset = 0;
-    this.lookPitchOffset = 0;
+    for (const c of [this.cams.target, this.cams.earth]) { c.yaw = 0; c.pitch = 0; }
     for (const side of [this.targetSide, this.earthSide]) {
       if (!side) continue;
       side.startPin.visible = mode === 'orbital';
@@ -266,17 +271,21 @@ export class MissionDualScene {
     return this.roverProgress;
   }
 
-  resetCamera(): void {
-    this.orbitAz = -0.65;
-    this.orbitEl = 0.62;
-    this.orbitDist = 6600;
-    this.panX = 0;
-    this.panZ = 0;
-    this.lookYawOffset = 0;
-    this.lookPitchOffset = 0;
-    this.chaseDist = 320;
-    this.camFov = 45;
+  /** reset one view, or both (default); with linked views a single reset moves both */
+  resetCamera(which: 'target' | 'earth' | 'both' = 'both'): void {
+    if (which === 'both' || this.linked) { this.cams.target = newCam(); this.cams.earth = newCam(); }
+    else this.cams[which] = newCam();
     this.requestRender();
+  }
+
+  setLinked(on: boolean): void {
+    this.linked = on;
+    if (on) this.cams.earth = { ...this.cams.target };   // meet at the target view
+    this.requestRender();
+  }
+
+  isLinked(): boolean {
+    return this.linked;
   }
 
   setData(target: SceneSideData, earth: SceneSideData): void {
@@ -576,11 +585,12 @@ export class MissionDualScene {
     return Number.isFinite(m) ? m : 0;
   }
 
-  private configureCameraForSide(side: SideWebGLObjects, data: SceneSideData, aspect: number): void {
+  private configureCameraForSide(side: SideWebGLObjects, data: SceneSideData, aspect: number, which: 'target' | 'earth'): void {
     const cam = this.glCamera;
+    const cs = this.cams[which];
     const mode = this.cameraMode;
     cam.aspect = aspect;
-    cam.fov = mode === 'astronaut' ? this.camFov : 45;
+    cam.fov = mode === 'astronaut' ? cs.fov : 45;
     // a close eye needs a close near plane, or the ground in front is cut into a flat slab
     // close cameras: near and far set for depth precision, so lines draped on the ground stay in front of it
     cam.near = mode === 'astronaut' ? 1.5 : 2;
@@ -612,7 +622,7 @@ export class MissionDualScene {
       // eye 1.7 m (times the vertical scale) over the highest facet under the feet
       const ground = Math.max(pose.y, this.groundMax(data.grid, side.exagZ, pose.row, pose.col, 1));
       const eyeOffset = 1.7 * this.exag + 2;
-      const yaw = pose.headingRad + this.lookYawOffset;
+      const yaw = pose.headingRad + cs.yaw;
       const forwardX = Math.sin(yaw);
       const forwardZ = Math.cos(yaw);
       cam.position.set(pose.x, ground + eyeOffset, pose.z);
@@ -620,40 +630,40 @@ export class MissionDualScene {
       const lookR = pose.row + (forwardZ * 240) / data.grid.dx;
       const lookC = pose.col + (forwardX * 240) / data.grid.dx;
       const [lx, ly, lz] = this.cellToWorld(data.grid, side.exagZ, lookR, lookC);
-      const pitchY = Math.tan(this.lookPitchOffset) * 240;
+      const pitchY = Math.tan(cs.pitch) * 240;
       // look at eye level over the ground ahead, never down into the slope at the feet
       cam.lookAt(lx, Math.max(ly, ground) + eyeOffset + pitchY, lz);
     } else if (this.cameraMode === 'rover') {
       // Chase camera orbiting behind the traversing rover
-      const yaw = pose.headingRad + this.lookYawOffset;
+      const yaw = pose.headingRad + cs.yaw;
       const forwardX = Math.sin(yaw);
       const forwardZ = Math.cos(yaw);
       const heightOffset = Math.max(
         45,
-        (this.chaseDist / 320) * (150 + 18 * this.exag) + Math.sin(this.lookPitchOffset) * 180,
+        (cs.chase / 320) * (150 + 18 * this.exag) + Math.sin(cs.pitch) * 180,
       );
       // behind the rover the ground may climb: keep the chase camera 30 m over the facets under it
-      const camR = pose.row - (forwardZ * this.chaseDist) / data.grid.dx;
-      const camC = pose.col - (forwardX * this.chaseDist) / data.grid.dx;
+      const camR = pose.row - (forwardZ * cs.chase) / data.grid.dx;
+      const camC = pose.col - (forwardX * cs.chase) / data.grid.dx;
       const under = this.groundMax(data.grid, side.exagZ, camR, camC, 1);
       cam.position.set(
-        pose.x - forwardX * this.chaseDist,
+        pose.x - forwardX * cs.chase,
         Math.max(pose.y + heightOffset, under + 30),
-        pose.z - forwardZ * this.chaseDist,
+        pose.z - forwardZ * cs.chase,
       );
       cam.lookAt(
         pose.x + forwardX * 180,
-        pose.y + 25 + Math.sin(this.lookPitchOffset) * 60,
+        pose.y + 25 + Math.sin(cs.pitch) * 60,
         pose.z + forwardZ * 180,
       );
     } else {
       // Synchronized Orbital camera
-      const cosEl = Math.cos(this.orbitEl);
-      const cx = this.panX + this.orbitDist * cosEl * Math.sin(this.orbitAz);
-      const cy = this.orbitDist * Math.sin(this.orbitEl);
-      const cz = this.panZ + this.orbitDist * cosEl * Math.cos(this.orbitAz);
+      const cosEl = Math.cos(cs.el);
+      const cx = cs.panX + cs.dist * cosEl * Math.sin(cs.az);
+      const cy = cs.dist * Math.sin(cs.el);
+      const cz = cs.panZ + cs.dist * cosEl * Math.cos(cs.az);
       cam.position.set(cx, cy, cz);
-      cam.lookAt(this.panX, 0, this.panZ);
+      cam.lookAt(cs.panX, 0, cs.panZ);
     }
   }
 
@@ -668,10 +678,10 @@ export class MissionDualScene {
   renderNow(): void {
     if (this.disposed) return;
     if (this.targetData) {
-      this.renderViewport(this.targetCanvas, this.targetSide, this.targetData);
+      this.renderViewport(this.targetCanvas, this.targetSide, this.targetData, 'target');
     }
     if (this.earthData) {
-      this.renderViewport(this.earthCanvas, this.earthSide, this.earthData);
+      this.renderViewport(this.earthCanvas, this.earthSide, this.earthData, 'earth');
     }
   }
 
@@ -679,6 +689,7 @@ export class MissionDualScene {
     canvas: HTMLCanvasElement,
     side: SideWebGLObjects | null,
     data: SceneSideData,
+    which: 'target' | 'earth',
   ): void {
     const rect = canvas.getBoundingClientRect();
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -693,7 +704,7 @@ export class MissionDualScene {
 
     if (this.webglAvailable && side && this.cameraMode !== 'topdown') {
       this.glRenderer.setSize(w, h, false);
-      this.configureCameraForSide(side, data, w / h);
+      this.configureCameraForSide(side, data, w / h, which);
       this.glRenderer.render(side.scene, this.glCamera);
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(this.glRenderer.domElement, 0, 0, w, h);
@@ -948,7 +959,7 @@ export class MissionDualScene {
 
     canvas.addEventListener('dblclick', () => {
       if (this.isWebGLActive()) {
-        this.resetCamera();
+        this.resetCamera(which);
       }
     });
 
@@ -977,26 +988,28 @@ export class MissionDualScene {
       }
       if (!this.dragMoved || !this.isWebGLActive()) return;
 
+      const c = this.cams[which];
       const isPan = this.dragPanning || (ev.buttons & 2) !== 0 || ev.shiftKey;
       if (this.cameraMode === 'orbital') {
         if (isPan) {
-          const panScale = this.orbitDist * 0.0012;
-          const cosAz = Math.cos(this.orbitAz);
-          const sinAz = Math.sin(this.orbitAz);
+          const panScale = c.dist * 0.0012;
+          const cosAz = Math.cos(c.az);
+          const sinAz = Math.sin(c.az);
           // Screen X -> horizontal right (cosAz, -sinAz); Screen Y -> forward XZ (-sinAz, -cosAz)
-          const nextX = this.panX - cosAz * dx * panScale - sinAz * dy * panScale;
-          const nextZ = this.panZ + sinAz * dx * panScale - cosAz * dy * panScale;
-          this.panX = Math.max(-3500, Math.min(3500, nextX));
-          this.panZ = Math.max(-3500, Math.min(3500, nextZ));
+          const nextX = c.panX - cosAz * dx * panScale - sinAz * dy * panScale;
+          const nextZ = c.panZ + sinAz * dx * panScale - cosAz * dy * panScale;
+          c.panX = Math.max(-3500, Math.min(3500, nextX));
+          c.panZ = Math.max(-3500, Math.min(3500, nextZ));
         } else {
-          this.orbitAz -= dx * 0.0075;
-          this.orbitEl = Math.max(0.1, Math.min(1.48, this.orbitEl + dy * 0.0065));
+          c.az -= dx * 0.0075;
+          c.el = Math.max(0.1, Math.min(1.48, c.el + dy * 0.0065));
         }
       } else {
         // Astronaut / Rover drag-look around traverse direction
-        this.lookYawOffset -= dx * 0.006;
-        this.lookPitchOffset = Math.max(-0.55, Math.min(0.55, this.lookPitchOffset - dy * 0.005));
+        c.yaw -= dx * 0.006;
+        c.pitch = Math.max(-0.55, Math.min(0.55, c.pitch - dy * 0.005));
       }
+      if (this.linked) this.cams[which === 'target' ? 'earth' : 'target'] = { ...c };
 
       this.dragStartX = ev.clientX;
       this.dragStartY = ev.clientY;
@@ -1042,14 +1055,16 @@ export class MissionDualScene {
       (ev: WheelEvent) => {
         if (!this.isWebGLActive()) return;
         ev.preventDefault();
+        const c = this.cams[which];
         const factor = ev.deltaY > 0 ? 1.09 : 0.92;
         if (this.cameraMode === 'orbital') {
-          this.orbitDist = Math.max(1600, Math.min(14000, this.orbitDist * factor));
+          c.dist = Math.max(1600, Math.min(14000, c.dist * factor));
         } else if (this.cameraMode === 'rover') {
-          this.chaseDist = Math.max(120, Math.min(950, this.chaseDist * factor));
+          c.chase = Math.max(120, Math.min(950, c.chase * factor));
         } else if (this.cameraMode === 'astronaut') {
-          this.camFov = Math.max(25, Math.min(70, this.camFov * factor));
+          c.fov = Math.max(25, Math.min(70, c.fov * factor));
         }
+        if (this.linked) this.cams[which === 'target' ? 'earth' : 'target'] = { ...c };
         this.requestRender();
       },
       { passive: false },
@@ -1071,7 +1086,7 @@ export class MissionDualScene {
     if (this.webglAvailable && side && this.cameraMode !== 'topdown' && this.THREE) {
       const ndcX = ((clientX - rect.left) / rect.width) * 2 - 1;
       const ndcY = -((clientY - rect.top) / rect.height) * 2 + 1;
-      this.configureCameraForSide(side, data, rect.width / rect.height);
+      this.configureCameraForSide(side, data, rect.width / rect.height, which);
       const raycaster = new this.THREE.Raycaster();
       raycaster.setFromCamera(new this.THREE.Vector2(ndcX, ndcY), this.glCamera);
       const hits = raycaster.intersectObject(side.terrainMesh, false);

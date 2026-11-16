@@ -26,7 +26,7 @@
 .plight-pts circle { fill: var(--accent); opacity: .45; }
 line.plight-bias { stroke: var(--text-1); stroke-width: 1.5; }
 line.plight-loa { stroke: var(--warn); stroke-width: 1.2; stroke-dasharray: 6 4; }
-.plight-t { font: 11px var(--font-ui); fill: var(--text-3); }
+.plight-t { font: 13px var(--font-ui); fill: var(--text-2); }
 text.plight-bias { fill: var(--text-1); font-weight: 600; } text.plight-loa { fill: var(--warn); }
 
 .plight-maps { display: flex; flex-wrap: wrap; gap: var(--s-5); margin-top: var(--s-5); }
@@ -42,3 +42,15 @@ text.plight-bias { fill: var(--text-1); font-weight: 600; } text.plight-loa { fi
 
 @media (max-width: 1000px) { .plight-grid { grid-template-columns: 1fr 1fr; } .plight-sites { grid-column: 1 / -1; } }
 @media (max-width: 620px) { .plight-grid { grid-template-columns: 1fr; } .plight-maps { gap: var(--s-4); } .plight-maps canvas, .plight-maps figcaption { width: 140px; max-width: 140px; } }
+
+/* framed like the other Proof charts */
+.plight-fig, .plight-maps figure { position: relative; padding: var(--s-3); border: 1px solid var(--line-strong); background: var(--glass); box-sizing: border-box; }
+.plight-fig::after, .plight-maps figure::after { content: ""; position: absolute; inset: 3px; pointer-events: none; opacity: .6;
+  background: linear-gradient(var(--mark), var(--mark)) top left / 9px 1px no-repeat, linear-gradient(var(--mark), var(--mark)) top left / 1px 9px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top right / 9px 1px no-repeat, linear-gradient(var(--mark), var(--mark)) top right / 1px 9px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom left / 9px 1px no-repeat, linear-gradient(var(--mark), var(--mark)) bottom left / 1px 9px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom right / 9px 1px no-repeat, linear-gradient(var(--mark), var(--mark)) bottom right / 1px 9px no-repeat; }
+.plight figcaption { font-size: 14px; }
+.plight-site .plight-sname { font-size: 15px; }
+.plight-maps canvas { width: 190px; }
+.plight-maps figcaption { max-width: 190px; }

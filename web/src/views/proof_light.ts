@@ -46,7 +46,7 @@ function drawDensity(host: HTMLElement, s: Site) {
   for (const [i, j, c] of s.density.cells) { g.fillStyle = mix(lo, hi, 0.18 + 0.82 * Math.log1p(c) / top); g.fillRect(P + i * cell, 8 + S - (j + 1) * cell, cell + 0.5, cell + 0.5); }
   g.strokeStyle = css('--text-3'); g.lineWidth = 1; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(P, 8 + S); g.lineTo(P + S, 8); g.stroke(); g.setLineDash([]);
   g.strokeStyle = css('--line-strong'); g.strokeRect(P + 0.5, 8.5, S, S);
-  g.fillStyle = css('--text-3'); g.font = '11px Barlow, sans-serif'; g.textAlign = 'center';
+  g.fillStyle = css('--text-3'); g.font = '13px Barlow, sans-serif'; g.textAlign = 'center';
   for (const v of [0, 0.5, 1]) { g.fillText(`${v * 100}`, P + v * S, W - 14); g.textAlign = 'right'; g.fillText(`${v * 100}`, P - 5, 8 + S - v * S + 4); g.textAlign = 'center'; }
   g.fillText('our model · % of time lit', P + S / 2, W - 1);
   g.save(); g.translate(9, 8 + S / 2); g.rotate(-Math.PI / 2); g.fillText('NASA LOLA · % of time lit', 0, 0); g.restore();
