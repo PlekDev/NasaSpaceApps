@@ -33,8 +33,7 @@ Checkpoint = 10-minute stand-up: what's done, what's blocked, and what's next.
 
 ## Individual plans (updated Sat 15:30)
 
-✅ = done (in `main` with v0.2). Each open line is one GitHub issue (`docs/issues/issues.json`, created by
-`scripts/create_issues.sh`, which skips the done ones).
+✅ = done (in `main` with v0.2). Each open line is one GitHub issue.
 
 ### Victor — tech lead & integrator
 - ✅ v0.2 pipeline run (14 regions), sensitivity analysis (fig5), known-analog test, Diviner context, README with the exact algorithm.

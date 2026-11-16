@@ -1,7 +1,7 @@
 // AI-assisted (Claude Code); reviewed by the author.
 /** Pure helpers behind the Explore cards: ranks, per-zone statistics, the rank of a known site, and the rank-versus-weight sweep.
  *  No DOM and no imports, so node --test loads it directly. Scores are compared rounded to 0.1, the precision the exported ranks use
- *  (ties then break by file order, like pandas rank(method="first"); see DECISIONS.md #19). */
+ *  (ties then break by file order, like pandas rank(method="first")). */
 
 export const round1 = (v: number) => Math.round(v * 10) / 10;
 
