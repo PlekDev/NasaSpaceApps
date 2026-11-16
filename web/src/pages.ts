@@ -7,7 +7,6 @@ import type { RouteId } from './lib/routes';
 export const VIEWS: Partial<Record<RouteId, ViewModule>> = {
   proof: lazyView(() => import('./views/proof'), { title: 'Proof' }),
   mission: lazyView(() => import('./views/mission/index'), { title: 'Mission' }),
-  limits: lazyView(() => import('./views/limits'), { title: 'Limits' }),
   dossier: lazyView(() => import('./views/dossier'), { title: 'Dossier' }),
   tour: lazyView(() => import('./views/tour'), { title: 'Tour' }),
   // existing views keep their own entry points; adapters resolve either render() or the legacy name

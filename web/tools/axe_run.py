@@ -16,7 +16,6 @@ VIEWS = [
     ("picker", "/?intro=0", "picker"),
     ("when", "/#/when", None),
     ("proof", "/#/proof", None),
-    ("limits", "/#/limits", None),
     ("mission", "/#/mission", None),
     ("method", "/#/method", None),
     ("dossier", "/#/dossier", None),
