@@ -46,6 +46,7 @@ async function boot() {
       document.querySelectorAll<HTMLElement>('[data-r]').forEach(a => { if (a.dataset.r === p.id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
       document.title = (p.id === 'home' ? '' : `${p.def.title} · `) + TITLE;
       stage.hidden = !p.def.stage; page.hidden = p.def.stage;
+      if (!p.def.stage) $('#crumbs').hidden = true;                 // the Explore breadcrumbs only belong to the map views
       if (p.id === 'home' && !intro && q.get('intro') !== '0') {
         introOn = true;
         intro = mountHome(stage, { m, view: ex.view, targetName: t0.name });
