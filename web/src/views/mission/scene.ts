@@ -46,6 +46,8 @@ interface SideWebGLObjects {
   terrainTex: any;
   texBytes: Uint8Array;
   routeLine: any | null;
+  /** 150 m survey grid draped on the terrain, shown in the close cameras */
+  groundGrid: any | null;
   roverGroup: any;
   rover: RoverModel;
   startPin: any;
@@ -71,19 +73,20 @@ function terrainRGB(
   wall: boolean,
   isMoon: boolean,
   isMars: boolean,
-  idx: number,
-  cols: number,
+  slopeDeg: number,
 ): void {
   let r: number;
   let g: number;
   let b: number;
+  // relief cue: steeper faces a step darker, so slopes read even where the cast shadow is one flat colour
+  const steep = Math.min(1, slopeDeg / 30);
   if (inShadow) {
-    const k = 0.82 + 0.3 * Math.min(1, shade);
+    const k = (0.84 + 0.28 * Math.min(1, shade)) * (1 - 0.34 * steep);
     r = SHADOW_RGB[0] * k;
     g = SHADOW_RGB[1] * k;
     b = SHADOW_RGB[2] * k;
   } else {
-    const s = 0.55 + 0.45 * Math.min(1, shade);
+    const s = (0.55 + 0.45 * Math.min(1, shade)) * (1 - 0.18 * steep);
     const base = isMoon ? [214, 218, 226] : isMars ? [234, 182, 146] : [200, 210, 218];
     r = base[0] * s * 0.82 + LIT_TINT[0] * s * 0.18;
     g = base[1] * s * 0.82 + LIT_TINT[1] * s * 0.18;
@@ -290,6 +293,8 @@ export class MissionDualScene {
     const THREE = this.THREE;
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(body === 'earth' ? 0x0b1220 : body === 'mars' ? 0x160e0b : 0x070a10);
+    // off (pushed past the far plane) in orbit; the close cameras pull it in for depth
+    scene.fog = new THREE.Fog(scene.background.getHex(), 1e6, 2e6);
 
     const n = 200;
     const sizeM = (n - 1) * 30;
@@ -308,6 +313,10 @@ export class MissionDualScene {
     terrainTex.needsUpdate = true;
 
     const terrainMat = new THREE.MeshBasicMaterial({ map: terrainTex });
+    // pushed back a hair in depth so lines draped on it (route, survey grid) never sink into its facets
+    terrainMat.polygonOffset = true;
+    terrainMat.polygonOffsetFactor = 1;
+    terrainMat.polygonOffsetUnits = 4;
     const terrainMesh = new THREE.Mesh(terrainGeo, terrainMat);
     scene.add(terrainMesh);
 
@@ -353,6 +362,7 @@ export class MissionDualScene {
       terrainTex,
       texBytes,
       routeLine: null,
+      groundGrid: null,
       roverGroup,
       rover,
       startPin,
@@ -370,6 +380,7 @@ export class MissionDualScene {
     const bgHex =
       data.body === 'earth' ? 0x0a1322 : data.body === 'mars' ? 0x170e0b : 0x070a0f;
     side.scene.background.setHex(bgHex);
+    side.scene.fog?.color.setHex(bgHex);
 
     this.updateMeshTexture(side, data);
     this.updateMeshGeometry(side, data);
@@ -387,7 +398,7 @@ export class MissionDualScene {
 
     for (let i = 0; i < n; i++) {
       const imp = this.showSlopeMask && layers.impassable[i] === 1;
-      terrainRGB(bytes, i * 4, shade[i], layers.shadow[i] === 1, imp, isMoon, isMars, i, grid.cols);
+      terrainRGB(bytes, i * 4, shade[i], layers.shadow[i] === 1, imp, isMoon, isMars, layers.slope[i]);
     }
 
     side.terrainTex.needsUpdate = true;
@@ -408,6 +419,7 @@ export class MissionDualScene {
     const THREE = this.THREE;
     const { grid, layers, route } = data;
     side.exagZ = exaggerated(grid, this.exag);
+    this.rebuildGroundGrid(side, grid);
 
     const pos = side.terrainGeo.attributes.position;
     const arr = pos.array as Float32Array;
@@ -515,27 +527,102 @@ export class MissionDualScene {
     side.rover.setSun(data.sun.gridAzDeg, data.sun.elevDeg);
   }
 
+  /** a light grid on every 30 m cell following the exaggerated surface: scale and depth for the close cameras */
+  private rebuildGroundGrid(side: SideWebGLObjects, grid: Grid): void {
+    const THREE = this.THREE;
+    if (side.groundGrid) {
+      side.scene.remove(side.groundGrid);
+      side.groundGrid.geometry.dispose();
+      side.groundGrid.material.dispose();
+      side.groundGrid = null;
+    }
+    const step = 1;
+    const pts: number[] = [];
+    const lift = 1.2;
+    const push = (r: number, c: number) => {
+      const [x, y, z] = this.cellToWorld(grid, side.exagZ, r, c);
+      pts.push(x, y + lift, z);
+    };
+    for (let r = 0; r < grid.rows; r += step) {
+      for (let c = 0; c < grid.cols - 1; c++) {
+        push(r, c);
+        push(r, c + 1);
+      }
+    }
+    for (let c = 0; c < grid.cols; c += step) {
+      for (let r = 0; r < grid.rows - 1; r++) {
+        push(r, c);
+        push(r + 1, c);
+      }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+    const mat = new THREE.LineBasicMaterial({ color: 0xaac8e6, transparent: true, opacity: 0.2, depthWrite: false });
+    side.groundGrid = new THREE.LineSegments(geo, mat);
+    side.groundGrid.visible = this.cameraMode !== 'orbital';
+    side.scene.add(side.groundGrid);
+  }
+
+  /** highest mesh height within `radius` cells of (row, col): the 30 m facets can stand above an interpolated point */
+  private groundMax(grid: Grid, exagZ: Float32Array, row: number, col: number, radius: number): number {
+    const r0 = Math.max(0, Math.floor(row - radius));
+    const r1 = Math.min(grid.rows - 1, Math.ceil(row + radius));
+    const c0 = Math.max(0, Math.floor(col - radius));
+    const c1 = Math.min(grid.cols - 1, Math.ceil(col + radius));
+    let m = -Infinity;
+    for (let r = r0; r <= r1; r++) {
+      for (let c = c0; c <= c1; c++) m = Math.max(m, exagZ[r * grid.cols + c]);
+    }
+    return Number.isFinite(m) ? m : 0;
+  }
+
   private configureCameraForSide(side: SideWebGLObjects, data: SceneSideData, aspect: number): void {
     const cam = this.glCamera;
+    const mode = this.cameraMode;
     cam.aspect = aspect;
-    cam.fov = this.cameraMode === 'astronaut' ? this.camFov : 45;
+    cam.fov = mode === 'astronaut' ? this.camFov : 45;
+    // a close eye needs a close near plane, or the ground in front is cut into a flat slab
+    // close cameras: near and far set for depth precision, so lines draped on the ground stay in front of it
+    cam.near = mode === 'astronaut' ? 1.5 : 2;
+    cam.far = mode === 'orbital' ? 30000 : 9000;
     cam.updateProjectionMatrix();
+
+    // the rover is drawn ~30x life size for the orbital view: the astronaut would stand inside it
+    side.roverGroup.visible = mode !== 'astronaut';
+    // the route line floats 16 m up so it reads from orbit; close up it sits 3 m over the ground, under the eye
+    if (side.routeLine) side.routeLine.position.y = mode === 'orbital' ? 0 : -13;
+    if (side.groundGrid) side.groundGrid.visible = mode !== 'orbital';
+    const fog = side.scene.fog;
+    if (fog) {
+      if (mode === 'astronaut') {
+        fog.near = 250;
+        fog.far = 4200;
+      } else if (mode === 'rover') {
+        fog.near = 900;
+        fog.far = 6500;
+      } else {
+        fog.near = 1e6;
+        fog.far = 2e6;
+      }
+    }
 
     const pose = this.sampleRoutePose(data.grid, side.exagZ, data.route, this.roverProgress);
 
-    if (this.cameraMode === 'astronaut') {
-      // Eye height 1.7 m above local terrain surface (scaled by exaggeration for mesh clearance)
-      const eyeOffset = 1.7 * this.exag + 6;
+    if (mode === 'astronaut') {
+      // eye 1.7 m (times the vertical scale) over the highest facet under the feet
+      const ground = Math.max(pose.y, this.groundMax(data.grid, side.exagZ, pose.row, pose.col, 1));
+      const eyeOffset = 1.7 * this.exag + 2;
       const yaw = pose.headingRad + this.lookYawOffset;
       const forwardX = Math.sin(yaw);
       const forwardZ = Math.cos(yaw);
-      cam.position.set(pose.x, pose.y + eyeOffset, pose.z);
+      cam.position.set(pose.x, ground + eyeOffset, pose.z);
       // Look 240 m ahead along the view yaw + pitch offset
       const lookR = pose.row + (forwardZ * 240) / data.grid.dx;
       const lookC = pose.col + (forwardX * 240) / data.grid.dx;
       const [lx, ly, lz] = this.cellToWorld(data.grid, side.exagZ, lookR, lookC);
       const pitchY = Math.tan(this.lookPitchOffset) * 240;
-      cam.lookAt(lx, ly + eyeOffset * 0.7 + pitchY, lz);
+      // look at eye level over the ground ahead, never down into the slope at the feet
+      cam.lookAt(lx, Math.max(ly, ground) + eyeOffset + pitchY, lz);
     } else if (this.cameraMode === 'rover') {
       // Chase camera orbiting behind the traversing rover
       const yaw = pose.headingRad + this.lookYawOffset;
@@ -545,9 +632,13 @@ export class MissionDualScene {
         45,
         (this.chaseDist / 320) * (150 + 18 * this.exag) + Math.sin(this.lookPitchOffset) * 180,
       );
+      // behind the rover the ground may climb: keep the chase camera 30 m over the facets under it
+      const camR = pose.row - (forwardZ * this.chaseDist) / data.grid.dx;
+      const camC = pose.col - (forwardX * this.chaseDist) / data.grid.dx;
+      const under = this.groundMax(data.grid, side.exagZ, camR, camC, 1);
       cam.position.set(
         pose.x - forwardX * this.chaseDist,
-        pose.y + heightOffset,
+        Math.max(pose.y + heightOffset, under + 30),
         pose.z - forwardZ * this.chaseDist,
       );
       cam.lookAt(
@@ -696,7 +787,7 @@ export class MissionDualScene {
       const isMars = body === 'mars';
       for (let i = 0; i < shade.length; i++) {
         const imp = this.showSlopeMask && layers.impassable[i] === 1;
-        terrainRGB(bytes, i * 4, shade[i], layers.shadow[i] === 1, imp, isMoon, isMars, i, grid.cols);
+        terrainRGB(bytes, i * 4, shade[i], layers.shadow[i] === 1, imp, isMoon, isMars, layers.slope[i]);
       }
       octx.putImageData(img, 0, 0);
       ctx.imageSmoothingEnabled = true;
@@ -1027,6 +1118,10 @@ export class MissionDualScene {
       if (s.routeLine) {
         s.routeLine.geometry?.dispose();
         s.routeLine.material?.dispose();
+      }
+      if (s.groundGrid) {
+        s.groundGrid.geometry?.dispose();
+        s.groundGrid.material?.dispose();
       }
     };
     disposeSide(this.targetSide);
