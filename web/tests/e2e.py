@@ -48,6 +48,7 @@ with sync_playwright() as p:
     pg.click("[data-act=overview]"); pg.wait_for_selector('[data-card="best"]', timeout=10000)
     check("Overview button returns to the overview", pg.locator(".ex-zone").count() == 0)
     for route, sel in [
+        ("statistics", ".stat .st-card .chart-canvas"),
         ("when", ".chart"),
         ("proof", "#hm .hm, .proof"),
         ("mission", ".mission-page, .view-wip, .page-stub"),

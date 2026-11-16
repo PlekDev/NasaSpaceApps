@@ -1,5 +1,5 @@
 // AI-assisted (Claude, Anthropic); reviewed by the team.
-// #/proof · "The 3 proofs": (1) blind test, (2) light model vs NASA (Diego Lizárraga's proof_light.ts), (3) robustness.
+// #/proof · "Proof" (the annex, last in the menu): the 3 proofs: (1) blind test, (2) light model vs NASA (Diego Lizárraga's proof_light.ts), (3) robustness.
 // Every number comes from web/public/data/stats/*.json (web/tools/exports/stats.py <- scripts/stats/*.py) or light/;
 // none is typed here. A file marked "_stub": true shows "Results pending" instead of numbers. Keys starting with "_"
 // are metadata, never targets. Wording rule: "top window" with its bootstrap CI, never "the best place".
@@ -171,6 +171,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
   const [got, ka0] = await Promise.all([Promise.all(FILES.map(f => getJSON<Meta>(`stats/${f}`).catch(() => null))),
     getJSON<{ rows: { reference: string }[] }>('known_analogs').catch(() => ({ rows: [] }))]);
   const S = Object.fromEntries(FILES.map((f, i) => [f, got[i]])) as unknown as Stats;
+  const mc = (host: HTMLElement, o: Parameters<typeof mountChart>[1], opts: Parameters<typeof mountChart>[2]) => mountChart(host, o, { fs: 14, ...opts });   // larger chart text for the annex
   const name = (id: string) => m.targets.find(t => t.id === id)?.name ?? id;
   const region = (wid: string) => { const r = m.regions.find(x => wid.startsWith(`${x.id}_`)); return r ? r.name : wid; };
   const moon = m.targets.filter(t => t.body === 'moon').map(t => t.id), mars = m.targets.filter(t => t.body === 'mars').map(t => t.id);
@@ -187,7 +188,8 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
   const pickDefault = okNull && S.null.headline_target ? S.null.headline_target : moon[0];
 
   el.innerHTML = `<div class="page-in wide proof">
-    <h1>The 3 proofs</h1>
+    <p class="dossier-kicker">Annex · how the claims were checked</p>
+    <h1>Proof</h1>
     <p class="lead">${okNull ? esc(leadLine(S.null, name, nMoonTests)) : 'Validation results are being computed.'}</p>
     <nav class="proof-cards" aria-label="The three proofs">
       <button type="button" class="proof-card" data-goto="proof-1"><span class="proof-num">1</span><b>Blind test</b><span>${okNull ? esc(card1(S.null, name, nMoonTests)) : 'pending'}</span></button>
@@ -283,7 +285,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
       <thead><tr><th scope="col">Target</th><th scope="col">Rank of ${nf(rows[0]?.[1].of ?? 0)} windows</th><th scope="col">Share of Mauna Kea as high or higher</th><th scope="col">p (region)</th><th scope="col">p × ${Object.keys(S.null.pu_uhiwahine).length} targets</th><th scope="col">p × ${nMoonTests} tests</th></tr></thead>
       <tbody>${rows.map(([t, v]) => `<tr><th scope="row">${esc(name(t))}</th><td class="tnum">#${nf(v.rank)} of ${nf(v.of)}</td><td class="tnum">${pct1(v.p_value_region_matched)} %</td><td class="tnum">${fmtP(v.p_value_region_matched)}</td><td class="tnum">${fmtPc(v.p_bonferroni)}</td><td class="tnum">${fmtPc(Math.min(1, v.p_value_region_matched * nMoonTests))}</td></tr>`).join('')}</tbody></table>`;
     const cats = rows.map(([t]) => name(t)).reverse(), vals = rows.map(([, v]) => +(100 * v.p_value_region_matched).toFixed(1)).reverse();
-    mountChart(el.querySelector('#proof-1a')!, {
+    mc(el.querySelector('#proof-1a')!, {
       grid: { left: 8, right: 56, top: 8, bottom: 28, containLabel: true },
       xAxis: { type: 'value', name: '% of Mauna Kea area', nameLocation: 'middle', nameGap: 24, min: 0 },
       yAxis: { type: 'category', data: cats },
@@ -322,7 +324,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
     });
     const sum = `AUC with 95 % CI per target, for the combined, terrain and illumination scores. ` + all.map(t => `${name(t)}: `
       + SCORES.map(s => `${SCORE_LABEL[s].toLowerCase()} ${f2(S.roc[t].auc_by_score[s])} [${f2(S.roc[t].auc_ci95_by_score[s][0])}–${f2(S.roc[t].auc_ci95_by_score[s][1])}]`).join(', ')).join('; ') + '.';
-    mountChart(el.querySelector('#proof-1c')!, {
+    mc(el.querySelector('#proof-1c')!, {
       legend: { top: 0, data: SCORES.map((s, i) => ({ name: SCORE_LABEL[s], icon: sym[i] })) },
       grid: { left: 8, right: 16, top: 32, bottom: 32, containLabel: true },
       xAxis: { type: 'value', min: 0, max: 1, name: 'AUC (0.5 = no separation)', nameLocation: 'middle', nameGap: 24 },
@@ -364,7 +366,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
       }, { type: 'scatter', symbolSize: 8, data: rows.map(r => r.score) }],
     };
     const summary = `${name(t)}: scores of the top 20 windows with 95 % bootstrap CI. ` + rows.map((r, i) => `#${i + 1} ${region(r.window_id)} ${f1(r.score)} [${f1(r.ci95[0])}–${f1(r.ci95[1])}]`).join('; ') + '.';
-    if (h3a) h3a.update(opt, { replace: true, summary }); else h3a = mountChart(el.querySelector('#proof-3a')!, opt, { summary });
+    if (h3a) h3a.update(opt, { replace: true, summary }); else h3a = mc(el.querySelector('#proof-3a')!, opt, { summary });
   };
   // ---- 3D · tornado and D^2 decomposition (per selected target)
   type TorRow = { feature: string; low: number; high: number; removed: number };
@@ -374,7 +376,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
       const rows = (S.tornado[t] as TorRow[]).slice().reverse(), top = (S.tornado[t] as TorRow[])[0];
       const w0 = okBoot ? (S.bootstrap[t] as BootRow[])[0] : null;
       el.querySelector('#proof-3d-line')!.textContent = `${name(t)}${w0 ? `, top window in ${region(w0.window_id)}` : ''}: the score is most sensitive to ${flabel(top.feature)} (−1 IQR: ${top.low > 0 ? '+' : ''}${f1(top.low)}; +1 IQR: ${top.high > 0 ? '+' : ''}${f1(top.high)} points).`;
-      const lbl = { show: true, fontSize: 11, textBorderWidth: 0, textBorderColor: 'transparent', formatter: (p: { value: number }) => `${p.value > 0 ? '+' : ''}${f1(p.value)}` };
+      const lbl = { show: true, fontSize: 13, textBorderWidth: 0, textBorderColor: 'transparent', formatter: (p: { value: number }) => `${p.value > 0 ? '+' : ''}${f1(p.value)}` };
       const opt = {
         legend: { top: 0 }, grid: { left: 8, right: 40, top: 32, bottom: 32, containLabel: true },
         xAxis: { type: 'value', name: 'change in score (points)', nameLocation: 'middle', nameGap: 24 },
@@ -384,7 +386,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
           { name: '+1 IQR', type: 'bar', data: rows.map(r => r.high), barMaxWidth: 12, itemStyle: { opacity: 0.75 }, label: { ...lbl, position: 'right' } }],
       };
       const summary = `${name(t)}, top window: change of the combined score when each feature moves by −1 / +1 IQR: ` + (S.tornado[t] as TorRow[]).map(r => `${flabel(r.feature)} ${f1(r.low)} / ${f1(r.high)}`).join('; ') + '.';
-      if (h3d) h3d.update(opt, { replace: true, summary }); else h3d = mountChart(el.querySelector('#proof-3d')!, opt, { summary });
+      if (h3d) h3d.update(opt, { replace: true, summary }); else h3d = mc(el.querySelector('#proof-3d')!, opt, { summary });
     }
     if (okDec) {
       const dec = S.decomp[t] as Record<string, Record<string, number>>, ids = Object.keys(dec), feats = Object.keys(dec[ids[0]]);
@@ -396,7 +398,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
         series: feats.map(f => ({ name: flabel(f), type: 'bar', stack: 'd2', data: ids.map(id => dec[id][f]), barMaxWidth: 26 })),
       };
       const summary = `${name(t)}: share of each feature in the squared distance of the top 20 windows. Top window: ` + feats.map(f => [f, dec[ids[0]][f]] as [string, number]).sort((a, b) => b[1] - a[1]).map(([f, v]) => `${flabel(f)} ${Math.round(v * 100)} %`).join(', ') + '.';
-      if (h3d2) h3d2.update(opt, { replace: true, summary }); else h3d2 = mountChart(el.querySelector('#proof-3d2')!, opt, { summary });
+      if (h3d2) h3d2.update(opt, { replace: true, summary }); else h3d2 = mc(el.querySelector('#proof-3d2')!, opt, { summary });
     }
   };
 
@@ -424,7 +426,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
     ]);
     const summary = `Combined score P50, P90 and maximum per target, our 14 regions against the control tiles. ` + all.map(t => `${name(t)}: `
       + groups.map(g => { const d = g.get(t); return `${g.name} ${f1(d.p50)}/${f1(d.p90)}/${f1(d.max)}`; }).join(', ')).join('; ') + '. ' + controlsLines(CT, CR, moon, name, arcadia).join(' ');
-    mountChart(el.querySelector('#proof-1d')!, {
+    mc(el.querySelector('#proof-1d')!, {
       legend: { top: 0, data: groups.map((g, i) => ({ name: g.name, icon: sym[i % sym.length] })) },
       grid: { left: 8, right: 16, top: 40, bottom: 32, containLabel: true },
       xAxis: { type: 'value', min: 0, max: 100, name: 'combined score (bar P50–P90, marker = max)', nameLocation: 'middle', nameGap: 24 },
@@ -439,15 +441,15 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
     const cats = [...all].reverse();
     const p1 = cats.map(t => S.stability[t].p_top1[S.stability[t].top1_equal_weights] ?? 0);
     const p10 = cats.map(t => S.stability[t].p_top10[S.stability[t].top1_equal_weights] ?? 0);
-    mountChart(el.querySelector('#proof-3b')!, {
+    mc(el.querySelector('#proof-3b')!, {
       legend: { top: 0 },
       grid: { left: 8, right: 56, top: 32, bottom: 32, containLabel: true },
       xAxis: { type: 'value', min: 0, max: 1, axisLabel: { formatter: (v: number) => `${Math.round(v * 100)} %` } },
       yAxis: { type: 'category', data: cats.map(name) },
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v: number) => `${Math.round(v * 100)} %` },
       series: [
-        { name: 'stays #1', type: 'bar', data: p1, barMaxWidth: 12, label: { show: true, position: 'right', fontSize: 11, textBorderWidth: 0, textBorderColor: 'transparent', textShadowBlur: 0, formatter: (p: { value: number }) => `${Math.round(p.value * 100)} %` } },
-        { name: 'stays in the top 10', type: 'bar', data: p10, barMaxWidth: 12, itemStyle: { opacity: 0.75 }, label: { show: true, position: 'right', fontSize: 11, textBorderWidth: 0, textBorderColor: 'transparent', textShadowBlur: 0, formatter: (p: { value: number }) => `${Math.round(p.value * 100)} %` } },
+        { name: 'stays #1', type: 'bar', data: p1, barMaxWidth: 12, label: { show: true, position: 'right', fontSize: 13, textBorderWidth: 0, textBorderColor: 'transparent', textShadowBlur: 0, formatter: (p: { value: number }) => `${Math.round(p.value * 100)} %` } },
+        { name: 'stays in the top 10', type: 'bar', data: p10, barMaxWidth: 12, itemStyle: { opacity: 0.75 }, label: { show: true, position: 'right', fontSize: 13, textBorderWidth: 0, textBorderColor: 'transparent', textShadowBlur: 0, formatter: (p: { value: number }) => `${Math.round(p.value * 100)} %` } },
       ],
     }, { summary: `Share of random slider weightings in which each target's equal-weight #1 window stays #1 and stays in the top 10: `
       + all.map(t => `${name(t)} ${Math.round(100 * (S.stability[t].p_top1[S.stability[t].top1_equal_weights] ?? 0))} % and ${Math.round(100 * (S.stability[t].p_top10[S.stability[t].top1_equal_weights] ?? 0))} %`).join('; ') + '.' });
@@ -458,7 +460,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
     const H = S.null.null_hist, bins = H.global.bins, mids = bins.slice(0, -1).map((b, i) => (b + bins[i + 1]) / 2);
     const share = (c: number[]) => { const t = c.reduce((a, b) => a + b, 0); return c.map(x => x / t); };
     const obs = S.null.observed.median_pct_combined;
-    mountChart(el.querySelector('#proof-1b')!, {
+    mc(el.querySelector('#proof-1b')!, {
       legend: { top: 0 }, grid: { left: 8, right: 16, top: 32, bottom: 40, containLabel: true },
       xAxis: { type: 'value', min: 0, max: 100, name: 'median percentile of the known sites (combined)', nameLocation: 'middle', nameGap: 26 },
       yAxis: { type: 'value', axisLabel: { formatter: (v: number) => `${Math.round(v * 100)} %` } },
@@ -473,7 +475,7 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
 
   // ---- Read more · ROC curves
   if (okRoc) {
-    mountChart(el.querySelector('#proof-roc')!, {
+    mc(el.querySelector('#proof-roc')!, {
       legend: { top: 0, type: 'scroll' }, grid: { left: 8, right: 16, top: 36, bottom: 40, containLabel: true },
       xAxis: { type: 'value', min: 0, max: 1, name: 'false-positive rate', nameLocation: 'middle', nameGap: 26 },
       yAxis: { type: 'value', min: 0, max: 1, name: 'true-positive rate' },

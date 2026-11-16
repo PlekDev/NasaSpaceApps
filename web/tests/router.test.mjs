@@ -5,7 +5,7 @@ import { ROUTES, REDIRECTS, parseHash, buildHash } from '../src/lib/routes.ts';
 import { createLoader } from '../src/lib/lazy.ts';
 import { createScope } from '../src/lib/lifecycle.ts';
 
-const IDS = ['home', 'explore', 'proof', 'mission', 'when', 'method', 'dossier', 'tour'];
+const IDS = ['home', 'explore', 'statistics', 'proof', 'mission', 'when', 'method', 'dossier', 'tour'];
 
 test('all 9 routes are defined and every one resolves from its own hash', () => {
   assert.deepEqual(ROUTES.map(r => r.id).sort(), [...IDS].sort());
@@ -19,15 +19,15 @@ test('all 9 routes are defined and every one resolves from its own hash', () => 
   assert.equal(parseHash('#/Proof/').id, 'proof');        // case and trailing slash
 });
 
-test('navigation: six primary items, Tour secondary, Dossier contextual only', () => {
-  assert.deepEqual(ROUTES.filter(r => r.nav === 'primary').map(r => r.title), ['Explore', 'Proof', 'Mission', 'When', 'Method']);
+test('navigation: six primary items (Proof, the annex, last), Tour secondary, Dossier contextual only', () => {
+  assert.deepEqual(ROUTES.filter(r => r.nav === 'primary').map(r => r.title), ['Explore', 'Mission', 'Statistics', 'When', 'Method', 'Proof']);
   assert.deepEqual(ROUTES.filter(r => r.nav === 'secondary').map(r => r.id), ['tour']);
   assert.equal(ROUTES.find(r => r.id === 'dossier').nav, null);
   assert.deepEqual(ROUTES.filter(r => r.stage).map(r => r.id), ['home', 'explore']);
 });
 
 test('redirects: #/validation -> #/proof and #/time -> #/when, query kept', () => {
-  assert.deepEqual(REDIRECTS, { validation: 'proof', limits: 'proof', time: 'when' });
+  assert.deepEqual(REDIRECTS, { validation: 'proof', limits: 'proof', time: 'when', stats: 'statistics' });
   let p = parseHash('#/validation'); assert.equal(p.id, 'proof'); assert.equal(p.canonical, '#/proof'); assert.equal(p.replace, true);
   p = parseHash('#/time?region=earth_hawaii_mauna_kea'); assert.equal(p.id, 'when'); assert.equal(p.canonical, '#/when?region=earth_hawaii_mauna_kea'); assert.equal(p.replace, true);
   assert.deepEqual(p.params, { region: 'earth_hawaii_mauna_kea' });

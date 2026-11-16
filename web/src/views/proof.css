@@ -6,10 +6,16 @@
 .proof-card b { color: var(--text-1); font-size: 15px; }
 .proof-num { font: 600 28px/1 var(--font-serif); color: var(--accent-text); }
 .proof-sec { scroll-margin-top: var(--s-6); }
-.proof-chart { width: 100%; margin: var(--s-3) 0; }
-.proof-h-sm { height: 260px; }
-.proof-h-md { height: 340px; }
-.proof-h-lg { height: 440px; }
+.proof-chart { position: relative; width: 100%; margin: var(--s-3) 0 var(--s-2); padding: var(--s-3) var(--s-3) var(--s-2); border: 1px solid var(--line-strong); background: var(--glass); box-sizing: border-box; }
+.proof-chart::after { content: ""; position: absolute; inset: 3px; pointer-events: none; opacity: .6;
+  background: linear-gradient(var(--mark), var(--mark)) top left / 9px 1px no-repeat, linear-gradient(var(--mark), var(--mark)) top left / 1px 9px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top right / 9px 1px no-repeat, linear-gradient(var(--mark), var(--mark)) top right / 1px 9px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom left / 9px 1px no-repeat, linear-gradient(var(--mark), var(--mark)) bottom left / 1px 9px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom right / 9px 1px no-repeat, linear-gradient(var(--mark), var(--mark)) bottom right / 1px 9px no-repeat; }
+.proof-chart .chart-canvas { width: 100%; height: 100%; }
+.proof-h-sm { height: 320px; }
+.proof-h-md { height: 420px; }
+.proof-h-lg { height: 540px; }
 .proof-pending { color: var(--text-3); font-style: italic; margin: var(--s-3) 0; }
 .proof-pick { display: inline-flex; align-items: center; gap: var(--s-2); color: var(--text-2); font-size: 14px; margin-bottom: var(--s-2); }
 .proof-pick select { font: inherit; color: var(--text-1); background: var(--raise); border: 1px solid var(--line-strong); border-radius: var(--r-1); padding: 6px 10px; }
@@ -21,10 +27,21 @@
   .proof-h-lg { height: 520px; }
   .proof-h-md { height: 300px; }
 }
-.proof-h-xl { height: 560px; }
+.proof-h-xl { height: 660px; }
 .proof-lines { margin: 0 0 var(--s-3); padding-left: 1.2em; color: var(--text-2); line-height: 1.6; max-width: 75ch; }
 .proof-lines li { margin-bottom: var(--s-1); }
 @media (max-width: 760px) { .proof-h-xl { height: 720px; } }
 .proof-heat td { background: color-mix(in srgb, var(--accent) calc(var(--v, 0) * 55%), transparent); }
 .proof code { font-size: 13px; }
 button.proof-card { font: inherit; text-align: left; cursor: pointer; width: 100%; }
+
+/* larger reading size for the annex */
+.proof .lead { font-size: 19px; }
+.proof .prose-p { font-size: 17px; line-height: 1.65; }
+.proof .note { font-size: 14.5px; line-height: 1.6; max-width: 80ch; }
+.proof-lines { font-size: 16.5px; }
+.proof .tbl table { font-size: 15px; }
+.proof h3 { font-size: 22px; }
+.proof-card { font-size: 15.5px; }
+.proof-card b { font-size: 17px; }
+.proof-more summary { font-size: 16px; }
