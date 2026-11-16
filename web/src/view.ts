@@ -11,6 +11,8 @@ export interface View {
   setScored(s: import('./model').Scored, min: number, km: number): void; mark(kind: 'hl' | 'sel', k: number | null): void;
   fly(lon: number, lat: number, zoom: number, padding?: maplibregl.PaddingOptions): void; setPadding(p: maplibregl.PaddingOptions): void;
   jumpTo(o: maplibregl.JumpToOptions): void; easeTo(o: maplibregl.EaseToOptions): void; getCenter(): [number, number]; getZoom(): number; resize(): void;
+  /** cancel any running camera animation (the stage is being hidden) */
+  stop(): void;
   setPin(el: HTMLElement | null, lon?: number, lat?: number): void;
   setMarkers(list: MapMarker[]): void;
 }
@@ -28,7 +30,7 @@ export function createDeferredView(container: HTMLElement, center: [number, numb
     fly: (lon, lat, zoom, p) => when('fly', () => inner!.fly(lon, lat, zoom, p)),
     setPadding: p => when('pad', () => inner!.setPadding(p)),
     jumpTo: o => when(null, () => inner!.jumpTo(o)), easeTo: o => when(null, () => inner!.easeTo(o)),
-    getCenter: () => (inner ? inner.getCenter() : center), getZoom: () => (inner ? inner.getZoom() : zoom), resize: () => inner?.resize(),
+    getCenter: () => (inner ? inner.getCenter() : center), getZoom: () => (inner ? inner.getZoom() : zoom), resize: () => inner?.resize(), stop: () => inner?.stop(),
     setPin: (el, lon, lat) => when('pin', () => inner!.setPin(el, lon, lat)),
     setMarkers: l => when('markers', () => inner!.setMarkers(l)),
   };

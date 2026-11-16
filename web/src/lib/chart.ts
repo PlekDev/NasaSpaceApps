@@ -58,18 +58,18 @@ export function readVars(): Vars {
 }
 
 /** ECharts theme from token values. Pure. */
-export function buildTheme(v: Vars = FALLBACK) {
+export function buildTheme(v: Vars = FALLBACK, fs = 12) {
   const g = (n: string) => v[n] ?? FALLBACK[n];
   const axis = { axisLine: { lineStyle: { color: g('--line-strong') } }, axisTick: { lineStyle: { color: g('--line-strong') } },
-    axisLabel: { color: g('--text-3'), fontSize: 12 }, nameTextStyle: { color: g('--text-2'), fontSize: 12 }, splitLine: { lineStyle: { color: g('--line') } },
+    axisLabel: { color: g('--text-3'), fontSize: fs }, nameTextStyle: { color: g('--text-2'), fontSize: fs }, splitLine: { lineStyle: { color: g('--line') } },
     splitArea: { show: false } };
   return {
     color: [1, 2, 3, 4, 5, 6, 7].map(i => g(`--series-${i}`)),
     backgroundColor: 'transparent',
-    textStyle: { color: g('--text-2'), fontFamily: g('--font-ui'), fontSize: 12 },
+    textStyle: { color: g('--text-2'), fontFamily: g('--font-ui'), fontSize: fs },
     title: { textStyle: { color: g('--text-1'), fontWeight: 600, fontSize: 14 }, subtextStyle: { color: g('--text-3') } },
-    legend: { textStyle: { color: g('--text-2') }, pageTextStyle: { color: g('--text-2') } },
-    tooltip: { backgroundColor: g('--panel-solid'), borderColor: g('--line-strong'), borderWidth: 1, textStyle: { color: g('--text-1'), fontSize: 13 }, extraCssText: 'border-radius:0;box-shadow:none;' },
+    legend: { textStyle: { color: g('--text-2'), fontSize: fs }, pageTextStyle: { color: g('--text-2') } },
+    tooltip: { backgroundColor: g('--panel-solid'), borderColor: g('--line-strong'), borderWidth: 1, textStyle: { color: g('--text-1'), fontSize: fs + 1 }, extraCssText: 'border-radius:0;box-shadow:none;' },
     categoryAxis: axis, valueAxis: axis, logAxis: axis, timeAxis: axis,
     line: { symbolSize: 6, lineStyle: { width: 2.25 } },
     bar: { itemStyle: { borderRadius: 0 }, label: { color: g('--text-2') } },   // square bars; value labels sit outside them and ECharts' default dark grey vanishes on the dark ground
@@ -82,11 +82,11 @@ export function buildTheme(v: Vars = FALLBACK) {
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const withMotion = (o: ChartOption): ChartOption => ({ ...(o as object), animation: !reduced() && (o as { animation?: boolean }).animation !== false });
 
-export interface MountOptions { summary: string; renderer?: 'canvas' | 'svg'; label?: string; managed?: boolean }
+export interface MountOptions { summary: string; renderer?: 'canvas' | 'svg'; label?: string; managed?: boolean; fs?: number /* base font size, default 12 */ }
 export interface ChartHandle { update(option: ChartOption, opts?: { replace?: boolean; summary?: string }): void; resize(): void; dispose(): void; readonly instance: ChartInstance | null }
 
 let uid = 0;
-export function mountChart(el: HTMLElement, option: ChartOption, { summary, renderer = 'canvas', label, managed = true }: MountOptions): ChartHandle {
+export function mountChart(el: HTMLElement, option: ChartOption, { summary, renderer = 'canvas', label, managed = true, fs = 12 }: MountOptions): ChartHandle {
   if (!summary || !summary.trim()) throw new Error('mountChart: `summary` (a plain-text description of the chart) is required');
   const id = `chart-sum-${++uid}`;
   el.classList.add('chart-host'); el.textContent = '';
@@ -98,7 +98,7 @@ export function mountChart(el: HTMLElement, option: ChartOption, { summary, rend
   let opt = option, inst: ChartInstance | null = null, raf = 0, dead = false;
   const build = () => {
     inst?.dispose();
-    inst = echarts.init(box, buildTheme(readVars()) as never, { renderer });
+    inst = echarts.init(box, buildTheme(readVars(), fs) as never, { renderer });
     inst.setOption(withMotion(opt), true);
   };
   const later = (f: () => void) => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { if (!dead) f(); }); };

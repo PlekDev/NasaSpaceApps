@@ -136,6 +136,7 @@ export class MapView {
   getCenter(): [number, number] { const c = this.map.getCenter(); return [c.lng, c.lat]; }
   getZoom() { return this.map.getZoom(); }
   resize() { this.map.resize(); }
+  stop() { this.map.stop(); }
   private pin: maplibregl.Marker | null = null;
   setPin(el: HTMLElement | null, lon = 0, lat = 0) {
     if (!el) { this.pin?.remove(); this.pin = null; return; }
@@ -156,7 +157,7 @@ export class NullView {
   dead = true; map: maplibregl.Map = noop; styled: Promise<void> = Promise.resolve();
   onPick: MapView['onPick'] = () => {}; onHover: MapView['onHover'] = () => {};
   async setScored(..._a: unknown[]) {} mark(..._a: unknown[]) {} fly(..._a: unknown[]) {} setPadding(..._a: unknown[]) {} jumpTo(..._a: unknown[]) {} easeTo(..._a: unknown[]) {}
-  getCenter(): [number, number] { return [0, 0]; } getZoom() { return 1; } resize() {} setPin(..._a: unknown[]) {} setMarkers(..._a: unknown[]) {}
+  getCenter(): [number, number] { return [0, 0]; } getZoom() { return 1; } resize() {} stop() {} setPin(..._a: unknown[]) {} setMarkers(..._a: unknown[]) {}
 }
 export const hasWebGL = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; } };
 export type View = MapView | NullView;

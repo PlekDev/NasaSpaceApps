@@ -5,6 +5,7 @@ import { lazyView, type ViewModule } from './lib/lazy';
 import type { RouteId } from './lib/routes';
 
 export const VIEWS: Partial<Record<RouteId, ViewModule>> = {
+  statistics: lazyView(() => import('./views/statistics'), { title: 'Statistics' }),
   proof: lazyView(() => import('./views/proof'), { title: 'Proof' }),
   mission: lazyView(() => import('./views/mission/index'), { title: 'Mission' }),
   dossier: lazyView(() => import('./views/dossier'), { title: 'Dossier' }),
