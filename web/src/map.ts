@@ -139,6 +139,12 @@ export class MapView {
     if (!this.pin) this.pin = new maplibregl.Marker({ element: el }).setLngLat([lon, lat]).addTo(this.map); else this.pin.setLngLat([lon, lat]);
   }
   setPadding(p: maplibregl.PaddingOptions) { this.map.easeTo({ padding: p, duration: reduced() ? 0 : 300 }); }
+  private marks: maplibregl.Marker[] = [];
+  /** Replace the DOM labels on the map (known analog sites). */
+  setMarkers(list: { el: HTMLElement; lon: number; lat: number }[]) {
+    this.marks.forEach(m => m.remove());
+    this.marks = list.map(o => new maplibregl.Marker({ element: o.el, anchor: 'left', offset: [-6, 0] }).setLngLat([o.lon, o.lat]).addTo(this.map));
+  }
 }
 
 /** No-WebGL stand-in: same surface as MapView, does nothing. Lets rankings, lists and filters keep working. */
@@ -147,7 +153,7 @@ export class NullView {
   dead = true; map: maplibregl.Map = noop; styled: Promise<void> = Promise.resolve();
   onPick: MapView['onPick'] = () => {}; onHover: MapView['onHover'] = () => {};
   async setScored(..._a: unknown[]) {} mark(..._a: unknown[]) {} fly(..._a: unknown[]) {} setPadding(..._a: unknown[]) {} jumpTo(..._a: unknown[]) {} easeTo(..._a: unknown[]) {}
-  getCenter(): [number, number] { return [0, 0]; } getZoom() { return 1; } resize() {} setPin(..._a: unknown[]) {}
+  getCenter(): [number, number] { return [0, 0]; } getZoom() { return 1; } resize() {} setPin(..._a: unknown[]) {} setMarkers(..._a: unknown[]) {}
 }
 export const hasWebGL = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; } };
 export type View = MapView | NullView;

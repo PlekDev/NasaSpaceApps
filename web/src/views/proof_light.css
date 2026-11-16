@@ -7,7 +7,7 @@
 
 .plight-sites .label { margin: 0 0 var(--s-2); }
 .plight-key { display: inline-flex; align-items: center; gap: 5px; margin-left: var(--s-2); text-transform: none; letter-spacing: 0; }
-.plight-key i { width: 14px; height: 6px; border-radius: 3px; display: inline-block; }
+.plight-key i { width: 14px; height: 6px; border-radius: 0; display: inline-block; }
 .plight-site { display: grid; grid-template-columns: minmax(0, 1fr) 64px 60px; gap: var(--s-3); align-items: center; width: 100%; min-height: 44px; padding: 4px var(--s-3);
   border: 1px solid transparent; border-radius: var(--r-2); background: none; color: var(--text-2); font: inherit; text-align: left; cursor: pointer; }
 .plight-site:hover { background: var(--raise); }
@@ -15,7 +15,7 @@
 .plight-site:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .plight-sname { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .plight-bars { display: grid; gap: 3px; }
-.plight-bars i { display: block; height: 6px; border-radius: 3px; }
+.plight-bars i { display: block; height: 6px; border-radius: 0; }
 .plight-b-far { background: var(--accent); } .plight-b-local { background: var(--text-3); opacity: .7; }
 .plight-rho { text-align: right; line-height: 1.15; }
 .plight-rho b { display: block; font-size: 15px; color: var(--text-1); }
@@ -33,7 +33,7 @@ text.plight-bias { fill: var(--text-1); font-weight: 600; } text.plight-loa { fi
 .plight-maps canvas { display: block; width: 168px; height: auto; border-radius: var(--r-1); border: 1px solid var(--line); image-rendering: pixelated; }
 .plight-maps figcaption { max-width: 168px; }
 .plight-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s-3); margin-top: var(--s-5); }
-.plight-facts > div { padding: var(--s-3) var(--s-4); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--raise); }
+.plight-facts > div { padding: var(--s-3) var(--s-4); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--glass); }
 .plight-facts b { display: block; font-size: 17px; margin-top: 2px; color: var(--text-1); }
 .plight-facts small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.35; color: var(--text-2); }
 .plight-more { margin-top: var(--s-4); font-size: 14px; color: var(--text-2); max-width: 76ch; }

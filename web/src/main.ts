@@ -23,6 +23,7 @@ async function boot() {
   app.innerHTML = `<header class="bar">
     <a class="brand" href="#/" aria-label="P.E.N. home"><b>P.E.N.</b><span>Planetary Environmental Navigator</span></a>
     <nav class="nav" id="nav" aria-label="Views">${primary.map(r => `<a href="#/${r.path}" data-r="${r.id}">${r.title}</a>`).join('')}<a class="only-phone" href="#/${tour.path}" data-r="${tour.id}">${tour.title}</a>${home.facts?.rhoRange ? `<a class="only-phone seal-m" href="#/proof">Light model vs NASA LOLA · ρ ${home.facts.rhoRange}</a>` : ''}</nav>
+    <div class="crumbs" id="crumbs" hidden></div>
     <div class="grow"></div>
     <a class="seal" id="seal" href="#/proof" ${home.facts?.rhoRange ? '' : 'hidden'} aria-label="Validation: light model against NASA LOLA">${home.facts?.rhoRange ? `<span class="seal-l">Light model vs NASA LOLA · </span>ρ ${home.facts.rhoRange}` : ''}</a>
     <a class="nav-tour" href="#/${tour.path}" data-r="${tour.id}">${tour.title}</a>

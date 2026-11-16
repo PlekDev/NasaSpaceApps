@@ -1,7 +1,7 @@
 /* Guided tour (#/tour). Every class is prefixed .tour-; colours and type come from tokens.css. AI-assisted (Claude Code); reviewed by the author. */
 .tour { max-width: 1240px; margin: 0 auto; padding: var(--s-6) var(--gutter) 0; }
 .tour-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-5); flex-wrap: wrap; margin-bottom: var(--s-5); }
-.tour-head h1 { font: 400 clamp(32px, 4.4vw, 52px)/1.05 var(--font-serif); letter-spacing: -.02em; margin: 0 0 var(--s-1); }
+.tour-head h1 { font: 600 clamp(40px, 5vw, 62px)/1.05 var(--font-serif); letter-spacing: -.005em; margin: 0 0 var(--s-1); }
 .tour-nav { display: flex; gap: var(--s-2); }
 .tour-nav button { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-pill); border: 1px solid var(--line-strong); color: var(--text-2); font-weight: 600; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
 .tour-nav button:hover { background: var(--raise); }
@@ -19,7 +19,7 @@
 .tour-step:first-child { min-height: 60vh; }
 .tour-end { min-height: 70vh; }
 .tour-text { display: grid; gap: var(--s-3); justify-items: start; max-width: 46ch; }
-.tour-text h2 { font: 400 clamp(26px, 2.8vw, 36px)/1.12 var(--font-serif); letter-spacing: -.02em; margin: 0; }
+.tour-text h2 { font: 600 clamp(32px, 3.2vw, 44px)/1.12 var(--font-serif); letter-spacing: -.005em; margin: 0; }
 .tour-text p { font-size: 17px; line-height: 1.55; color: var(--text-2); margin: 0; }
 .tour-text p b { color: var(--text-1); font-weight: 600; }
 .tour-actions { display: flex; gap: var(--s-3); flex-wrap: wrap; margin-top: var(--s-2); }
@@ -29,19 +29,19 @@
 .tour-map { position: absolute; inset: 0; background: var(--space); }
 .tour-map.static { background: radial-gradient(circle at 60% 40%, #17345f 0, var(--space) 70%); }
 .tour-pin { width: 18px; height: 18px; border-radius: 50%; background: #ffd166; border: 2px solid #0b0f17; box-shadow: 0 0 0 2px rgba(255, 255, 255, .85); }
-.tour-over { position: absolute; left: var(--s-4); right: var(--s-4); bottom: var(--s-4); padding: var(--s-4); border-radius: var(--r-3); background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(18px); display: grid; gap: var(--s-3); }
-.tour-big { font: 400 64px/1 var(--font-serif); letter-spacing: -.03em; }
+.tour-over { position: absolute; left: var(--s-4); right: var(--s-4); bottom: var(--s-4); padding: var(--s-4); border-radius: var(--r-3); background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(18px); display: grid; gap: var(--s-3); }
+.tour-big { font: 600 76px/1 var(--font-serif); letter-spacing: -.005em; }
 .tour-big span { font: 500 15px/1 var(--font-ui); letter-spacing: 0; color: var(--text-2); }
 .tour-ranks { display: grid; gap: 6px; }
 .tour-rank { display: grid; grid-template-columns: 1fr 56px 92px; gap: var(--s-3); align-items: center; font-size: 13px; }
 .tour-rank b { text-align: right; font-weight: 600; }
-.tour-track { display: block; height: 8px; border-radius: 4px; background: var(--raise-2); overflow: hidden; }
+.tour-track { display: block; height: 8px; border-radius: 0; background: var(--raise-2); overflow: hidden; }
 .tour-track.thin { height: 4px; }
-.tour-track i { display: block; height: 100%; border-radius: 4px; background: #ffd166; }
+.tour-track i { display: block; height: 100%; border-radius: 0; background: #ffd166; }
 
 /* 2 · light vs NASA */
 .tour-legend { display: flex; gap: var(--s-5); flex-wrap: wrap; font-size: 12px; color: var(--text-2); }
-.tour-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.tour-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 0; margin-right: 6px; vertical-align: -1px; }
 .tour i.k-far { background: var(--accent); }
 .tour i.k-loc { background: var(--text-3); }
 .tour-bars { display: grid; gap: var(--s-3); }
@@ -54,8 +54,8 @@
 .tour-temp { display: grid; gap: var(--s-3); padding-bottom: var(--s-5); position: relative; }
 .tour-trow { display: grid; grid-template-columns: minmax(110px, 180px) 1fr 92px; gap: var(--s-3); align-items: center; font-size: 13px; }
 .tour-trow b { text-align: right; font-weight: 600; }
-.tour-tplot { position: relative; height: 14px; border-radius: 7px; background: var(--raise-2); }
-.tour-tplot i { position: absolute; top: 0; bottom: 0; min-width: 6px; border-radius: 7px; }
+.tour-tplot { position: relative; height: 14px; border-radius: 0; background: var(--raise-2); }
+.tour-tplot i { position: absolute; top: 0; bottom: 0; min-width: 6px; border-radius: 0; }
 .tour i.t-moon { background: #6da7ec; } .tour i.t-mars { background: #d9a548; } .tour i.t-earth { background: #5db38b; }
 .tour-ticks { position: absolute; left: 0; right: 0; bottom: 0; height: 14px; font-size: 11px; color: var(--text-3); display: grid; grid-template-columns: minmax(110px, 180px) 1fr 92px; gap: var(--s-3); }
 .tour-ticks span { grid-column: 2; grid-row: 1; position: relative; justify-self: start; transform: translateX(-50%); white-space: nowrap; }
@@ -69,8 +69,8 @@
 .tour-months { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; align-items: end; }
 .tour-month { display: grid; gap: 4px; justify-items: center; font-size: 11px; color: var(--text-3); }
 .tour-month b { font-size: 12px; color: var(--text-1); font-weight: 600; }
-.tour-col { display: flex; align-items: flex-end; width: 100%; height: 150px; border-radius: 4px; background: var(--raise); }
-.tour-col i { display: block; width: 100%; border-radius: 4px; background: var(--accent); }
+.tour-col { display: flex; align-items: flex-end; width: 100%; height: 150px; border-radius: 0; background: var(--raise); }
+.tour-col i { display: block; width: 100%; border-radius: 0; background: var(--accent); }
 
 /* 5 · mission */
 .tour-media { display: block; width: 100%; max-height: 300px; object-fit: contain; border-radius: var(--r-2); background: #0b0f17; }

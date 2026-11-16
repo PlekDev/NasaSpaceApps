@@ -10,6 +10,7 @@ export const icon = {
   close: p('<path d="M6 6l12 12M18 6 6 18"/>'),
   search: p('<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>'),
   chevron: p('<path d="m9 6 6 6-6 6"/>'),
+  external: p('<path d="M14 5h5v5M19 5l-8 8M18 14v5H5V6h5"/>'),
   menu: p('<path d="M4 7h16M4 12h16M4 17h16"/>'),
   sun: p('<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>'),
 };

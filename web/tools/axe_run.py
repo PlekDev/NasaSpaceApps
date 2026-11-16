@@ -11,9 +11,9 @@ AXE = axe_path.read_text(encoding="utf-8")
 VIEWS = [
     ("explore", "/?intro=0", None),
     ("intro", "/", None),
-    ("detail", "/?intro=0", "detail"),
+    ("zone", "/?intro=0", "zone"),
+    ("focus", "/?intro=0", "focus"),
     ("picker", "/?intro=0", "picker"),
-    ("regions", "/?intro=0", "regions"),
     ("when", "/#/when", None),
     ("proof", "/#/proof", None),
     ("limits", "/#/limits", None),
@@ -32,10 +32,10 @@ with sync_playwright() as p:
             for name, path, act in VIEWS:
                 pg = b.new_context(viewport={"width": w, "height": h}, color_scheme=theme).new_page()
                 pg.goto(BASE + path); pg.wait_for_selector(".bar", timeout=30000); pg.wait_for_timeout(wait_ms)
-                if act == "detail":
-                    pg.locator(".match").first.click(); pg.wait_for_timeout(500); pg.locator(".win").first.click(); pg.wait_for_selector("#d-title"); pg.wait_for_timeout(wait_ms)
-                if act == "picker": pg.click("#target-btn"); pg.wait_for_timeout(500)
-                if act == "regions": pg.click("#regions-btn"); pg.wait_for_timeout(500)
+                if act == "zone":
+                    pg.click("[data-dd=z]"); pg.wait_for_selector(".ex-dd-opt[data-z]"); pg.locator(".ex-dd-opt[data-z]:not([data-z='-1'])").first.click(); pg.wait_for_selector(".ex-zone"); pg.wait_for_timeout(wait_ms)
+                if act == "focus": pg.wait_for_selector('[data-card="best"]'); pg.click('[data-card="best"]'); pg.wait_for_selector("#ex-focus:not([hidden]) .ex-detail"); pg.wait_for_timeout(wait_ms)
+                if act == "picker": pg.click("[data-dd=t]"); pg.wait_for_timeout(500)
                 pg.evaluate(AXE)
                 res = pg.evaluate("axe.run(document, {runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}, resultTypes:['violations']})")
                 v = res["violations"]

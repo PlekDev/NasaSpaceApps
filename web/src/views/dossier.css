@@ -18,7 +18,7 @@
 
 .dossier-top { display: flex; align-items: center; gap: var(--s-6); flex-wrap: wrap; }
 .dossier-score { display: flex; align-items: baseline; gap: var(--s-2); color: var(--text-2); font-size: 13px; }
-.dossier-score b { font: 400 72px/1 var(--font-serif); letter-spacing: -.03em; color: var(--text-1); }
+.dossier-score b { font: 600 84px/1 var(--font-serif); letter-spacing: -.005em; color: var(--text-1); }
 .dossier-score i { font-style: normal; color: var(--text-3); }
 .dossier-facts { display: flex; gap: var(--s-6); flex-wrap: wrap; margin: 0; }
 .dossier-facts dt { font-size: 12px; color: var(--text-3); font-weight: 500; }

@@ -12,7 +12,10 @@ export interface View {
   fly(lon: number, lat: number, zoom: number, padding?: maplibregl.PaddingOptions): void; setPadding(p: maplibregl.PaddingOptions): void;
   jumpTo(o: maplibregl.JumpToOptions): void; easeTo(o: maplibregl.EaseToOptions): void; getCenter(): [number, number]; getZoom(): number; resize(): void;
   setPin(el: HTMLElement | null, lon?: number, lat?: number): void;
+  setMarkers(list: MapMarker[]): void;
 }
+/** A DOM label placed on the map (known analog sites). */
+export interface MapMarker { el: HTMLElement; lon: number; lat: number }
 
 export function createDeferredView(container: HTMLElement, center: [number, number], zoom: number, theme: () => string): View {
   let inner: MapView | NullView | null = null; const q: (() => void)[] = []; const last = new Map<string, () => void>();
@@ -27,6 +30,7 @@ export function createDeferredView(container: HTMLElement, center: [number, numb
     jumpTo: o => when(null, () => inner!.jumpTo(o)), easeTo: o => when(null, () => inner!.easeTo(o)),
     getCenter: () => (inner ? inner.getCenter() : center), getZoom: () => (inner ? inner.getZoom() : zoom), resize: () => inner?.resize(),
     setPin: (el, lon, lat) => when('pin', () => inner!.setPin(el, lon, lat)),
+    setMarkers: l => when('markers', () => inner!.setMarkers(l)),
   };
   v.ready = import('./map').then(({ createView }) => {
     inner = createView(container, center, zoom, theme); v.dead = 'dead' in inner;
