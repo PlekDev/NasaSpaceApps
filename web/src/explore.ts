@@ -331,7 +331,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     const c: [number, number] = [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2], tok = ++flyTok;
     view.fly(c[0], c[1], zoom, p);
     // safety net: if the flight was cancelled by another camera move, land on the zone anyway
-    setTimeout(() => { if (tok !== flyTok || S.zone !== z || homeOn()) return; const cc = view.getCenter(); if (Math.abs(cc[0] - c[0]) > .6 || Math.abs(cc[1] - c[1]) > .6) view.jumpTo({ center: c, zoom, padding: p }); }, 2800);
+    setTimeout(() => { if (tok !== flyTok || S.zone !== z || homeOn() || root.hidden) return; const cc = view.getCenter(); if (Math.abs(cc[0] - c[0]) > .6 || Math.abs(cc[1] - c[1]) > .6) view.jumpTo({ center: c, zoom, padding: p }); }, 2800);
   }
 
   // ---------- state changes
