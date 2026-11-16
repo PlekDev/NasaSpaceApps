@@ -12,12 +12,12 @@ Shape notes for the views:
 Run:  python -I web/tools/exports/stats.py
 """
 # AI-assisted (Claude, Anthropic); reviewed by the team.
-import csv, hashlib, json, sys
+import csv, json, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web" / "tools"))
-from export_data import write_json, read_json  # noqa: E402  (atomic UTF-8 writer shared by all exporters)
+from export_data import write_json, read_json, write_index  # noqa: E402  (atomic UTF-8 writer shared by all exporters)
 
 PROC = ROOT / "data" / "processed"
 SRC = {  # output name -> source file in data/processed
@@ -88,21 +88,19 @@ def stubs():
 
 def main():
     stub = None
-    files, h = [], hashlib.sha256()
+    files = []
     for name, src in SRC.items():
         if src.exists():
             obj = read_json(src)
             obj.setdefault("_stub", False)
-            h.update(src.read_bytes())
         else:
             stub = stub or stubs()
             obj = stub[name]
-            h.update(f"stub:{name}".encode())
         write_json(OUT / f"{name}.json", obj)
         files.append(f"{name}.json")
         print(f"  stats/{name}.json  {'stub' if obj['_stub'] else 'real'}")
-    # "generated": SHA-256 of the input files (fallback until the shared hash format is published)
-    write_json(OUT / "index.json", {"files": files, "generated": h.hexdigest()})
+    # shared index format (web/tools/exports/README.md): "generated" = hash of data/processed, as in the manifest
+    write_index("stats", files, {"_stub": True} if stub else None)
 
 
 if __name__ == "__main__":

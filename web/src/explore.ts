@@ -24,7 +24,7 @@ const where = (r: { place: string; cc: string }) => [r.place, r.cc].filter(Boole
 
 export interface Explore { store: Store; view: View; ready: Promise<void>; show(on: boolean): void; overview(animate?: boolean): void; focus(p: { target?: string; region?: string }): void }
 
-interface KnownSite { name: string; lat: number; lon: number; analog_for: string }
+interface KnownSite { name: string; lat: number; lon: number; analog_for: string[] | string }
 interface Known { name: string; lat: number; lon: number; zone: number; w: number[]; now: { rank: number; best: number }; was: { rank: number; best: number }; nasa: boolean }
 interface NullStats { _stub?: boolean; pu_uhiwahine?: Record<string, { rank: number; p_value_region_matched: number; p_bonferroni: number }> }
 interface Derived {
@@ -90,7 +90,8 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   /** Map padding: the globe is centred in the part of the screen the panels leave free. */
   const pad = () => isPhone() ? { top: 52, bottom: Math.round(Math.min(dock.getBoundingClientRect().height, innerHeight * .6)), left: 0, right: 0 }
     : { top: 68, bottom: 96, left: cssPx('--col-l', 300) + 32, right: cssPx('--col-r', 372) + 32 };
-  const applyPad = () => { if (!homeOn()) view.setPadding(pad()); };
+  let lastPad = '';
+  const applyPad = () => { if (homeOn()) return; const p = pad(), key = JSON.stringify(p); if (key === lastPad) return; lastPad = key; view.setPadding(p); };   // an unchanged padding must not cancel a flight in progress
   const applySnap = (h: number, i = snap) => {
     if (i > 0 && snap === 0) dock.scrollTop = 0;
     snap = i; dock.style.setProperty('--sheet-h', `${h}px`); dock.dataset.snap = ['peek', 'half', 'full'][i]; grab.setAttribute('aria-expanded', String(i > 0)); applyPad();
@@ -125,7 +126,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     let above = 0; for (const z of Z) { above += z.above; z.bins.forEach((n, i) => { bins[i] += n; }); }
     const body = tgt().body, kn: Known[] = [];
     for (const k of known0) {
-      const w = tc.sites.get(k.name) ?? []; if (!w.length || !k.analog_for.split(',').includes(body)) continue;
+      const w = tc.sites.get(k.name) ?? []; if (!w.length || !(Array.isArray(k.analog_for) ? k.analog_for : k.analog_for.split(',')).includes(body)) continue;
       kn.push({ name: k.name, lat: k.lat, lon: k.lon, zone: sc.site[w[0]], w, now: siteRank(sc.s, w), was: siteRank(tc.baseS, w), nasa: /hiwahine/i.test(k.name) });
     }
     const puuW = known0.filter(k => /hiwahine/i.test(k.name)).map(k => tc!.sites.get(k.name) ?? [])[0] ?? [], pk = known0.find(k => /hiwahine/i.test(k.name));
@@ -310,8 +311,17 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   function overview(animate = true) {
     if (homeOn() || !X || X.zero) return;
     const p = pad(), w = innerWidth - p.left - p.right, h = innerHeight - p.top - p.bottom, px = isPhone() ? Math.min(innerWidth * .94, h * .94) : Math.min(w * 1.25, h * 1.15);
-    const c = m.regions[X.sc.site[X.top10[0]]].center, lon = isPhone() ? c[0] : ((c[0] + 26 + 540) % 360) - 180, lat = Math.max(-25, Math.min(25, c[1]));
-    if (animate) view.fly(lon, lat, zoomForGlobe(px), p); else view.jumpTo({ center: [lon, lat], zoom: zoomForGlobe(px), padding: p });
+    const ks = X.sc.shown.slice(0, 400), med = (a: number[]) => a.slice().sort((x, y) => x - y)[Math.floor(a.length / 2)];
+    let c: [number, number] = ks.length ? [med(ks.map(k => X.sc.lon[k])), med(ks.map(k => X.sc.lat[k]))] : [0, 20];
+    if (ks.length) {   // halfway between the best match and the bulk of the matches, so the #1 window is never on the limb of the globe
+      const b = ks[0], dLon = ((c[0] - X.sc.lon[b] + 540) % 360) - 180;
+      c = [((X.sc.lon[b] + dLon / 2 + 540) % 360) - 180, (X.sc.lat[b] + c[1]) / 2];
+    }
+    // a camera move made before the globe projection is applied is lost: wait for the style
+    void view.loaded.then(() => {
+      if (animate) view.fly(c[0], c[1], zoomForGlobe(px), p); else view.jumpTo({ center: c, zoom: zoomForGlobe(px), padding: p });
+      lastPad = JSON.stringify(p);
+    });
   }
   function flyZone(z: number) {
     const b = tc!.bounds[z], p = pad(), W = Math.max(200, innerWidth - p.left - p.right), H = Math.max(200, innerHeight - p.top - p.bottom), mercY = (la: number) => Math.log(Math.tan(Math.PI / 4 + (la * Math.PI) / 360)) / (2 * Math.PI);

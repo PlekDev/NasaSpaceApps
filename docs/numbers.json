@@ -1,10 +1,6 @@
 {
- "_note": "Numbers used in the deck and on the project page. Generated from data/processed; entries with pending=true are filled after the 19:00 freeze. Do not edit values by hand.",
+ "_note": "Numbers as written in the deck and on the project page. Each entry is checked by tests/test_factcheck_numbers.py against data/processed. rehearsal_fidelity stays pending: it is computed in the browser from today's date.",
  "generated": "2026-11-15",
- "tiles_global": {
-  "value": 26450,
-  "source": "tileList.txt of the public Copernicus GLO-30 bucket (s3://copernicus-dem-30m), counted 2026-11-15"
- },
  "numbers": [
   {
    "id": "blind_rank",
@@ -391,64 +387,135 @@
    "source": "briefs/rover_twin.json moon_malapert"
   },
   {
-   "id": "null_p_value",
+   "id": "tile_seconds",
+   "slide": [
+    7
+   ],
+   "text": "52 s per one-degree tile on one core",
+   "value": 51.86,
+   "source": "benchmark_tile.json median_seconds.total_without_reproject"
+  },
+  {
+   "id": "scale_core_hours",
+   "slide": [
+    7
+   ],
+   "text": "about 230 core-hours for all land",
+   "value": 230,
+   "source": "benchmark_tile.json all_land_estimate.core_hours",
+   "pending": false
+  },
+  {
+   "id": "scale_hours_64",
+   "slide": [
+    7
+   ],
+   "text": "under 4 hours on 64 cores (3.6 h)",
+   "value": 3.6,
+   "source": "benchmark_tile.json all_land_estimate.hours_on_64_cores",
+   "pending": false
+  },
+  {
+   "id": "null_p_malapert",
    "slide": [
     1,
     4
    ],
-   "text": "p-value of the permutation null test",
-   "value": null,
-   "source": "stats/null.json (D. Dona, D1)",
-   "pending": true
+   "text": "p = 0.004 (0.025 corrected for 6 lunar targets)",
+   "value": [
+    0.0041,
+    0.0246,
+    0.1476
+   ],
+   "source": "stats/null.json pu_uhiwahine.moon_malapert: p_value_region_matched, p_bonferroni, p_bonferroni_all_lunar_tests",
+   "pending": false
   },
   {
-   "id": "score_ci",
+   "id": "null_frac_mauna_kea",
+   "slide": [
+    1,
+    4
+   ],
+   "text": "only 0.4 % of Mauna Kea scores as high",
+   "value": 0.0041,
+   "source": "stats/null.json pu_uhiwahine.moon_malapert.p_value_region_matched (the share in the generated headline)",
+   "pending": false
+  },
+  {
+   "id": "null_p_group",
    "slide": [
     4
    ],
-   "text": "95 % bootstrap interval of the top score",
-   "value": null,
-   "source": "stats/bootstrap.json (D. Dona, D1)",
-   "pending": true
+   "text": "as a group, p = 0.37 combined, 0.065 illumination",
+   "value": [
+    0.36746,
+    0.06489
+   ],
+   "source": "stats/null.json p_value.global",
+   "pending": false
   },
   {
-   "id": "rank_stability",
+   "id": "score_ci_malapert",
    "slide": [
     4
    ],
-   "text": "share of random weightings that keep the #1 window",
-   "value": null,
-   "source": "stats/stability.json (D. Dona, D1)",
-   "pending": true
+   "text": "Malapert score 79, 95 % bootstrap interval 60–90",
+   "value": [
+    79.3,
+    60.3,
+    89.9
+   ],
+   "source": "stats/bootstrap.json moon_malapert[0]",
+   "pending": false
   },
   {
-   "id": "auc",
+   "id": "stability_top1",
    "slide": [
     4
    ],
-   "text": "AUC of known analogs vs the rest",
-   "value": null,
-   "source": "stats/roc.json (D. Dona, D1)",
-   "pending": true
+   "text": "stays #1 in 81 % of random weightings for Malapert, 100 % for Connecting Ridge",
+   "value": {
+    "moon_malapert": 0.812,
+    "moon_connecting_ridge": 1.0
+   },
+   "source": "stats/stability.json p_top1",
+   "pending": false
+  },
+  {
+   "id": "auc_mars",
+   "slide": [
+    4
+   ],
+   "text": "for Mars the score does not separate the known sites (AUC 0.33–0.50)",
+   "value": [
+    0.3328,
+    0.5016,
+    0.4445
+   ],
+   "source": "stats/roc.json <mars target>.auc",
+   "pending": false
+  },
+  {
+   "id": "light_bias",
+   "slide": [
+    4
+   ],
+   "text": "bias −0.7 to −2.5 percentage points (model slightly darker than NASA)",
+   "value": [
+    -0.0248,
+    -0.007
+   ],
+   "source": "stats/light_summary.json overall.bias",
+   "pending": false
   },
   {
    "id": "rehearsal_fidelity",
    "slide": [
     6
    ],
-   "text": "date, time and rehearsal fidelity of the example traverse",
-   "value": null,
-   "source": "web/src/sim/rehearse.ts output (Victor V3, Aaron A2)",
-   "pending": true
-  },
-  {
-   "id": "tile_seconds",
-   "slide": [
-    7
-   ],
-   "text": "measured seconds per one-degree tile",
-   "value": null,
-   "source": "Victor V6; README currently says ~50 s on 2 CPU cores",
+   "text": "fidelity 80 % for the Malapert traverse with the lunar Sun from the east (29–30 March 2027, about half an hour after sunrise)",
+   "value": 80.2,
+   "source": "Mission view (main after #42), Malapert, default route, Sun 2.5° high, hour angle -90 (from the east): best window 2027-03-29 16:30–17:00 UTC, 81 of 101 route points match. Computed in the browser from today, so it can shift by a few days; no file in data/processed yet.",
    "pending": true
   }
  ]

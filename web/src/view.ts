@@ -5,6 +5,8 @@ export const hasWebGL = () => { try { const c = document.createElement('canvas')
 
 export interface View {
   dead: boolean; ready: Promise<void>;
+  /** resolves once the map style (globe projection) is in place: a camera move made before that is lost */
+  loaded: Promise<void>;
   onPick: (k: number) => void; onHover: (k: number | null, x: number, y: number) => void;
   setScored(s: import('./model').Scored, min: number, km: number): void; mark(kind: 'hl' | 'sel', k: number | null): void;
   fly(lon: number, lat: number, zoom: number, padding?: maplibregl.PaddingOptions): void; setPadding(p: maplibregl.PaddingOptions): void;
@@ -19,7 +21,7 @@ export function createDeferredView(container: HTMLElement, center: [number, numb
   let inner: MapView | NullView | null = null; const q: (() => void)[] = []; const last = new Map<string, () => void>();
   const when = (key: string | null, f: () => void) => { if (inner) f(); else if (key) last.set(key, f); else q.push(f); };
   const v: View = {
-    dead: !hasWebGL(), ready: Promise.resolve(),
+    dead: !hasWebGL(), ready: Promise.resolve(), loaded: Promise.resolve(),
     onPick: () => {}, onHover: () => {},
     setScored: (s, min, km) => when('scored', () => { void inner!.setScored(s, min, km); }),
     mark: (kind, k) => when(`mark-${kind}`, () => inner!.mark(kind, k)),
@@ -35,5 +37,6 @@ export function createDeferredView(container: HTMLElement, center: [number, numb
     inner.onPick = k => v.onPick(k); inner.onHover = (k, x, y) => v.onHover(k, x, y);
     q.splice(0).forEach(f => f()); [...last.values()].forEach(f => f()); last.clear();
   });
+  v.loaded = v.ready.then(() => inner!.styled);
   return v;
 }

@@ -1,7 +1,12 @@
 """Export compact, UI-ready data for the static web app (web/public/data).
 
-Read-only on config/ and data/processed/. Run with:  python -I web/tools/export_data.py
+Read-only on config/ and data/processed/. Run with:  python -I web/tools/export_data.py  (or: make web-data)
 Nothing is typed by hand: targets, regions, dimensions and every number come from the repo files.
+
+After the core export, every web/tools/exports/<name>.py (alphabetical, files starting with "_" skipped) runs as its own
+process. Each one reads data/processed/, writes only web/public/data/<name>/ through write_json / copy_atomic /
+write_index below, and ends with write_index(name, files). The manifest lists what each exporter produced
+(manifest["exports"][name] = its index.json), so a view can check that its data exists. Contract: web/tools/exports/README.md.
 AI-assisted (Claude Code); reviewed by the author."""
 import ast, csv, hashlib, json, os, re, shutil, subprocess, sys, tempfile
 from pathlib import Path
@@ -35,6 +40,32 @@ def write_text(path, text):
 
 def write_json(path, obj):
     write_text(path, json.dumps(obj, ensure_ascii=False, separators=(",", ":")))
+
+
+def write_index(name, files, extra=None):
+    """web/public/data/<name>/index.json = {"files": [...], "generated": <hash of data/processed>, ...}: every exporter ends with this."""
+    idx = dict(files=sorted(files), generated=source_stamp()[0], **(extra or {}))
+    write_json(DATA / name / "index.json", idx)
+    return idx
+
+
+def run_exporters():
+    """Run each web/tools/exports/*.py (alphabetical, '_*' skipped) in its own isolated process; any failure fails the export."""
+    out = {}
+    for script in sorted((Path(__file__).resolve().parent / "exports").glob("*.py")):
+        if script.name.startswith("_"):
+            continue
+        name = script.stem
+        r = subprocess.run([sys.executable, "-I", str(script)], cwd=ROOT, capture_output=True, encoding="utf-8", errors="replace")
+        if r.returncode:
+            sys.stderr.write(r.stdout + r.stderr)
+            raise SystemExit(f"exporter {script.name} failed (exit {r.returncode})")
+        idx = DATA / name / "index.json"
+        if not idx.exists():
+            raise SystemExit(f"exporter {script.name} wrote no {idx.relative_to(ROOT)}: end it with write_index()")
+        out[name] = read_json(idx)
+        print(f"  exporter {name}: {len(out[name]['files'])} files" + (" (stub)" if out[name].get("_stub") else ""))
+    return out
 
 
 def read_json(path):
@@ -138,6 +169,24 @@ def known_ranks(known_json):
             want = rows[(ref, k["name"])]["score_combined_pct_best"]
             assert abs(pct - want) < 0.05, f"percentile mismatch for {ref} / {k['name']}: {pct} vs {want} in known_analogs.json"
             out.setdefault(ref, {})[k["name"]] = dict(rank=pos[best], n=len(g), pct=pct)
+    return out
+
+
+def known_sites(known_json, centers, regions):
+    """NASA's and other classic analog sites with their coordinates, read from scripts/validate_known_analogs.py (KNOWN, the
+    list the known-analog test uses) without importing it. Each site: name, lat, lon, analog_for (moon/mars), note (source
+    of the coordinate), region (the 1° Earth tile it lies in, or None) and the targets it was tested against."""
+    tree = ast.parse((ROOT / "scripts" / "validate_known_analogs.py").read_text(encoding="utf-8"))
+    node = next(n.value for n in tree.body if isinstance(n, ast.Assign) and any(getattr(t, "id", None) == "KNOWN" for t in n.targets))
+    tested = {}
+    for r in known_json["rows"]:
+        tested.setdefault(r["site"], []).append(r["reference"])
+    out = []
+    for call in node.elts:                        # each entry is dict(name=..., lat=..., ...)
+        k = {kw.arg: ast.literal_eval(kw.value) for kw in call.keywords}
+        near = [s for s in regions if abs(centers[s][1] - k["lat"]) <= 0.5 and abs(((centers[s][0] - k["lon"] + 180) % 360) - 180) <= 0.5]
+        out.append(dict(name=k["name"], lat=k["lat"], lon=k["lon"], analog_for=k["analog_for"].split(","), note=k.get("note", ""),
+                        region=near[0] if len(near) == 1 else None, tested_for=sorted(tested.get(k["name"], []))))
     return out
 
 
@@ -249,8 +298,7 @@ def main():
     matrix = dict(dims=mdims, targets=targets, regions=regions,
                   v={d: [[float(cell[(t, s)][f"score_{d}"]) if (t, s) in cell else None for t in targets] for s in regions] for d in mdims})
     write_json(DATA / "known_ranks.json", known_ranks(read_json(PROC / "known_analogs.json")))
-    # position of every known analog site: the Explore view re-ranks them live when the weights change
-    write_json(DATA / "known_sites.json", [dict(name=k["name"], lat=k["lat"], lon=k["lon"], analog_for=k.get("analog_for", "")) for k in extract_known()])
+    write_json(DATA / "known_sites.json", known_sites(read_json(PROC / "known_analogs.json"), centers, regions))
     write_json(DATA / "matrix.json", matrix)
     for f in sorted((ROOT / "figures").glob("fig*.png")):
         copy_atomic(f, OUT / "figures" / f.name)
@@ -304,8 +352,9 @@ def main():
         p = PROC / f"{name}.json"
         if p.exists():
             copy_atomic(p, DATA / f"{name}.json")
-    write_json(DATA / "manifest.json", manifest)
     print(f"exported {len(targets)} targets, {len(regions)} regions, {len(present)} dimensions")
+    manifest["exports"] = run_exporters()
+    write_json(DATA / "manifest.json", manifest)
 
 
 if __name__ == "__main__":
