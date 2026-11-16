@@ -628,3 +628,7 @@ input[type=range]::-moz-range-thumb { width: 12px; height: 12px; border-radius: 
 .tbl th, .tbl td { padding: 9px var(--s-4); }
 .fig-frame { background: var(--glass-solid); border-color: var(--line); }
 @media print { .page { background: #fff !important; } .page-in h1 { border-bottom-color: #ccc; } .vsec > h2:first-child::before, .proof-card::before, .method-step::before, .callout::before { display: none; } }
+
+/* Brand mark: the globe takes the text colour so it follows the theme; the gold diamond is the one fixed accent. */
+:root { --logo-gold: #ffd166; }
+.brand-mark { width: 36px; height: 36px; flex: none; color: var(--text-1); }

@@ -21,7 +21,7 @@ async function boot() {
   const home = await loadHome(m);            // Home facts: the blind-test headline target (Malapert Massif) is the default target
   const t0 = m.targets.find(x => x.id === q.get('target')) ?? m.targets.find(x => x.id === home.facts?.target.id) ?? m.targets[0];
   app.innerHTML = `<header class="bar">
-    <a class="brand" href="#/" aria-label="P.E.N. home"><b>P.E.N.</b><span>Planetary Environmental Navigator</span></a>
+    <a class="brand" href="#/" aria-label="P.E.N. home"><svg class="brand-mark" viewBox="1336 56 400 400" aria-hidden="true" focusable="false"><defs><clipPath id="bm"><circle cx="1536" cy="256" r="200"/></clipPath></defs><g clip-path="url(#bm)" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round"><path d="M1536 56V456"/><ellipse cx="1536" cy="256" rx="100" ry="200"/><ellipse cx="1536" cy="256" rx="155" ry="200"/><path d="M1336 189.333H1736M1336 322.667H1736"/></g><path d="M1536 56V456A200 200 0 0 1 1536 56Z" fill="var(--bg)" fill-opacity=".65"/><circle cx="1536" cy="256" r="200" fill="none" stroke="currentColor" stroke-width="12"/><rect x="1682.14" y="158.221" width="44" height="44" transform="rotate(45 1682.14 158.221)" fill="var(--logo-gold)"/></svg><b>P.E.N.</b><span>Planetary Environmental Navigator</span></a>
     <nav class="nav" id="nav" aria-label="Views">${primary.map(r => `<a href="#/${r.path}" data-r="${r.id}">${r.title}</a>`).join('')}<a class="only-phone" href="#/${tour.path}" data-r="${tour.id}">${tour.title}</a>${home.facts?.rhoRange ? `<a class="only-phone seal-m" href="#/proof">Light model vs NASA LOLA · ρ ${home.facts.rhoRange}</a>` : ''}</nav>
     <div class="crumbs" id="crumbs" hidden></div>
     <div class="grow"></div>

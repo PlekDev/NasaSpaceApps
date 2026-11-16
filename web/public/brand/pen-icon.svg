@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="1280 0 512 512" fill="none" role="img" aria-label="P.E.N.">
+<rect width="512" height="512" transform="translate(1280)" fill="#0B0F17"/>
+<mask id="mask1_0_1" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="1336" y="56" width="400" height="400">
+<circle cx="1536" cy="256" r="200" fill="white"/>
+</mask>
+<g mask="url(#mask1_0_1)">
+<path d="M1536 56V456" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke="#F0EFEC"/>
+<ellipse cx="1536" cy="256" rx="100" ry="200" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke="#F0EFEC"/>
+<ellipse cx="1536" cy="256" rx="155" ry="200" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke="#F0EFEC"/>
+<path d="M1336 189.333H1736" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke="#F0EFEC"/>
+<path d="M1336 322.667H1736" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke="#F0EFEC"/>
+</g>
+<path d="M1536 56V456C1482.96 456 1432.09 434.929 1394.58 397.421C1357.07 359.914 1336 309.043 1336 256C1336 202.957 1357.07 152.086 1394.58 114.579C1432.09 77.0714 1482.96 56 1536 56Z" fill="#0B0F17" fill-opacity="0.65"/>
+<circle cx="1536" cy="256" r="200" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke="#F0EFEC"/>
+<rect x="1682.14" y="158.221" width="44" height="44" transform="rotate(45 1682.14 158.221)" fill="#FFD166"/>
+</svg>
