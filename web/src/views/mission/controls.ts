@@ -42,6 +42,7 @@ export interface MissionControlsState {
   playingSun: boolean;
   drivingRover: boolean;
   roverProgress: number;
+  linked: boolean;
   reach: SunReach | null;
   webgl: boolean;
 }
@@ -52,6 +53,7 @@ export interface MissionControlsCallbacks {
   onChangeExag: (exag: number) => void;
   onChangeCameraMode: (mode: CameraMode) => void;
   onResetCamera: () => void;
+  onToggleLink: (on: boolean) => void;
   onChangePointerTool: (tool: PointerTool) => void;
   onToggleSlopeMask: (show: boolean) => void;
   onChangeSun: (elevDeg: number, hourAngleDeg: number) => void;
@@ -194,6 +196,7 @@ export class MissionControls {
   private exagMore: HTMLButtonElement;
   private slopeCheckbox: HTMLInputElement;
   private driveBtn: HTMLButtonElement;
+  private linkBtn: HTMLButtonElement;
   private roverSlider: HTMLInputElement;
   private roverVal: HTMLElement;
   private elevSlider: HTMLInputElement;
@@ -203,6 +206,10 @@ export class MissionControls {
   private reachNote: HTMLElement;
   private earthSunButtons = new Map<EarthSunMode, HTMLButtonElement>();
   private playSunBtn: HTMLButtonElement;
+  private playSunDock: HTMLButtonElement;
+  private sunDockVal: HTMLElement;
+  private haDock: HTMLInputElement;
+  readonly resultChip: HTMLButtonElement;
   private rangeSlot: HTMLElement;
   private rangeCaption: HTMLElement;
 
@@ -300,6 +307,18 @@ export class MissionControls {
       '+',
     ) as HTMLButtonElement;
 
+    this.linkBtn = h(
+      'button',
+      {
+        type: 'button',
+        class: 'mission-btn',
+        'aria-pressed': 'false',
+        title: 'When on, dragging or zooming either view moves both. When off, each view turns on its own.',
+        onclick: () => this.cb.onToggleLink(this.linkBtn.getAttribute('aria-pressed') !== 'true'),
+      },
+      'Views: independent',
+    ) as HTMLButtonElement;
+
     this.viewerBar = h(
       'div',
       { class: 'mission-viewer-bar' },
@@ -315,10 +334,11 @@ export class MissionControls {
           this.exagVal,
           this.exagMore,
         ),
+        this.linkBtn,
         h(
           'button',
-          { type: 'button', class: 'mission-btn mission-btn--quiet', onclick: () => this.cb.onResetCamera() },
-          'Reset view',
+          { type: 'button', class: 'mission-btn mission-btn--quiet', title: 'Reset both views', onclick: () => this.cb.onResetCamera() },
+          'Reset views',
         ),
       ),
     );
@@ -332,8 +352,8 @@ export class MissionControls {
 
     this.driveBtn = h(
       'button',
-      { type: 'button', class: 'mission-btn', 'aria-pressed': 'false', onclick: () => this.cb.onToggleDriveRover() },
-      'Drive',
+      { type: 'button', class: 'mission-btn mission-btn--primary', 'aria-pressed': 'false', onclick: () => this.cb.onToggleDriveRover() },
+      '▶ Drive rover',
     ) as HTMLButtonElement;
     this.roverVal = h('output', { class: 'mission-rover-val', for: 'mission-rover-scrub' }, '');
     this.roverSlider = h('input', {
@@ -350,6 +370,32 @@ export class MissionControls {
         this.cb.onScrubRover(v / 100);
       },
     }) as HTMLInputElement;
+
+    this.playSunDock = h(
+      'button',
+      { type: 'button', class: 'mission-btn mission-btn--primary', 'aria-pressed': 'false', onclick: () => this.cb.onTogglePlaySun() },
+      '▶ Play Sun',
+    ) as HTMLButtonElement;
+    this.sunDockVal = h('output', { class: 'mission-rover-val mission-sun-dock-val' }, '');
+    this.haDock = h('input', {
+      id: 'mission-sun-ha-dock',
+      type: 'range',
+      min: '-180',
+      max: '180',
+      step: '5',
+      'aria-label': 'Target Sun azimuth',
+      oninput: () => {
+        const v = Number(this.haDock.value);
+        setRangeValue(this.haDock, v, -180, 180);
+        this.cb.onChangeSun(this.state.sunElevDeg, v);
+      },
+    }) as HTMLInputElement;
+    this.resultChip = h(
+      'button',
+      { type: 'button', class: 'mission-dock-result', title: 'Jump to step 3, when does Earth match' },
+      h('i', { 'aria-hidden': 'true' }),
+      h('span', null, 'Scanning…'),
+    ) as HTMLButtonElement;
 
     this.roverBar = h(
       'div',
@@ -379,7 +425,10 @@ export class MissionControls {
           'Start, end',
         ),
       ),
-      h('div', { class: 'mission-rover' }, this.driveBtn, this.roverSlider, this.roverVal),
+      h('span', { class: 'mission-dock-hint' }, 'Drag a view to rotate it · wheel to zoom · Drive moves the rover from A to B in both views · Play Sun sweeps the light around the horizon.'),
+      h('div', { class: 'mission-rover' }, h('span', { class: 'mission-cap' }, 'Rover on route'), this.driveBtn, this.roverSlider, this.roverVal),
+      h('div', { class: 'mission-rover mission-rover--sun' }, h('span', { class: 'mission-cap' }, 'Sun'), this.playSunDock, this.haDock, this.sunDockVal),
+      this.resultChip,
     );
 
     // ── Step 2 · Sun ────────────────────────────────────────────────────
@@ -430,8 +479,8 @@ export class MissionControls {
 
     this.playSunBtn = h(
       'button',
-      { type: 'button', class: 'mission-btn', 'aria-pressed': 'false', onclick: () => this.cb.onTogglePlaySun() },
-      'Play Sun',
+      { type: 'button', class: 'mission-btn mission-btn--primary', 'aria-pressed': 'false', onclick: () => this.cb.onTogglePlaySun() },
+      '▶ Play Sun',
     ) as HTMLButtonElement;
 
     this.rangeSlot = h('div', { class: 'mission-range-slot' });
@@ -472,7 +521,6 @@ export class MissionControls {
             h('span', null, 'Later'),
           ),
         ),
-        this.playSunBtn,
       ),
       h(
         'div',
@@ -538,7 +586,9 @@ export class MissionControls {
     setRangeValue(this.roverSlider, rp, 0, 100);
     this.roverVal.textContent = `${rp} %`;
     this.driveBtn.setAttribute('aria-pressed', String(state.drivingRover));
-    this.driveBtn.textContent = state.drivingRover ? 'Pause' : 'Drive';
+    this.driveBtn.textContent = state.drivingRover ? '❚❚ Pause rover' : '▶ Drive rover';
+    this.linkBtn.setAttribute('aria-pressed', String(state.linked));
+    this.linkBtn.textContent = state.linked ? 'Views: linked' : 'Views: independent';
 
     setRangeValue(this.elevSlider, state.sunElevDeg, 0.5, 20);
     this.elevVal.textContent = `${state.sunElevDeg.toFixed(1)}°`;
@@ -548,7 +598,11 @@ export class MissionControls {
     this.haSlider.setAttribute('aria-valuetext', `Sun azimuth ${az} degrees`);
 
     this.playSunBtn.setAttribute('aria-pressed', String(state.playingSun));
-    this.playSunBtn.textContent = state.playingSun ? 'Pause Sun' : 'Play Sun';
+    this.playSunBtn.textContent = state.playingSun ? '❚❚ Pause Sun' : '▶ Play Sun';
+    this.playSunDock.setAttribute('aria-pressed', String(state.playingSun));
+    this.playSunDock.textContent = state.playingSun ? '❚❚ Pause Sun' : '▶ Play Sun';
+    setRangeValue(this.haDock, Math.round(state.sunHourAngleDeg), -180, 180);
+    this.sunDockVal.textContent = `${state.sunElevDeg.toFixed(1)}° el · ${Math.round(norm360(state.sunGridAzDeg))}° az`;
     for (const [id, b] of this.earthSunButtons) b.setAttribute('aria-pressed', String(state.earthSunMode === id));
 
     const r = state.reach;

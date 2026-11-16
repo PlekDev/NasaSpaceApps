@@ -63,14 +63,20 @@ function buildViewport(which: 'target' | 'earth') {
   const title = h('p', { class: 'mission-vp-title' }, which === 'target' ? 'Loading target…' : 'Loading Earth analog…');
   const meta = h('p', { class: 'mission-vp-meta' }, '');
   const badge = h('p', { class: 'mission-exag-badge' }, '');
+  const reset = h(
+    'button',
+    { type: 'button', class: 'mission-vp-reset', title: 'Reset this view', 'aria-label': `Reset the ${which === 'target' ? 'target' : 'Earth'} view` },
+    '↺ Reset',
+  ) as HTMLButtonElement;
   const wrap = h(
     'div',
-    { class: 'mission-vp' },
+    { class: 'mission-vp', 'data-side': which },
     canvas,
     h('div', { class: 'mission-vp-id' }, title, meta),
     badge,
+    reset,
   );
-  return { wrap, canvas, title, meta, badge };
+  return { wrap, canvas, title, meta, badge, reset };
 }
 
 export async function render(el: HTMLElement, m: Manifest, params: Params): Promise<() => void> {
@@ -84,6 +90,7 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
     params.cam === 'astronaut' || params.cam === 'rover' || params.cam === 'topdown' ? params.cam : 'orbital';
   let pointerTool: PointerTool = 'orbit';
   let showSlopeMask = true;
+  let linked = false;
 
   let sunElevDeg = targetId.startsWith('mars_') ? 8.0 : 2.5;
   let sunHourAngleDeg = -35;
@@ -131,6 +138,7 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
   const windowsSlot = h('div', { class: 'mission-windows-slot' });
   const telemetrySlot = h('div', { class: 'mission-telemetry-slot' });
   const hint = h('span', { class: 'mission-step-hint' }, 'Shift+click a view to move B');
+  const verdictChip = h('button', { type: 'button', class: 'mission-verdict-chip', title: 'Jump to step 3, when does Earth match' }, h('i', { 'aria-hidden': 'true' }), h('span', null, 'Scanning…')) as HTMLButtonElement;
   const sunStepTitle = h('h2', { class: 'mission-step-title' }, 'Set the Sun');
   const status = h('p', { class: 'sr-only', role: 'status', 'aria-live': 'polite' }, '');
   let shownState: VerdictState | null = null;
@@ -163,7 +171,12 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
       dualScene.setCameraMode(cameraMode);
       syncControls();
     },
-    onResetCamera: () => dualScene.resetCamera(),
+    onResetCamera: () => dualScene.resetCamera('both'),
+    onToggleLink: (on) => {
+      linked = on;
+      dualScene.setLinked(on);
+      syncControls();
+    },
     onChangePointerTool: (tool) => {
       pointerTool = tool;
       dualScene.setPointerTool(tool);
@@ -204,6 +217,7 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
   };
 
   const controls = new MissionControls(m, buildControlsState(false), callbacks);
+  controls.viewerBar.querySelector('.mission-viewer-bar-end')?.prepend(verdictChip);
 
   const page = h(
     'div',
@@ -219,30 +233,34 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
       ),
     ),
     h(
-      'div',
-      { class: 'mission-main' },
+      'section',
+      { class: 'mission-theater', 'aria-label': 'Step 1, plan the route' },
       h(
         'div',
-        { class: 'mission-stage' },
-        h(
-          'section',
-          { class: 'mission-step mission-step--route', 'aria-labelledby': 'mission-step1' },
-          h(
-            'div',
-            { class: 'mission-step-head' },
-            h('span', { class: 'mission-step-num', 'aria-hidden': 'true' }, '1'),
-            h('h2', { class: 'mission-step-title', id: 'mission-step1' }, 'Plan the route'),
-            hint,
-          ),
-          controls.routeBar,
-        ),
+        { class: 'mission-step mission-step--route', 'aria-labelledby': 'mission-step1' },
         h(
           'div',
-          { class: 'panel mission-viewer' },
-          controls.viewerBar,
-          h('div', { class: 'mission-viewports', role: 'group', 'aria-label': 'Target and Earth terrain, synchronized' }, tVp.wrap, eVp.wrap),
-          controls.roverBar,
+          { class: 'mission-step-head' },
+          h('span', { class: 'mission-step-num', 'aria-hidden': 'true' }, '1'),
+          h('h2', { class: 'mission-step-title', id: 'mission-step1' }, 'Plan the route'),
+          hint,
         ),
+        controls.routeBar,
+      ),
+      h(
+        'div',
+        { class: 'panel mission-viewer' },
+        controls.viewerBar,
+        h('div', { class: 'mission-viewports', role: 'group', 'aria-label': 'Target and Earth terrain, each view turns on its own unless linked' }, tVp.wrap, eVp.wrap),
+        controls.roverBar,
+      ),
+    ),
+    h(
+      'div',
+      { class: 'mission-deck' },
+      h(
+        'div',
+        { class: 'mission-deck-main' },
         h(
           'section',
           { class: 'mission-step mission-step--sun', 'aria-labelledby': 'mission-step2' },
@@ -254,10 +272,11 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
           ),
           controls.sunBlock,
         ),
+        windowsSlot,
       ),
       h('aside', { class: 'mission-aside', 'aria-label': 'Step 3, when does Earth match' }, verdictSlot),
     ),
-    h('div', { class: 'mission-lower' }, windowsSlot, telemetrySlot),
+    h('div', { class: 'mission-lower' }, telemetrySlot),
     status,
   );
   sunStepTitle.id = 'mission-step2';
@@ -278,6 +297,12 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
       recomputeSimulation(true);
     },
   });
+
+  tVp.reset.addEventListener('click', () => dualScene.resetCamera('target'));
+  eVp.reset.addEventListener('click', () => dualScene.resetCamera('earth'));
+  verdictChip.addEventListener('click', () => verdictSlot.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+
+  controls.resultChip.addEventListener('click', () => verdictSlot.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
 
   // WebGL first; falls back to the 2D canvas map
   await dualScene.init();
@@ -315,6 +340,7 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
       playingSun,
       drivingRover,
       roverProgress,
+      linked,
       webgl,
       reach: earthWin
         ? {
@@ -551,6 +577,16 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
     }
     shownState = verdictState;
     shownFidelity = shownWin?.fidelity ?? null;
+    verdictChip.dataset.state = verdictState;
+    controls.resultChip.dataset.state = verdictState;
+    const resultText =
+      verdictState === 'loading'
+        ? 'Scanning 365 days…'
+        : verdictState === 'good' && shownWin
+          ? `Earth match ${shownWin.fidelity.toFixed(0)} % · ${fmtDate(shownWin.date, false)}`
+          : `No exact date · best ${shownWin ? shownWin.fidelity.toFixed(0) : '–'} %`;
+    verdictChip.querySelector('span')!.textContent = resultText;
+    controls.resultChip.querySelector('span')!.textContent = resultText;
 
     renderWindows(windowsSlot, {
       site: earthWin.region,

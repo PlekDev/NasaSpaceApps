@@ -234,10 +234,10 @@ function buildStrip(
     h(
       'div',
       { class: 'mission-strip-grid' },
-      h('span', { class: 'mission-strip-lbl' }, body),
+      h('span', { class: 'mission-strip-lbl', 'data-side': 'target' }, body),
       stripRow('', Array.from({ length: n }, (_, i) => litCls(tProf, i))),
       h('span', { class: 'mission-strip-val' }, tShare === null ? '–' : `${tShare}${NBSP}% lit`),
-      h('span', { class: 'mission-strip-lbl' }, 'Earth'),
+      h('span', { class: 'mission-strip-lbl', 'data-side': 'earth' }, 'Earth'),
       stripRow('', Array.from({ length: n }, (_, i) => litCls(eProf, i))),
       h('span', { class: 'mission-strip-val' }, eShare === null ? '–' : `${eShare}${NBSP}% lit`),
       h('span', { class: 'mission-strip-lbl' }, 'Same'),

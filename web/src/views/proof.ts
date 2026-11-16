@@ -167,11 +167,18 @@ const pending = (what: string) => `<p class="proof-pending">${esc(what)}: result
 
 export async function render(el: HTMLElement, m: Manifest, _params: Params): Promise<void> {
   void import('./proof.css');
-  const [{ mountChart }, { getJSON }] = await Promise.all([import('../lib/chart'), import('../data')]);
+  const [{ mountChart }, { getJSON }, PC, { onCleanup }] = await Promise.all([import('../lib/chart'), import('../data'), import('../lib/proofcharts'), import('../lib/lifecycle')]);
   const [got, ka0] = await Promise.all([Promise.all(FILES.map(f => getJSON<Meta>(`stats/${f}`).catch(() => null))),
     getJSON<{ rows: { reference: string }[] }>('known_analogs').catch(() => ({ rows: [] }))]);
   const S = Object.fromEntries(FILES.map((f, i) => [f, got[i]])) as unknown as Stats;
-  const mc = (host: HTMLElement, o: Parameters<typeof mountChart>[1], opts: Parameters<typeof mountChart>[2]) => mountChart(host, o, { fs: 14, ...opts });   // larger chart text for the annex
+  const hosts = new Map<HTMLElement, ReturnType<typeof mountChart>>();   // one chart per host: a redraw (theme flip, target change) updates it in place
+  const mc = (host: HTMLElement, o: Parameters<typeof mountChart>[1], opts: Parameters<typeof mountChart>[2]) => {
+    const old = hosts.get(host);
+    if (old) { old.update(o, { replace: true, summary: opts.summary }); return old; }
+    const h = mountChart(host, o, { fs: 14, ...opts }); hosts.set(host, h); return h;
+  };
+  const P = () => PC.palette();
+  const charts: (() => void)[] = [];   // every chart is a function of the theme palette and of the selected target
   const name = (id: string) => m.targets.find(t => t.id === id)?.name ?? id;
   const region = (wid: string) => { const r = m.regions.find(x => wid.startsWith(`${x.id}_`)); return r ? r.name : wid; };
   const moon = m.targets.filter(t => t.body === 'moon').map(t => t.id), mars = m.targets.filter(t => t.body === 'mars').map(t => t.id);
@@ -284,55 +291,15 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
     el.querySelector('#proof-1a-tbl')!.innerHTML = `<table><caption>Pu'u Hiwahine (Mauna Kea) per lunar target</caption>
       <thead><tr><th scope="col">Target</th><th scope="col">Rank of ${nf(rows[0]?.[1].of ?? 0)} windows</th><th scope="col">Share of Mauna Kea as high or higher</th><th scope="col">p (region)</th><th scope="col">p × ${Object.keys(S.null.pu_uhiwahine).length} targets</th><th scope="col">p × ${nMoonTests} tests</th></tr></thead>
       <tbody>${rows.map(([t, v]) => `<tr><th scope="row">${esc(name(t))}</th><td class="tnum">#${nf(v.rank)} of ${nf(v.of)}</td><td class="tnum">${pct1(v.p_value_region_matched)} %</td><td class="tnum">${fmtP(v.p_value_region_matched)}</td><td class="tnum">${fmtPc(v.p_bonferroni)}</td><td class="tnum">${fmtPc(Math.min(1, v.p_value_region_matched * nMoonTests))}</td></tr>`).join('')}</tbody></table>`;
-    const cats = rows.map(([t]) => name(t)).reverse(), vals = rows.map(([, v]) => +(100 * v.p_value_region_matched).toFixed(1)).reverse();
-    mc(el.querySelector('#proof-1a')!, {
-      grid: { left: 8, right: 56, top: 8, bottom: 28, containLabel: true },
-      xAxis: { type: 'value', name: '% of Mauna Kea area', nameLocation: 'middle', nameGap: 24, min: 0 },
-      yAxis: { type: 'category', data: cats },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (ps: { dataIndex: number }[]) => { const [t, v] = rows[rows.length - 1 - ps[0].dataIndex]; return `${esc(name(t))}<br>${pct1(v.p_value_region_matched)} % of Mauna Kea as high or higher<br>p ${fmtP(v.p_value_region_matched)} · Bonferroni ${fmtP(v.p_bonferroni)}`; } },
-      series: [{ type: 'bar', data: vals, barMaxWidth: 22, label: { show: true, position: 'right', formatter: '{c} %', textBorderWidth: 0, textBorderColor: 'transparent', textShadowBlur: 0 } }],
-    }, { summary: puuSummary(S.null, name) });
+    charts.push(() => mc(el.querySelector('#proof-1a')!, PC.puuBars(P(), rows.map(([t, v]) => ({ label: name(t), share: +(100 * v.p_value_region_matched).toFixed(1),
+      tip: `${esc(name(t))}<br>${pct1(v.p_value_region_matched)} % of Mauna Kea as high or higher<br>p ${fmtP(v.p_value_region_matched)} · Bonferroni ${fmtP(v.p_bonferroni)}` }))), { summary: puuSummary(S.null, name) }));
   }
 
   // ---- 1C · AUC with CI, 3 scores x 9 targets
   if (okRoc) {
-    const cats = [...all].reverse(), sym = ['circle', 'rect', 'triangle'];
-    const whisker = (si: number) => ({
-      type: 'custom', name: SCORE_LABEL[SCORES[si]], z: 2, silent: true,
-      renderItem: (_p: unknown, api: { value: (i: number) => number; coord: (v: number[]) => number[]; size: (v: number[]) => number[]; visual: (k: string) => string }) => {
-        const y = api.value(0), a = api.coord([api.value(1), y]), b = api.coord([api.value(2), y]), dy = (si - 1) * api.size([0, 1])[1] * 0.26;
-        const style = { stroke: api.visual('color'), lineWidth: 1.5 };
-        return { type: 'group', children: [
-          { type: 'line', shape: { x1: a[0], y1: a[1] + dy, x2: b[0], y2: b[1] + dy }, style },
-          { type: 'line', shape: { x1: a[0], y1: a[1] + dy - 4, x2: a[0], y2: a[1] + dy + 4 }, style },
-          { type: 'line', shape: { x1: b[0], y1: b[1] + dy - 4, x2: b[0], y2: b[1] + dy + 4 }, style }] };
-      },
-      encode: { x: [1, 2], y: 0 },
-      data: cats.map((t, i) => [i, ...S.roc[t].auc_ci95_by_score[SCORES[si]]]),
-    });
-    const point = (si: number) => ({
-      type: 'custom', name: SCORE_LABEL[SCORES[si]], z: 3,
-      renderItem: (_p: unknown, api: { value: (i: number) => number; coord: (v: number[]) => number[]; size: (v: number[]) => number[]; visual: (k: string) => string }) => {
-        const c = api.coord([api.value(1), api.value(0)]), dy = (si - 1) * api.size([0, 1])[1] * 0.26, r = 5, fill = api.visual('color');
-        const shape = sym[si] === 'rect' ? { type: 'rect', shape: { x: c[0] - r, y: c[1] + dy - r, width: 2 * r, height: 2 * r } }
-          : sym[si] === 'triangle' ? { type: 'polygon', shape: { points: [[c[0], c[1] + dy - r - 1], [c[0] - r, c[1] + dy + r], [c[0] + r, c[1] + dy + r]] } }
-          : { type: 'circle', shape: { cx: c[0], cy: c[1] + dy, r } };
-        return { ...shape, style: { fill } };
-      },
-      encode: { x: 1, y: 0 },
-      data: cats.map((t, i) => [i, S.roc[t].auc_by_score[SCORES[si]], ...S.roc[t].auc_ci95_by_score[SCORES[si]]]),
-    });
     const sum = `AUC with 95 % CI per target, for the combined, terrain and illumination scores. ` + all.map(t => `${name(t)}: `
       + SCORES.map(s => `${SCORE_LABEL[s].toLowerCase()} ${f2(S.roc[t].auc_by_score[s])} [${f2(S.roc[t].auc_ci95_by_score[s][0])}–${f2(S.roc[t].auc_ci95_by_score[s][1])}]`).join(', ')).join('; ') + '.';
-    mc(el.querySelector('#proof-1c')!, {
-      legend: { top: 0, data: SCORES.map((s, i) => ({ name: SCORE_LABEL[s], icon: sym[i] })) },
-      grid: { left: 8, right: 16, top: 32, bottom: 32, containLabel: true },
-      xAxis: { type: 'value', min: 0, max: 1, name: 'AUC (0.5 = no separation)', nameLocation: 'middle', nameGap: 24 },
-      yAxis: { type: 'category', data: cats.map(name) },
-      tooltip: { trigger: 'item', formatter: (p: { seriesName: string; value: number[] }) => `${esc(name(cats[p.value[0]]))} · ${esc(p.seriesName)}<br>AUC ${f2(p.value[1])} [${f2(p.value[2])}–${f2(p.value[3])}]` },
-      series: [...SCORES.map((_, i) => whisker(i)), ...SCORES.map((_, i) => point(i)),
-        { type: 'line', data: [], markLine: { silent: true, symbol: 'none', lineStyle: { type: 'dashed' }, label: { show: false }, data: [{ xAxis: 0.5 }] } }],
-    }, { summary: sum });
+    charts.push(() => mc(el.querySelector('#proof-1c')!, PC.aucForest(P(), all.map(t => ({ label: name(t), auc: S.roc[t].auc_by_score, ci: S.roc[t].auc_ci95_by_score as Record<string, [number, number]> })), moon.length), { summary: sum }));
   }
 
   // ---- 2 · light model vs NASA (Diego Lizárraga's component)
@@ -346,144 +313,66 @@ export async function render(el: HTMLElement, m: Manifest, _params: Params): Pro
 
   // ---- 3A · bootstrap CI of the top-20 (per selected target)
   const sel = el.querySelector<HTMLSelectElement>('#proof-target')!;
-  let h3a: ReturnType<typeof mountChart> | null = null;
   const draw3a = (t: string) => {
     if (!okBoot) return;
     const rows = S.bootstrap[t] as BootRow[], b = rows[0];
     el.querySelector('#proof-3a-line')!.textContent = `${name(t)}: the top window (${region(b.window_id)}) scores ${f1(b.score)} [95 % CI ${f1(b.ci95[0])}–${f1(b.ci95[1])}]; its rank ranges #${b.rank_ci95[0]}–#${b.rank_ci95[1]} under resampling (${S.bootstrap.n_ref[t]} reference windows).`;
-    const opt = {
-      grid: { left: 8, right: 16, top: 32, bottom: 40, containLabel: true },
-      xAxis: { type: 'category', data: rows.map((_, i) => `#${i + 1}`), name: 'window rank (equal weights)', nameLocation: 'middle', nameGap: 28 },
-      yAxis: { type: 'value', name: 'score', scale: true },
-      tooltip: { trigger: 'item', formatter: (p: { dataIndex: number }) => { const r = rows[p.dataIndex]; return `#${p.dataIndex + 1} · ${esc(region(r.window_id))}<br>score ${f1(r.score)} [${f1(r.ci95[0])}–${f1(r.ci95[1])}]<br>rank CI #${r.rank_ci95[0]}–#${r.rank_ci95[1]}`; } },
-      series: [{
-        type: 'custom', silent: true, encode: { x: 0, y: [1, 2] }, data: rows.map((r, i) => [i, r.ci95[0], r.ci95[1]]),
-        renderItem: (_p: unknown, api: { value: (i: number) => number; coord: (v: number[]) => number[]; visual: (k: string) => string }) => {
-          const a = api.coord([api.value(0), api.value(1)]), c = api.coord([api.value(0), api.value(2)]), style = { stroke: api.visual('color'), lineWidth: 1.5 };
-          return { type: 'group', children: [{ type: 'line', shape: { x1: a[0], y1: a[1], x2: c[0], y2: c[1] }, style },
-            { type: 'line', shape: { x1: a[0] - 4, y1: a[1], x2: a[0] + 4, y2: a[1] }, style }, { type: 'line', shape: { x1: c[0] - 4, y1: c[1], x2: c[0] + 4, y2: c[1] }, style }] };
-        },
-      }, { type: 'scatter', symbolSize: 8, data: rows.map(r => r.score) }],
-    };
     const summary = `${name(t)}: scores of the top 20 windows with 95 % bootstrap CI. ` + rows.map((r, i) => `#${i + 1} ${region(r.window_id)} ${f1(r.score)} [${f1(r.ci95[0])}–${f1(r.ci95[1])}]`).join('; ') + '.';
-    if (h3a) h3a.update(opt, { replace: true, summary }); else h3a = mc(el.querySelector('#proof-3a')!, opt, { summary });
+    mc(el.querySelector('#proof-3a')!, PC.bootstrapCI(P(), rows.map((r, i) => ({ score: r.score, lo: r.ci95[0], hi: r.ci95[1],
+      tip: `#${i + 1} · ${esc(region(r.window_id))}<br>score ${f1(r.score)} [${f1(r.ci95[0])}–${f1(r.ci95[1])}]<br>rank CI #${r.rank_ci95[0]}–#${r.rank_ci95[1]}` }))), { summary });
   };
   // ---- 3D · tornado and D^2 decomposition (per selected target)
   type TorRow = { feature: string; low: number; high: number; removed: number };
-  let h3d: ReturnType<typeof mountChart> | null = null, h3d2: ReturnType<typeof mountChart> | null = null;
   const draw3d = (t: string) => {
     if (okTor) {
-      const rows = (S.tornado[t] as TorRow[]).slice().reverse(), top = (S.tornado[t] as TorRow[])[0];
+      const rows = S.tornado[t] as TorRow[], top = rows[0];
       const w0 = okBoot ? (S.bootstrap[t] as BootRow[])[0] : null;
       el.querySelector('#proof-3d-line')!.textContent = `${name(t)}${w0 ? `, top window in ${region(w0.window_id)}` : ''}: the score is most sensitive to ${flabel(top.feature)} (−1 IQR: ${top.low > 0 ? '+' : ''}${f1(top.low)}; +1 IQR: ${top.high > 0 ? '+' : ''}${f1(top.high)} points).`;
-      const lbl = { show: true, fontSize: 13, textBorderWidth: 0, textBorderColor: 'transparent', formatter: (p: { value: number }) => `${p.value > 0 ? '+' : ''}${f1(p.value)}` };
-      const opt = {
-        legend: { top: 0 }, grid: { left: 8, right: 40, top: 32, bottom: 32, containLabel: true },
-        xAxis: { type: 'value', name: 'change in score (points)', nameLocation: 'middle', nameGap: 24 },
-        yAxis: { type: 'category', data: rows.map(r => flabel(r.feature)) },
-        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v: number) => `${v > 0 ? '+' : ''}${f1(v)}` },
-        series: [{ name: '−1 IQR', type: 'bar', data: rows.map(r => r.low), barMaxWidth: 12, label: { ...lbl, position: 'left' } },
-          { name: '+1 IQR', type: 'bar', data: rows.map(r => r.high), barMaxWidth: 12, itemStyle: { opacity: 0.75 }, label: { ...lbl, position: 'right' } }],
-      };
       const summary = `${name(t)}, top window: change of the combined score when each feature moves by −1 / +1 IQR: ` + (S.tornado[t] as TorRow[]).map(r => `${flabel(r.feature)} ${f1(r.low)} / ${f1(r.high)}`).join('; ') + '.';
-      if (h3d) h3d.update(opt, { replace: true, summary }); else h3d = mc(el.querySelector('#proof-3d')!, opt, { summary });
+      mc(el.querySelector('#proof-3d')!, PC.tornado(P(), rows.map(r => ({ label: flabel(r.feature), low: r.low, high: r.high }))), { summary });
     }
     if (okDec) {
       const dec = S.decomp[t] as Record<string, Record<string, number>>, ids = Object.keys(dec), feats = Object.keys(dec[ids[0]]);
-      const opt = {
-        legend: { top: 0, type: 'scroll' }, grid: { left: 8, right: 16, top: 36, bottom: 40, containLabel: true },
-        xAxis: { type: 'category', data: ids.map((_, i) => `#${i + 1}`), name: 'window rank (equal weights)', nameLocation: 'middle', nameGap: 28 },
-        yAxis: { type: 'value', max: 1, axisLabel: { formatter: (v: number) => `${Math.round(v * 100)} %` } },
-        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v: number) => `${Math.round(v * 100)} %` },
-        series: feats.map(f => ({ name: flabel(f), type: 'bar', stack: 'd2', data: ids.map(id => dec[id][f]), barMaxWidth: 26 })),
-      };
       const summary = `${name(t)}: share of each feature in the squared distance of the top 20 windows. Top window: ` + feats.map(f => [f, dec[ids[0]][f]] as [string, number]).sort((a, b) => b[1] - a[1]).map(([f, v]) => `${flabel(f)} ${Math.round(v * 100)} %`).join(', ') + '.';
-      if (h3d2) h3d2.update(opt, { replace: true, summary }); else h3d2 = mc(el.querySelector('#proof-3d2')!, opt, { summary });
+      mc(el.querySelector('#proof-3d2')!, PC.decompStack(P(), ids, feats.map(f => ({ key: f, label: flabel(f), vals: ids.map(id => dec[id][f]) }))), { summary });
     }
   };
-
-  draw3a(sel.value); draw3d(sel.value);
   sel.addEventListener('change', () => { draw3a(sel.value); draw3d(sel.value); });
 
   // ---- 1D · controls vs the 14 regions
   if (okCtrl) {
-    const cats = [...all].reverse();
     const groups = [{ name: 'Our 14 regions', get: (t: string) => CT[t].candidates }, ...CR.map(r => ({ name: ctrlName(r), get: (t: string) => CT[t].controls[r.id] as Dist }))];
-    const sym = ['circle', 'rect', 'triangle', 'diamond'], n = groups.length;
-    type Api = { value: (i: number) => number; coord: (v: number[]) => number[]; size: (v: number[]) => number[]; visual: (k: string) => string };
-    const off = (gi: number, api: Api) => (gi - (n - 1) / 2) * api.size([0, 1])[1] * (0.8 / n);
-    const series = groups.flatMap((g, gi) => [
-      { type: 'custom', name: g.name, silent: true, encode: { x: [1, 2], y: 0 }, data: cats.map((t, i) => [i, g.get(t).p50, g.get(t).p90]),
-        renderItem: (_p: unknown, api: Api) => { const a = api.coord([api.value(1), api.value(0)]), b = api.coord([api.value(2), api.value(0)]), dy = off(gi, api);
-          return { type: 'rect', shape: { x: a[0], y: a[1] + dy - 3, width: Math.max(2, b[0] - a[0]), height: 6 }, style: { fill: api.visual('color') } }; } },
-      { type: 'custom', name: g.name, encode: { x: 1, y: 0 }, data: cats.map((t, i) => [i, g.get(t).max, g.get(t).p50, g.get(t).p90]),
-        renderItem: (_p: unknown, api: Api) => { const c = api.coord([api.value(1), api.value(0)]), dy = off(gi, api), r = 4.5, y = c[1] + dy, fill = api.visual('color');
-          const s = sym[gi % sym.length];
-          return s === 'rect' ? { type: 'rect', shape: { x: c[0] - r, y: y - r, width: 2 * r, height: 2 * r }, style: { fill } }
-            : s === 'triangle' ? { type: 'polygon', shape: { points: [[c[0], y - r - 1], [c[0] - r, y + r], [c[0] + r, y + r]] }, style: { fill } }
-            : s === 'diamond' ? { type: 'polygon', shape: { points: [[c[0], y - r - 1], [c[0] + r + 1, y], [c[0], y + r + 1], [c[0] - r - 1, y]] }, style: { fill } }
-            : { type: 'circle', shape: { cx: c[0], cy: y, r }, style: { fill } }; } },
-    ]);
     const summary = `Combined score P50, P90 and maximum per target, our 14 regions against the control tiles. ` + all.map(t => `${name(t)}: `
       + groups.map(g => { const d = g.get(t); return `${g.name} ${f1(d.p50)}/${f1(d.p90)}/${f1(d.max)}`; }).join(', ')).join('; ') + '. ' + controlsLines(CT, CR, moon, name, arcadia).join(' ');
-    mc(el.querySelector('#proof-1d')!, {
-      legend: { top: 0, data: groups.map((g, i) => ({ name: g.name, icon: sym[i % sym.length] })) },
-      grid: { left: 8, right: 16, top: 40, bottom: 32, containLabel: true },
-      xAxis: { type: 'value', min: 0, max: 100, name: 'combined score (bar P50–P90, marker = max)', nameLocation: 'middle', nameGap: 24 },
-      yAxis: { type: 'category', data: cats.map(name) },
-      tooltip: { trigger: 'item', formatter: (p: { seriesName: string; value: number[] }) => p.value.length > 3 ? `${esc(name(cats[p.value[0]]))} · ${esc(p.seriesName)}<br>P50 ${f1(p.value[2])} · P90 ${f1(p.value[3])} · max ${f1(p.value[1])}` : '' },
-      series,
-    }, { summary });
+    charts.push(() => mc(el.querySelector('#proof-1d')!, PC.controlRanges(P(), all.map(name), groups.map(g => ({ name: g.name, get: (i: number) => g.get(all[i]) }))), { summary }));
   }
 
   // ---- 3B · weight stability
   if (okStab) {
-    const cats = [...all].reverse();
-    const p1 = cats.map(t => S.stability[t].p_top1[S.stability[t].top1_equal_weights] ?? 0);
-    const p10 = cats.map(t => S.stability[t].p_top10[S.stability[t].top1_equal_weights] ?? 0);
-    mc(el.querySelector('#proof-3b')!, {
-      legend: { top: 0 },
-      grid: { left: 8, right: 56, top: 32, bottom: 32, containLabel: true },
-      xAxis: { type: 'value', min: 0, max: 1, axisLabel: { formatter: (v: number) => `${Math.round(v * 100)} %` } },
-      yAxis: { type: 'category', data: cats.map(name) },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v: number) => `${Math.round(v * 100)} %` },
-      series: [
-        { name: 'stays #1', type: 'bar', data: p1, barMaxWidth: 12, label: { show: true, position: 'right', fontSize: 13, textBorderWidth: 0, textBorderColor: 'transparent', textShadowBlur: 0, formatter: (p: { value: number }) => `${Math.round(p.value * 100)} %` } },
-        { name: 'stays in the top 10', type: 'bar', data: p10, barMaxWidth: 12, itemStyle: { opacity: 0.75 }, label: { show: true, position: 'right', fontSize: 13, textBorderWidth: 0, textBorderColor: 'transparent', textShadowBlur: 0, formatter: (p: { value: number }) => `${Math.round(p.value * 100)} %` } },
-      ],
-    }, { summary: `Share of random slider weightings in which each target's equal-weight #1 window stays #1 and stays in the top 10: `
-      + all.map(t => `${name(t)} ${Math.round(100 * (S.stability[t].p_top1[S.stability[t].top1_equal_weights] ?? 0))} % and ${Math.round(100 * (S.stability[t].p_top10[S.stability[t].top1_equal_weights] ?? 0))} %`).join('; ') + '.' });
+    const p1 = all.map(t => S.stability[t].p_top1[S.stability[t].top1_equal_weights] ?? 0);
+    const p10 = all.map(t => S.stability[t].p_top10[S.stability[t].top1_equal_weights] ?? 0);
+    charts.push(() => mc(el.querySelector('#proof-3b')!, PC.stabilityBars(P(), all.map(name), p1, p10), { summary: `Share of random slider weightings in which each target's equal-weight #1 window stays #1 and stays in the top 10: `
+      + all.map(t => `${name(t)} ${Math.round(100 * (S.stability[t].p_top1[S.stability[t].top1_equal_weights] ?? 0))} % and ${Math.round(100 * (S.stability[t].p_top10[S.stability[t].top1_equal_weights] ?? 0))} %`).join('; ') + '.' }));
   }
 
   // ---- 1B · null histograms
   if (okNull) {
     const H = S.null.null_hist, bins = H.global.bins, mids = bins.slice(0, -1).map((b, i) => (b + bins[i + 1]) / 2);
-    const share = (c: number[]) => { const t = c.reduce((a, b) => a + b, 0); return c.map(x => x / t); };
     const obs = S.null.observed.median_pct_combined;
-    mc(el.querySelector('#proof-1b')!, {
-      legend: { top: 0 }, grid: { left: 8, right: 16, top: 32, bottom: 40, containLabel: true },
-      xAxis: { type: 'value', min: 0, max: 100, name: 'median percentile of the known sites (combined)', nameLocation: 'middle', nameGap: 26 },
-      yAxis: { type: 'value', axisLabel: { formatter: (v: number) => `${Math.round(v * 100)} %` } },
-      tooltip: { trigger: 'axis', valueFormatter: (v: number) => `${(v * 100).toFixed(1)} %` },
-      series: [
-        { name: 'global null', type: 'line', step: 'middle', symbol: 'none', areaStyle: { opacity: 0.25 }, data: mids.map((x, i) => [x, share(H.global.counts)[i]]) },
-        { name: 'region-matched null', type: 'line', step: 'middle', symbol: 'none', lineStyle: { type: 'dashed' }, data: mids.map((x, i) => [x, share(H.region_matched.counts)[i]]),
-          markLine: { silent: true, symbol: 'none', lineStyle: { type: 'solid', width: 2 }, label: { formatter: `observed ${f1(obs)}` }, data: [{ xAxis: obs }] } },
-      ],
-    }, { summary: `Distribution of the median percentile of ${nSites} random sites under the global null (mean ${f1(S.null.null_summary.global.combined.mean)}) and the region-matched null (mean ${f1(S.null.null_summary.region_matched.combined.mean)}), against the observed ${f1(obs)}. ${nullLine(S.null, nSites, m.regions.length)}` });
+    charts.push(() => mc(el.querySelector('#proof-1b')!, PC.nullHist(P(), mids, H.global.counts, H.region_matched.counts, obs, `observed ${f1(obs)}`),
+      { summary: `Distribution of the median percentile of ${nSites} random sites under the global null (mean ${f1(S.null.null_summary.global.combined.mean)}) and the region-matched null (mean ${f1(S.null.null_summary.region_matched.combined.mean)}), against the observed ${f1(obs)}. ${nullLine(S.null, nSites, m.regions.length)}` }));
   }
 
   // ---- Read more · ROC curves
   if (okRoc) {
-    mc(el.querySelector('#proof-roc')!, {
-      legend: { top: 0, type: 'scroll' }, grid: { left: 8, right: 16, top: 36, bottom: 40, containLabel: true },
-      xAxis: { type: 'value', min: 0, max: 1, name: 'false-positive rate', nameLocation: 'middle', nameGap: 26 },
-      yAxis: { type: 'value', min: 0, max: 1, name: 'true-positive rate' },
-      tooltip: { trigger: 'item', formatter: (p: { seriesName: string }) => `${esc(p.seriesName)}: AUC ${f2(S.roc[all.find(t => name(t) === p.seriesName) ?? all[0]].auc)}` },
-      series: [...all.map((t, i) => ({ name: name(t), type: 'line', symbol: 'none', lineStyle: { type: mars.includes(t) ? 'dashed' : 'solid', width: 1.5 }, data: S.roc[t].fpr.map((x, k) => [x, S.roc[t].tpr[k]]), z: i })),
-        { name: 'no separation', type: 'line', symbol: 'none', lineStyle: { type: 'dotted', width: 1 }, data: [[0, 0], [1, 1]] }],
-    }, { summary: `ROC curves of the combined score per target (Mars dashed). AUC: ${all.map(t => `${name(t)} ${f2(S.roc[t].auc)}`).join(', ')}.` });
+    charts.push(() => mc(el.querySelector('#proof-roc')!, PC.rocCurves(P(), all.map(t => ({ name: name(t), mars: mars.includes(t), auc: S.roc[t].auc, pts: S.roc[t].fpr.map((x, k) => [x, S.roc[t].tpr[k]]) }))),
+      { summary: `ROC curves of the combined score per target (Mars dashed). AUC: ${all.map(t => `${name(t)} ${f2(S.roc[t].auc)}`).join(', ')}.` }));
   }
+
+  const paintAll = () => { charts.forEach(f => f()); draw3a(sel.value); draw3d(sel.value); };
+  paintAll();
+  const themeObs = new MutationObserver(paintAll); themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  onCleanup(() => themeObs.disconnect());
 
   // ---- Read more · known analog table, controls table, sensitivity table
   Promise.all([getJSON<{ rows: Record<string, number | string>[] }>('known_analogs'), getJSON<Record<string, Record<string, { rank: number; n: number }>>>('known_ranks'),
