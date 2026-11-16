@@ -154,7 +154,7 @@ export async function render(el: HTMLElement, m: Manifest, params?: Record<strin
         ['r_k', 'r_k', `Reference value of feature ${tex('k', 'k')} for ${esc(t.name)}: the median over its reference windows`, `Real number, same unit as ${tex('x_k', 'x_k')}`],
         [String.raw`\mathrm{IQR}_k`, 'IQR_k', `Inter-quartile range of feature ${tex('k', 'k')} over all ${nf(n)} Earth windows; the yardstick that makes features comparable`, `Real number greater than 0, same unit as ${tex('x_k', 'x_k')}`],
         ['d_k', 'd_k', `Standardised difference of feature ${tex('k', 'k')} between Earth and target (Table 1)`, `Real number, dimensionless (IQR units); positive when Earth is higher`],
-        ['w_k', 'w_k', `Weight of feature ${tex('k', 'k')}; terrain and illumination weigh the same here, and no weight was fitted`, `Real number, dimensionless, ${tex(String.raw`w_k \ge 0`, 'w_k ≥ 0')}`],
+        ['w_k', 'w_k', `Weight of feature ${tex('k', 'k')}: every feature has weight 1 here (${dims.map(d => `${esc(d)} ${m.dims[d].length} features`).join(', ')}), so the dimensions weigh as their number of features; no weight was fitted`, `Real number, dimensionless, ${tex(String.raw`w_k \ge 0`, 'w_k ≥ 0')}; here ${tex(String.raw`w_k = 1`, 'w_k = 1')}`],
         ['D', 'D', 'Distance between the Earth window and the target: the weighted root mean square of the differences', `Real number, dimensionless, ${tex(String.raw`D \ge 0`, 'D ≥ 0')}${dist === null ? '' : `; here ${dist.toFixed(3)}`}`],
         ['S', 'S', 'Similarity score of the window', `Real number, dimensionless, ${tex(String.raw`0 < S \le 100`, '0 < S ≤ 100')}; 100 means identical${dist === null ? '' : `; here ${score.toFixed(1)}`}`],
       ])}
