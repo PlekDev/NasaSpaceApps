@@ -6,7 +6,7 @@
 import type { Manifest } from '../types';
 import type { Params } from '../lib/routes';
 import { histogram } from '../lib/live';
-import { onCleanup } from '../lib/lifecycle';
+import { currentScope } from '../lib/lifecycle';
 import { quantile, regionSummary, type RegionSummary, shareAtLeast, cumulative, pearson, spearman, quadrants, targetSimilarity, argmax, meanShares, corrWords, f1, f2, nf } from '../lib/statview';
 
 type Dim = 'combined' | 'terrain' | 'illumination';
@@ -76,10 +76,14 @@ const SORTS: Record<string, string> = { p90: '90th percentile', p50: 'median', m
 const table = (head: string[], rows: (string | number)[][]) => `<table class="st-t"><thead><tr>${head.map((h, i) => `<th scope="col"${i ? ' class="n"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => i ? `<td class="n">${c}</td>` : `<th scope="row">${c}</th>`).join('')}</tr>`).join('')}</tbody></table>`;
 
 export async function render(el: HTMLElement, m: Manifest, params: Params): Promise<void> {
+  const scope = currentScope();   // taken before any await: the router opened this scope for this very render
+  let dead = false; scope.add(() => { dead = true; });
   void import('./statistics.css');
   const [{ mountChart }, { getJSON, loadTarget }] = await Promise.all([import('../lib/chart'), import('../data')]);
+  if (dead) return;
   const opt = <T>(f: string) => getJSON<T>(f).catch(() => null as T | null);
   const [matrix, sens, known, boot, decomp, valid] = await Promise.all([opt<Rec>('matrix'), opt<Rec>('sensitivity'), opt<Rec>('known_ranks'), opt<Rec>('stats/bootstrap'), opt<Rec>('stats/decomp'), opt<Rec>('validation')]);
+  if (dead) return;
   void valid;
   const targets = m.targets, regions = m.regions, nR = regions.length;
   const tname = (id: string) => targets.find(t => t.id === id)?.name ?? id;
@@ -149,6 +153,7 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
   let regionsFull: string[] = [];
   const bind = (h: Handle, click?: (p: Rec) => void) => { const i = h.instance; if (!i) return; i.off('click'); if (click) i.on('click', click); };
   const draw = (id: string, option: Rec, summary: string, click?: (p: Rec) => void) => {
+    if (dead) return undefined as never;
     OPT[id] = { option, summary, click };
     const host = $(`#st-${id}-c`);
     if (!H[id]) H[id] = mountChart(host, option, { summary }); else H[id]!.update(option, { replace: true, summary });
@@ -447,7 +452,7 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
     $<HTMLInputElement>('#st-thr').value = String(S.thr); $('#st-thr-v').textContent = String(S.thr);
     $<HTMLSelectElement>('#st-zone').value = String(S.zone); syncTools();
     if (urlToo) history.replaceState(null, '', `#/statistics?target=${S.target}${S.dim !== 'combined' ? `&score=${S.dim}` : ''}${S.zone >= 0 ? `&region=${S.zone}` : ''}`);
-    const tok = S.target; S.w = await load(S.target); if (tok !== S.target) return;
+    const tok = S.target; S.w = await load(S.target); if (tok !== S.target || dead) return;
     paintWindows(S.w); paintStatic();
   }
   const setZone = (z: number) => { S.zone = z; sync(true); };
@@ -464,7 +469,7 @@ export async function render(el: HTMLElement, m: Manifest, params: Params): Prom
   });
   $('#st-d-tools').addEventListener('input', e => { const t = e.target as HTMLInputElement; if ('thr' in t.dataset) setThr(+t.value); });
   $('#st-d-tools').addEventListener('change', e => { const t = e.target as HTMLSelectElement; if ('sort' in t.dataset) { S.sort = t.value as typeof S.sort; if (S.w) paintWindows(S.w); } else if ('zone' in t.dataset) setZone(+t.value); });
-  onCleanup(() => { document.removeEventListener('keydown', onKey); document.documentElement.classList.remove('st-lock'); DLG.h?.dispose(); DLG.h = null; });
+  scope.add(() => { document.removeEventListener('keydown', onKey); document.documentElement.classList.remove('st-lock'); DLG.h?.dispose(); DLG.h = null; });
   el.querySelectorAll<HTMLButtonElement>('#st-cum button').forEach(b => b.addEventListener('click', () => { S.cum = b.dataset.c === '1'; syncTools(); el.querySelectorAll('#st-cum button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); if (S.w) paintWindows(S.w); }));
   void pearson;
   await sync();
