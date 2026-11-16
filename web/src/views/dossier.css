@@ -216,7 +216,7 @@
         figures stacked (never side by side, so nothing can overlap), at most 3 A4 pages, with a running footer and page numbers.
         The sheet keeps only what a field team needs; the equations, their nomenclature and the reading paragraphs stay on screen. */
 @media print {
-  @page { size: A4; margin: 16mm 15mm 18mm;
+  @page { size: A4; margin: 12mm 14mm 14mm;
     @bottom-left { content: "P.E.N. mission dossier"; font: 7.5pt "Barlow", sans-serif; color: #666; }
     @bottom-right { content: "Page " counter(page) " of " counter(pages); font: 7.5pt "Barlow", sans-serif; color: #666; } }
   html:has(.dossier) { color-scheme: light !important; }
@@ -229,7 +229,7 @@
   .dossier *, .dossier *::before, .dossier *::after { transition: none !important; animation: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .dossier [data-rv], .dossier [data-rv] * { opacity: 1 !important; transform: none !important; clip-path: none !important; }
   .dossier .dossier-plot-line { stroke-dashoffset: 0 !important; }
-  .dossier-printonly, .dossier-guide, .dossier-eq, .dossier-therm, .dossier-when tbody tr:nth-child(n+5) { display: none !important; }
+  .dossier-printonly, .dossier-guide, .dossier-therm, .dossier-when tbody tr:nth-child(n+5) { display: none !important; }
 
   /* title block */
   .dossier-doc { margin-bottom: 7pt; } .dossier-doc > div { padding: 3pt 7pt; } .dossier-doc dt { font-size: 6.5pt; } .dossier-doc dd { font-size: 8pt; margin: 1pt 0 0; }
@@ -240,7 +240,7 @@
   .dossier-head p.dossier-abstract { font-size: 9.5pt; line-height: 1.5; margin-top: 8pt; }
 
   /* sections and text */
-  .dossier-sec { padding: 7pt 0 3pt; }
+  .dossier-sec { padding: 6pt 0 2pt; }
   .dossier.page-in h2 { font-size: 13pt; margin-bottom: 5pt; padding-top: 0; break-after: avoid; }
   .dossier.page-in h2::before { display: none; }
   .dossier-n { font-size: 9pt; }
@@ -262,11 +262,12 @@
   .dossier-facts > div { padding: 5pt 10pt; } .dossier-facts dd { font-size: 15pt; margin-top: 2pt; } .dossier-facts dd small { font-size: 8pt; } .dossier-mini { margin-top: 4pt; height: 2.5pt; }
 
   /* equations: one per line, centred, numbered on the right; the nomenclature follows */
-  .dossier-eq { margin: 8pt 0; padding: 8pt 12pt; }
-  .dossier-eq > div { padding: 2pt 0; overflow: visible; }
-  .dossier-eq > div:not(.dossier-sym) .dossier-tex { font-size: 11pt; }
-  .dossier-eq figcaption { margin-top: 5pt; padding-top: 5pt; font-size: 8pt; }
-  .dossier-eq .dossier-sym { margin-top: 8pt; }
+  /* equations without their nomenclature: Eq. 1-3 on one row, Eq. 4 on its own; the symbols are explained on the page */
+  .dossier .dossier-eq { display: grid !important; grid-template-columns: 1fr 1fr 1.6fr; align-items: center; gap: 0 12pt; margin: 6pt 0; padding: 5pt 10pt; break-inside: avoid; }
+  .dossier .dossier-eq.dossier-guide { grid-template-columns: 1fr; }
+  .dossier-eq > div { padding: 0; overflow: visible; }
+  .dossier-eq > div:not(.dossier-sym) .dossier-tex { font-size: 9.5pt; }
+  .dossier .dossier-eq .dossier-sym { display: none !important; }
   .dossier-sym table { font-size: 8.5pt; } .dossier-sym th, .dossier-sym td { padding: 3pt 6pt; line-height: 1.4; }
   .dossier-sym thead th { font-size: 7pt; } .dossier-sym tbody th { width: 46pt; } .dossier-sym tbody th .dossier-tex { font-size: 10pt; }
 
@@ -283,7 +284,7 @@
   .dossier-figs { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8pt; max-width: none; margin: 4pt 0 0; }
   .dossier-figs.one { grid-template-columns: 1fr; max-width: none; margin-top: 10pt; }
   .dossier-figs.one .dossier-frame { border: 0; background: none; text-align: center; }
-  .dossier-figs.one .dossier-frame img { display: inline-block; width: auto; max-width: 100%; max-height: 54mm; }
+  .dossier-figs.one .dossier-frame img { display: inline-block; width: auto; max-width: 100%; max-height: 56mm; }
   .dossier-split { display: block; }
 
   /* traverse and temperature */
