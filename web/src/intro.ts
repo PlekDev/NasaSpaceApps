@@ -6,7 +6,8 @@ import { icon } from './icons';
 import { loadHome } from './lib/homeload';
 import './views/home.css';
 
-const FALLBACK_IMG = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/2004-08/GoogleMapsCompatible_Level8/1/0/0.jpeg';
+const FALLBACK_IMG =
+	"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/2004-08/GoogleMapsCompatible_Level8/1/0/0.jpeg";
 
 /** Home: the judge's path, in Explore's instrument skin. A glass panel on the left asks the question in plain words and says what P.E.N.
  *  does (counts from the manifest); the live globe turns and flies to NASA's Pu'u Hiwahine test site on Mauna Kea; then three Explore-style
@@ -37,28 +38,53 @@ export function mountHome(root: HTMLElement, o: { m: Manifest; view: View; targe
   const padding = wide ? { left: Math.min(520, Math.round(innerWidth * .34)), top: 0, right: innerWidth > 1180 ? 400 : 0, bottom: 0 } : { bottom: Math.round(innerHeight * .5), top: 52, left: 0, right: 0 };
   let raf = 0, last = 0, done = false, landed = false, flying = false, flyTimer = 0, landTimer = 0, siteName = "Pu'u Hiwahine";
 
-  if (!dead) {
-    view.jumpTo({ center: [-100, 18], zoom: wide ? 2.3 : 1.55, padding });
-    if (!reduced) {                                    // slow spin, ~5° per second, paused while the tab is hidden
-      const spin = (t: number) => { if (done || landed || flying) return; if (last && !document.hidden) { const c = view.getCenter(); view.jumpTo({ center: [c[0] + (t - last) * 0.005, c[1]] }); } last = t; raf = requestAnimationFrame(spin); };
-      raf = requestAnimationFrame(spin);
-    }
-  }
+	if (!dead) {
+		view.jumpTo({ center: [-100, 18], zoom: wide ? 2.3 : 1.55, padding });
+		if (!reduced) {
+			// slow spin, ~5° per second, paused while the tab is hidden
+			const spin = (t: number) => {
+				if (done || landed || flying) return;
+				if (last && !document.hidden) {
+					const c = view.getCenter();
+					view.jumpTo({ center: [c[0] + (t - last) * 0.005, c[1]] });
+				}
+				last = t;
+				raf = requestAnimationFrame(spin);
+			};
+			raf = requestAnimationFrame(spin);
+		}
+	}
 
-  const land = () => {
-    if (landed || done) return; landed = true; cancelAnimationFrame(raf); clearTimeout(flyTimer); clearTimeout(landTimer);
-    el.classList.add('landed'); document.documentElement.dataset.homeLanded = ''; $q('#home-skip').hidden = true;
-    for (const id of ['#home-hook', '#home-stats', '#home-try', '#home-site']) { const n = $q<HTMLElement>(id); if (n.innerHTML) n.hidden = false; }
-  };
-  const skip = () => {
-    if (landed) return; clearTimeout(flyTimer); clearTimeout(landTimer);
-    const s = facts?.site; if (!dead && s) view.jumpTo({ center: [s.lon, s.lat], zoom: 7.4, padding });
-    land();
-  };
-  $q('#home-skip').addEventListener('click', skip);
-  const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') skip(); };
-  document.addEventListener('keydown', onKey);
-  $q('#go').addEventListener('click', () => { location.hash = '#/explore'; });
+	const land = () => {
+		if (landed || done) return;
+		landed = true;
+		cancelAnimationFrame(raf);
+		clearTimeout(flyTimer);
+		clearTimeout(landTimer);
+		el.classList.add("landed");
+		document.documentElement.dataset.homeLanded = "";
+		$q("#home-skip").hidden = true;
+		for (const id of ["#home-hook", "#home-stats", "#home-try", "#home-site"]) {
+			const n = $q<HTMLElement>(id);
+			if (n.innerHTML) n.hidden = false;
+		}
+	};
+	const skip = () => {
+		if (landed) return;
+		clearTimeout(flyTimer);
+		clearTimeout(landTimer);
+		const s = facts?.site;
+		if (!dead && s) view.jumpTo({ center: [s.lon, s.lat], zoom: 7.4, padding });
+		land();
+	};
+	$q("#home-skip").addEventListener("click", skip);
+	const onKey = (e: KeyboardEvent) => {
+		if (e.key === "Escape") skip();
+	};
+	document.addEventListener("keydown", onKey);
+	$q("#go").addEventListener("click", () => {
+		location.hash = "#/explore";
+	});
 
   let facts: Awaited<ReturnType<typeof loadHome>>['facts'] = null;
   loadHome(m).then(d => {
@@ -96,5 +122,22 @@ export function mountHome(root: HTMLElement, o: { m: Manifest; view: View; targe
     }
   }).catch(() => land());
 
-  return { finish() { if (done) return; done = true; document.removeEventListener('keydown', onKey); cancelAnimationFrame(raf); clearTimeout(flyTimer); clearTimeout(landTimer); if (!dead) view.jumpTo({ padding: { top: 0, left: 0, right: 0, bottom: 0 } });   /* give Explore its camera back without Home's left padding */ el.classList.add('leaving'); delete document.documentElement.dataset.intro; delete document.documentElement.dataset.homeLanded; setTimeout(() => el.remove(), 260); } };
+	return {
+		finish() {
+			if (done) return;
+			done = true;
+			document.removeEventListener("keydown", onKey);
+			cancelAnimationFrame(raf);
+			clearTimeout(flyTimer);
+			clearTimeout(landTimer);
+			if (!dead)
+				view.jumpTo({ padding: { top: 0, left: 0, right: 0, bottom: 0 } });
+			/* give Explore its camera back without Home's left padding */ el.classList.add(
+				"leaving",
+			);
+			delete document.documentElement.dataset.intro;
+			delete document.documentElement.dataset.homeLanded;
+			setTimeout(() => el.remove(), 260);
+		},
+	};
 }
