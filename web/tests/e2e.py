@@ -33,7 +33,9 @@ with sync_playwright() as p:
     above = lambda: pg.evaluate("Number(document.querySelector('[data-card=dist] [data-n]').dataset.n)")
     n60 = above(); pg.fill("#min", "99"); pg.dispatch_event("#min", "input"); pg.wait_for_timeout(1000)
     check("min score filter shrinks the count of qualifying windows", above() < n60, f"{n60} -> {above()}")
-    pg.fill("#min", "60"); pg.dispatch_event("#min", "input"); pg.fill("#w-illumination", "0"); pg.fill("#w-terrain", "0"); pg.dispatch_event("#w-terrain", "input"); pg.dispatch_event("#w-illumination", "input"); pg.wait_for_timeout(800)
+    pg.fill("#min", "60"); pg.dispatch_event("#min", "input"); pg.fill("#w-illumination", "0"); pg.fill("#w-terrain", "0"); pg.dispatch_event("#w-terrain", "input"); pg.dispatch_event("#w-illumination", "input")
+    try: pg.wait_for_function("() => document.querySelector('#ex-panel')?.innerText.includes('All weights are 0')", timeout=10000)   # recompute time varies on a CI runner
+    except Exception: pass
     check("all weights 0 -> empty state", "All weights are 0" in pg.inner_text("#ex-panel"))
     pg.click("#ex-reset"); pg.wait_for_selector('[data-card="best"]', timeout=10000); pg.wait_for_timeout(500)
     check("Reset weights restores equal weights", pg.inner_text("#w-terrain-o") == "1.0" and "Equal weights" in pg.inner_text("#ex-live"))
