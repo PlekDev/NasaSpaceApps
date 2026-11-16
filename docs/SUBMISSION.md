@@ -72,8 +72,11 @@ on Earth that light happens.
    - Mission view: plans a traverse on the target, casts the real shadows on both terrains and scans a year of Sun
      positions on Earth for the same light along the route. Example: fidelity 80 % for the Malapert traverse with the
      lunar Sun from the east (29–30 March 2027, about half an hour after sunrise), exported as a calendar file (.ics).
-   - Limits view: for every target, a yes / partly / no table of terrain, light, temperature, minerals, gravity and air
-     for its best Earth regions, so the analogy's limits are stated, not hidden.
+   - Where the analogy breaks: every analog dossier lists what Earth cannot reproduce (cold, ice, gravity, vacuum, Sun
+     height, regolith) and compares the window's MODIS surface temperature with Diviner or the Mars Climate Database.
+   - Hands-on method: the Method page runs the exact cast-shadow algorithm live on the real terrain of the headline Moon
+     site and its best Earth window as the Sun moves, and lets the reader move two feature differences along
+     S = 100·e^(−D). The When page draws the day-long Sun path for the Moon site and two Earth regions, month by month.
    - Scale: 52 s per one-degree tile on one core, about 230 core-hours for all land: under 4 hours on 64 cores (3.6 h).
 4. *Benefits:* regional screeners say which region to look at; P.E.N. picks the exact 6 km site and the best weeks.
    Choose and schedule analog field tests for rover vision, EVA lighting and landing-hazard rehearsal.
@@ -144,7 +147,7 @@ Figures and screenshots are rendered from the data and the web app: no AI imager
    Moon Base sites, top 5 % for all 6.
 4. **Validation**: fig7 and four numbers: ρ = 0.92–0.99; 2.0–3.2 pp mean error; 98.0–99.7 % agreement with NASA's
    permanent-shadow map (only next to the ρ, see the Q&A); 84th percentile for classic analog sites in illumination.
-5. **Where the analogy breaks**: the Limits view; 95–132 K warmer; 88–100 % colder than Earth's record low; Mars
+5. **Where the analogy breaks**: the dossier's limits section; 95–132 K warmer; 88–100 % colder than Earth's record low; Mars
    15–38 K colder than University Valley; the Mars AUC 0.33–0.50, said openly.
 6. **Where and when to rehearse**: the Mission view (3D twin and rehearsal panel); fidelity 80 % on 29–30 March 2027;
    `.ics`; about 1 h/day at Mauna Kea, 5.6–6.7 h/day at polar sites; EONET check.
