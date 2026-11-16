@@ -1,3 +1,5 @@
+<p align="center"><img src="web/public/brand/pen-lockup.svg" alt="P.E.N. logo: a globe with a gold marker next to the letters PEN" width="420"></p>
+
 # P.E.N. 🌗
 ### Planetary Environmental Navigator
 
