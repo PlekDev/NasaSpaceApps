@@ -27,7 +27,7 @@ html[data-nowebgl] #map { display: grid; place-items: center; }
 
 /* ---- top bar */
 .bar { position: fixed; z-index: 40; top: 0; left: 0; right: 0; height: var(--bar-h); display: flex; align-items: stretch; gap: 0; padding: 0 var(--gutter);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--space) 88%, transparent), color-mix(in srgb, var(--space) 60%, transparent)); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); border-bottom: 1px solid var(--line); }
+  background: linear-gradient(180deg, color-mix(in srgb, var(--space) 94%, transparent), color-mix(in srgb, var(--space) 80%, transparent)); border-bottom: 1px solid var(--line); }
 .brand { display: flex; gap: var(--s-3); text-decoration: none; color: var(--text-1); min-height: 44px; align-items: center; }
 .brand b { font: 700 24px/1 var(--font-display); letter-spacing: .02em; }
 .brand span { color: var(--text-3); font-size: 13px; }
@@ -43,7 +43,7 @@ html[data-nowebgl] #map { display: grid; place-items: center; }
 [data-theme="dark"] .only-light, [data-theme="light"] .only-dark { display: none; }
 
 /* ---- panels */
-.panel { position: relative; background: var(--glass); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); border: 1px solid var(--line); border-radius: var(--r-3); box-shadow: var(--shadow); }
+.panel { position: relative; background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--line); border-radius: var(--r-3); box-shadow: var(--shadow); }
 .explore { position: fixed; inset: 0; z-index: 10; pointer-events: none; transition: opacity var(--dur) var(--ease); }
 .explore.off { opacity: 0; }
 .dock { display: contents; }
@@ -135,8 +135,8 @@ input[type=range]:focus-visible { outline-offset: -4px; }
 .more:hover { background: var(--raise); }
 
 /* popovers / sheets */
-.scrim { position: fixed; inset: 0; z-index: 49; background: var(--scrim); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-.pop { position: fixed; z-index: 50; background: var(--glass-solid); backdrop-filter: blur(24px) saturate(1.5); -webkit-backdrop-filter: blur(24px) saturate(1.5); border: 1px solid var(--line-strong); border-radius: var(--r-3); box-shadow: var(--shadow); display: flex; flex-direction: column; overflow: hidden; max-width: calc(100vw - 2 * var(--gutter)); }
+.scrim { position: fixed; inset: 0; z-index: 49; background: var(--scrim); }
+.pop { position: fixed; z-index: 50; background: var(--glass-solid); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line-strong); border-radius: var(--r-3); box-shadow: var(--shadow); display: flex; flex-direction: column; overflow: hidden; max-width: calc(100vw - 2 * var(--gutter)); }
 .pop-h { display: flex; align-items: center; justify-content: space-between; padding: var(--s-3) var(--s-3) var(--s-2) var(--s-4); }
 .pop-h h2, .dialog h2 { font-size: 15px; font-weight: 600; }
 .opts { overflow-y: auto; padding: 0 var(--s-2) var(--s-2); }
@@ -598,7 +598,7 @@ input[type=range]::-moz-range-thumb { width: 12px; height: 12px; border-radius: 
   .nav { align-self: auto; margin: 0; }
   .nav a { height: 44px; border-right: 0; border-bottom: 1px solid var(--line); font-size: 16px; }
   .nav a[aria-current="page"] { box-shadow: inset 2px 0 0 var(--accent); padding-left: calc(var(--s-4) - 2px); }
-  .dock { background: var(--glass-solid); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); }
+  .dock { background: var(--glass-solid); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
   .grab { background: transparent; }
   .dock .panel::after { display: none; }
   .stack { padding: 0; }
@@ -613,13 +613,13 @@ input[type=range]::-moz-range-thumb { width: 12px; height: 12px; border-radius: 
 .page-in h1 { padding-bottom: var(--s-3); border-bottom: 1px solid var(--line); max-width: none; }
 .lead { color: var(--text-2); }
 /* cards: glass with inner registration marks (::before; method steps keep their ::after arrow) */
-.proof-card, .limits-card, .method-step, .plight-facts > div, .callout, .method-formulas figure { position: relative; border-color: var(--line); }
-.proof-card::before, .limits-card::before, .method-step::before, .plight-facts > div::before, .callout::before, .method-formulas figure::before { content: ""; position: absolute; inset: 3px; pointer-events: none; opacity: .6; --m: var(--mark);
+.proof-card, .method-step, .plight-facts > div, .callout, .method-formulas figure { position: relative; border-color: var(--line); }
+.proof-card::before, .method-step::before, .plight-facts > div::before, .callout::before, .method-formulas figure::before { content: ""; position: absolute; inset: 3px; pointer-events: none; opacity: .6; --m: var(--mark);
   background: linear-gradient(var(--m), var(--m)) 0 0 / 10px 1px no-repeat, linear-gradient(var(--m), var(--m)) 0 0 / 1px 10px no-repeat, linear-gradient(var(--m), var(--m)) 100% 0 / 10px 1px no-repeat, linear-gradient(var(--m), var(--m)) 100% 0 / 1px 10px no-repeat,
     linear-gradient(var(--m), var(--m)) 0 100% / 10px 1px no-repeat, linear-gradient(var(--m), var(--m)) 0 100% / 1px 10px no-repeat, linear-gradient(var(--m), var(--m)) 100% 100% / 10px 1px no-repeat, linear-gradient(var(--m), var(--m)) 100% 100% / 1px 10px no-repeat; }
 .proof-card:hover, .proof-card:focus-visible { border-color: var(--accent); transform: translateY(-1px); }
 .proof-card { transition: border-color 160ms, transform 200ms var(--ease); }
-.proof-num, .limits-card > b, .method-n { font-family: var(--font-display); }
+.proof-num, .method-n { font-family: var(--font-display); }
 .proof-num { font-size: 36px; letter-spacing: 0; }
 /* tables: hairline rows, uppercase condensed heads, glass frame */
 .tbl { background: var(--glass); border-color: var(--line); }
@@ -627,4 +627,4 @@ input[type=range]::-moz-range-thumb { width: 12px; height: 12px; border-radius: 
 .tbl tbody tr:hover td, .tbl tbody tr:hover th { background: var(--raise); }
 .tbl th, .tbl td { padding: 9px var(--s-4); }
 .fig-frame { background: var(--glass-solid); border-color: var(--line); }
-@media print { .page { background: #fff !important; } .page-in h1 { border-bottom-color: #ccc; } .vsec > h2:first-child::before, .proof-card::before, .limits-card::before, .method-step::before, .callout::before { display: none; } }
+@media print { .page { background: #fff !important; } .page-in h1 { border-bottom-color: #ccc; } .vsec > h2:first-child::before, .proof-card::before, .method-step::before, .callout::before { display: none; } }

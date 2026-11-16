@@ -319,6 +319,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     }
     // a camera move made before the globe projection is applied is lost: wait for the style
     void view.loaded.then(() => {
+      if (S.zone != null) return;   // a zone was opened while the globe was still loading: do not pull the camera back
       if (animate) view.fly(c[0], c[1], zoomForGlobe(px), p); else view.jumpTo({ center: c, zoom: zoomForGlobe(px), padding: p });
       lastPad = JSON.stringify(p);
     });
@@ -337,12 +338,14 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     if (pendingRegion) { const i = m.regions.findIndex(r => r.id === pendingRegion); pendingRegion = null; if (i >= 0) goZone(i); }
   }
   const sched = (fit = false) => { cancelAnimationFrame(pending); pending = requestAnimationFrame(() => recompute(fit)); };
-  function goZone(z: number, w: number | null = null) { dd = null; store.set({ zone: z, selected: w }); refresh(true); flyZone(z); if (isPhone()) { setSnap(1); dock.scrollTop = 0; } }
+  function goZone(z: number, w: number | null = null) { loadDet(); dd = null; store.set({ zone: z, selected: w }); refresh(true); flyZone(z); if (isPhone()) { setSnap(1); dock.scrollTop = 0; } }
   function goOverview() { dd = null; store.set({ zone: null, selected: null }); refresh(true); overview(true); }
-  const loadDet = () => { det = null; const id = S.target; loadDetail(id).then(d => { if (S.target !== id) return; det = { i: d.i, j: d.j }; if (S.zone != null) renderPanel(false); }).catch(() => {}); };
+  const idle = (f: () => void) => setTimeout(() => ('requestIdleCallback' in window ? (window as unknown as { requestIdleCallback(f: () => void, o: { timeout: number }): void }).requestIdleCallback(f, { timeout: 4000 }) : f()), 4000);
+  let detFor = '';
+  const loadDet = () => { if (detFor === S.target) return; detFor = S.target; det = null; const id = S.target; loadDetail(id).then(d => { if (S.target !== id) return; det = { i: d.i, j: d.j }; if (S.zone != null) renderPanel(false); }).catch(() => {}); };
   async function switchTarget() {
     const id = S.target; store.set({ selected: null, hover: null }); dd = null; data = await loadTarget(id); if (S.target !== id) return;
-    loadDet(); recompute(true);
+    idle(loadDet); recompute(true);
   }
   for (const d of dims) bindSlider(`w-${d}`, v => store.set({ weights: { ...S.weights, [d]: v } }));
   bindSlider('min', v => store.set({ minScore: v }));
@@ -364,7 +367,6 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     const c = CARD[id](); if (!c) return; openCard = id; focusFrom = from;
     modalEl.innerHTML = `<div class="ex-m-in"><div class="ex-m-head"><div><span class="ex-cap" id="ex-m-title">${c.cap}</span>${c.num}<p>${c.txt}</p></div><button type="button" class="ex-x" data-close aria-label="Close">${icon.close}</button></div><div class="ex-detail">${DETAIL[id]()}</div></div>`;
     focusEl.hidden = false; document.body.classList.add('is-focus'); tween(modalEl); drawSc(modalEl);
-    requestAnimationFrame(() => focusEl.classList.add('on'));
     if (!reduced()) {
       const a = from.getBoundingClientRect(), b = modalEl.getBoundingClientRect(); modalEl.classList.add('is-flip');
       modalEl.animate([{ transform: `translate(${a.left - b.left}px,${a.top - b.top}px) scale(${a.width / b.width},${a.height / b.height})`, transformOrigin: '0 0', opacity: .4 }, { transform: 'none', transformOrigin: '0 0', opacity: 1 }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }).onfinish = () => modalEl.classList.remove('is-flip');
@@ -412,8 +414,9 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   ]).then(([d, ks, n, ka, fh, cr]) => {
     data = d; known0 = ks; nul = n; far = fh; credits = cr;
     const lunar = new Set(m.targets.filter(t => t.body === 'moon').map(t => t.id)); nMoonTests = ka.rows.filter(r => lunar.has(r.reference)).length;
-    loadDet(); recompute(); requestAnimationFrame(() => setSnap(snap));
-    for (const t of m.targets) if (t.id !== S.target) loadTarget(t.id).then(x => { bestOf.set(t.id, baseBest(x)); renderLeft(); }).catch(() => {});
+    recompute(); requestAnimationFrame(() => setSnap(snap)); idle(loadDet);
+    // the other targets only feed the target menu's scores: load them after the first map tiles
+    idle(() => { for (const t of m.targets) if (t.id !== S.target) loadTarget(t.id).then(x => { bestOf.set(t.id, baseBest(x)); if (dd === 't') renderLeft(); }).catch(() => {}); });
   });
   return { store, view, ready,
     show(on: boolean) { $('#explore', root).classList.toggle('off', !on); ($('#explore', root) as HTMLElement).inert = !on; const cr = document.getElementById('crumbs'); if (cr) cr.hidden = !on; if (on) setSnap(snap); },

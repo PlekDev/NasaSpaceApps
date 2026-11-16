@@ -76,7 +76,7 @@ export async function render(el: HTMLElement, m: Manifest, _params?: Record<stri
         <div class="tour-ticks tnum">${[0, 100, 200, 300].map(v => `<span style="left:${K(v)}">${v} K</span>`).join('')}</div></div>
         <ul class="tour-fid"><li class="ok">Terrain</li><li class="ok">Low-Sun light</li><li class="no">Temperature</li><li class="no">Gravity</li><li class="no">Vacuum</li><li class="no">Radiation</li></ul>
         <p class="tour-cap">Mean temperature: Moon, LRO Diviner (annual mean, 2 cm below the surface); Mars, Mars Climate Database (model); Earth, NASA POWER skin temperature.</p></div>`,
-      cta: ['See the limits', '#/limits'],
+      cta: ['Open the three proofs', '#/proof'],
     });
   }
 

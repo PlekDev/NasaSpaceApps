@@ -1,11 +1,11 @@
 // AI-assisted (Claude Code); reviewed by the author.
 /** Route table and hash parsing. Pure (no DOM, no imports) so Node tests can load it directly.
  *
- *  Hash routes:  #/  #/explore  #/proof  #/mission  #/when  #/limits  #/method  #/dossier  #/tour
- *  Aliases (replaceState, query kept):  #/validation -> #/proof,  #/time -> #/when
+ *  Hash routes:  #/  #/explore  #/proof  #/mission  #/when  #/method  #/dossier  #/tour
+ *  Aliases (replaceState, query kept):  #/validation -> #/proof,  #/limits -> #/proof (the view was removed),  #/time -> #/when
  *  Query strings live inside the hash:  #/dossier?target=moon_malapert&window=earth_hawaii_mauna_kea_700_1900&route=...
  *  Unknown paths render Home (and the URL is replaced by #/). */
-export type RouteId = 'home' | 'explore' | 'proof' | 'mission' | 'when' | 'limits' | 'method' | 'dossier' | 'tour';
+export type RouteId = 'home' | 'explore' | 'proof' | 'mission' | 'when' | 'method' | 'dossier' | 'tour';
 export type Params = Record<string, string>;
 export interface RouteDef {
   id: RouteId; path: string; title: string;
@@ -18,12 +18,11 @@ export const ROUTES: RouteDef[] = [
   { id: 'proof', path: 'proof', title: 'Proof', nav: 'primary', stage: false },
   { id: 'mission', path: 'mission', title: 'Mission', nav: 'primary', stage: false },
   { id: 'when', path: 'when', title: 'When', nav: 'primary', stage: false },
-  { id: 'limits', path: 'limits', title: 'Limits', nav: 'primary', stage: false },
   { id: 'method', path: 'method', title: 'Method', nav: 'primary', stage: false },
   { id: 'tour', path: 'tour', title: 'Tour', nav: 'secondary', stage: false },
   { id: 'dossier', path: 'dossier', title: 'Dossier', nav: null, stage: false },
 ];
-export const REDIRECTS: Record<string, string> = { validation: 'proof', time: 'when' };
+export const REDIRECTS: Record<string, string> = { validation: 'proof', limits: 'proof', time: 'when' };
 
 export interface Parsed {
   id: RouteId; def: RouteDef; path: string; params: Params;

@@ -18,7 +18,7 @@
 :root, [data-theme="dark"] {
   color-scheme: dark;
   --bg: #0b0f17; --space: #05070b;
-  --glass: linear-gradient(155deg, rgba(38, 60, 88, .40), rgba(8, 14, 24, .46) 62%); --panel: rgba(10, 18, 30, .6); --panel-solid: #0e1722; --glass-solid: rgba(12, 20, 32, .80);
+  --glass: linear-gradient(155deg, rgba(38, 60, 88, .40), rgba(8, 14, 24, .46) 62%); --glass-card: linear-gradient(155deg, rgba(34, 54, 80, .70), rgba(8, 14, 24, .78) 62%); --panel: rgba(10, 18, 30, .6); --panel-solid: #0e1722; --glass-solid: rgba(12, 20, 32, .80);
   --raise: rgba(148, 188, 227, .06); --raise-2: rgba(148, 188, 227, .12);
   --text-1: #eef2f6; --text-2: #b6c2cf; --text-3: #8a99ab;
   --line: rgba(170, 200, 230, .16); --line-strong: rgba(170, 200, 230, .34);
@@ -34,7 +34,7 @@
 [data-theme="light"] {
   color-scheme: light;
   --bg: #f2f2f3; --space: #e4e7ea;
-  --glass: linear-gradient(155deg, rgba(255, 255, 255, .62), rgba(232, 237, 243, .66) 62%); --panel: rgba(244, 246, 248, .72); --panel-solid: #f5f6f7; --glass-solid: rgba(245, 246, 248, .9);
+  --glass: linear-gradient(155deg, rgba(255, 255, 255, .62), rgba(232, 237, 243, .66) 62%); --glass-card: linear-gradient(155deg, rgba(255, 255, 255, .84), rgba(236, 240, 245, .86) 62%); --panel: rgba(244, 246, 248, .72); --panel-solid: #f5f6f7; --glass-solid: rgba(245, 246, 248, .9);
   --raise: rgba(29, 31, 32, .05); --raise-2: rgba(29, 31, 32, .09);
   --text-1: #1d1f20; --text-2: #424244; --text-3: #5b5b5e;
   --line: rgba(29, 31, 32, .16); --line-strong: rgba(29, 31, 32, .38);
