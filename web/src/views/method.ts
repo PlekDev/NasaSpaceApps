@@ -3,6 +3,7 @@
  *  MathML below is shown first and stays if KaTeX cannot load.
  *  AI-assisted (Claude, Anthropic); reviewed by the team. */
 import './method.css';
+import './stage.css';
 import { md } from '../markdown';
 import { getText } from '../data';
 import { esc } from '../format';
@@ -53,19 +54,30 @@ const SCORE = `<math display="block" aria-label="d sub k equals x sub k minus r 
 export async function renderMethod(el: HTMLElement, m?: Manifest) {
   const nFeat = m ? Object.values(m.dims).reduce((a, f) => a + f.length, 0) : null;
   const dims = m ? Object.entries(m.dims).map(([d, f]) => `${f.length} for ${d === 'illumination' ? 'light' : d}`).join(' and ') : '';
-  const flow = STEPS.map(([t, a, b], i) => `<li class="method-step"><span class="method-n" aria-hidden="true">${i + 1}</span><b>${t}</b><p>${a}</p><small>${b}</small></li>`).join('');
+  const flow = STEPS.map(([t, a, b], i) => `<li class="method-step" style="--i:${i}"><span class="method-n" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span><b>${t}</b><p>${a}</p><small>${b}</small></li>`).join('');
+  // three Explore-style cards from the manifest: how many windows, features and targets (nothing typed)
+  const moon = m ? m.targets.filter(t => t.body === 'moon').length : 0, mars = m ? m.targets.filter(t => t.body === 'mars').length : 0;
+  const card = (i: number, cap: string, num: string, unit: string, txt: string) =>
+    `<div class="ex-card ex-glass" style="--i:${i}"><span class="ex-cap">${esc(cap)}</span><span class="ex-num">${num}<small>${esc(unit)}</small></span><span class="ex-txt">${txt}</span></div>`;
+  const kpis = m ? [
+    card(0, 'Compared', m.windows_per_target.toLocaleString('en-US'), 'Earth windows', `Each ${m.window_km} km wide, in ${m.regions.length} Earth regions, scored against every target.`),
+    nFeat ? card(1, 'Measured', String(nFeat), 'features', `${esc(dims)}. Terrain and light stay separate dimensions.`) : '',
+    card(2, 'Targets', String(moon + mars), 'sites', `${moon} Moon Base sites and ${mars} Mars sites. No labels are used to fit anything.`),
+  ].join('') : '';
   const rows = DATA.map(([n, u, who, use]) => `<tr><th scope="row"><a href="${u}" target="_blank" rel="noopener">${esc(n)}</a></th><td>${esc(who)}</td><td>${esc(use)}</td></tr>`).join('');
-  el.innerHTML = `<div class="page-in method">
+  el.innerHTML = `<div class="page-in method stage">
+    <p class="ex-cap stage-kicker">Method · how a score is made</p>
     <h1>Method &amp; data</h1>
     <p class="method-lede">P.E.N. compares every ${m ? `${m.window_km} km ` : ''}window of Earth with a target on the Moon or Mars${nFeat ? `, using ${nFeat} features (${dims})` : ''}. Nothing is learned from labels: the known analog sites are only used afterwards, to test the result.</p>
-    <section aria-labelledby="method-h-flow"><h2 id="method-h-flow">How a score is made</h2><ol class="method-flow">${flow}</ol></section>
-    <section aria-labelledby="method-h-f"><h2 id="method-h-f">The two formulas</h2>
+    ${kpis ? `<div class="stage-kpis method-kpis">${kpis}</div>` : ''}
+    <section aria-labelledby="method-h-flow"><h2 id="method-h-flow"><span class="ex-n">01</span>How a score is made</h2><ol class="method-flow">${flow}</ol></section>
+    <section aria-labelledby="method-h-f"><h2 id="method-h-f"><span class="ex-n">02</span>The two formulas</h2>
       <div class="method-formulas">
-        <figure><div class="method-math" data-tex="shadow">${SHADOW}</div><figcaption><b>Shadow of a low Sun.</b> With the Sun at height θ on the left of a row of heights <i>z</i> spaced Δx apart, one running maximum per row tells exactly which pixels are in shadow.</figcaption></figure>
-        <figure><div class="method-math" data-tex="score">${SCORE}</div><figcaption><b>Similarity score.</b> <i>x</i> is the Earth window, <i>r</i> the target, and IQR the spread of that feature over all Earth windows. S = 100 means identical; S ≈ 37 means one spread apart on average.</figcaption></figure>
+        <figure class="panel"><div class="method-math" data-tex="shadow">${SHADOW}</div><figcaption><b>Shadow of a low Sun.</b> With the Sun at height θ on the left of a row of heights <i>z</i> spaced Δx apart, one running maximum per row tells exactly which pixels are in shadow.</figcaption></figure>
+        <figure class="panel"><div class="method-math" data-tex="score">${SCORE}</div><figcaption><b>Similarity score.</b> <i>x</i> is the Earth window, <i>r</i> the target, and IQR the spread of that feature over all Earth windows. S = 100 means identical; S ≈ 37 means one spread apart on average.</figcaption></figure>
       </div></section>
-    <section aria-labelledby="method-h-d"><h2 id="method-h-d">Data, with exact product names</h2>
-      <div class="tbl method-data"><table><thead><tr><th scope="col">Product</th><th scope="col">Agency</th><th scope="col">Used for</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <section aria-labelledby="method-h-d"><h2 id="method-h-d"><span class="ex-n">03</span>Data, with exact product names</h2>
+      <div class="tbl method-data panel"><table><thead><tr><th scope="col">Product</th><th scope="col">Agency</th><th scope="col">Used for</th></tr></thead><tbody>${rows}</tbody></table></div>
       <p class="note">NASA data are public domain. Copernicus DEM © DLR e.V. / Airbus, provided under the Copernicus programme by ESA. The Mars Climate Database is a model, not a measurement.</p></section>
     <details class="method-more"><summary>Read more: the full method, step by step</summary><div class="prose" id="method-full"><p class="muted">Loading…</p></div></details>
   </div>`;

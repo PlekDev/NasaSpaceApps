@@ -3,6 +3,7 @@ import { esc, nf, coord } from '../format.ts';
 import { getJSON } from '../data.ts';
 import { ramp } from '../score.ts';
 import type { Manifest, Region } from '../types.ts';
+import { icon } from '../icons.ts';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -109,16 +110,34 @@ export async function renderTime(el: HTMLElement, m: Manifest, params: Record<st
 
   const briefEntries = series.filter(s => m.briefs[s.id] && (m.briefs[s.id].brief || m.briefs[s.id].calendar || m.briefs[s.id].csv));
 
-  el.innerHTML = `<div class="page-in wide">
+  // three Explore-style cards under the title, all computed from results.json and the field briefs (nothing typed)
+  const longest = [...series].sort((a, b) => b.peak - a.peak)[0];
+  const lowLat = [...series].sort((a, b) => a.absLat - b.absLat)[0];
+  const mk = series.find(s => s.id === startId) ?? series[0];
+  const mkBrief = mk ? m.briefs[mk.id] : undefined;
+  const strip = (s: Series | undefined) => s ? `<span class="k-strip">${s.v.map((v, i) => `<i class="${i === s.peakMonth ? 'top' : v > 0 ? 'on' : ''}" style="height:${Math.max(4, Math.round((v / max) * 100))}%"></i>`).join('')}</span><span class="k-ends"><span>Jan</span><span>Dec</span></span>` : '';
+  const kpi = (i: number, cap: string, num: string, txt: string, mini: string, href = '') => {
+    const tag = href ? 'a' : 'div';
+    return `<${tag} class="ex-card ex-glass" style="--i:${i}"${href ? ` href="${href}" download` : ''}><span class="ex-cap">${esc(cap)}${href ? icon.chevron : ''}</span>${num}<span class="ex-txt">${txt}</span><span class="ex-mini" aria-hidden="true">${mini}</span></${tag}>`;
+  };
+  const kpis = series.length ? [
+    longest ? kpi(0, 'Longest low Sun', `<span class="ex-num">${longest.peak.toFixed(1)}<small>h / day</small></span>`, `<b>${esc(longest.r.name)}</b> in ${MONTH_FULL[longest.peakMonth]}, at ${latFmt(longest.lat)}.`, strip(longest)) : '',
+    lowLat ? kpi(1, 'Near the equator', `<span class="ex-num">${lowLat.mean.toFixed(1)}<small>h / day</small></span>`, `<b>${esc(lowLat.r.name)}</b> (${latFmt(lowLat.lat)}): low Sun only at sunrise and sunset, all year.`, strip(lowLat)) : '',
+    mk && mkBrief?.block ? kpi(2, 'Next field block', `<span class="ex-num" style="font-size:28px">${esc(mkBrief.block)}</span>`, `Best 14-day window at <b>${esc(mk.r.name)}</b>${mkBrief.min_day ? `, ${nf(mkBrief.min_day)} min/day of Sun 0–7°` : ''}.${mkBrief.calendar ? ' Calendar file below.' : ''}`, strip(mk), mkBrief.calendar ? `${BASE}extras/briefs/${mkBrief.calendar}` : '') : '',
+  ].join('') : '';
+
+  el.innerHTML = `<div class="page-in wide stage">
+    <p class="ex-cap stage-kicker">When · analog in time</p>
     <h1>Analog in time</h1>
-    <p class="lead">At the lunar south pole the Sun never climbs above ~7°. On Earth that grazing light only lasts minutes at sunrise and sunset — except at high latitudes, where it lasts for hours around the equinoxes. P.E.N. tells field teams <b>when</b> to test rover vision and EVA lighting, not just <b>where</b>.</p>
+    <p class="lead">At the Moon Base the Sun stays within ~7° of the horizon all day. On Earth that light lasts minutes near the equator, but hours near the poles around the equinoxes. Pick a region, find its best weeks, and take the calendar file: P.E.N. says <b>when</b> to test rover vision and EVA lighting, not just <b>where</b>.</p>
+    ${kpis ? `<div class="stage-kpis">${kpis}</div>` : ''}
 
     <div class="time-grid">
       <div class="time-main">
         <section class="panel time-panel" aria-label="Seasonal low-Sun illumination">
           <header class="time-head">
             <div>
-              <h2>Hours per day with the Sun 0–7° above the horizon</h2>
+              <h2><span class="ex-n">01</span>Hours per day with the Sun 0–7° above the horizon</h2>
               <p class="tnum muted" id="time-sub">${series.length} Earth candidate regions · monthly daily average · solar elevation 0–7°</p>
             </div>
             <div class="seg" role="group" aria-label="Visualization mode">
@@ -176,7 +195,7 @@ export async function renderTime(el: HTMLElement, m: Manifest, params: Record<st
         <section class="panel time-focus" id="time-focus" aria-label="Focused region profile"></section>
         <section class="panel time-regs" aria-label="Earth regions list">
           <header class="time-regs-h">
-            <h2>Earth regions</h2>
+            <h2><span class="ex-n">03</span>Earth regions</h2>
             <p class="tnum muted">Click to pin on chart · hover to inspect</p>
           </header>
           <div class="regs" role="group" aria-label="Earth regions in the chart">
@@ -200,7 +219,7 @@ export async function renderTime(el: HTMLElement, m: Manifest, params: Record<st
     ${briefEntries.length ? `<section class="vsec time-campaigns" aria-label="Field campaign windows">
       <div class="time-camp-head">
         <div>
-          <h2>Field campaign windows · 2026–2027</h2>
+          <h2><span class="ex-n">04</span>Field campaign windows · 2026–2027</h2>
           <p class="prose-p">For every Earth region that ranks in the top 3 analogs of a lunar polar target, P.E.N. computes the optimal 14-day low-Sun test block (01 Dec 2026 – 30 Nov 2027, NOAA solar algorithm, Sun 0–7° above the horizon) along with ready-to-import calendar files (<code>.ics</code>) and full-year window logs (<code>.csv</code>).</p>
         </div>
       </div>
@@ -265,7 +284,7 @@ export async function renderTime(el: HTMLElement, m: Manifest, params: Record<st
     const meanMin = Math.round(s.mean * 60);
     focusEl.innerHTML = `
       <div class="focus-head">
-        <span class="label">Focused region · Seasonal profile</span>
+        <span class="label"><span class="n">02</span>Focused region · Seasonal profile</span>
         <span class="focus-badge tnum"><i style="background:${c ?? 'var(--accent)'}"></i>${pinned.has(s.id) ? 'Pinned' : 'Preview'}</span>
       </div>
       <div class="score">

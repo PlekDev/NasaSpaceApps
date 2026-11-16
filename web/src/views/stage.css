@@ -1,0 +1,30 @@
+/* Instrument backdrop shared by the page views restyled after Explore (When, Method): a fixed starfield-and-grid stage behind the page,
+   so pages read as the same instrument as the globe view. Purely decorative; colours come from tokens.css. */
+.stage { position: relative; isolation: isolate; }
+.stage::before { content: ""; position: fixed; inset: var(--bar-h) 0 0 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(1200px 520px at 82% -8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+    radial-gradient(900px 600px at -10% 110%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%),
+    linear-gradient(color-mix(in srgb, var(--line) 45%, transparent) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(90deg, color-mix(in srgb, var(--line) 45%, transparent) 1px, transparent 1px) 0 0 / 64px 64px,
+    var(--bg); }
+[data-theme="light"] .stage::before { background:
+    radial-gradient(1200px 520px at 82% -8%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+    linear-gradient(color-mix(in srgb, var(--line) 40%, transparent) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(90deg, color-mix(in srgb, var(--line) 40%, transparent) 1px, transparent 1px) 0 0 / 64px 64px,
+    var(--bg); }
+/* page header in the Explore voice: a numbered kicker, a condensed title, a short lead */
+.stage-kicker { margin-bottom: 10px; color: var(--accent-text); }
+.stage h1 { font-size: clamp(44px, 5vw, 72px); line-height: .98; }
+.stage .lead { max-width: 62ch; }
+.stage h2 .ex-n, .stage h3 .ex-n { margin-right: 10px; font-size: .62em; vertical-align: .28em; }
+/* a row of Explore cards right under the header */
+.stage-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin: 0 0 var(--s-6); }
+.stage-kpis .ex-card { cursor: default; } .stage-kpis a.ex-card { cursor: pointer; color: inherit; text-decoration: none; }
+.stage-kpis .ex-card:not(a):hover { transform: none; }
+.stage-kpis .ex-cap svg { margin-left: auto; width: 14px; height: 14px; }
+.stage-kpis .ex-card { animation: ex-in 420ms var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
+.k-strip { display: flex; align-items: flex-end; gap: 2px; height: 44px; border-bottom: 1px solid var(--line-strong); }
+.k-strip i { flex: 1; min-height: 2px; background: var(--line-strong); } .k-strip i.on { background: var(--accent); } .k-strip i.top { background: var(--ramp-3); }
+.k-ends { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-3); padding-top: 3px; }
+@media (prefers-reduced-motion: reduce) { .stage-kpis .ex-card { animation: none; } }

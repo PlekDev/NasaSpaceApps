@@ -1,41 +1,39 @@
-/* Method view (owner: D. Lizárraga). Every class is prefixed .method-; colours come from tokens.css. */
-.method section { margin-top: var(--s-6); }
-.method-lede { font-size: 17px; line-height: 1.5; color: var(--text-2); max-width: 70ch; }
+/* Method view (owner: D. Lizárraga), in Explore's instrument skin. Every class is prefixed .method-; colours come from tokens.css. */
+.method section { margin-top: var(--s-7); }
+.method-lede { font-size: 17px; line-height: 1.55; color: var(--text-2); max-width: 66ch; margin-bottom: var(--s-6); }
+.method-kpis .ex-card { grid-template-columns: 1fr; }
 
-.method-flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-4) var(--s-5); }
-.method-step { position: relative; padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--glass); }
-/* arrows only between cards on the same row: 4 per row on desktop, 2 on tablets, a downward arrow on phones */
-.method-step::after { content: "→"; position: absolute; right: calc(-1 * var(--s-5) + 4px); top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 16px; }
-.method-step:nth-child(4n)::after, .method-step:last-child::after { content: none; }
+/* the pipeline: seven instrument cells divided by hairlines, numbered like Explore's control sections */
+.method-flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.method-step { position: relative; padding: 18px 18px 20px; background: var(--panel-solid); display: grid; align-content: start; gap: 6px; animation: ex-in 420ms var(--ease) both; animation-delay: calc(var(--i, 0) * 50ms); transition: background 200ms; }
+.method-step:hover { background: color-mix(in srgb, var(--panel-solid) 88%, var(--accent)); }
+.method-step::after { content: "→"; position: absolute; right: 14px; top: 16px; font: 600 14px/1 var(--font-display); color: var(--text-3); }
+.method-step:last-child::after { content: none; }
+.method-step:last-child { grid-column: span 2; background: color-mix(in srgb, var(--panel-solid) 86%, var(--ramp-3)); }
+.method-n { font: 600 34px/1 var(--font-display); color: var(--accent-text); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.method-step:last-child .method-n { color: var(--ramp-3); }
+.method-step b { display: block; font: 600 14px/1.25 var(--font-display); letter-spacing: var(--cap-ls); text-transform: uppercase; color: var(--text-1); margin-top: 4px; }
+.method-step p { margin: 0; font-size: 14px; line-height: 1.45; color: var(--text-2); }
+.method-step small { font-size: 12px; line-height: 1.4; color: var(--text-3); }
 .method-step small a { color: var(--accent-text); }
-.method-n { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-text); font-size: 12px; font-weight: 600; margin-bottom: var(--s-2); }
-.method-step b { display: block; font-size: 15px; color: var(--text-1); }
-.method-step p { margin: var(--s-1) 0; font-size: 14px; line-height: 1.4; color: var(--text-2); }
-.method-step small { font-size: 12px; line-height: 1.35; color: var(--text-3); }
+[data-theme="light"] .method-step:last-child .method-n { color: #8a5a00; }
 
-.method-formulas { display: grid; gap: var(--s-4); }
-.method-formulas figure { margin: 0; padding: var(--s-4) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--glass); }
-.method-math { overflow-x: auto; overflow-y: hidden; padding: var(--s-2) 0 var(--s-3); color: var(--text-1); font-size: 19px; }
+.method-formulas { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: var(--s-5); }
+.method-formulas figure { margin: 0; padding: var(--s-4) var(--s-5); }
+.method-math { overflow-x: auto; overflow-y: hidden; padding: var(--s-3) 0 var(--s-4); color: var(--text-1); font-size: 19px; border-bottom: 1px solid var(--line); margin-bottom: var(--s-3); }
 .method-math.is-katex .katex-display { margin: 0; }
-.method-math.is-katex .katex { font-size: 1.15em; }
+.method-math.is-katex .katex { font-size: 1.1em; }
 .method-math math { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", serif; }
-.method-formulas figcaption { font-size: 14px; line-height: 1.5; color: var(--text-2); max-width: 78ch; }
-.method-formulas figcaption b { color: var(--text-1); }
+.method-formulas figcaption { font-size: 14px; line-height: 1.55; color: var(--text-2); max-width: 78ch; }
+.method-formulas figcaption b { font: 600 13px/1.3 var(--font-display); letter-spacing: var(--cap-ls); text-transform: uppercase; color: var(--text-1); margin-right: 4px; }
 
+.method-data { padding: 4px 16px 8px; }
 .method-data th a { color: var(--accent-text); }
 .method-data th, .method-data td { white-space: normal; }
 .method-data thead th:not(:first-child), .method-data td { text-align: left; }
 .method-more { margin: var(--s-6) 0; }
-.method-more summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--accent-text); font-weight: 500; }
+.method-more summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font: 600 13px/1 var(--font-display); letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text); }
+@media (prefers-reduced-motion: reduce) { .method-step { animation: none; } }
 
-@media (max-width: 1000px) {
-  .method-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .method-step:nth-child(4n)::after { content: "→"; }
-  .method-step:nth-child(2n)::after, .method-step:last-child::after { content: none; }
-}
-@media (max-width: 620px) {
-  .method-flow { grid-template-columns: 1fr; gap: var(--s-5); }
-  .method-step::after, .method-step:nth-child(2n)::after, .method-step:nth-child(4n)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: calc(-1 * var(--s-5) + 2px); transform: translateX(-50%); }
-  .method-step:last-child::after { content: none; }
-  .method-math { font-size: 16px; }
-}
+@media (max-width: 1000px) { .method-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); } .method-formulas { grid-template-columns: 1fr; } }
+@media (max-width: 620px) { .method-flow { grid-template-columns: 1fr; } .method-step:last-child { grid-column: auto; } .method-step::after { content: "↓"; } .method-math { font-size: 16px; } }
