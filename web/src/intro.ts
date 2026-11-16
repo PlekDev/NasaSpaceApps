@@ -17,7 +17,7 @@ export function mountHome(root: HTMLElement, o: { m: Manifest; view: View; targe
   const el = document.createElement('section');
   el.className = 'intro home'; el.setAttribute('aria-label', 'Home');
   el.innerHTML = `<div class="home-scroll"><div class="home-copy">
-      <h1>Where on Earth looks, and is lit, like <em>${esc(o.targetName)}</em>?</h1>
+      <h1>Where on Earth looks and is illuminated like <em>${esc(o.targetName)}</em>?</h1>
       <p class="home-hook" id="home-hook" aria-live="polite" hidden></p>
       <div class="home-actions"><a class="btn primary" id="home-proof" href="#/proof">See the proof</a><button class="home-btn" id="go" type="button">Explore the map</button>
         <button class="home-skip" id="home-skip" type="button">Skip</button></div>
@@ -58,17 +58,17 @@ export function mountHome(root: HTMLElement, o: { m: Manifest; view: View; targe
     if (done) return; facts = d.facts;
     const f = d.facts;
     if (f) {
-      $q('#home-hook').innerHTML = `NASA rehearsed a lunar-pole mission here in 2012 · P.E.N. found it <b>${esc(f.rankText)} of ${esc(f.n.toLocaleString('en-US'))}</b>, blind.`;
+      $q('#home-hook').innerHTML = `NASA rehearsed a lunar-pole mission here in 2012 · P.E.N. ranked it <b>${esc(f.rankText)} of ${esc(f.n.toLocaleString('en-US'))}</b>, blind.`;
       const stat = (cls: string, label: string, num: string, cap: string, pending = false) =>
         `<div class="home-stat ${cls}${pending ? ' pending' : ''}"><dt>${esc(label)}</dt><dd class="home-num">${num}</dd><dd class="home-cap">${esc(cap)}</dd></div>`;
       $q('#home-stats').innerHTML =
-        stat('lead', 'Blind test', `${esc(f.rankText)}<small> of ${esc(f.n.toLocaleString('en-US'))}</small>`, `Where NASA's own test site ranks among all Earth windows for ${f.target.name}, found without being told.`) +
-        stat('', 'Light model', f.rhoText ? esc(f.rhoText) : '—', `Spearman ρ against NASA LOLA${f.horizonKm ? `, horizons up to ${f.horizonKm} km` : ''} (${f.target.name}).`, !f.rhoText) +
+        stat('lead', 'Blind test', `${esc(f.rankText)}<small> of ${esc(f.n.toLocaleString('en-US'))}</small>`, `Where NASA's own field-test site ranks among all Earth windows for ${f.target.name}, without prior knowledge.`) +
+        stat('', 'Light model', f.rhoText ? esc(f.rhoText) : '—', `Spearman ρ vs. NASA LOLA${f.horizonKm ? ` (horizons up to ${f.horizonKm} km)` : ''} for ${f.target.name}.`, !f.rhoText) +
         stat('', 'Permutation test · p-value', f.pText ? esc(f.pText) : '—', f.pCaption, f.pending);
       siteName = "Pu'u Hiwahine";
       $q('#home-site').innerHTML = `<b>${esc(siteName)}</b><span>NASA's 2012 lunar-pole field-test site</span>`;
     }
-    $q('#home-try').innerHTML = d.shortcuts.length ? `<h2 class="home-try-h">Try</h2><ul>${d.shortcuts.map(s => `<li><a href="${esc(s.hash)}"><b>${esc(s.label)}</b><span>${esc(s.pair)}</span></a></li>`).join('')}</ul>` : '';
+    $q('#home-try').innerHTML = d.shortcuts.length ? `<h2 class="home-try-h">Featured pairs</h2><ul>${d.shortcuts.map(s => `<li><a href="${esc(s.hash)}"><b>${esc(s.label)}</b><span>${esc(s.pair)}</span></a></li>`).join('')}</ul>` : '';
     if (landed) { for (const id of ['#home-hook', '#home-stats', '#home-try', '#home-site']) { const n = $q<HTMLElement>(id); if (n.innerHTML) n.hidden = false; } }
     else if (dead || reduced) skip();
     else {
