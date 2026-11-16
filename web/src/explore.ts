@@ -377,7 +377,9 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     const done = () => { focusEl.hidden = true; modalEl.innerHTML = ''; if (from && !quick) from.focus({ preventScroll: true }); };
     if (reduced() || quick || !from) { done(); return; }
     const a = from.getBoundingClientRect(), b = modalEl.getBoundingClientRect(); modalEl.classList.add('is-flip');
-    modalEl.animate([{ transform: 'none', transformOrigin: '0 0', opacity: 1 }, { transform: `translate(${a.left - b.left}px,${a.top - b.top}px) scale(${a.width / b.width},${a.height / b.height})`, transformOrigin: '0 0', opacity: 0 }], { duration: 320, easing: 'cubic-bezier(.4,0,.2,1)' }).onfinish = () => { modalEl.classList.remove('is-flip'); done(); };
+    let finished = false; const fin = () => { if (finished) return; finished = true; modalEl.classList.remove('is-flip'); done(); };
+    modalEl.animate([{ transform: 'none', transformOrigin: '0 0', opacity: 1 }, { transform: `translate(${a.left - b.left}px,${a.top - b.top}px) scale(${a.width / b.width},${a.height / b.height})`, transformOrigin: '0 0', opacity: 0 }], { duration: 320, easing: 'cubic-bezier(.4,0,.2,1)' }).onfinish = fin;
+    setTimeout(fin, 400);   // never depend on the animation event alone (it can be late in a headless or throttled tab)
   }
 
   // ---------- events

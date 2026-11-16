@@ -39,7 +39,7 @@ with sync_playwright() as p:
     check("Reset weights restores equal weights", pg.inner_text("#w-terrain-o") == "1.0" and "Equal weights" in pg.inner_text("#ex-live"))
     pg.locator('[data-card="best"]').focus(); pg.keyboard.press("Enter"); pg.wait_for_selector("#ex-focus:not([hidden]) .ex-detail table", timeout=10000)
     check("keyboard opens a card in focus with its table", pg.locator("#ex-modal .ex-detail tbody tr").count() == 10 and pg.evaluate("document.body.classList.contains('is-focus')"))
-    pg.keyboard.press("Escape"); pg.wait_for_timeout(700)
+    pg.keyboard.press("Escape"); pg.wait_for_selector("#ex-focus[hidden]", state="attached", timeout=5000)
     check("Escape closes the focus dialog", pg.locator("#ex-focus[hidden]").count() == 1)
     pg.click("[data-dd=z]"); pg.wait_for_selector(".ex-dd-opt[data-z]"); pg.locator(".ex-dd-opt[data-z]:not([data-z='-1'])").first.click(); pg.wait_for_selector(".ex-zone", timeout=20000); pg.wait_for_timeout(800)
     check("a zone opens its view with imagery and zone cards", pg.locator(".ex-pair figure").count() == 2 and pg.locator('[data-card^="z"]').count() >= 3)
