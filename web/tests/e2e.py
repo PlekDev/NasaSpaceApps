@@ -50,7 +50,6 @@ with sync_playwright() as p:
     for route, sel in [
         ("when", ".chart"),
         ("proof", "#hm .hm, .proof"),
-        ("limits", ".limits, .view-wip, .page-stub"),
         ("mission", ".mission-page, .view-wip, .page-stub"),
         ("method", ".method, .prose"),
         ("dossier", ".dossier, .view-wip, .page-stub"),

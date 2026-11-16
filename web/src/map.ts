@@ -4,6 +4,8 @@ import { RAMP_HEX } from './score';
 import { squareRing, distKm, type Scored } from './model';
 
 const GIBS = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/2004-08/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg';
+/** Sentinel-2 cloudless (10 m): sharp land imagery once the camera is close; GIBS Blue Marble (500 m) stays underneath and alone at globe scale. */
+const SHARP = 'https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg';
 const CARTO = (v: string) => ['a', 'b', 'c', 'd'].map(s => `https://${s}.basemaps.cartocdn.com/${v}/{z}/{x}/{y}@2x.png`);
 export const SQUARE_ZOOM = 7.5;
 const SKY = {
@@ -35,8 +37,9 @@ export class MapView {
       container, center, zoom, minZoom: 0.8, maxZoom: 12.5, attributionControl: false, renderWorldCopies: false,
       dragRotate: false, pitchWithRotate: false, touchPitch: false, fadeDuration: 0,
       style: { version: 8, projection: { type: 'globe' },
-        sources: { gibs: { type: 'raster', tiles: [GIBS], tileSize: 256, maxzoom: 8 } },
-        layers: [{ id: 'imagery', type: 'raster', source: 'gibs', paint: { 'raster-fade-duration': 0 } }] },
+        sources: { gibs: { type: 'raster', tiles: [GIBS], tileSize: 256, maxzoom: 8 }, sharp: { type: 'raster', tiles: [SHARP], tileSize: 256, maxzoom: 14 } },
+        layers: [{ id: 'imagery', type: 'raster', source: 'gibs', paint: { 'raster-fade-duration': 0 } },
+          { id: 'sharp', type: 'raster', source: 'sharp', minzoom: 5.5, paint: { 'raster-fade-duration': 0, 'raster-opacity': ['interpolate', ['linear'], ['zoom'], 5.5, 0, 7.5, 1] } }] },
     });
     this.map.touchZoomRotate.disableRotation();
     this.ready = new Promise(res => this.map.on('load', () => { this.init(); res(); }));

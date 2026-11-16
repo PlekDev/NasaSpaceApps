@@ -266,7 +266,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     const t = tgt(), far0 = far?.sites?.[t.id]?.V3_far_curved?.spearman_rho as number | undefined;
     if (X.zero) return `<section class="ex-ph panel"><span class="ex-cap">${kicker()}</span><h1>${esc(t.name)}</h1><p>All weights are 0, so there is no score to compute. Raise a weight to rank the windows.</p></section>`;
     if (S.zone == null) {
-      return `<section class="ex-ph panel"><span class="ex-cap">${kicker()}</span><h1>${esc(t.name)}</h1><p>${esc(ABOUT[t.id] ?? t.label)}</p><p class="ex-facts">${esc(TOPO_SOURCE[t.body] ?? '')}${far0 != null ? ` · Light model vs NASA LOLA ρ ${pyFixed(far0, 3)}` : ''}</p></section>`
+      return `<section class="ex-ph panel"><figure class="ex-hero"><img src="${BASE}thumbs/ref_real/${t.id}.jpg" alt="${esc(t.name)}, NASA imagery" width="360" height="203"><figcaption>${esc(credits[`ref__${t.id}`] ?? 'NASA imagery')}</figcaption></figure><span class="ex-cap">${kicker()}</span><h1>${esc(t.name)}</h1><p>${esc(ABOUT[t.id] ?? t.label)}</p><p class="ex-facts">${esc(TOPO_SOURCE[t.body] ?? '')}${far0 != null ? ` · Light model vs NASA LOLA ρ ${pyFixed(far0, 3)}` : ''}</p></section>`
         + CARDS_OVERVIEW.map((c, i) => cardHTML(c, i + 1)).join('');
     }
     const z = X.Z[S.zone], r = m.regions[z.zone], w = curWin(), im = winImage(w), ref = `${BASE}thumbs/ref_real/${t.id}.jpg`, refOk = true;
@@ -319,14 +319,19 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     }
     // a camera move made before the globe projection is applied is lost: wait for the style
     void view.loaded.then(() => {
+      if (S.zone != null) return;   // a zone was opened while the globe was still loading: do not pull the camera back
       if (animate) view.fly(c[0], c[1], zoomForGlobe(px), p); else view.jumpTo({ center: c, zoom: zoomForGlobe(px), padding: p });
       lastPad = JSON.stringify(p);
     });
   }
+  let flyTok = 0;
   function flyZone(z: number) {
     const b = tc!.bounds[z], p = pad(), W = Math.max(200, innerWidth - p.left - p.right), H = Math.max(200, innerHeight - p.top - p.bottom), mercY = (la: number) => Math.log(Math.tan(Math.PI / 4 + (la * Math.PI) / 360)) / (2 * Math.PI);
     const dx = Math.max((b[2] - b[0]) / 360, 1e-4), dy = Math.max(mercY(b[3]) - mercY(b[1]), 1e-4), zoom = Math.min(10.5, Math.log2(Math.min(W / (dx * 512), H / (dy * 512))) - .15);
-    view.fly((b[0] + b[2]) / 2, (b[1] + b[3]) / 2, zoom, p);
+    const c: [number, number] = [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2], tok = ++flyTok;
+    view.fly(c[0], c[1], zoom, p);
+    // safety net: if the flight was cancelled by another camera move, land on the zone anyway
+    setTimeout(() => { if (tok !== flyTok || S.zone !== z || homeOn()) return; const cc = view.getCenter(); if (Math.abs(cc[0] - c[0]) > .6 || Math.abs(cc[1] - c[1]) > .6) view.jumpTo({ center: c, zoom, padding: p }); }, 2800);
   }
 
   // ---------- state changes
@@ -337,12 +342,14 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     if (pendingRegion) { const i = m.regions.findIndex(r => r.id === pendingRegion); pendingRegion = null; if (i >= 0) goZone(i); }
   }
   const sched = (fit = false) => { cancelAnimationFrame(pending); pending = requestAnimationFrame(() => recompute(fit)); };
-  function goZone(z: number, w: number | null = null) { dd = null; store.set({ zone: z, selected: w }); refresh(true); flyZone(z); if (isPhone()) { setSnap(1); dock.scrollTop = 0; } }
+  function goZone(z: number, w: number | null = null) { loadDet(); dd = null; store.set({ zone: z, selected: w }); refresh(true); flyZone(z); if (isPhone()) { setSnap(1); dock.scrollTop = 0; } }
   function goOverview() { dd = null; store.set({ zone: null, selected: null }); refresh(true); overview(true); }
-  const loadDet = () => { det = null; const id = S.target; loadDetail(id).then(d => { if (S.target !== id) return; det = { i: d.i, j: d.j }; if (S.zone != null) renderPanel(false); }).catch(() => {}); };
+  const idle = (f: () => void) => setTimeout(() => ('requestIdleCallback' in window ? (window as unknown as { requestIdleCallback(f: () => void, o: { timeout: number }): void }).requestIdleCallback(f, { timeout: 4000 }) : f()), 4000);
+  let detFor = '';
+  const loadDet = () => { if (detFor === S.target) return; detFor = S.target; det = null; const id = S.target; loadDetail(id).then(d => { if (S.target !== id) return; det = { i: d.i, j: d.j }; if (S.zone != null) renderPanel(false); }).catch(() => {}); };
   async function switchTarget() {
     const id = S.target; store.set({ selected: null, hover: null }); dd = null; data = await loadTarget(id); if (S.target !== id) return;
-    loadDet(); recompute(true);
+    idle(loadDet); recompute(true);
   }
   for (const d of dims) bindSlider(`w-${d}`, v => store.set({ weights: { ...S.weights, [d]: v } }));
   bindSlider('min', v => store.set({ minScore: v }));
@@ -363,23 +370,16 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   function openFocus(id: CardId, from: HTMLElement) {
     const c = CARD[id](); if (!c) return; openCard = id; focusFrom = from;
     modalEl.innerHTML = `<div class="ex-m-in"><div class="ex-m-head"><div><span class="ex-cap" id="ex-m-title">${c.cap}</span>${c.num}<p>${c.txt}</p></div><button type="button" class="ex-x" data-close aria-label="Close">${icon.close}</button></div><div class="ex-detail">${DETAIL[id]()}</div></div>`;
-    focusEl.hidden = false; document.body.classList.add('is-focus'); tween(modalEl); drawSc(modalEl);
-    requestAnimationFrame(() => focusEl.classList.add('on'));
-    if (!reduced()) {
-      const a = from.getBoundingClientRect(), b = modalEl.getBoundingClientRect(); modalEl.classList.add('is-flip');
-      modalEl.animate([{ transform: `translate(${a.left - b.left}px,${a.top - b.top}px) scale(${a.width / b.width},${a.height / b.height})`, transformOrigin: '0 0', opacity: .4 }, { transform: 'none', transformOrigin: '0 0', opacity: 1 }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }).onfinish = () => modalEl.classList.remove('is-flip');
-    }
-    setTimeout(() => modalEl.querySelector<HTMLElement>('.ex-x')?.focus(), reduced() ? 0 : 300);
+    focusEl.classList.remove('closing'); focusEl.hidden = false; document.body.classList.add('is-focus'); tween(modalEl); drawSc(modalEl);
+    setTimeout(() => modalEl.querySelector<HTMLElement>('.ex-x')?.focus({ preventScroll: true }), reduced() ? 0 : 220);
   }
   function closeFocus(quick = false) {
     if (focusEl.hidden) return; const from = focusFrom?.isConnected ? focusFrom : panelEl.querySelector<HTMLElement>(`[data-card="${openCard}"]`); openCard = null;
-    document.body.classList.remove('is-focus'); focusEl.classList.remove('on');
-    const done = () => { focusEl.hidden = true; modalEl.innerHTML = ''; if (from && !quick) from.focus({ preventScroll: true }); };
-    if (reduced() || quick || !from) { done(); return; }
-    const a = from.getBoundingClientRect(), b = modalEl.getBoundingClientRect(); modalEl.classList.add('is-flip');
-    let finished = false; const fin = () => { if (finished) return; finished = true; modalEl.classList.remove('is-flip'); done(); };
-    modalEl.animate([{ transform: 'none', transformOrigin: '0 0', opacity: 1 }, { transform: `translate(${a.left - b.left}px,${a.top - b.top}px) scale(${a.width / b.width},${a.height / b.height})`, transformOrigin: '0 0', opacity: 0 }], { duration: 320, easing: 'cubic-bezier(.4,0,.2,1)' }).onfinish = fin;
-    setTimeout(fin, 400);   // never depend on the animation event alone (it can be late in a headless or throttled tab)
+    document.body.classList.remove('is-focus');
+    let finished = false;
+    const done = () => { if (finished) return; finished = true; focusEl.hidden = true; focusEl.classList.remove('closing'); modalEl.innerHTML = ''; if (from && !quick) from.focus({ preventScroll: true }); };
+    if (reduced() || quick) { done(); return; }
+    focusEl.classList.add('closing'); setTimeout(done, 140);   // timer, not an animation event: it must always run
   }
 
   // ---------- events
@@ -412,8 +412,9 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   ]).then(([d, ks, n, ka, fh, cr]) => {
     data = d; known0 = ks; nul = n; far = fh; credits = cr;
     const lunar = new Set(m.targets.filter(t => t.body === 'moon').map(t => t.id)); nMoonTests = ka.rows.filter(r => lunar.has(r.reference)).length;
-    loadDet(); recompute(); requestAnimationFrame(() => setSnap(snap));
-    for (const t of m.targets) if (t.id !== S.target) loadTarget(t.id).then(x => { bestOf.set(t.id, baseBest(x)); renderLeft(); }).catch(() => {});
+    recompute(); requestAnimationFrame(() => setSnap(snap)); idle(loadDet);
+    // the other targets only feed the target menu's scores: load them after the first map tiles
+    idle(() => { for (const t of m.targets) if (t.id !== S.target) loadTarget(t.id).then(x => { bestOf.set(t.id, baseBest(x)); if (dd === 't') renderLeft(); }).catch(() => {}); });
   });
   return { store, view, ready,
     show(on: boolean) { $('#explore', root).classList.toggle('off', !on); ($('#explore', root) as HTMLElement).inert = !on; const cr = document.getElementById('crumbs'); if (cr) cr.hidden = !on; if (on) setSnap(snap); },
