@@ -1,7 +1,7 @@
 # P.E.N. web
 
 Static web app (Vite + TypeScript + MapLibre GL JS) for P.E.N. It reads the pipeline's committed results at build time; no Python at runtime.
-UI AI-assisted (Claude Code); reviewed by the author. Design system: [DESIGN.md](DESIGN.md). Decisions: [DECISIONS.md](DECISIONS.md). Resume notes: [PROGRESS.md](PROGRESS.md).
+UI AI-assisted (Claude Code); reviewed by the author. Design system: [DESIGN.md](DESIGN.md).
 
 ```bash
 npm run dev:lan       # in web/: dev server on your LAN (vite --host) to test on a phone: open http://<your-ip>:5173
@@ -28,7 +28,7 @@ The export writes every file as UTF-8 and atomically; it does not depend on the 
 Requirements: Python 3.11+, `pip install -r requirements.txt` (includes Pillow and PyYAML), Node 22+.
 `web/public/data`, `thumbs`, `figures` and `extras` are generated and git-ignored, so the site can never show numbers that differ from
 `data/processed`. The footer shows `data <hash>` (hash of data/processed) and the manifest records the git commit.
-`web/pages.yml` is a GitHub Pages workflow, prepared but not enabled (copy it to `.github/workflows/` to turn it on).
+The GitHub Pages workflow is `.github/workflows/pages.yml`.
 
 Deploy base path: `BASE_PATH=/NasaSpaceApps/ make web` (default `/`). Every asset, data, font and thumbnail URL goes through it (`src/base.ts`); `web/tools/serve_dist.py` serves `dist/` under a prefix like Pages does.
 Browser checks need Playwright (`python -m playwright install firefox webkit`; WebKit also needs system libraries: `sudo python -m playwright install-deps webkit`) and one-time `mkdir -p /tmp/axe && cd /tmp/axe && npm i axe-core`:

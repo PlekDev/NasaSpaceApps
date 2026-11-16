@@ -1,3 +1,5 @@
+<p align="center"><img src="web/public/brand/pen-lockup.svg" alt="P.E.N. logo: a globe with a gold marker next to the letters PEN" width="420"></p>
+
 # P.E.N. 🌗
 ### Planetary Environmental Navigator
 
@@ -119,7 +121,7 @@ the official 5 m LOLA DEMs of six Moon Base sites, five of them inside NASA's Ar
 
 | What | Why it matters | Owner |
 |---|---|---|
-| Turn on GitHub Pages for the web app (copy `web/pages.yml` to `.github/workflows/`, Settings → Pages → GitHub Actions, run it) and test the link in a private window and on a phone | The judges need a link that opens without installing anything | Aaron (repo admin) |
+| Turn on GitHub Pages for the web app (Settings → Pages → GitHub Actions, then run `.github/workflows/pages.yml`) and test the link in a private window and on a phone | The judges need a link that opens without installing anything | Aaron (repo admin) |
 | Deck (7 slides, our demo instead of the video) and project page around the blind-rediscovery result | It's the demo the judges see | Angel · Paul |
 | Fact-check every number in README, deck and page; tag `v1.0` | No wrong number in front of judges | Angel · Victor |
 
