@@ -1,6 +1,6 @@
 # P.E.N.: FINDING AND SCHEDULING EARTH ANALOGS OF LUNAR SOUTH-POLE AND MARS SITES BY TERRAIN AND LOW-SUN ILLUMINATION, VALIDATED AGAINST NASA LOLA
 
-**Pollones en Fuga** (Mexico): V. Velázquez, D. Lizárraga, D. Dona, A. Landin, A. Hernández, Paul.
+**Pollones en Fuga** (Mexico): V. Velázquez, D. Lizárraga, D. Dona, A. Landin, A. Hernández, P. Sarmiento.
 NASA Space Apps Challenge 2026 · *Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars*.
 Code, data and web app: https://github.com/PlekDev/NasaSpaceApps · https://plekdev.github.io/NasaSpaceApps/
 
@@ -35,12 +35,12 @@ No analog labels enter the score.
 
 **Results.** *Blind test.* Pu'u Hiwahine on Mauna Kea, where NASA, CSA and DLR rehearsed a lunar-polar prospecting
 mission in 2012 [4], was never shown to P.E.N. Its best window is **#1 of 10,424** Earth windows for Malapert Massif,
-in the top 0.2 % for four of the six Moon Base sites and in the top 5 % for all six. In a permutation test (10,000
-random points), only 0.4 % of Mauna Kea scores as high for Malapert (p = 0.004; p = 0.025 after correcting for the six
+in the top 0.2 % for four of the six Moon Base sites and in the top 5 % for all six. Only 0.4 % of the valid area of
+the Mauna Kea region (150 m lattice) scores as high for Malapert (p = 0.004; p = 0.025 after correcting for the six
 lunar targets, 0.15 if all 36 lunar site × target tests are counted). The result does not generalise to the group:
 across 8 classic analog sites and 48 site × target tests the median rank is the 84th percentile in illumination and the
-61st in terrain, which is not significantly better than random points of our regions (p = 0.37 combined, 0.065 for
-illumination). Those regions were chosen because they are analogs, so the null is a strict one. For Mars the score does
+61st in terrain, which is not significantly better than 10,000 random draws from our regions (illumination
+p = 0.065, terrain p = 0.55; combined p = 0.37). Those regions were chosen because they are analogs, so the null is a strict one. For Mars the score does
 not separate the known sites (AUC 0.33–0.50).
 
 *Light model against NASA.* With the LOLA 40 m polar DEM, horizons traced up to 150 km away on the curved Moon and
@@ -69,12 +69,13 @@ intervals, not "the best place".
 
 *When, and how.* Solar geometry gives the hours per day with the Sun at 0–7°: about 1 h/day below 40° latitude and
 up to 5.6–6.7 h/day in spring and autumn at Arctic and Antarctic sites. For a traverse drawn on the lunar site, P.E.N.
-lists the dates and times at which the Earth analog has the same Sun elevation and a compatible direction, with a
+lists the dates and times at which the Earth analog has a similarly low Sun (0–7°) and a compatible direction, with a
 rehearsal fidelity (share of 101 samples along the route with the same lit or shadowed state on both bodies). For
 the default Malapert traverse the lunar Sun comes from the north-northeast, a direction Mauna Kea's low Sun never
 reaches; the view says so and offers the closest dates (around 23 June 2027, at sunrise, 33° off in direction). With
 the lunar Sun from the east, the best Mauna Kea windows are on 29–30 March 2027, about half an hour after sunrise
-(06:08–06:38 local solar time), with a rehearsal fidelity of 80 %. Saying when no Earth date matches is part of the answer: it tells a field team which lunar lighting a site
+(06:08–06:38 local solar time), with a rehearsal fidelity of 80 % (the lunar route is 41 % lit, the Earth route 21 %, so most of the agreement is
+in stretches shadowed on both). Saying when no Earth date matches is part of the answer: it tells a field team which lunar lighting a site
 cannot rehearse.
 
 **Where the analogy breaks.** Per Diviner [3], in 88–100 % of each lunar site the annual mean temperature (2 cm below
