@@ -64,7 +64,7 @@ function routePlot(pts: [number, number][]): string {
     <g class="dossier-plot-grid">${grid}</g>
     <polyline class="dossier-plot-line" pathLength="1" points="${P.map(p => `${f(p[0])},${f(p[1])}`).join(' ')}"/>
     <g class="dossier-plot-pts">${P.map(p => `<circle cx="${f(p[0])}" cy="${f(p[1])}" r="2.2"/>`).join('')}</g>
-    <g class="dossier-plot-ends"><circle cx="${f(a[0])}" cy="${f(a[1])}" r="5"/><text x="${f(a[0] + 9)}" y="${f(a[1] - 7)}">A</text><rect x="${f(b[0] - 4.5)}" y="${f(b[1] - 4.5)}" width="9" height="9"/><text x="${f(b[0] + 9)}" y="${f(b[1] - 7)}">B</text></g>
+    <g class="dossier-plot-ends"><circle cx="${f(a[0])}" cy="${f(a[1])}" r="5"/><text x="${f(a[0] - 4)}" y="${f(a[1] + 20)}">A</text><rect x="${f(b[0] - 4.5)}" y="${f(b[1] - 4.5)}" width="9" height="9"/><text x="${f(b[0] - 4)}" y="${f(b[1] + 21)}">B</text></g>
     <g class="dossier-plot-scale"><path d="M${pad} ${H - 8}v-5m0 5h${f(barPx)}m0 0v-5"/><text x="${f(pad + barPx + 6)}" y="${H - 6}">${barKm} km</text></g>
     <g class="dossier-plot-north"><path d="M16 30V12m-4 6l4-6l4 6"/><text x="16" y="42" text-anchor="middle">N</text></g></svg>`;
 }

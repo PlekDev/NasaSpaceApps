@@ -35,7 +35,7 @@
 .dossier-sec p.dossier-cap { margin: 0 0 var(--s-2); }
 
 /* ---- typeset mathematics (KaTeX); the plain-text fallback uses a maths serif */
-.dossier-tex { font-family: "Latin Modern Math", "STIX Two Math", "Cambria Math", Cambria, serif; font-style: italic; font-weight: 400; color: inherit; white-space: nowrap; }
+.dossier-tex { font-family: "Latin Modern Math", "STIX Two Math", "Cambria Math", Cambria, serif; font-style: italic; font-weight: 400; color: var(--text-2); white-space: nowrap; }
 .dossier-tex.is-katex { font-style: normal; }
 .dossier-tex .katex { font-size: 1.04em; font-weight: 400; }
 .dossier-eq > div .dossier-tex, .dossier-tbl thead .dossier-tex { color: var(--text-1); }
@@ -43,7 +43,7 @@
 .dossier-eq { position: relative; margin: var(--s-4) 0; padding: var(--s-4) var(--s-5); border: 1px solid var(--line); background: var(--glass); }
 .dossier-eq::before, .dossier-top::before { content: ""; position: absolute; inset: 3px; pointer-events: none; opacity: .6; background: var(--marks); }
 .dossier-eq > div { padding: 5px 0; overflow-x: auto; overflow-y: hidden; }
-.dossier-eq > div .dossier-tex { display: block; font-size: 17px; white-space: normal; }
+.dossier-eq > div .dossier-tex { display: block; font-size: 20px; white-space: normal; }
 .dossier-eq > div .dossier-tex:not(.is-katex) { text-align: center; white-space: pre-wrap; }
 .dossier-eq figcaption { margin-top: var(--s-3); padding-top: var(--s-3); border-top: 1px solid var(--line); font-size: 12.5px; line-height: 1.6; color: var(--text-3); }
 
@@ -123,6 +123,7 @@
 .dossier-plot-pts circle { fill: var(--bg); stroke: var(--accent); stroke-width: 1.2; }
 .dossier-plot-ends circle, .dossier-plot-ends rect { fill: var(--text-1); }
 .dossier-plot text { font: 600 11px var(--font-display); letter-spacing: .06em; fill: var(--text-2); }
+.dossier-plot-ends text { font-size: 13px; fill: var(--text-1); }
 .dossier-plot-scale path, .dossier-plot-north path { fill: none; stroke: var(--text-2); stroke-width: 1.2; }
 .dossier-route { margin: 0; padding-left: 26px; columns: 2; column-gap: var(--s-5); color: var(--text-2); font-size: 12.5px; line-height: 1.7; }
 .dossier-route li::marker { color: var(--text-3); font-size: 11px; }
