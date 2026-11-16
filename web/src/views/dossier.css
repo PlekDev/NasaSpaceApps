@@ -213,8 +213,8 @@
 
 /* ---- print: the app shell is a fixed, scroll-locked layout; undo that so the whole dossier paginates, on white paper.
         Nothing moves: every reveal state is forced to its end. The sheet reads as a report: one column, full-width tables and
-        figures stacked (never side by side, so nothing can overlap), reading paragraphs and nomenclature included, as many A4
-        pages as the content needs, with a running footer and page numbers. */
+        figures stacked (never side by side, so nothing can overlap), at most 3 A4 pages, with a running footer and page numbers.
+        The sheet keeps only what a field team needs; the equations, their nomenclature and the reading paragraphs stay on screen. */
 @media print {
   @page { size: A4; margin: 16mm 15mm 18mm;
     @bottom-left { content: "P.E.N. mission dossier"; font: 7.5pt "Barlow", sans-serif; color: #666; }
@@ -229,10 +229,10 @@
   .dossier *, .dossier *::before, .dossier *::after { transition: none !important; animation: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .dossier [data-rv], .dossier [data-rv] * { opacity: 1 !important; transform: none !important; clip-path: none !important; }
   .dossier .dossier-plot-line { stroke-dashoffset: 0 !important; }
-  .dossier-printonly { display: none !important; }
+  .dossier-printonly, .dossier-guide, .dossier-eq, .dossier-therm, .dossier-when tbody tr:nth-child(n+5) { display: none !important; }
 
   /* title block */
-  .dossier-doc { margin-bottom: 10pt; } .dossier-doc > div { padding: 3pt 7pt; } .dossier-doc dt { font-size: 6.5pt; } .dossier-doc dd { font-size: 8pt; margin: 1pt 0 0; }
+  .dossier-doc { margin-bottom: 7pt; } .dossier-doc > div { padding: 3pt 7pt; } .dossier-doc dt { font-size: 6.5pt; } .dossier-doc dd { font-size: 8pt; margin: 1pt 0 0; }
   .dossier-kicker { font-size: 8pt; margin-bottom: 3pt; }
   .dossier.page-in h1 { font-size: 22pt; margin-bottom: 4pt; padding-bottom: 5pt; }
   .dossier.page-in h1::after { display: none; }
@@ -240,22 +240,23 @@
   .dossier-head p.dossier-abstract { font-size: 9.5pt; line-height: 1.5; margin-top: 8pt; }
 
   /* sections and text */
-  .dossier-sec { padding: 12pt 0 8pt; }
-  .dossier.page-in h2 { font-size: 14pt; margin-bottom: 7pt; padding-top: 0; break-after: avoid; }
+  .dossier-sec { padding: 7pt 0 3pt; }
+  .dossier.page-in h2 { font-size: 13pt; margin-bottom: 5pt; padding-top: 0; break-after: avoid; }
   .dossier.page-in h2::before { display: none; }
   .dossier-n { font-size: 9pt; }
   .dossier.page-in h3 { font-size: 11pt; margin: 10pt 0 4pt; break-after: avoid; }
-  .dossier-sec p, .dossier-list { font-size: 9.5pt; line-height: 1.5; margin-bottom: 6pt; max-width: none; orphans: 3; widows: 3; }
+  .dossier-sec p, .dossier-list { font-size: 9pt; line-height: 1.45; margin-bottom: 4pt; max-width: none; orphans: 3; widows: 3; }
   .dossier-note, .dossier-sec p.dossier-note, .dossier-dim, .dossier figcaption { font-size: 8pt; line-height: 1.4; }
   .dossier figcaption { margin-top: 4pt; }
   .dossier-explain { font-size: 9.5pt; gap: 2pt 10pt; margin-bottom: 6pt; } .dossier-explain dt { font-size: 7.5pt; line-height: 1.9; }
   .dossier-list li { margin-bottom: 2pt; }
+  .dossier-list { columns: 2; column-gap: 18pt; }
 
   /* summary */
-  .dossier-top { margin-top: 10pt; padding: 10pt 12pt; gap: 16pt; }
+  .dossier-top { margin-top: 8pt; padding: 7pt 12pt; gap: 16pt; }
   .dossier-top::before, .dossier-eq::before, .dossier-frame::after { display: none; }
   .dossier-cap, .dossier-facts dt { font-size: 7pt; }
-  .dossier-score b { font-size: 40pt; } .dossier-score { font-size: 10pt; }
+  .dossier-score b { font-size: 34pt; } .dossier-score { font-size: 10pt; }
   .dossier-scale { margin-top: 7pt; } .dossier-scale-track { height: 6pt; } .dossier-scale-ticks { font-size: 7pt; margin-top: 3pt; }
   .dossier-sec p.dossier-ci { margin-top: 5pt; font-size: 8pt; }
   .dossier-facts > div { padding: 5pt 10pt; } .dossier-facts dd { font-size: 15pt; margin-top: 2pt; } .dossier-facts dd small { font-size: 8pt; } .dossier-mini { margin-top: 4pt; height: 2.5pt; }
@@ -270,29 +271,29 @@
   .dossier-sym thead th { font-size: 7pt; } .dossier-sym tbody th { width: 46pt; } .dossier-sym tbody th .dossier-tex { font-size: 10pt; }
 
   /* tables: full width, caption above */
-  .dossier-tbl { overflow: visible; margin: 8pt 0 6pt; }
+  .dossier-tbl { overflow: visible; margin: 5pt 0 4pt; }
   .dossier-tbl table { width: 100%; font-size: 9pt; border-top-width: 1.2pt; border-bottom-width: 1.2pt; }
   .dossier-tbl caption { font-size: 8.5pt; padding-bottom: 4pt; line-height: 1.4; }
-  .dossier-tbl th, .dossier-tbl td { padding: 3pt 7pt; }
+  .dossier-tbl th, .dossier-tbl td { padding: 2pt 7pt; }
   .dossier-tbl thead th { font-size: 8.5pt; } .dossier-tbl thead th.dossier-dvh { font-size: 7pt; }
   .dossier-dv { height: 9pt; } .dossier-dv i { top: 2pt; bottom: 2pt; }
   .dossier-tag { font-size: 7pt; padding: 0 4pt; }
 
   /* figures: a 2 × 2 grid for the four views, single figures centred below their table */
-  .dossier-figs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10pt 14pt; max-width: 150mm; margin: 4pt auto 0; }
+  .dossier-figs { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8pt; max-width: none; margin: 4pt 0 0; }
   .dossier-figs.one { grid-template-columns: 1fr; max-width: none; margin-top: 10pt; }
   .dossier-figs.one .dossier-frame { border: 0; background: none; text-align: center; }
-  .dossier-figs.one .dossier-frame img { display: inline-block; width: auto; max-width: 100%; max-height: 95mm; }
+  .dossier-figs.one .dossier-frame img { display: inline-block; width: auto; max-width: 100%; max-height: 54mm; }
   .dossier-split { display: block; }
 
   /* traverse and temperature */
-  .dossier-trav { grid-template-columns: 62mm minmax(0, 1fr); gap: 14pt; margin-bottom: 8pt; }
+  .dossier-trav { grid-template-columns: 52mm minmax(0, 1fr); gap: 14pt; margin-bottom: 8pt; }
   .dossier-route { columns: 2; font-size: 8.5pt; line-height: 1.6; padding-left: 20pt; }
   .dossier-therm { max-width: none; margin: 6pt 0 8pt; } .dossier-therm-row { padding: 2pt 0; font-size: 8.5pt; grid-template-columns: 70pt minmax(0, 1fr); }
   .dossier-therm-track { height: 8pt; } .dossier-therm-mean { top: -2pt; bottom: -2pt; } .dossier-therm-axis { font-size: 7.5pt; }
   .dossier-sec p.dossier-pick { padding: 5pt 9pt; }
 
-  .dossier figure:not(.dossier-eq), .dossier-tbl:not(.dossier-sym), .dossier-top, .dossier-list li, .dossier-eq > div, .dossier-therm, .dossier-trav, .dossier-explain, .dossier-sym tr { break-inside: avoid; }
+  .dossier figure:not(.dossier-eq), .dossier-tbl, .dossier-top, .dossier-list li, .dossier-eq > div, .dossier-therm, .dossier-trav, .dossier-explain, .dossier-sym tr { break-inside: avoid; }
   .dossier-tbl caption, .dossier.page-in h3 { break-after: avoid; }
   .dossier a { color: inherit; text-decoration: none; }
 }
