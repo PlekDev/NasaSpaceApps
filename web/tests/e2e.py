@@ -20,7 +20,7 @@ with sync_playwright() as p:
     bad = []
     pg.on("console", lambda m: errs.append(m.text) if m.type == "error" else None); pg.on("pageerror", lambda e: errs.append(str(e)))
     pg.on("response", lambda r: bad.append(f"{r.status} {r.url}") if r.status >= 400 and r.url.startswith(BASE.split("/", 3)[0] + "//" + BASE.split("/")[2]) else None)
-    pg.goto(BASE + "/"); pg.wait_for_selector("#go"); check("intro shows the line and one button", "Where on Earth looks" in pg.inner_text(".intro h1") and pg.locator(".intro .btn").count() == 1)
+    pg.goto(BASE + "/"); pg.wait_for_selector("#go"); check("intro shows the line and one button", "Where on Earth can you rehearse" in pg.inner_text(".intro h1") and pg.locator(".intro .btn").count() == 1)
     pg.click("#go"); pg.wait_for_selector('[data-card="best"]', timeout=30000); pg.wait_for_timeout(1500)
     check("explore opens after Explore", pg.locator('[data-card="best"]').count() == 1 and pg.locator("#ex-panel h1").inner_text() != "")
     first = pg.inner_text("#ex-panel h1")

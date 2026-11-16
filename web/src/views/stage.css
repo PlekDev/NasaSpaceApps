@@ -1,0 +1,41 @@
+/* Shared by the page views restyled after Explore (When, Method): the page header in Explore's voice and a row of Explore cards.
+   The starfield behind the pages is the global .page background (style.css), the same as the globe stage. */
+.stage { position: relative; isolation: isolate; }
+/* page header in the Explore voice: a numbered kicker, a condensed title, a short lead */
+.stage-kicker { margin-bottom: 10px; color: var(--accent-text); }
+.stage h1 { font-size: clamp(44px, 5vw, 72px); line-height: .98; }
+.stage .lead { max-width: 62ch; }
+.stage h2 .ex-n, .stage h3 .ex-n { margin-right: 10px; font-size: .62em; vertical-align: .28em; }
+/* a row of Explore cards right under the header */
+.stage-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin: 0 0 var(--s-6); }
+.stage-kpis .ex-card { cursor: default; } .stage-kpis a.ex-card { cursor: pointer; color: inherit; text-decoration: none; }
+.stage-kpis .ex-card:not(a):hover { transform: none; }
+.stage-kpis .ex-cap svg { margin-left: auto; width: 14px; height: 14px; }
+.stage-kpis .ex-card { animation: ex-in 420ms var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
+.k-strip { display: flex; align-items: flex-end; gap: 2px; height: 44px; border-bottom: 1px solid var(--line-strong); }
+.k-strip i { flex: 1; min-height: 2px; background: var(--line-strong); } .k-strip i.on { background: var(--accent); } .k-strip i.top { background: var(--ramp-3); }
+.k-ends { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-3); padding-top: 3px; }
+@media (prefers-reduced-motion: reduce) { .stage-kpis .ex-card { animation: none; } }
+
+/* When: the day-long Sun path (views/sunpath.ts) */
+.time-sun { margin-bottom: var(--s-5); padding: 0 0 18px; }
+.time-sun .time-head { padding: 18px 20px 6px; }
+.sp { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; padding: 0 20px; align-items: start; }
+.sp-svg { width: 100%; display: block; overflow: visible; }
+.sp-band { fill: color-mix(in srgb, var(--ramp-3) 16%, transparent); stroke: color-mix(in srgb, var(--ramp-3) 55%, transparent); stroke-dasharray: 4 4; }
+.sp-bl { fill: var(--ramp-3); font: 600 11px var(--font-display); letter-spacing: .08em; text-transform: uppercase; }
+[data-theme="light"] .sp-bl { fill: #8a5a00; }
+.sp-g { stroke: var(--line); } .sp-h { stroke: var(--line-strong); } .sp-t { fill: var(--text-3); font: 11px var(--font-ui); }
+.sp-l { fill: none; stroke-width: 2; opacity: .55; transition: d 600ms var(--ease); }
+.sp-on { fill: none; stroke-width: 5; stroke-linecap: round; filter: drop-shadow(0 0 6px currentColor); transition: d 600ms var(--ease); }
+.sp-side { display: grid; gap: 10px; align-content: start; padding-top: 6px; }
+.sp-month { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.sp-month b { font: 600 34px/1 var(--font-display); }
+.sp-row { display: grid; grid-template-columns: 12px 1fr auto; gap: 10px; align-items: center; font-size: 13px; }
+.sp-row i { width: 12px; height: 12px; } .sp-row small { display: block; font-size: 11px; color: var(--text-3); }
+.sp-row b { font: 600 24px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.sp-cap { margin: 0; font-size: 11.5px; line-height: 1.45; color: var(--text-3); }
+.sp-ctl { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding-top: 6px; border-top: 1px solid var(--line); }
+.sp-ctl input { width: 100%; }
+@media (prefers-reduced-motion: reduce) { .sp-l, .sp-on { transition: none; } }
+@media (max-width: 900px) { .sp { grid-template-columns: 1fr; } }
