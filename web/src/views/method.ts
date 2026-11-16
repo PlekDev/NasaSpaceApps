@@ -4,6 +4,8 @@
  *  AI-assisted (Claude, Anthropic); reviewed by the team. */
 import './method.css';
 import './stage.css';
+import { mountShadowLab, mountScorePlay } from './method_lab';
+import { loadHome } from '../lib/homeload';
 import { md } from '../markdown';
 import { getText } from '../data';
 import { esc } from '../format';
@@ -64,23 +66,28 @@ export async function renderMethod(el: HTMLElement, m?: Manifest) {
     nFeat ? card(1, 'Measured', String(nFeat), 'features', `${esc(dims)}. Terrain and light stay separate dimensions.`) : '',
     card(2, 'Targets', String(moon + mars), 'sites', `${moon} Moon Base sites and ${mars} Mars sites. No labels are used to fit anything.`),
   ].join('') : '';
-  const rows = DATA.map(([n, u, who, use]) => `<tr><th scope="row"><a href="${u}" target="_blank" rel="noopener">${esc(n)}</a></th><td>${esc(who)}</td><td>${esc(use)}</td></tr>`).join('');
+  const rows = DATA.map(([n, u, who, use], i) => `<a class="method-src ex-glass" style="--i:${i}" href="${u}" target="_blank" rel="noopener"><span class="ex-cap">${esc(who)}</span><b>${esc(n)}</b><span>${esc(use)}</span></a>`).join('');
   el.innerHTML = `<div class="page-in method stage">
     <p class="ex-cap stage-kicker">Method · how a score is made</p>
     <h1>Method &amp; data</h1>
     <p class="method-lede">P.E.N. compares every ${m ? `${m.window_km} km ` : ''}window of Earth with a target on the Moon or Mars${nFeat ? `, using ${nFeat} features (${dims})` : ''}. Nothing is learned from labels: the known analog sites are only used afterwards, to test the result.</p>
     ${kpis ? `<div class="stage-kpis method-kpis">${kpis}</div>` : ''}
     <section aria-labelledby="method-h-flow"><h2 id="method-h-flow"><span class="ex-n">01</span>How a score is made</h2><ol class="method-flow">${flow}</ol></section>
-    <section aria-labelledby="method-h-f"><h2 id="method-h-f"><span class="ex-n">02</span>The two formulas</h2>
+    <section aria-labelledby="method-h-lab"><h2 id="method-h-lab"><span class="ex-n">02</span>Cast shadows, live</h2>
+      <p class="method-sub">Drag the Sun. This is the exact shadow algorithm, running now on the real terrain of a Moon Base site and of its best Earth match.</p>
+      <div class="panel method-lab" id="method-lab"></div></section>
+    <section aria-labelledby="method-h-f"><h2 id="method-h-f"><span class="ex-n">03</span>The two formulas</h2>
       <div class="method-formulas">
         <figure class="panel"><div class="method-math" data-tex="shadow">${SHADOW}</div><figcaption><b>Shadow of a low Sun.</b> With the Sun at height θ on the left of a row of heights <i>z</i> spaced Δx apart, one running maximum per row tells exactly which pixels are in shadow.</figcaption></figure>
-        <figure class="panel"><div class="method-math" data-tex="score">${SCORE}</div><figcaption><b>Similarity score.</b> <i>x</i> is the Earth window, <i>r</i> the target, and IQR the spread of that feature over all Earth windows. S = 100 means identical; S ≈ 37 means one spread apart on average.</figcaption></figure>
+        <figure class="panel"><div class="method-math" data-tex="score">${SCORE}</div><figcaption><b>Similarity score.</b> <i>x</i> is the Earth window, <i>r</i> the target, and IQR the spread of that feature over all Earth windows. S = 100 means identical; S ≈ 37 means one spread apart on average.</figcaption><div class="method-play" id="method-play"></div></figure>
       </div></section>
-    <section aria-labelledby="method-h-d"><h2 id="method-h-d"><span class="ex-n">03</span>Data, with exact product names</h2>
-      <div class="tbl method-data panel"><table><thead><tr><th scope="col">Product</th><th scope="col">Agency</th><th scope="col">Used for</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <section aria-labelledby="method-h-d"><h2 id="method-h-d"><span class="ex-n">04</span>Data, with exact product names</h2>
+      <div class="method-data">${rows}</div>
       <p class="note">NASA data are public domain. Copernicus DEM © DLR e.V. / Airbus, provided under the Copernicus programme by ESA. The Mars Climate Database is a model, not a measurement.</p></section>
     <details class="method-more"><summary>Read more: the full method, step by step</summary><div class="prose" id="method-full"><p class="muted">Loading…</p></div></details>
   </div>`;
+  mountScorePlay(el.querySelector<HTMLElement>('#method-play')!);
+  if (m) loadHome(m).then(h => { const t = m.targets.find(x => x.id === (h.facts?.target.id ?? '')) ?? m.targets.find(x => x.body === 'moon'); if (t) void mountShadowLab(el.querySelector<HTMLElement>('#method-lab')!, t.id, t.name); });
   // typeset the formulas; on any failure the MathML fallback already in the box stays
   el.querySelectorAll<HTMLElement>('.method-math[data-tex]').forEach(box => {
     const tex = TEX[box.dataset.tex as keyof typeof TEX];
