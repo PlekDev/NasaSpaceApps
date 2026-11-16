@@ -26,7 +26,7 @@ GitHub Pages build fail too: `main` never ships half the data.
    fetching it (`getJSON("<name>/<file>")` in the web app).
 
 Start from [`_template.py`](_template.py). Owners (see the team plan): `sim.py` Victor, `stats.py` D. Dona,
-`light.py` D. Lizárraga.
+`light.py` and `limits.py` D. Lizárraga.
 
 ## `sim` (Victor): terrain grids for Mission Rehearsal
 
