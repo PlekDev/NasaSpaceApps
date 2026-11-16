@@ -22,13 +22,16 @@ Our Local Event ends **Sun Nov 15, 20:00 local time** (the global form closes at
 **Project name:** P.E.N. — Planetary Environmental Navigator
 
 **High-level summary (≈100 words):**
-NASA plans its Moon Base near the lunar south pole, where the Sun never rises above about 7°. Long shadows rule
-landing, roving and power there. P.E.N. is an open tool that searches Earth for places that match a target
-Moon or Mars site **dimension by dimension** (terrain shape and low-Sun illumination) and explains what is similar
-and where the analogy breaks. Never told about it, P.E.N. ranks NASA's 2012 lunar-polar test site on Mauna Kea
-**#1 of 10,424** Earth windows for Malapert Massif. Its cast-shadow model reproduces NASA's official LOLA
-illumination map at all six Moon Base sites (ρ = 0.92–0.99). P.E.N. also finds *when* Earth sites reproduce
-lunar-pole light, so field teams know the best weeks to test.
+NASA plans its Moon Base near the lunar south pole, where the Sun never rises above about 7° and long shadows rule
+landing, roving and power. P.E.N. is an open web tool that finds the places on Earth that match a Moon or Mars site in
+terrain and in low-Sun light, explains where the analogy breaks, and tells field teams when to go. Never told about it,
+P.E.N. ranks NASA's 2012 lunar-polar test site on Mauna Kea **#1 of 10,424** Earth windows for Malapert Massif
+(p = 0.004, 0.025 corrected for 6 lunar targets). Its light model matches NASA's LOLA illumination map
+(ρ = 0.92–0.99), and its Mission view schedules a rehearsal down to the hour, with a calendar file.
+
+**One-sentence unique angle:** analog sites are usually chosen for geology and looks; P.E.N. is the first open tool we
+know of that also matches the *light* of the lunar pole, proves it blind against NASA's own test site, and says when
+on Earth that light happens.
 
 **Link to project demo:** <public link to the 7-slide deck>
 
@@ -61,10 +64,26 @@ lunar-pole light, so field teams know the best weeks to test.
      (306–342 K) are within reach of Earth's deserts (up to 328 K). See fig8.
    - Mars is a closer thermal match: the Mars Climate Database (model) gives our three Mars sites a mean surface
      temperature of 200–224 K, 15–38 K colder than University Valley, at 680–830 Pa (under 1 % of sea level).
-   - Polar sites give 4–7 h/day of lunar-pole-like light around the equinoxes.
+   - Not luck: a null test against random Earth windows gives p = 0.004 for Malapert (0.025 corrected for 6 lunar
+     targets); only 0.4 % of Mauna Kea scores as high. Malapert score 79, 95 % bootstrap interval 60–90; it stays #1 in
+     81 % of random weightings for Malapert, 100 % for Connecting Ridge. As a group, p = 0.37 combined, 0.065 illumination.
+   - Honest negative: for Mars the score does not separate the known sites (AUC 0.33–0.50). We report it.
+   - Analog in time: about 1 h/day of 0–7° Sun at Mauna Kea; 5.6–6.7 h/day at polar sites around the equinoxes.
+   - Mission view: plans a traverse on the target, casts the real shadows on both terrains and scans a year of Sun
+     positions on Earth for the same light along the route. Example: fidelity 80 % for the Malapert traverse with the
+     lunar Sun from the east (29–30 March 2027, about half an hour after sunrise), exported as a calendar file (.ics).
+   - Limits view: for every target, a yes / partly / no table of terrain, light, temperature, minerals, gravity and air
+     for its best Earth regions, so the analogy's limits are stated, not hidden.
+   - Scale: 52 s per one-degree tile on one core, about 230 core-hours for all land: under 4 hours on 64 cores (3.6 h).
 4. *Benefits:* regional screeners say which region to look at; P.E.N. picks the exact 6 km site and the best weeks.
    Choose and schedule analog field tests for rover vision, EVA lighting and landing-hazard rehearsal.
    Find under-studied analogs, including in Mexico.
+   - *Who uses it tomorrow:* teams that plan analog field campaigns (rover vision, EVA lighting, landing-hazard
+     rehearsal) pick the exact 6 km site, the week and the hour, and take the `.ics` file and the field brief with them.
+     Students and analog researchers get an open, checked baseline to build on.
+   - *Local impact, Mexico:* El Pinacate: top 3 % for 4 Moon Base sites, top 8 % for all 6. For Jezero, the best Earth
+     match is Sierra Chichinautzin, south of Mexico City (89). Both are reachable by road from Mexican universities,
+     so lunar- and Mars-analog field tests do not have to start abroad.
 5. *Tools:* Python (rasterio, NumPy, SciPy, pandas, Matplotlib), a static web app (TypeScript, Vite, MapLibre GL JS)
    on GitHub Pages, Streamlit + pydeck, GitHub; NASA APIs Trek WMTS, GIBS and EONET.
 6. *Limitations and next steps:* local horizons only, 30 m resolution, flat Mars plains, and Earth's limits
@@ -112,24 +131,38 @@ AI-assisted file is marked in its header. No AI-generated images.
 
 ## 7-slide deck (the demo link)
 
-Built as a slide deck with speaker notes (export to PDF or PowerPoint and host it publicly; that link is the demo).
-Every number below is checked by `tests/test_claims.py` against `data/processed/`.
+Built as a slide deck with speaker notes (export to PDF and host it publicly; that link is the demo). Every number on a
+slide is an entry of `docs/numbers.json`, checked by `tests/test_factcheck_numbers.py` against `data/processed/`.
+Figures and screenshots are rendered from the data and the web app: no AI imagery, no NASA logos.
 
 1. **Cover**: P.E.N., Pollones en Fuga (Mexico), the challenge, and the hook: "Blind test: NASA's 2012 lunar test site
-   comes out #1 of 10,424".
-2. **The problem**: at the Moon Base the Sun never climbs above 7°; Earth test sites are chosen for geology and looks,
-   and the light is rarely checked.
-3. **How it works**: NASA elevation models → one 30 m grid, 10,424 Earth windows of 6 km → 5 terrain features plus exact
-   cast shadows at 2° and 5° → S = 100 · exp(−D), with what matches and what differs.
-4. **Blind test**: the twin-light timelapse (Malapert vs Mauna Kea) and "#1 of 10,424 for Malapert Massif; top 0.2 % for
-   4 of 6 Moon Base sites, top 5 % for all 6".
-5. **Validation**: fig7 and four numbers: ρ = 0.92–0.99 against NASA's LOLA map; 2.0–3.2 pp mean error; 98.0–99.7 %
-   agreement with NASA's permanent-shadow map (say it only next to the ρ, see the Q&A); 84th percentile for classic
-   analog sites in illumination.
-6. **Where and when to rehearse**: astronaut's-eye view; analog in time (about 1 h a day of 0–7° Sun at Mauna Kea, up to
-   5.6–6.7 h around the equinoxes at Arctic and Antarctic sites); field brief + `.ics`; rover twin; EONET check.
-7. **What it gives NASA**: pick the site, pick the week, know the limits (the coldest Earth region we search is still
-   95–132 K warmer than the Moon Base); the links; the NASA data list; no AI imagery, no NASA logos.
+   comes out #1 of 10,424", with p = 0.004 (0.025 corrected for 6 lunar targets) and ρ = 0.92–0.99.
+2. **Problem and method**: the Sun never climbs above 7°; test sites are chosen for geology and looks, the light is rarely
+   checked; data → one 30 m grid (10,424 Earth windows of 6 km) → 5 terrain features plus exact cast shadows at 2° and
+   5° → S = 100 · exp(−D).
+3. **Blind test**: the twin-light timelapse, "#1 of 10,424 for Malapert Massif", the null test, top 0.2 % for 4 of 6
+   Moon Base sites, top 5 % for all 6.
+4. **Validation**: fig7 and four numbers: ρ = 0.92–0.99; 2.0–3.2 pp mean error; 98.0–99.7 % agreement with NASA's
+   permanent-shadow map (only next to the ρ, see the Q&A); 84th percentile for classic analog sites in illumination.
+5. **Where the analogy breaks**: the Limits view; 95–132 K warmer; 88–100 % colder than Earth's record low; Mars
+   15–38 K colder than University Valley; the Mars AUC 0.33–0.50, said openly.
+6. **Where and when to rehearse**: the Mission view (3D twin and rehearsal panel); fidelity 80 % on 29–30 March 2027;
+   `.ics`; about 1 h/day at Mauna Kea, 5.6–6.7 h/day at polar sites; EONET check.
+7. **Who uses it tomorrow**: field-test planners; Mexico (El Pinacate, Sierra Chichinautzin); scale (under 4 hours on
+   64 cores); the links; the NASA data list; AI disclosure.
+
+## Traceability: where each headline number comes from
+
+| Claim | `docs/numbers.json` id | Data | Checked by |
+|---|---|---|---|
+| #1 of 10,424 for Malapert; top 0.2 % / top 5 % | `blind_rank`, `blind_top02`, `blind_top5` | `known_analogs.json`, `windows.csv` | `test_factcheck_numbers.py`, `test_claims.py` |
+| p = 0.004 (0.025 corrected) | `null_p_malapert`, `null_frac_mauna_kea` | `stats/null.json` | `test_factcheck_numbers.py` |
+| ρ = 0.92–0.99, 2.0–3.2 pp | `rho_far`, `mae` | `far_horizons.json` | `test_factcheck_numbers.py`, `test_claims.py` |
+| 98.0–99.7 %, IoU 0.53–0.82 | `psr_agreement`, `psr_iou` | `validation.json` | `test_factcheck_numbers.py` |
+| 95–132 K warmer | `thermal_gap_moon` | `thermal_gap.json` (Diviner + POWER) | `test_factcheck_numbers.py`, `test_claims.py` |
+| fidelity 80 %, 29–30 March 2027 | `rehearsal_fidelity` (pending: computed in the browser) | `sim/` grids | method in `web/tests/sim_*.test.mjs` |
+| under 4 hours on 64 cores | `scale_hours_64`, `scale_core_hours` | `benchmark_tile.json` | `test_factcheck_numbers.py` |
+| Web app numbers | — (read from the exports, never typed) | `web/public/data/` | `test_factcheck_web.py` |
 
 ## Judge Q&A: the light validation
 
