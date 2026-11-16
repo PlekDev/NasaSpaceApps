@@ -324,10 +324,14 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
       lastPad = JSON.stringify(p);
     });
   }
+  let flyTok = 0;
   function flyZone(z: number) {
     const b = tc!.bounds[z], p = pad(), W = Math.max(200, innerWidth - p.left - p.right), H = Math.max(200, innerHeight - p.top - p.bottom), mercY = (la: number) => Math.log(Math.tan(Math.PI / 4 + (la * Math.PI) / 360)) / (2 * Math.PI);
     const dx = Math.max((b[2] - b[0]) / 360, 1e-4), dy = Math.max(mercY(b[3]) - mercY(b[1]), 1e-4), zoom = Math.min(10.5, Math.log2(Math.min(W / (dx * 512), H / (dy * 512))) - .15);
-    view.fly((b[0] + b[2]) / 2, (b[1] + b[3]) / 2, zoom, p);
+    const c: [number, number] = [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2], tok = ++flyTok;
+    view.fly(c[0], c[1], zoom, p);
+    // safety net: if the flight was cancelled by another camera move, land on the zone anyway
+    setTimeout(() => { if (tok !== flyTok || S.zone !== z || homeOn()) return; const cc = view.getCenter(); if (Math.abs(cc[0] - c[0]) > .6 || Math.abs(cc[1] - c[1]) > .6) view.jumpTo({ center: c, zoom, padding: p }); }, 2800);
   }
 
   // ---------- state changes
@@ -366,22 +370,16 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
   function openFocus(id: CardId, from: HTMLElement) {
     const c = CARD[id](); if (!c) return; openCard = id; focusFrom = from;
     modalEl.innerHTML = `<div class="ex-m-in"><div class="ex-m-head"><div><span class="ex-cap" id="ex-m-title">${c.cap}</span>${c.num}<p>${c.txt}</p></div><button type="button" class="ex-x" data-close aria-label="Close">${icon.close}</button></div><div class="ex-detail">${DETAIL[id]()}</div></div>`;
-    focusEl.hidden = false; document.body.classList.add('is-focus'); tween(modalEl); drawSc(modalEl);
-    if (!reduced()) {
-      const a = from.getBoundingClientRect(), b = modalEl.getBoundingClientRect(); modalEl.classList.add('is-flip');
-      modalEl.animate([{ transform: `translate(${a.left - b.left}px,${a.top - b.top}px) scale(${a.width / b.width},${a.height / b.height})`, transformOrigin: '0 0', opacity: .4 }, { transform: 'none', transformOrigin: '0 0', opacity: 1 }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }).onfinish = () => modalEl.classList.remove('is-flip');
-    }
-    setTimeout(() => modalEl.querySelector<HTMLElement>('.ex-x')?.focus(), reduced() ? 0 : 300);
+    focusEl.classList.remove('closing'); focusEl.hidden = false; document.body.classList.add('is-focus'); tween(modalEl); drawSc(modalEl);
+    setTimeout(() => modalEl.querySelector<HTMLElement>('.ex-x')?.focus({ preventScroll: true }), reduced() ? 0 : 220);
   }
   function closeFocus(quick = false) {
     if (focusEl.hidden) return; const from = focusFrom?.isConnected ? focusFrom : panelEl.querySelector<HTMLElement>(`[data-card="${openCard}"]`); openCard = null;
-    document.body.classList.remove('is-focus'); focusEl.classList.remove('on');
-    const done = () => { focusEl.hidden = true; modalEl.innerHTML = ''; if (from && !quick) from.focus({ preventScroll: true }); };
-    if (reduced() || quick || !from) { done(); return; }
-    const a = from.getBoundingClientRect(), b = modalEl.getBoundingClientRect(); modalEl.classList.add('is-flip');
-    let finished = false; const fin = () => { if (finished) return; finished = true; modalEl.classList.remove('is-flip'); done(); };
-    modalEl.animate([{ transform: 'none', transformOrigin: '0 0', opacity: 1 }, { transform: `translate(${a.left - b.left}px,${a.top - b.top}px) scale(${a.width / b.width},${a.height / b.height})`, transformOrigin: '0 0', opacity: 0 }], { duration: 320, easing: 'cubic-bezier(.4,0,.2,1)' }).onfinish = fin;
-    setTimeout(fin, 400);   // never depend on the animation event alone (it can be late in a headless or throttled tab)
+    document.body.classList.remove('is-focus');
+    let finished = false;
+    const done = () => { if (finished) return; finished = true; focusEl.hidden = true; focusEl.classList.remove('closing'); modalEl.innerHTML = ''; if (from && !quick) from.focus({ preventScroll: true }); };
+    if (reduced() || quick) { done(); return; }
+    focusEl.classList.add('closing'); setTimeout(done, 140);   // timer, not an animation event: it must always run
   }
 
   // ---------- events
