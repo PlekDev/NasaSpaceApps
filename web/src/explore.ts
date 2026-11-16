@@ -288,7 +288,7 @@ export function mountExplore(root: HTMLElement, m: Manifest, theme: () => string
     const cs = getComputedStyle(document.documentElement), col = (v: string) => cs.getPropertyValue(v).trim();
     rootEl.querySelectorAll<HTMLCanvasElement>('canvas[data-sc]').forEach(cv => {
       const big = cv.dataset.sc === 'big', dpr = devicePixelRatio || 1, w = cv.clientWidth || 118, h = big ? 360 : 56; cv.width = w * dpr; cv.height = h * dpr; cv.style.height = `${h}px`;
-      const g = cv.getContext('2d')!; g.scale(dpr, dpr);
+      const g = cv.getContext('2d'); if (!g) return; g.scale(dpr, dpr);
       const p = big ? 28 : 3, x = (v: number) => p + (w - p - 4) * v / 100, y = (v: number) => h - p - (h - p - 4) * v / 100, r = big ? 1.6 : .9, a = X.sc.dim[0], b = X.sc.dim[1], s = X.sc.s;
       if (big) { g.strokeStyle = col('--line-strong'); g.strokeRect(p + .5, 4.5, w - p - 4, h - p - 4); g.fillStyle = col('--text-3'); g.font = `11px ${col('--font-ui')}`; g.textAlign = 'center'; [0, 50, 100].forEach(v => g.fillText(String(v), x(v), h - 8)); g.textAlign = 'right'; [0, 50, 100].forEach(v => g.fillText(String(v), p - 6, y(v) + 4)); }
       g.globalAlpha = .4; g.fillStyle = col('--text-3'); for (let i = 0; i < X.sc.n; i++) if (s[i] < S.minScore) g.fillRect(x(a[i]) - r / 2, y(b[i]) - r / 2, r, r);

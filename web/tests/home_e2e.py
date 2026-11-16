@@ -25,8 +25,8 @@ with sync_playwright() as p:
     check("three shortcuts (Moon, Mars, Mexico) with pairs from data", len(tries) == 3 and "Chichinautzin" in tries[1][0] and "Pinacate" in tries[2][0] and all(h.startswith("#/explore?target=") for _, h in tries), str(tries))
     pg.click("#home-proof"); pg.wait_for_selector("#page .page-in"); check("See the proof navigates to Proof", pg.evaluate("location.hash") == "#/proof")
     check("seal stays on other views", pg.is_visible("#seal"))
-    pg.goto(BASE + "/"); pg.wait_for_selector(".home.landed", timeout=15000); pg.locator(".home-try a").nth(1).click(); pg.wait_for_selector(".col-r .rg", timeout=20000); pg.wait_for_timeout(2500)
-    check("Mars shortcut opens Explore on Jezero with the Earth region expanded", "Jezero" in pg.inner_text("#target-name") and pg.locator(".match[aria-expanded=true]").count() == 1 and "Chichinautzin" in pg.inner_text(".match[aria-expanded=true]"), pg.inner_text("#target-name"))
+    pg.goto(BASE + "/"); pg.wait_for_selector(".home.landed", timeout=15000); pg.locator(".home-try a").nth(1).click(); pg.wait_for_selector(".ex-zone", timeout=30000); pg.wait_for_timeout(2500)
+    check("Mars shortcut opens Explore on Jezero with the Earth zone shown", "Jezero" in pg.inner_text("#dd-t") and pg.locator(".ex-zone").count() == 1 and "Chichinautzin" in pg.inner_text(".ex-zone h1"), pg.inner_text("#dd-t"))
     check("Explore keeps the Home deep link in the hash", pg.evaluate("location.hash").startswith("#/explore?target=mars_jezero&region="))
     # skippable: Skip and Escape jump to the end state
     pg.goto(BASE + "/#/"); pg.wait_for_selector(".home"); pg.wait_for_timeout(600); pg.click("#home-skip"); check("Skip lands at once", pg.locator(".home.landed").count() == 1)
